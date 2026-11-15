@@ -9,6 +9,9 @@ Evaluates Self-Regulated Learning (SRL) cyclical state machine transitions.
 3. unauthorized_actor: Learner does not own the project, or unauthorized peer actor.
 4. offline_version_conflict: Mismatched expected_version vs project version (stale cache/concurrent edit).
 5. skipped_reflection_gate: Submit action attempted with reflection_completed=False.
+
+NOTE: All annotation records in this generator are deterministic programmatic
+templates. They are NOT real expert adjudication, human review, or consensus.
 """
 import hashlib
 import json
@@ -139,12 +142,12 @@ def generate_holdout_cases():
                 "transition": transition,
             }
 
-            input_bytes = json.dumps(case_input, sort_keys=True).encode("utf-8")
+            input_bytes = json.dumps(case_input, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
             input_hash = hashlib.sha256(input_bytes).hexdigest()
 
             row = {
                 "case_id": case_id,
-                "cohort": "INDEPENDENT_HOLDOUT",
+                "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
                 "fault_id": fault_id,
                 "canonical_fault": {
                     "nominal": "nominal",
@@ -155,6 +158,7 @@ def generate_holdout_cases():
                 }[fault_id],
                 "input": case_input,
                 "input_hash": input_hash,
+                "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
                 "materializer_version": "2.1-holdout",
                 "oracle": {
                     "basis": "ZIMMERMAN_SRL_CYCLICAL_INVARIANT",
@@ -176,7 +180,7 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as f:
         for c in cases:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+            f.write(json.dumps(c, ensure_ascii=False, separators=(",", ":")) + "\n")
 
     print(f"Generated {len(cases)} holdout cases at {out_path}")
     fault_counts = {}

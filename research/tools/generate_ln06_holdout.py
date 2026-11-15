@@ -6,7 +6,10 @@ Study LN-06: Cognitively Constrained Heritage Trails & Route Optimization.
 Task:
 1. 120 cases across 5 fault types (nominal, unreachable_checkpoint, source_gap_in_monument, prerequisite_cycle, over_time_budget x 24 cases).
 2. Uses diverse heritage stops across the Imperial Citadel and Nine Dynastic Urns.
-3. Annotations include external expert annotations, oracle expectations, GDPT 2018 outcomes, and pedagogical rationales.
+3. Annotations include synthetic annotation templates, oracle expectations, GDPT 2018 outcomes, and pedagogical rationales.
+
+NOTE: All annotation records in this generator are deterministic programmatic
+templates. They are NOT real expert adjudication, human review, or consensus.
 """
 import hashlib
 import json
@@ -55,26 +58,22 @@ HERITAGE_STOP_SETS = [
     ],
 ]
 
-EXPERTS = [
+SYNTHETIC_ANNOTATION_TEMPLATES = [
     {
-        "id": "EXP-GDPT-HIST-01",
-        "name": "TS. Nguyễn Văn Hùng",
-        "role": "Senior Historian & GDPT 2018 Curriculum Reviewer (Hue University)",
+        "id": "TPL-LN06-01",
+        "role": "Programmatic curriculum-review template: GDPT 2018 history specialist",
     },
     {
-        "id": "EXP-HMCC-CURATOR-02",
-        "name": "ThS. Lê Thị Mai",
-        "role": "Senior Curator & Epigrapher (Hue Monuments Conservation Center)",
+        "id": "TPL-LN06-02",
+        "role": "Programmatic curriculum-review template: heritage curation specialist",
     },
     {
-        "id": "EXP-MEASURE-PSYCH-03",
-        "name": "PGS.TS. Trần Quốc Tuấn",
-        "role": "Educational Measurement Specialist & Psychometrician (VNU-HN)",
+        "id": "TPL-LN06-03",
+        "role": "Programmatic curriculum-review template: educational measurement specialist",
     },
     {
-        "id": "EXP-PEDAGOGY-HIST-04",
-        "name": "Cô Hoàng Thị Bích Thảo",
-        "role": "Master History Teacher & Instructional Designer (Quoc Hoc Hue High School)",
+        "id": "TPL-LN06-04",
+        "role": "Programmatic curriculum-review template: instructional design specialist",
     },
 ]
 
@@ -86,7 +85,7 @@ def generate_cases():
     for fault_id in FAULT_TYPES:
         for i in range(24):
             base_set = HERITAGE_STOP_SETS[i % len(HERITAGE_STOP_SETS)]
-            expert = EXPERTS[i % len(EXPERTS)]
+            tpl = SYNTHETIC_ANNOTATION_TEMPLATES[i % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
             case_id = f"LN-06-HOLD-{case_idx:05d}"
             seed = 92000 + case_idx
 
@@ -149,29 +148,31 @@ def generate_cases():
                 "seed": seed,
             }
 
-            raw_str = json.dumps(scenario_input, sort_keys=True)
-            input_hash = hashlib.sha256(raw_str.encode("utf-8")).hexdigest()
+            input_hash = hashlib.sha256(
+                json.dumps(scenario_input, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+            ).hexdigest()
 
             case_record = {
                 "case_id": case_id,
                 "paper_id": "LN-06",
-                "cohort": "INDEPENDENT_HOLDOUT",
+                "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
                 "fault_id": fault_id,
                 "canonical_fault": canonical_fault,
                 "input": scenario_input,
                 "input_hash": input_hash,
+                "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
                 "materializer_version": "2.1-holdout",
                 "oracle": {
                     "expected_decision": expected_decision,
                     "basis": "PEDAGOGICAL_DAG_CONSTRAINTS",
                     "reason": oracle_reason,
                 },
-                "external_expert_annotation": {
-                    "expert_id": expert["id"],
-                    "expert_role": expert["role"],
-                    "consensus_decision": expected_decision,
+                "synthetic_annotation_template": {
+                    "template_id": tpl["id"],
+                    "template_role": tpl["role"],
+                    "template_decision": expected_decision,
                     "target_outcomes": target_outcomes,
-                    "pedagogical_rationale": exp_notes,
+                    "pedagogical_rationale": "[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] " + exp_notes,
                 },
             }
             cases.append(case_record)
@@ -185,7 +186,7 @@ def main():
     cases = generate_cases()
     with OUTPUT_FILE.open("w", encoding="utf-8") as f:
         for c in cases:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+            f.write(json.dumps(c, ensure_ascii=False, separators=(",", ":")) + "\n")
     print(f"Successfully generated {len(cases)} holdout cases in {OUTPUT_FILE}")
 
 

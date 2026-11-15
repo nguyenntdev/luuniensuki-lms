@@ -1,0 +1,1022 @@
+{
+  "n_total": 120,
+  "n_correct": 96,
+  "n_errors": 24,
+  "accuracy": 0.8,
+  "error_rate": 0.2,
+  "accuracy_wilson_ci_95": [
+    0.7196332649371805,
+    0.8617552352115975
+  ],
+  "accuracy_clopper_pearson_ci_95": [
+    0.7171901091020599,
+    0.8674524324552813
+  ],
+  "error_rate_wilson_ci_95": [
+    0.13824476478840256,
+    0.2803667350628196
+  ],
+  "error_rate_clopper_pearson_ci_95": [
+    0.13254756754471878,
+    0.28280989089794006
+  ],
+  "per_class": {
+    "abstain_insufficient_data": {
+      "n": 24,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "recommend_eligible": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "reject_cycle": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "reject_invalid_score": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "remediate_first": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    }
+  },
+  "confusion": {
+    "abstain_insufficient_data->remediate_first": 24,
+    "recommend_eligible->recommend_eligible": 24,
+    "reject_cycle->reject_cycle": 24,
+    "reject_invalid_score->reject_invalid_score": 24,
+    "remediate_first->remediate_first": 24
+  },
+  "predictions_sha256": "0118758cd77b0bf2aa1594fb5bfaf96312fee43deea3c7d9ff46d4dcd46e611c",
+  "gold_sha256": "f908901f3a75f7df02a13510bb6fb1dcdc9cd5f07700cd6ec9ab04004f28946e",
+  "label_map": {},
+  "cases": [
+    {
+      "case_id": "LN-02-HOLD-0001",
+      "group_id": "LN-02-grp-001",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0002",
+      "group_id": "LN-02-grp-002",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0003",
+      "group_id": "LN-02-grp-003",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0004",
+      "group_id": "LN-02-grp-004",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0005",
+      "group_id": "LN-02-grp-005",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0006",
+      "group_id": "LN-02-grp-006",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0007",
+      "group_id": "LN-02-grp-007",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0008",
+      "group_id": "LN-02-grp-008",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0009",
+      "group_id": "LN-02-grp-009",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0010",
+      "group_id": "LN-02-grp-010",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0011",
+      "group_id": "LN-02-grp-011",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0012",
+      "group_id": "LN-02-grp-012",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0013",
+      "group_id": "LN-02-grp-013",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0014",
+      "group_id": "LN-02-grp-014",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0015",
+      "group_id": "LN-02-grp-015",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0016",
+      "group_id": "LN-02-grp-016",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0017",
+      "group_id": "LN-02-grp-017",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0018",
+      "group_id": "LN-02-grp-018",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0019",
+      "group_id": "LN-02-grp-019",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0020",
+      "group_id": "LN-02-grp-020",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0021",
+      "group_id": "LN-02-grp-021",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0022",
+      "group_id": "LN-02-grp-022",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0023",
+      "group_id": "LN-02-grp-023",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0024",
+      "group_id": "LN-02-grp-024",
+      "gold": "recommend_eligible",
+      "pred": "recommend_eligible",
+      "pred_mapped": "recommend_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0025",
+      "group_id": "LN-02-grp-025",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0026",
+      "group_id": "LN-02-grp-026",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0027",
+      "group_id": "LN-02-grp-027",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0028",
+      "group_id": "LN-02-grp-028",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0029",
+      "group_id": "LN-02-grp-029",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0030",
+      "group_id": "LN-02-grp-030",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0031",
+      "group_id": "LN-02-grp-031",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0032",
+      "group_id": "LN-02-grp-032",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0033",
+      "group_id": "LN-02-grp-033",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0034",
+      "group_id": "LN-02-grp-034",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0035",
+      "group_id": "LN-02-grp-035",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0036",
+      "group_id": "LN-02-grp-036",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0037",
+      "group_id": "LN-02-grp-037",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0038",
+      "group_id": "LN-02-grp-038",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0039",
+      "group_id": "LN-02-grp-039",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0040",
+      "group_id": "LN-02-grp-040",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0041",
+      "group_id": "LN-02-grp-041",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0042",
+      "group_id": "LN-02-grp-042",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0043",
+      "group_id": "LN-02-grp-043",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0044",
+      "group_id": "LN-02-grp-044",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0045",
+      "group_id": "LN-02-grp-045",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0046",
+      "group_id": "LN-02-grp-046",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0047",
+      "group_id": "LN-02-grp-047",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0048",
+      "group_id": "LN-02-grp-048",
+      "gold": "remediate_first",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0049",
+      "group_id": "LN-02-grp-049",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0050",
+      "group_id": "LN-02-grp-050",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0051",
+      "group_id": "LN-02-grp-051",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0052",
+      "group_id": "LN-02-grp-052",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0053",
+      "group_id": "LN-02-grp-053",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0054",
+      "group_id": "LN-02-grp-054",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0055",
+      "group_id": "LN-02-grp-055",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0056",
+      "group_id": "LN-02-grp-056",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0057",
+      "group_id": "LN-02-grp-057",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0058",
+      "group_id": "LN-02-grp-058",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0059",
+      "group_id": "LN-02-grp-059",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0060",
+      "group_id": "LN-02-grp-060",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0061",
+      "group_id": "LN-02-grp-061",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0062",
+      "group_id": "LN-02-grp-062",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0063",
+      "group_id": "LN-02-grp-063",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0064",
+      "group_id": "LN-02-grp-064",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0065",
+      "group_id": "LN-02-grp-065",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0066",
+      "group_id": "LN-02-grp-066",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0067",
+      "group_id": "LN-02-grp-067",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0068",
+      "group_id": "LN-02-grp-068",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0069",
+      "group_id": "LN-02-grp-069",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0070",
+      "group_id": "LN-02-grp-070",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0071",
+      "group_id": "LN-02-grp-071",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0072",
+      "group_id": "LN-02-grp-072",
+      "gold": "abstain_insufficient_data",
+      "pred": "remediate_first",
+      "pred_mapped": "remediate_first",
+      "correct": false
+    },
+    {
+      "case_id": "LN-02-HOLD-0073",
+      "group_id": "LN-02-grp-073",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0074",
+      "group_id": "LN-02-grp-074",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0075",
+      "group_id": "LN-02-grp-075",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0076",
+      "group_id": "LN-02-grp-076",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0077",
+      "group_id": "LN-02-grp-077",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0078",
+      "group_id": "LN-02-grp-078",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0079",
+      "group_id": "LN-02-grp-079",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0080",
+      "group_id": "LN-02-grp-080",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0081",
+      "group_id": "LN-02-grp-081",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0082",
+      "group_id": "LN-02-grp-082",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0083",
+      "group_id": "LN-02-grp-083",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0084",
+      "group_id": "LN-02-grp-084",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0085",
+      "group_id": "LN-02-grp-085",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0086",
+      "group_id": "LN-02-grp-086",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0087",
+      "group_id": "LN-02-grp-087",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0088",
+      "group_id": "LN-02-grp-088",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0089",
+      "group_id": "LN-02-grp-089",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0090",
+      "group_id": "LN-02-grp-090",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0091",
+      "group_id": "LN-02-grp-091",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0092",
+      "group_id": "LN-02-grp-092",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0093",
+      "group_id": "LN-02-grp-093",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0094",
+      "group_id": "LN-02-grp-094",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0095",
+      "group_id": "LN-02-grp-095",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0096",
+      "group_id": "LN-02-grp-096",
+      "gold": "reject_cycle",
+      "pred": "reject_cycle",
+      "pred_mapped": "reject_cycle",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0097",
+      "group_id": "LN-02-grp-097",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0098",
+      "group_id": "LN-02-grp-098",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0099",
+      "group_id": "LN-02-grp-099",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0100",
+      "group_id": "LN-02-grp-100",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0101",
+      "group_id": "LN-02-grp-101",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0102",
+      "group_id": "LN-02-grp-102",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0103",
+      "group_id": "LN-02-grp-103",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0104",
+      "group_id": "LN-02-grp-104",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0105",
+      "group_id": "LN-02-grp-105",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0106",
+      "group_id": "LN-02-grp-106",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0107",
+      "group_id": "LN-02-grp-107",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0108",
+      "group_id": "LN-02-grp-108",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0109",
+      "group_id": "LN-02-grp-109",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0110",
+      "group_id": "LN-02-grp-110",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0111",
+      "group_id": "LN-02-grp-111",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0112",
+      "group_id": "LN-02-grp-112",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0113",
+      "group_id": "LN-02-grp-113",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0114",
+      "group_id": "LN-02-grp-114",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0115",
+      "group_id": "LN-02-grp-115",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0116",
+      "group_id": "LN-02-grp-116",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0117",
+      "group_id": "LN-02-grp-117",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0118",
+      "group_id": "LN-02-grp-118",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0119",
+      "group_id": "LN-02-grp-119",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    },
+    {
+      "case_id": "LN-02-HOLD-0120",
+      "group_id": "LN-02-grp-120",
+      "gold": "reject_invalid_score",
+      "pred": "reject_invalid_score",
+      "pred_mapped": "reject_invalid_score",
+      "correct": true
+    }
+  ]
+}

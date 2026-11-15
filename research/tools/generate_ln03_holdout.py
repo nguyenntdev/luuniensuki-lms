@@ -8,6 +8,9 @@ Fault types:
 4. non_finite_stability_weight (24 cases)
 5. unverified_source_claim (24 cases)
 Total: 120 cases.
+
+NOTE: All annotation records in this generator are deterministic programmatic
+templates. They are NOT real expert adjudication, human review, or consensus.
 """
 
 from __future__ import annotations
@@ -44,8 +47,9 @@ NON_FINITE_WEIGHTS = ["NaN", "Inf", "-Inf", None, "nan", "inf", "-inf", "undefin
 
 
 def canonical_hash(obj: dict) -> str:
-    s = json.dumps(obj, sort_keys=True, ensure_ascii=False)
-    return hashlib.sha256(s.encode("utf-8")).hexdigest()
+    return hashlib.sha256(
+        json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    ).hexdigest()
 
 
 def generate_cases():
@@ -90,11 +94,12 @@ def generate_cases():
         cases.append({
             "case_id": cid,
             "paper_id": "LN-03",
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "nominal",
             "materializer_version": "3.0",
             "input": scenario_input,
             "input_hash": canonical_hash(scenario_input),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "oracle": {
                 "basis": "PEDAGOGICAL_SPEC_DUAL_MODE",
                 "expected_decision": "schedule_eligible",
@@ -139,11 +144,12 @@ def generate_cases():
         cases.append({
             "case_id": cid,
             "paper_id": "LN-03",
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "missing_fact_base",
             "materializer_version": "3.0",
             "input": scenario_input,
             "input_hash": canonical_hash(scenario_input),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "oracle": {
                 "basis": "PEDAGOGICAL_SPEC_DUAL_MODE",
                 "expected_decision": "assign_fact_retrieval",
@@ -190,11 +196,12 @@ def generate_cases():
         cases.append({
             "case_id": cid,
             "paper_id": "LN-03",
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "not_due_for_review",
             "materializer_version": "3.0",
             "input": scenario_input,
             "input_hash": canonical_hash(scenario_input),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "oracle": {
                 "basis": "PEDAGOGICAL_SPEC_DUAL_MODE",
                 "expected_decision": "postpone",
@@ -239,11 +246,12 @@ def generate_cases():
         cases.append({
             "case_id": cid,
             "paper_id": "LN-03",
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "non_finite_stability_weight",
             "materializer_version": "3.0",
             "input": scenario_input,
             "input_hash": canonical_hash(scenario_input),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "oracle": {
                 "basis": "PEDAGOGICAL_SPEC_DUAL_MODE",
                 "expected_decision": "reject_invalid_scheduler",
@@ -288,11 +296,12 @@ def generate_cases():
         cases.append({
             "case_id": cid,
             "paper_id": "LN-03",
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "unverified_source_claim",
             "materializer_version": "3.0",
             "input": scenario_input,
             "input_hash": canonical_hash(scenario_input),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "oracle": {
                 "basis": "PEDAGOGICAL_SPEC_DUAL_MODE",
                 "expected_decision": "block_explanation",
@@ -313,7 +322,7 @@ def main():
 
     with out_path.open("w", encoding="utf-8") as f:
         for c in cases:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+            f.write(json.dumps(c, ensure_ascii=False, separators=(",", ":")) + "\n")
 
     print(f"Generated {len(cases)} holdout cases at: {out_path}")
 

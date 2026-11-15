@@ -91,3 +91,41 @@ python3 research/tools/generate_results_tables.py --output "$OUT_DIR"
 Generates:
 - `manuscript_tables/LN-01_results.tex` ... `LN-10_results.tex`
 - `manuscript_tables/LN-01_results.csv` ... `LN-10_results.csv`
+
+---
+
+## Holdout Integrity Gate
+
+`research/tools/check_sources.py` fail-closed validates all 1,200 synthetic held-out test
+scenarios (`research/fixtures/holdout/LN-*_holdout.jsonl`, 120 cases × 10 studies) in
+addition to the 7,200 concrete fixtures. For every row it enforces:
+
+- `input_hash` equals the canonical hash (`sha256` of sort-keys, compact, UTF-8 JSON of `input`);
+- `case_id` is present and unique per file;
+- `cohort == "SYNTHETIC_HELD_OUT_TEST_SET"`;
+- no oracle leakage (`oracle` / `expected_decision` absent from `input`);
+- `annotation_provenance` is present.
+
+It then checks per-file case counts (120 each, 1,200 total) and verifies
+`holdout_manifest.json` matches the on-disk files (sha256 per file and case counts).
+Any violation makes the validator exit nonzero and list the holdout issues in the
+JSON summary.
+
+The manifest can be regenerated deterministically (byte-identical for identical
+fixtures — it contains no timestamp):
+
+```bash
+python3 research/tools/check_sources.py --write-holdout-manifest
+```
+
+Expected output:
+
+```json
+{
+  "status": "PASS",
+  "spec_verified": 11,
+  "fixture_total": 7200,
+  "holdout_total": 1200,
+  "issues": []
+}
+```

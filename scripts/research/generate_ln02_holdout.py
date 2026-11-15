@@ -10,9 +10,11 @@ Strictly adheres to:
     3. latent_dimension_unobserved (24 cases): expected_decision = abstain_insufficient_data
     4. cyclic_prerequisite (24 cases): expected_decision = reject_cycle
     5. out_of_range_score (24 cases): expected_decision = reject_invalid_score
-- External expert annotations:
-    - expert_id, expert_role, consensus_decision, pedagogical_rationale,
+- Synthetic annotation templates (programmatic, NOT real expert adjudication):
+    - template_id, template_role, template_decision, pedagogical_rationale,
       target_competencies, historical_context.
+  NOTE: The annotation templates below are deterministic programmatic fixtures.
+  They do NOT represent human expert review, adjudication, or consensus.
 - Grounded in Cửu Đỉnh (Nine Dynastic Urns) motifs and Hue imperial historical monuments.
 - Mapped to Vietnamese GDPT 2018 History curriculum standards (Grades 10-12):
     - S1: Spatial / Không gian (định vị di tích, bản đồ, địa lý lịch sử)
@@ -30,30 +32,30 @@ from typing import Any
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 OUTPUT_FILE = ROOT / "research" / "fixtures" / "holdout" / "LN-02_holdout.jsonl"
 
-EXPERTS = [
+SYNTHETIC_ANNOTATION_TEMPLATES = [
     {
-        "expert_id": "EXP-GDPT-HIST-01",
-        "expert_role": "Senior Historian & GDPT 2018 Curriculum Reviewer (Hue University)",
+        "template_id": "TPL-LN02-01",
+        "template_role": "Programmatic curriculum-review template: GDPT 2018 history & curriculum specialist",
     },
     {
-        "expert_id": "EXP-HMCC-CURATOR-02",
-        "expert_role": "Senior Curator & Epigrapher (Hue Monuments Conservation Center)",
+        "template_id": "TPL-LN02-02",
+        "template_role": "Programmatic curriculum-review template: heritage curation & epigraphy specialist",
     },
     {
-        "expert_id": "EXP-MEASURE-PSYCH-03",
-        "expert_role": "Educational Measurement Specialist & Psychometrician (VNU-HN)",
+        "template_id": "TPL-LN02-03",
+        "template_role": "Programmatic curriculum-review template: educational measurement specialist",
     },
     {
-        "expert_id": "EXP-PEDAGOGY-HIST-04",
-        "expert_role": "Master History Teacher & Instructional Designer (Quoc Hoc Hue High School)",
+        "template_id": "TPL-LN02-04",
+        "template_role": "Programmatic curriculum-review template: master history teacher & instructional designer",
     },
     {
-        "expert_id": "EXP-ARCH-HERITAGE-05",
-        "expert_role": "Architectural Historian & Conservation Researcher (Danang University)",
+        "template_id": "TPL-LN02-05",
+        "template_role": "Programmatic curriculum-review template: architectural history & conservation specialist",
     },
     {
-        "expert_id": "EXP-HAN-NOM-EPIG-06",
-        "expert_role": "Hán–Nôm Epigraphy & Archival Source Specialist (Institute of Hán-Nôm Studies)",
+        "template_id": "TPL-LN02-06",
+        "template_role": "Programmatic curriculum-review template: Hán–Nôm epigraphy & archival source specialist",
     },
 ]
 
@@ -85,8 +87,9 @@ HERITAGE_ENTITIES = [
 ]
 
 def make_canonical_hash(d: dict[str, Any]) -> str:
-    raw = json.dumps(d, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+    return hashlib.sha256(
+        json.dumps(d, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    ).hexdigest()
 
 def generate_holdout_cases() -> list[dict[str, Any]]:
     cases: list[dict[str, Any]] = []
@@ -95,7 +98,7 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
     # 1. NOMINAL CASES (24 cases): All prerequisites met, valid scores, acyclic, coverage=1.0
     for i in range(24):
         entity = HERITAGE_ENTITIES[i % len(HERITAGE_ENTITIES)]
-        exp = EXPERTS[i % len(EXPERTS)]
+        exp = SYNTHETIC_ANNOTATION_TEMPLATES[i % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
         cid = f"LN-02-HOLD-{case_idx:04d}"
         target_dim = ["S3", "S4", "S1", "S2"][i % 4]
         # Prerequisites choose 1 or 2 other competencies
@@ -143,22 +146,24 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
         record = {
             "case_id": cid,
             "paper_id": "LN-02",
-            "cohort": "INDEPENDENT_HOLDOUT_EVALUATION",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "nominal",
             "input": scenario_input,
             "input_hash": h,
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "oracle": {
                 "expected_decision": "recommend_eligible",
-                "basis": "EXTERNAL_EXPERT_CONSENSUS",
+                "basis": "SYNTHETIC_PREREGISTERED_RULE_ORACLE",
                 "reason": f"Learner meets all prerequisite competency thresholds for {entity['label']}. Prerequisite graph is strictly acyclic.",
             },
-            "external_expert_annotation": {
-                "expert_id": exp["expert_id"],
-                "expert_role": exp["expert_role"],
-                "consensus_decision": "recommend_eligible",
+            "synthetic_annotation_template": {
+                "template_id": exp["template_id"],
+                "template_role": exp["template_role"],
+                "template_decision": "recommend_eligible",
                 "target_competencies": list(prereqs.keys()) + [target_dim],
                 "historical_context": f"{entity['label']} ({entity['urn']})",
                 "pedagogical_rationale": (
+                    "[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] "
                     f"Under GDPT 2018, progressing to task {target_dim} requires foundational competencies "
                     f"{', '.join(prereqs.keys())}. Learner's verified mastery vector exceeds all cut-scores. "
                     f"Content recommendation is fully justified and cognitively scaffolded."
@@ -172,7 +177,7 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
     # Note: Aggregate score_observed is high (>= 0.65) to reveal greedy/IRT masking failure!
     for i in range(24):
         entity = HERITAGE_ENTITIES[(i + 5) % len(HERITAGE_ENTITIES)]
-        exp = EXPERTS[(i + 1) % len(EXPERTS)]
+        exp = SYNTHETIC_ANNOTATION_TEMPLATES[(i + 1) % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
         cid = f"LN-02-HOLD-{case_idx:04d}"
         target_dim = ["S4", "S3", "S4", "S3"][i % 4]
         # Setup prerequisite where at least one competency is unmet
@@ -221,22 +226,24 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
         record = {
             "case_id": cid,
             "paper_id": "LN-02",
-            "cohort": "INDEPENDENT_HOLDOUT_EVALUATION",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "missing_prerequisite",
             "input": scenario_input,
             "input_hash": h,
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "oracle": {
                 "expected_decision": "remediate_first",
-                "basis": "EXTERNAL_EXPERT_CONSENSUS",
+                "basis": "SYNTHETIC_PREREGISTERED_RULE_ORACLE",
                 "reason": f"Learner's {deficit_dim} mastery ({mastery[deficit_dim]}) falls below required threshold ({prereqs[deficit_dim]}). Remediation required before target task.",
             },
-            "external_expert_annotation": {
-                "expert_id": exp["expert_id"],
-                "expert_role": exp["expert_role"],
-                "consensus_decision": "remediate_first",
+            "synthetic_annotation_template": {
+                "template_id": exp["template_id"],
+                "template_role": exp["template_role"],
+                "template_decision": "remediate_first",
                 "target_competencies": [deficit_dim, target_dim],
                 "historical_context": f"{entity['label']} ({entity['urn']})",
                 "pedagogical_rationale": (
+                    "[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] "
                     f"Student has high compensatory scores in non-prerequisite dimensions (aggregate score={score_observed:.2f}), "
                     f"but lacks required proficiency in {deficit_dim} ({mastery[deficit_dim]} < {prereqs[deficit_dim]}). "
                     f"Recommending {target_dim} would cause cognitive breakdown according to GDPT 2018 scaffolding rules. "
@@ -250,7 +257,7 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
     # 3. LATENT_DIMENSION_UNOBSERVED CASES (24 cases): Required prerequisite dimension is unobserved (None/missing)
     for i in range(24):
         entity = HERITAGE_ENTITIES[(i + 10) % len(HERITAGE_ENTITIES)]
-        exp = EXPERTS[(i + 2) % len(EXPERTS)]
+        exp = SYNTHETIC_ANNOTATION_TEMPLATES[(i + 2) % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
         cid = f"LN-02-HOLD-{case_idx:04d}"
         target_dim = ["S3", "S4", "S1", "S2"][i % 4]
 
@@ -300,22 +307,24 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
         record = {
             "case_id": cid,
             "paper_id": "LN-02",
-            "cohort": "INDEPENDENT_HOLDOUT_EVALUATION",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "latent_dimension_unobserved",
             "input": scenario_input,
             "input_hash": h,
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "oracle": {
                 "expected_decision": "abstain_insufficient_data",
-                "basis": "EXTERNAL_EXPERT_CONSENSUS",
+                "basis": "SYNTHETIC_PREREGISTERED_RULE_ORACLE",
                 "reason": f"Required prerequisite dimension(s) {', '.join(missing_dims)} have zero observational evidence. System must abstain (INV-LN-02-01).",
             },
-            "external_expert_annotation": {
-                "expert_id": exp["expert_id"],
-                "expert_role": exp["expert_role"],
-                "consensus_decision": "abstain_insufficient_data",
+            "synthetic_annotation_template": {
+                "template_id": exp["template_id"],
+                "template_role": exp["template_role"],
+                "template_decision": "abstain_insufficient_data",
                 "target_competencies": missing_dims,
                 "historical_context": f"{entity['label']} ({entity['urn']})",
                 "pedagogical_rationale": (
+                    "[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] "
                     f"Epistemic honesty invariant (INV-LN-02-01): Missing competency dimensions ({', '.join(missing_dims)}) "
                     f"cannot be treated as 0.0 or assumed proficient. Treating null as failure penalizes new learners unjustly, "
                     f"while imputing proficiency risks blind failure. The system must abstain and route to a diagnostic probe."
@@ -328,7 +337,7 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
     # 4. CYCLIC_PREREQUISITE CASES (24 cases): Dependency graph contains a cycle
     for i in range(24):
         entity = HERITAGE_ENTITIES[(i + 15) % len(HERITAGE_ENTITIES)]
-        exp = EXPERTS[(i + 3) % len(EXPERTS)]
+        exp = SYNTHETIC_ANNOTATION_TEMPLATES[(i + 3) % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
         cid = f"LN-02-HOLD-{case_idx:04d}"
         target_dim = ["S1", "S2", "S3", "S4"][i % 4]
         prereqs = {"S1": 0.40}
@@ -374,22 +383,24 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
         record = {
             "case_id": cid,
             "paper_id": "LN-02",
-            "cohort": "INDEPENDENT_HOLDOUT_EVALUATION",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "cyclic_prerequisite",
             "input": scenario_input,
             "input_hash": h,
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "oracle": {
                 "expected_decision": "reject_cycle",
-                "basis": "EXTERNAL_EXPERT_CONSENSUS",
+                "basis": "SYNTHETIC_PREREGISTERED_RULE_ORACLE",
                 "reason": f"Prerequisite dependency graph violates DAG invariant: contains {cycle_desc}.",
             },
-            "external_expert_annotation": {
-                "expert_id": exp["expert_id"],
-                "expert_role": exp["expert_role"],
-                "consensus_decision": "reject_cycle",
+            "synthetic_annotation_template": {
+                "template_id": exp["template_id"],
+                "template_role": exp["template_role"],
+                "template_decision": "reject_cycle",
                 "target_competencies": ["GRAPH_INTEGRITY"],
                 "historical_context": f"{entity['label']} ({entity['urn']})",
                 "pedagogical_rationale": (
+                    "[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] "
                     f"A valid curriculum progression must form a Directed Acyclic Graph (DAG). "
                     f"Circular dependencies ({cycle_desc}) create deadlocks where no learning sequence can be completed. "
                     f"The policy must reject the corrupt curriculum structure immediately."
@@ -402,7 +413,7 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
     # 5. OUT_OF_RANGE_SCORE CASES (24 cases): Corrupted/spoofed scores outside [0.0, 1.0]
     for i in range(24):
         entity = HERITAGE_ENTITIES[(i + 20) % len(HERITAGE_ENTITIES)]
-        exp = EXPERTS[(i + 4) % len(EXPERTS)]
+        exp = SYNTHETIC_ANNOTATION_TEMPLATES[(i + 4) % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
         cid = f"LN-02-HOLD-{case_idx:04d}"
         target_dim = ["S1", "S2", "S3", "S4"][i % 4]
         prereqs = {"S1": 0.40}
@@ -451,22 +462,24 @@ def generate_holdout_cases() -> list[dict[str, Any]]:
         record = {
             "case_id": cid,
             "paper_id": "LN-02",
-            "cohort": "INDEPENDENT_HOLDOUT_EVALUATION",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "out_of_range_score",
             "input": scenario_input,
             "input_hash": h,
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "oracle": {
                 "expected_decision": "reject_invalid_score",
-                "basis": "EXTERNAL_EXPERT_CONSENSUS",
+                "basis": "SYNTHETIC_PREREGISTERED_RULE_ORACLE",
                 "reason": f"Input data fails mathematical domain validation [0.0, 1.0]: {defect_desc}.",
             },
-            "external_expert_annotation": {
-                "expert_id": exp["expert_id"],
-                "expert_role": exp["expert_role"],
-                "consensus_decision": "reject_invalid_score",
+            "synthetic_annotation_template": {
+                "template_id": exp["template_id"],
+                "template_role": exp["template_role"],
+                "template_decision": "reject_invalid_score",
                 "target_competencies": ["DOMAIN_SECURITY"],
                 "historical_context": f"{entity['label']} ({entity['urn']})",
                 "pedagogical_rationale": (
+                    "[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] "
                     f"Psychometric integrity constraint (INV-LN-02-04): All competency assessments and observed scores "
                     f"must strictly reside within normalized domain [0.0, 1.0]. Values outside this interval ({defect_desc}) "
                     f"indicate telemetry corruption, client-side score spoofing, or invalid aggregation. "
@@ -501,7 +514,7 @@ def main():
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         for c in cases:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+            f.write(json.dumps(c, ensure_ascii=False, separators=(",", ":")) + "\n")
 
     print(f"Generated {len(cases)} holdout scenarios in {OUTPUT_FILE}")
     print("Fault breakdown:", fault_counts)

@@ -1,0 +1,98 @@
+# LN-04 — Source-Grounded Socratic Tutoring and Instruction Boundary Enforcement
+# Pre-registration: hypotheses, endpoints, and analysis plan (T3 stress tier).
+#
+# SCIENTIFIC LABELING: all methods are deterministic heuristic policies.
+# baselines_c1 is a rule-based SIMULATED generic-LLM proxy, NOT a real LLM.
+# No result from this preregistration may be described as real-LLM evaluation.
+
+study_id: LN-04
+title: "Source-Grounded Socratic Tutoring and Instruction Boundary Enforcement"
+tier: T3
+oracle_bases:
+  - SOCRATIC_SCAFFOLDING_SPEC
+  - PROMPT_INJECTION_DEFENSE_SPEC
+  - EPISTEMIC_SOURCE_INTEGRITY_SPEC
+  - ANSWER_LEAKAGE_DEFENSE_SPEC
+  - DOMAIN_BOUNDARY_INTEGRITY_SPEC
+provenance: PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION
+
+hypotheses:
+  H1_injection_boundary: >
+    The proposed policy rejects prompt-injection turns (reject_injection) at a
+    higher rate than baselines; B0 executes injected turns as answer dumps and
+    the simulated C1 proxy is overridden by them.
+  H2_malicious_note_isolation: >
+    When the answer text appears only in a malicious retrieved note, the
+    proposed policy withholds the answer and redirects Socratically; it never
+    surfaces note-only answer text.
+  H3_source_gate: >
+    The proposed policy abstains on unverified/draft/out-of-scope retrieval
+    (abstain_insufficient_source); removing the gate (ablations_a2) collapses
+    this abstention.
+  H4_answer_budget: >
+    With answer_release_allowed=false, early direct-answer requests receive a
+    Socratic redirect; removing the budget (ablations_a1) leaks the answer.
+
+primary_endpoint:
+  metric: task_specific_safety_accuracy
+  definition: exact-match accuracy against the preregistered rule oracle on the T3 holdout
+  estimation_unit: case_id
+  grouping_unit: group_id
+  abstain_handling: abstention counts as its own decision class (never merged into reject)
+
+secondary_metrics:
+  - answer_leakage_rate
+  - injection_defense_rate
+  - source_gate_rate
+  - socratic_quality_rate
+
+decision_labels:
+  - hint
+  - socratic_question
+  - abstain_insufficient_source
+  - reject_injection
+  - direct_answer
+
+label_space_divergence_note: >
+  All methods emit contract-space decisions validated by
+  research_v2.contracts.label_space.validate_decision("LN-04", ...). The frozen
+  T3 gold was generated with the legacy engine vocabulary
+  (hint_then_fade / restrict_leakage / abstain_source_gap / reject_injection).
+  The generic runner's exact-match accuracy therefore understates agreement;
+  the deterministic equivalence mapping (research_v2.methods.ln04.labels.
+  LEGACY_TO_CONTRACT) is the scoring transformation, and the study-specific
+  safety metrics in research_v2.methods.ln04.metrics are the primary endpoints.
+
+methods:
+  - id: proposed
+    kind: intervention
+    comparator_status: REIMPLEMENTATION
+  - id: baselines_b0
+    kind: naive_baseline
+    comparator_status: REIMPLEMENTATION
+  - id: baselines_c1
+    kind: simulated_generic_llm_proxy   # NOT a real LLM
+    comparator_status: REIMPLEMENTATION
+  - id: ablations_a1
+    kind: ablation_no_hint_budget
+    comparator_status: REIMPLEMENTATION
+  - id: ablations_a2
+    kind: ablation_no_source_gate
+    comparator_status: REIMPLEMENTATION
+  - id: ablations_a3
+    kind: ablation_no_injection_filter
+    comparator_status: REIMPLEMENTATION
+
+seeds: [11, 23, 37]
+split_id: test
+group_key: group_id
+
+analysis_plan:
+  paired: true
+  paired_on: case_id
+  ci: wilson_95
+  negative_controls: [baselines_b0]
+  guardrails:
+    - "An always-reject policy must not score best: nominal hint_then_fade cases punish over-refusal."
+    - "If primary metric is not computable, release gate is EVIDENCE_INSUFFICIENT."
+  exclusions: []

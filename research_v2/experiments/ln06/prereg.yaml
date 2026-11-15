@@ -1,0 +1,75 @@
+# LN-06 — Constrained Heritage Trail Planning with Alternative Learning Stops
+# Pre-registration: locked before any T3 holdout evaluation.
+study_id: LN-06
+title: "Constrained Heritage Trail Planning with Alternative Learning Stops"
+tier: T3
+oracle_basis: PEDAGOGICAL_DAG_CONSTRAINTS
+claim_boundary: >
+  Route feasibility and objective coverage only; field-trip learning outcomes
+  require human assessment and are not claimed by this study.
+
+primary_endpoint:
+  name: feasible_solution_rate_with_utility_regret
+  unit: paired_case_decision
+  decision_rule: >
+    Paired exact-match decision accuracy against the PEDAGOGICAL_DAG_CONSTRAINTS
+    oracle, with false-infeasibility rate as the sensitive error axis and
+    cost-regret versus the certified brute-force optimum on solvable cases.
+
+primary_contrast:
+  intervention: proposed
+  comparator: baselines_c1
+  test: mcnemar_exact
+  alpha: 0.05
+  correction: holm
+
+secondary_metrics:
+  - false_infeasibility_rate
+  - coverage_at_budget
+  - travel_minutes
+  - prerequisite_violations
+  - cost_regret_vs_exact
+  - wall_ms_per_case
+
+ablation_hypotheses:
+  ablations_a1: >
+    Removing the budget check increases false acceptance of over-budget plans
+    (cost_exceeded gold cases predicted find_valid_route).
+  ablations_a2: >
+    Removing the prerequisite closure increases prerequisite violations and
+    misses certifyable cycles.
+  ablations_a3: >
+    Restoring the legacy all-providers behaviour reproduces false
+    infeasibility on the mandatory alternative-provider case (A/B same
+    outcome at 40 min each, budget 50), demonstrating the proposed fix.
+
+mandatory_counterexamples:
+  - id: AB_same_outcome_choose_one
+    description: >
+      Stops A and B both provide outcome T at 40 minutes each; budget 50.
+      Exactly one stop must be chosen (cost 40 <= 50). Summing both to 80 and
+      rejecting is the legacy all-providers regression.
+  - id: asymmetric_travel_closed_checkpoint
+    description: >
+      Asymmetric directed travel times with an unverified checkpoint claim;
+      decision must be reject_checkpoint_source.
+
+estimation_unit: one case
+grouping_unit: monument family + topology template + source edition
+denominator_rule: >
+  All 120 T3 holdout cases per method/seed; no exclusion. Abstain labels do
+  not exist for LN-06; every decision is scored.
+
+tuning_budget:
+  dev_split_only: true
+  grid: none (deterministic policy; no hyperparameter search)
+  seeds: [11, 23, 37]
+
+integrity:
+  inference_inputs_contain_gold_material: false
+  synthetic_annotation_is_human: false
+  exact_solver_claim: >
+    Subset selection is NP-hard (set-cover variant). Exact optimality is only
+    certified on small instances via branch-and-bound within a node budget;
+    larger instances use a deterministic greedy heuristic and are labelled
+    heuristic_fallback. No polynomial-time exactness is claimed.

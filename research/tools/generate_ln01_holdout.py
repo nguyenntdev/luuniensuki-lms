@@ -8,7 +8,10 @@ Stratified across 5 fault types × 24 cases:
 4. bloom_depth_leap (24 cases): cognitive stagnation/inversion along prerequisite edges.
 5. prerequisite_cycle (24 cases): cyclic dependency (both intra-grade and inter-grade cycles).
 
-Each case is audited and annotated with external educator panel reviews.
+Each case carries a synthetic annotation template (programmatic, not human adjudication).
+
+NOTE: All annotation records in this generator are deterministic programmatic
+templates. They are NOT real expert adjudication, human review, or consensus.
 """
 
 import hashlib
@@ -42,30 +45,25 @@ HERITAGE_ENTITIES = [
     {"id": "lang-khai-dinh", "label": "Lăng Khải Định (Ứng Lăng)", "type": "imperial-tomb"},
 ]
 
-EDUCATORS = [
+# Programmatic annotation templates, NOT human adjudication.
+# These are deterministic fixtures used to exercise the evaluator; no human
+# expert reviewed, rated, approved, or reached consensus on any case below.
+SYNTHETIC_ANNOTATION_TEMPLATES = [
     {
-        "annotator_id": "EDU-AUDIT-01",
-        "name": "ThS. Hoàng Thị Mai Phương",
-        "title": "Chuyên viên Tổ Lịch sử - GDĐP, Sở GD&ĐT Thừa Thiên Huế",
-        "experience_years": 18,
+        "template_id": "TPL-LN01-01",
+        "template_role": "Programmatic curriculum-review template: History & local heritage specialist (Sở GD&ĐT Thừa Thiên Huế)",
     },
     {
-        "annotator_id": "EDU-AUDIT-02",
-        "name": "TS. Lê Văn Tuấn",
-        "title": "Giảng viên Khoa Lịch sử, Trường Đại học Sư phạm - Đại học Huế",
-        "experience_years": 22,
+        "template_id": "TPL-LN01-02",
+        "template_role": "Programmatic curriculum-review template: History education lecturer (Đại học Sư phạm - Đại học Huế)",
     },
     {
-        "annotator_id": "EDU-AUDIT-03",
-        "name": "ThS. Nguyễn Thị Thu Trang",
-        "title": "Tổ trưởng Chuyên môn Lịch sử, Trường THPT Chuyên Quốc Học Huế",
-        "experience_years": 15,
+        "template_id": "TPL-LN01-03",
+        "template_role": "Programmatic curriculum-review template: History department lead (THPT Chuyên Quốc Học Huế)",
     },
     {
-        "annotator_id": "EDU-AUDIT-04",
-        "name": "ThS. Trần Đình Hưng",
-        "title": "Giáo viên Lịch sử Cốt cán GDPT 2018, Trường THPT Hai Bà Trưng Huế",
-        "experience_years": 14,
+        "template_id": "TPL-LN01-04",
+        "template_role": "Programmatic curriculum-review template: GDPT 2018 history teacher (THPT Hai Bà Trưng Huế)",
     },
 ]
 
@@ -78,8 +76,9 @@ LEARNER_PROFILES = [
 
 
 def sha256_dict(d: dict) -> str:
-    serialized = json.dumps(d, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+    return hashlib.sha256(
+        json.dumps(d, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    ).hexdigest()
 
 
 def generate_cases():
@@ -92,7 +91,7 @@ def generate_cases():
     for i in range(24):
         cid = f"LN-01-HOLD-{case_idx:05d}"
         entity = HERITAGE_ENTITIES[i % len(HERITAGE_ENTITIES)]
-        edu = EDUCATORS[i % len(EDUCATORS)]
+        tpl = SYNTHETIC_ANNOTATION_TEMPLATES[i % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
         learner = dict(LEARNER_PROFILES[i % len(LEARNER_PROFILES)])
         learner["access"] = "standard"
         learner["event_condition"] = "regular"
@@ -142,28 +141,27 @@ def generate_cases():
         }
 
         oracle = {
-            "basis": "EXTERNAL_EDUCATOR_CURRICULUM_AUDIT",
+            "basis": "SYNTHETIC_PREREGISTERED_RULE_ORACLE",
             "expected_decision": "accept",
             "progression_valid": True,
             "reason": "Nhiệm vụ mới dùng kỹ năng bổ sung có lí do, đúng chuẩn GDPT 2018 Thừa Thiên Huế.",
-            "educator_annotation": {
-                "annotator_id": edu["annotator_id"],
-                "name": edu["name"],
-                "title": edu["title"],
-                "experience_years": edu["experience_years"],
-                "panel_consensus": "UNANIMOUS_ACCEPT",
+            "synthetic_annotation_template": {
+                "template_id": tpl["template_id"],
+                "template_role": tpl["template_role"],
+                "template_decision": "accept",
                 "rubric_dimension": "SPIRAL_PROGRESSION",
-                "pedagogical_verdict": f"Chuỗi học tập về {entity['label']} thỏa mãn 5 bất biến: không chu trình, thứ tự lớp 10-11-12 tăng dần, thang nhận thức Bloom nâng từ nhận biết lên vận dụng/đánh giá, có neo chương trình chính khóa.",
+                "pedagogical_rationale": f"[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] Chuỗi học tập về {entity['label']} thỏa mãn 5 bất biến: không chu trình, thứ tự lớp 10-11-12 tăng dần, thang nhận thức Bloom nâng từ nhận biết lên vận dụng/đánh giá, có neo chương trình chính khóa.",
             },
         }
 
         cases.append({
             "case_id": cid,
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "nominal",
             "canonical_fault": "nominal",
             "input": inp,
             "input_hash": sha256_dict(inp),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "materializer_version": "2.1-holdout",
             "oracle": oracle,
             "paper_id": "LN-01",
@@ -177,7 +175,7 @@ def generate_cases():
     for i in range(24):
         cid = f"LN-01-HOLD-{case_idx:05d}"
         entity = HERITAGE_ENTITIES[i % len(HERITAGE_ENTITIES)]
-        edu = EDUCATORS[i % len(EDUCATORS)]
+        tpl = SYNTHETIC_ANNOTATION_TEMPLATES[i % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
         learner = dict(LEARNER_PROFILES[i % len(LEARNER_PROFILES)])
         learner["access"] = "standard"
         learner["event_condition"] = "regular"
@@ -229,28 +227,27 @@ def generate_cases():
         }
 
         oracle = {
-            "basis": "EXTERNAL_EDUCATOR_CURRICULUM_AUDIT",
+            "basis": "SYNTHETIC_PREREGISTERED_RULE_ORACLE",
             "expected_decision": "reject_grade_order",
             "progression_valid": False,
             "reason": "Quan hệ sau → trước đi sai mức lớp",
-            "educator_annotation": {
-                "annotator_id": edu["annotator_id"],
-                "name": edu["name"],
-                "title": edu["title"],
-                "experience_years": edu["experience_years"],
-                "panel_consensus": "UNANIMOUS_REJECT_GRADE_ORDER",
+            "synthetic_annotation_template": {
+                "template_id": tpl["template_id"],
+                "template_role": tpl["template_role"],
+                "template_decision": "reject_grade_order",
                 "rubric_dimension": "GRADE_DEVELOPMENTAL_ALIGNMENT",
-                "pedagogical_verdict": f"Vi phạm bất biến thứ tự khối lớp (INV-LN-01-04): {specific_flaw}",
+                "pedagogical_rationale": f"[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] Vi phạm bất biến thứ tự khối lớp (INV-LN-01-04): {specific_flaw}",
             },
         }
 
         cases.append({
             "case_id": cid,
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "grade_boundary_inversion",
             "canonical_fault": "grade_reversed",
             "input": inp,
             "input_hash": sha256_dict(inp),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "materializer_version": "2.1-holdout",
             "oracle": oracle,
             "paper_id": "LN-01",
@@ -264,7 +261,7 @@ def generate_cases():
     for i in range(24):
         cid = f"LN-01-HOLD-{case_idx:05d}"
         entity = HERITAGE_ENTITIES[i % len(HERITAGE_ENTITIES)]
-        edu = EDUCATORS[i % len(EDUCATORS)]
+        tpl = SYNTHETIC_ANNOTATION_TEMPLATES[i % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
         learner = dict(LEARNER_PROFILES[i % len(LEARNER_PROFILES)])
         learner["access"] = "standard"
         learner["event_condition"] = "regular"
@@ -308,28 +305,27 @@ def generate_cases():
         }
 
         oracle = {
-            "basis": "EXTERNAL_EDUCATOR_CURRICULUM_AUDIT",
+            "basis": "SYNTHETIC_PREREGISTERED_RULE_ORACLE",
             "expected_decision": "reject_missing_anchor",
             "progression_valid": False,
             "reason": "Không có văn bản mục tiêu chương trình",
-            "educator_annotation": {
-                "annotator_id": edu["annotator_id"],
-                "name": edu["name"],
-                "title": edu["title"],
-                "experience_years": edu["experience_years"],
-                "panel_consensus": "UNANIMOUS_REJECT_MISSING_ANCHOR",
+            "synthetic_annotation_template": {
+                "template_id": tpl["template_id"],
+                "template_role": tpl["template_role"],
+                "template_decision": "reject_missing_anchor",
                 "rubric_dimension": "REGULATORY_ANCHOR_COVERAGE",
-                "pedagogical_verdict": f"Vi phạm bất biến neo chương trình (INV-LN-01-03): {missing_text} Hoạt động học không liên kết được với chuẩn đầu ra GDPT 2018.",
+                "pedagogical_rationale": f"[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] Vi phạm bất biến neo chương trình (INV-LN-01-03): {missing_text} Hoạt động học không liên kết được với chuẩn đầu ra GDPT 2018.",
             },
         }
 
         cases.append({
             "case_id": cid,
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "anchor_misalignment",
             "canonical_fault": "missing_curriculum",
             "input": inp,
             "input_hash": sha256_dict(inp),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "materializer_version": "2.1-holdout",
             "oracle": oracle,
             "paper_id": "LN-01",
@@ -343,7 +339,7 @@ def generate_cases():
     for i in range(24):
         cid = f"LN-01-HOLD-{case_idx:05d}"
         entity = HERITAGE_ENTITIES[i % len(HERITAGE_ENTITIES)]
-        edu = EDUCATORS[i % len(EDUCATORS)]
+        tpl = SYNTHETIC_ANNOTATION_TEMPLATES[i % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
         learner = dict(LEARNER_PROFILES[i % len(LEARNER_PROFILES)])
         learner["access"] = "standard"
         learner["event_condition"] = "regular"
@@ -392,28 +388,27 @@ def generate_cases():
         }
 
         oracle = {
-            "basis": "EXTERNAL_EDUCATOR_CURRICULUM_AUDIT",
+            "basis": "SYNTHETIC_PREREGISTERED_RULE_ORACLE",
             "expected_decision": "reject_no_progression",
             "progression_valid": False,
             "reason": "Hai cấp chỉ lặp hoạt động nhận diện",
-            "educator_annotation": {
-                "annotator_id": edu["annotator_id"],
-                "name": edu["name"],
-                "title": edu["title"],
-                "experience_years": edu["experience_years"],
-                "panel_consensus": "UNANIMOUS_REJECT_NO_PROGRESSION",
+            "synthetic_annotation_template": {
+                "template_id": tpl["template_id"],
+                "template_role": tpl["template_role"],
+                "template_decision": "reject_no_progression",
                 "rubric_dimension": "BLOOM_COGNITIVE_ASCENT",
-                "pedagogical_verdict": f"Vi phạm bất biến tiến triển thang nhận thức (INV-LN-01-01): {leap_desc} Không tạo ra vòng xoắn ốc mở rộng chiều sâu theo Bruner.",
+                "pedagogical_rationale": f"[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] Vi phạm bất biến tiến triển thang nhận thức (INV-LN-01-01): {leap_desc} Không tạo ra vòng xoắn ốc mở rộng chiều sâu theo Bruner.",
             },
         }
 
         cases.append({
             "case_id": cid,
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "bloom_depth_leap",
             "canonical_fault": "repeat_shallow",
             "input": inp,
             "input_hash": sha256_dict(inp),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "materializer_version": "2.1-holdout",
             "oracle": oracle,
             "paper_id": "LN-01",
@@ -427,7 +422,7 @@ def generate_cases():
     for i in range(24):
         cid = f"LN-01-HOLD-{case_idx:05d}"
         entity = HERITAGE_ENTITIES[i % len(HERITAGE_ENTITIES)]
-        edu = EDUCATORS[i % len(EDUCATORS)]
+        tpl = SYNTHETIC_ANNOTATION_TEMPLATES[i % len(SYNTHETIC_ANNOTATION_TEMPLATES)]
         learner = dict(LEARNER_PROFILES[i % len(LEARNER_PROFILES)])
         learner["access"] = "standard"
         learner["event_condition"] = "regular"
@@ -483,28 +478,27 @@ def generate_cases():
         }
 
         oracle = {
-            "basis": "EXTERNAL_EDUCATOR_CURRICULUM_AUDIT",
+            "basis": "SYNTHETIC_PREREGISTERED_RULE_ORACLE",
             "expected_decision": "reject_cycle",
             "progression_valid": False,
             "reason": "Chu trình tiền đề không hợp lệ",
-            "educator_annotation": {
-                "annotator_id": edu["annotator_id"],
-                "name": edu["name"],
-                "title": edu["title"],
-                "experience_years": edu["experience_years"],
-                "panel_consensus": "UNANIMOUS_REJECT_CYCLE",
+            "synthetic_annotation_template": {
+                "template_id": tpl["template_id"],
+                "template_role": tpl["template_role"],
+                "template_decision": "reject_cycle",
                 "rubric_dimension": "TOPOLOGICAL_ACYCLICITY",
-                "pedagogical_verdict": f"Vi phạm bất biến đồ thị không chu trình DAG (INV-LN-01-02): {cycle_desc}",
+                "pedagogical_rationale": f"[SYNTHETIC TEMPLATE — NOT HUMAN-ADJUDICATED] Vi phạm bất biến đồ thị không chu trình DAG (INV-LN-01-02): {cycle_desc}",
             },
         }
 
         cases.append({
             "case_id": cid,
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "prerequisite_cycle",
             "canonical_fault": "prerequisite_cycle",
             "input": inp,
             "input_hash": sha256_dict(inp),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "materializer_version": "2.1-holdout",
             "oracle": oracle,
             "paper_id": "LN-01",
@@ -527,11 +521,11 @@ def main():
     for f in ["nominal", "grade_boundary_inversion", "anchor_misalignment", "bloom_depth_leap", "prerequisite_cycle"]:
         assert counts.get(f) == 24, f"Fault {f} has count {counts.get(f)}, expected 24"
 
-    out_path = Path("/home/clue/Documents/luuniensuki-lms/research/fixtures/holdout/LN-01_holdout.jsonl")
+    out_path = Path(__file__).resolve().parents[2] / "research" / "fixtures" / "holdout" / "LN-01_holdout.jsonl"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         for c in cases:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+            f.write(json.dumps(c, ensure_ascii=False, separators=(",", ":")) + "\n")
 
     print(f"Successfully generated 120 holdout cases at {out_path}")
 

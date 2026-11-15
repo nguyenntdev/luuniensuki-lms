@@ -1,0 +1,17 @@
+{
+  "study_id": "LN-06",
+  "tier": "T3",
+  "dataset_path": "research_v2/data/ln06/t3_inputs.jsonl",
+  "dataset_sha256": "eb223b8fc5ff9078265e26260233ef269228b25ae4fa9a2c623d5c520a2570f1",
+  "gold_path": "research_v2/data/ln06/t3_gold.jsonl",
+  "method_id": "ablations_a2",
+  "seed": 23,
+  "split_id": "test",
+  "source_commit": "abcfab201d47db4cf89edf4b769c645438522d3a",
+  "python_version": "3.12.3",
+  "platform": "Linux-6.17.0-20-generic-x86_64-with-glibc2.39",
+  "wall_ms": 18.269,
+  "status": "PASS",
+  "error_code": null,
+  "n_inputs": 120
+}

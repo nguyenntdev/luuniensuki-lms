@@ -1,0 +1,19 @@
+# LN-04 frozen experiment matrix (T3).
+repo_root: .
+cells:
+  - study: LN-04
+    tier: T3
+    dataset: research_v2/data/ln04/t3_inputs.jsonl
+    gold: research_v2/data/ln04/t3_gold.jsonl
+    methods: [proposed, baselines_b0, baselines_c1, ablations_a1, ablations_a2, ablations_a3]
+    seeds: [11, 23, 37]
+    split_id: test
+    group_key: group_id
+    # Evaluator-side equivalence map: contract prediction label -> sealed gold label.
+    # Native vocabulary is preserved in reason_codes; this only aligns the scored label.
+    label_map:
+      socratic_question: hint_then_fade
+      hint: restrict_leakage
+      abstain_insufficient_source: abstain_source_gap
+      reject_injection: reject_injection
+      direct_answer: direct_answer

@@ -15,7 +15,8 @@
 
 \title{\textbf{Evidence-Grounded Learning Analytics and Teacher Orchestration:\\
 Algorithmic Invariants, Privacy Suppression, and Workload Ethics in Heritage Education (LN-09)}}
-\author{\textbf{Lưu Niên Sứ Ký Research Consortium}}
+% TODO: finalize author list, order, affiliations, and institutional consent.
+\author{\textbf{Author Name(s) to be finalized} \\ \small Affiliation to be confirmed}
 \date{November 2026}
 
 \begin{document}
@@ -24,13 +25,13 @@ Algorithmic Invariants, Privacy Suppression, and Workload Ethics in Heritage Edu
 \begin{abstract}
 Educational dashboards frequently suffer from ``dashboard fatigue'' and spurious algorithmic paternalism: raw log aggregations or black-box statistical heuristics either overwhelm educators with uncontextualized metrics or recommend pedagogical interventions lacking verifiable curricular evidence. In tangible heritage education, where local history and epigraphy require rigorous source corroboration, ungrounded diagnostic assertions risk propagating historical errors and mislabeling student competencies.
 In this study (LN-09), we present an evidence-grounded teacher decision-support policy for local heritage curriculum (\textit{Giáo dục địa phương - Di sản văn hóa Cố đô Huế}). The policy formalizes five strict pedagogical invariants: (1) no deficit inference from absent or missing interaction logs (\textsc{INV-LN-09-01}); (2) full backward curriculum traceability to verified historical tasks (\textsc{INV-LN-09-02}); (3) explicit teacher supremacy and non-coercive intervention control (\textsc{INV-LN-09-03}); (4) strict $k$-anonymity privacy suppression ($n < 5$) blocking micro-cohort student re-identification (\textsc{INV-LN-09-04}); and (5) transparent surface exposure of contradictory assessment signals (\textsc{INV-LN-09-05}).
-We conduct an empirical evaluation across 720 benchmark scenarios and an independent 120-case holdout dataset spanning five declared fault strata (nominal, missing interaction logs, conflicting assessment signals, unverified curriculum tasks, and stale mastery data). Compared to standard ungrounded heuristics ($100\%$ unsupported action rate on faults) and statistical thresholding baselines ($75\%$), our policy reduces unsupported interventions to $0.0\%$ ($95\%$ Wilson CI $[0.0\%, 3.8\%]$, $\chi^2 = 94.01, p < 0.0001$), achieving $100\%$ privacy suppression compliance on vulnerable cohorts. Finally, we establish a teacher workload ethics framework guaranteeing that analytical recommendations function strictly as discretionary scaffolding rather than automated evaluative judgments.
+We conduct an empirical evaluation across 720 benchmark scenarios and a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) spanning five declared fault strata (nominal, missing interaction logs, conflicting assessment signals, unverified curriculum tasks, and stale mastery data). Compared to standard ungrounded heuristics ($100\%$ unsupported action rate on faults) and statistical thresholding baselines ($75\%$), our policy reduces unsupported interventions to $0.0\%$ ($95\%$ Wilson CI $[0.0\%, 3.8\%]$, $\chi^2 = 94.01, p < 0.0001$), achieving $100\%$ privacy suppression compliance on vulnerable cohorts. Finally, we establish a teacher workload ethics framework guaranteeing that analytical recommendations function strictly as discretionary scaffolding rather than automated evaluative judgments.
 \end{abstract}
 
 \section{Introduction and Theoretical Foundation}
-Contemporary learning analytics (LA) systems increasingly seek to bridge the gap between telemetry extraction and teacher orchestration in classroom environments \cite{vanleeuwen2021teacher,wise2021guiding}. However, learning analytics in practice frequently encounters the ``orchestration gap'': descriptive dashboards display voluminous activity counters, time-on-task, and superficial completion scores without indicating \textit{why} a learner struggles or \textit{what} pedagogical action the educator should take. Conversely, automated recommender systems that bypass teacher judgment often commit severe epistemic fallacies, attributing cognitive deficiencies to learners whose apparent inactivity may stem from connectivity latency, offline learning, or device sharing.
+Contemporary learning analytics (LA) systems increasingly seek to bridge the gap between telemetry extraction and teacher orchestration in classroom environments \cite{vanleeuwen2021teacher,wise2021guiding,siemens2013learning,dillenbourg2013evolution}. However, learning analytics in practice frequently encounters the ``orchestration gap'': descriptive dashboards display voluminous activity counters, time-on-task, and superficial completion scores without indicating \textit{why} a learner struggles or \textit{what} pedagogical action the educator should take. Conversely, automated recommender systems that bypass teacher judgment often commit severe epistemic fallacies, attributing cognitive deficiencies to learners whose apparent inactivity may stem from connectivity latency, offline learning, or device sharing.
 
-In tangible cultural heritage education—specifically the study of the Nine Dynastic Urns (\textit{Cửu Đỉnh}, 1835--1837) and royal monuments in Huế within Vietnam's 2018 General Education Program (\textit{Giáo dục địa phương Lớp 12})—these risks are amplified. Historical inquiry demands critical analysis across four core competencies:
+In tangible cultural heritage education—specifically the study of the Nine Dynastic Urns (\textit{Cửu Đỉnh}, 1835--1837) and royal monuments in Huế within Vietnam's 2018 General Education Program (\textit{Giáo dục địa phương Lớp 12}) \cite{moet2018gdpt}—these risks are amplified. Historical inquiry demands critical analysis across four core competencies:
 \begin{enumerate}
     \item \textbf{S1 (Spatial Context):} Orienting architectural, geographic, and territorial bas-reliefs across imperial sites (e.g., \textit{Ngọ Môn}, \textit{Điện Thái Hòa}, \textit{Biển Đông} on \textit{Cao Đỉnh}).
     \item \textbf{S2 (Temporal Context):} Synchronizing reign eras, royal decrees, and chronologies across the Nguyễn Dynasty.
@@ -39,7 +40,19 @@ In tangible cultural heritage education—specifically the study of the Nine Dyn
 \end{enumerate}
 
 When an automated analytics engine analyzes historical inquiry without verifying source grounding, it risks proposing remedial tasks anchored in unauthenticated claims or interpreting conflicting performance as deficit rather than nuance. 
-To address this challenge, Study LN-09 develops an \textit{Evidence-Grounded Teacher Decision-Support Policy} embedded in the \textit{Lưu Niên Sứ Ký} platform. This paper specifies the formal architecture of the decision engine, details the five governing pedagogical invariants, presents comprehensive empirical evaluations on both benchmark ($N=720$) and independent holdout ($N=120$) datasets, and analyzes teacher workload ergonomics and privacy safeguards under Vietnamese Decree No.~13/2023/NĐ-CP.
+To address this challenge, Study LN-09 develops an \textit{Evidence-Grounded Teacher Decision-Support Policy} embedded in the \textit{Lưu Niên Sứ Ký} platform. This paper specifies the formal architecture of the decision engine, details the five governing pedagogical invariants, presents comprehensive empirical evaluations on both benchmark ($N=720$) and synthetic held-out ($N=120$) test sets, and analyzes teacher workload ergonomics and privacy safeguards under Vietnamese Decree No.~13/2023/NĐ-CP.
+
+\section{Research Questions}
+
+\begin{enumerate}[label=\textbf{RQ\arabic*}, leftmargin=2.4em]
+    \item \textbf{RQ1 (Evidence Grounding):} Can teacher-facing analytics be constrained so that every proposed instructional action is backward-traceable to verified assessment evidence and an approved curriculum anchor?
+    \item \textbf{RQ2 (Unsupported-Action Reduction):} On a synthetic held-out test set with programmatic annotation templates (no human adjudication), does the evidence-grounded policy (I1) reduce unsupported interventions relative to a descriptive dashboard baseline (B0) and statistical thresholding (B1)?
+    \item \textbf{RQ3 (Privacy and Agency):} Does the policy enforce $k$-anonymity suppression on small cohorts while preserving teacher override supremacy and avoiding deficit inference from missing data?
+\end{enumerate}
+
+\subsection{Research Gap and Novelty}
+
+Learning analytics has matured as a discipline \cite{siemens2013learning}, and computer-supported collaborative learning research documents a persistent orchestration gap between dashboards and actionable teacher practice \cite{dillenbourg2013evolution, vanleeuwen2021teacher, wise2021guiding}. Privacy research provides formal suppression guarantees through $k$-anonymity \cite{sweeney2002k}. What has not been established is a single decision policy that simultaneously enforces evidence traceability, abstention on missing or conflicting telemetry, privacy suppression, and non-coercive teacher control under the Vietnamese local-heritage curriculum \cite{moet2018gdpt}. This study contributes that combined invariant set and a reproducible synthetic fault-stratified held-out test set, rather than a classroom deployment study with human-adjudicated outcomes.
 
 \section{Pedagogical Invariants and Algorithmic Decision Rules}
 
@@ -50,7 +63,7 @@ The policy enforces five foundational invariants implemented in \texttt{backend/
     \item \textbf{\textsc{INV-LN-09-01} (Zero Deficit Inference from Missing Data):} The engine must never categorize a student as having low competence or assign remedial stigma based on absent or zero LMS logs. Lack of telemetry requires explicit abstention (\texttt{abstain\_missing\_evidence}), prompting the teacher to verify connectivity or offline engagement.
     \item \textbf{\textsc{INV-LN-09-02} (Curricular and Source Backward-Traceability):} Every proposed instructional action must link backward to a verified assessment task and an approved curriculum anchor in the national competency catalog (\texttt{GDDP12-HUE-HERITAGE-*}). Evidence from unverified or uncalibrated tasks forces \texttt{abstain\_unverified\_source}.
     \item \textbf{\textsc{INV-LN-09-03} (Teacher Supremacy and Discretionary Override):} Algorithmic suggestions never auto-execute, never modify gradebooks directly, and never impose mandatory student homework without affirmative teacher confirmation. The educator may accept, reject, or modify any recommendation with structured rationale logging.
-    \item \textbf{\textsc{INV-LN-09-04} (Privacy Preservation via $k$-Anonymity):} Aggregate classroom visualizations and group-level remedial recommendations must strictly enforce $k$-anonymity with $k \ge 5$. For small cohorts ($n < 5$), granular breakdowns are suppressed to prevent deductive deanonymization of vulnerable minors.
+    \item \textbf{\textsc{INV-LN-09-04} (Privacy Preservation via $k$-Anonymity):} Aggregate classroom visualizations and group-level remedial recommendations must strictly enforce $k$-anonymity \cite{sweeney2002k} with $k \ge 5$. For small cohorts ($n < 5$), granular breakdowns are suppressed to prevent deductive deanonymization of vulnerable minors.
     \item \textbf{\textsc{INV-LN-09-05} (Transparent Signal Conflict Exposure):} When student performance signals across independent assessment tasks contradict each other (e.g., high field-rubbing demonstration but low multiple-choice quiz score), the engine must not average them into a misleading midpoint. Instead, it surfaces the conflict transparently via \texttt{abstain\_conflict}, directing the teacher to conduct qualitative observation.
 \end{itemize}
 
@@ -84,7 +97,7 @@ Algorithm~\ref{alg:ln09_decision_policy} details the deterministic rule evaluati
 \end{algorithmic}
 \end{algorithm}
 
-\section{Experimental Design and Holdout Benchmark}
+\section{Experimental Design and Held-Out Benchmark}
 
 \subsection{Conditions and Baselines}
 To isolate the functional contributions of our policy architecture, we evaluate six experimental conditions:
@@ -97,11 +110,11 @@ To isolate the functional contributions of our policy architecture, we evaluate 
     \item \textbf{A3 (Ablation 3 -- No Rationale/Curriculum Traceability):} Proposes interventions but omits explanatory rationale and curriculum anchor identifiers.
 \end{itemize}
 
-\subsection{Dataset Stratification and Holdout Generation}
+\subsection{Dataset Stratification and Held-Out Test Set Generation}
 To preclude data snooping and circular overfitting, evaluation is conducted on two distinct datasets:
 \begin{enumerate}
     \item \textbf{Frozen Concrete Fixture ($N=720$):} Primary benchmark across 720 scenario configurations (144 nominal, 576 fault scenarios).
-    \item \textbf{Independent Holdout Dataset ($N=120$):} A newly generated holdout dataset (\texttt{research/fixtures/holdout/LN-09\_holdout.jsonl}) partitioned equally into 5 fault strata ($n=24$ each):
+    \item \textbf{Synthetic Held-Out Test Set ($N=120$):} A newly generated held-out test set with programmatic annotation templates (no human adjudication) (\texttt{research/fixtures/holdout/LN-09\_holdout.jsonl}) partitioned equally into 5 fault strata ($n=24$ each):
     \begin{itemize}
         \item \textit{Nominal:} Fresh evidence ($\le 30$d), verified items, no conflict, cohort $n \ge 25$.
         \item \textit{Missing Interaction Logs:} Complete absence of student submission records.
@@ -113,8 +126,8 @@ To preclude data snooping and circular overfitting, evaluation is conducted on t
 
 \section{Empirical Results and Comparative Analysis}
 
-\subsection{Holdout Dataset Results}
-Table~\ref{tab:ln-09-holdout-results} reports performance across all six conditions on the independent holdout dataset ($N=120$).
+\subsection{Held-Out Test Set Results}
+Table~\ref{tab:ln-09-holdout-results} reports performance across all six conditions on the synthetic held-out test set ($N=120$).
 
 \input{results/LN-09_holdout_results.tex}
 
@@ -158,8 +171,17 @@ To protect teacher agency, LN-09 enforces:
 \subsection{Epistemic Calibration in Heritage Education}
 Automated learning analytics often project a false sense of certainty onto complex human reasoning. In historical inquiry, student hesitation or non-linear exploration of primary rubbings may indicate deep critical thinking rather than lack of mastery. By enforcing explicit abstention when assessment tasks conflict or logs are sparse, LN-09 explicitly prevents the system from pathologizing normal student inquiry processes.
 
+\subsection{Threats to Validity}
+
+\begin{itemize}
+    \item \textbf{Internal validity:} Oracle decisions in the held-out test set are generated by programmatic annotation templates (no human adjudication); policy performance is measured against those templates, so template defects would bias every condition.
+    \item \textbf{External validity:} Scenarios encode Huế heritage classroom workflows and Vietnamese data-protection expectations; teacher behaviour with real dashboards may differ substantially from the simulated decision policies.
+    \item \textbf{Construct validity:} ``Unsupported action'' is defined by the invariant checks; it is a software-policy construct and not a validated measure of pedagogical quality or student benefit.
+    \item \textbf{Statistical validity:} Per-stratum $n=24$ and $N=96$ eligible fault cases yield wide Wilson intervals, with several conditions at the 0\% or 100\% boundary. The $k$-anonymity probe uses only 24 micro-cohort cases. All findings are internal software-policy estimates on a \emph{synthetic} held-out test set and are not human-adjudicated external validation.
+\end{itemize}
+
 \section{Conclusion and Future Work}
-Study LN-09 demonstrates that evidence-grounded learning analytics can bridge the teacher orchestration gap without succumbing to spurious algorithmic recommendations. By mathematically enforcing five core pedagogical invariants—zero deficit inference, curricular backward-traceability, teacher override supremacy, $k$-anonymity privacy suppression, and transparent conflict exposure—the system achieves a $0.0\%$ unsupported action rate on both synthetic benchmark and independent holdout evaluations. Future research will explore multi-teacher consensus protocols for collaborative cross-school curriculum delivery across Central Vietnam.
+Study LN-09 demonstrates that evidence-grounded learning analytics can bridge the teacher orchestration gap without succumbing to spurious algorithmic recommendations. By mathematically enforcing five core pedagogical invariants—zero deficit inference, curricular backward-traceability, teacher override supremacy, $k$-anonymity privacy suppression, and transparent conflict exposure—the system achieves a $0.0\%$ unsupported action rate on both synthetic benchmark and held-out evaluations. Future research will explore multi-teacher consensus protocols for collaborative cross-school curriculum delivery across Central Vietnam.
 
 \bibliographystyle{IEEEtran}
 \begin{thebibliography}{99}

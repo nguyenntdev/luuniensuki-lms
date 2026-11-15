@@ -1,0 +1,17 @@
+{
+  "study_id": "LN-09",
+  "tier": "T3",
+  "dataset_path": "research_v2/data/ln09/t3_inputs.jsonl",
+  "dataset_sha256": "013b61a277431fddc92a41937747162d6d210e5bb6d7ccd46fa3e8aae5d73d37",
+  "gold_path": "research_v2/data/ln09/t3_gold.jsonl",
+  "method_id": "baselines_c1",
+  "seed": 37,
+  "split_id": "test",
+  "source_commit": "abcfab201d47db4cf89edf4b769c645438522d3a",
+  "python_version": "3.12.3",
+  "platform": "Linux-6.17.0-20-generic-x86_64-with-glibc2.39",
+  "wall_ms": 8.794,
+  "status": "PASS",
+  "error_code": null,
+  "n_inputs": 120
+}

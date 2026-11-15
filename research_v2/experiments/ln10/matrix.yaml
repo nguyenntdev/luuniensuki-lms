@@ -1,0 +1,11 @@
+# LN-10 frozen experiment matrix (schema shared by run_matrix).
+repo_root: .
+cells:
+  - study: LN-10
+    tier: T3
+    dataset: research_v2/data/ln10/t3_inputs.jsonl
+    gold: research_v2/data/ln10/t3_gold.jsonl
+    methods: [proposed, baselines_b0, baselines_c1, ablations_a1, ablations_a2, ablations_a3]
+    seeds: [11, 23, 37]
+    split_id: test
+    group_key: group_id

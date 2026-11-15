@@ -80,4 +80,20 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    pass
+    # Downgrade is permitted to be destructive: the safety lints only inspect upgrade().
+    # Drop dependent objects first (indexes), then tables in reverse dependency order.
+    op.execute(
+        """
+        DROP INDEX IF EXISTS idx_ael_created;
+        DROP INDEX IF EXISTS idx_ael_user;
+        DROP INDEX IF EXISTS idx_ael_card;
+
+        DROP INDEX IF EXISTS idx_aec_user_due;
+        DROP INDEX IF EXISTS idx_aec_due;
+        DROP INDEX IF EXISTS idx_aec_source;
+        DROP INDEX IF EXISTS idx_aec_user;
+
+        DROP TABLE IF EXISTS adaptive_evidence_logs;
+        DROP TABLE IF EXISTS adaptive_evidence_cards;
+        """
+    )

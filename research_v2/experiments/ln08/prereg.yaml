@@ -1,0 +1,89 @@
+# LN-08 — Evidence-Calibrated Diagnostic Feedback for Historical Reasoning
+# Pre-registration: locked before any T3 holdout evaluation.
+study_id: LN-08
+title: "Evidence-Calibrated Diagnostic Feedback for Historical Reasoning"
+tier: T3
+oracle_basis: DIAGNOSTIC_FEEDBACK_SPEC
+claim_boundary: >
+  Diagnostic reliability only (error-class classification with source-grounded
+  feedback and calibrated abstention). No improved exam scores or learning
+  outcomes are claimed without an intervention trial.
+
+primary_endpoint:
+  name: macro_decision_accuracy_on_labeled_error_classes
+  unit: paired_case_decision
+  decision_rule: >
+    Paired exact-match decision accuracy against the DIAGNOSTIC_FEEDBACK_SPEC
+    oracle over the five gold strata (feedback_supported,
+    classify_contradiction, classify_source_error, preserve_semantics,
+    feedback_incomplete), with false-acceptance-of-negation and
+    false-rejection-of-synonyms as the two sensitive error axes.
+
+primary_contrast:
+  intervention: proposed
+  comparator: baselines_c1
+  test: mcnemar_exact
+  alpha: 0.05
+  correction: holm
+
+secondary_metrics:
+  - false_negation_acceptance_rate
+  - false_source_error_acceptance_rate
+  - synonym_false_rejection_rate
+  - abstain_rate
+  - wall_ms_per_case
+
+ablation_hypotheses:
+  ablations_a1: >
+    Keyword-only mode accepts negated answers (contradiction gold predicted
+    feedback_supported) and fabricated citations (source-error gold predicted
+    feedback_supported): keyword presence alone must never grant correctness.
+  ablations_a2: >
+    Disabling negation parsing accepts every keyword-complete-but-reversed
+    answer (24/24 contradiction gold cases predicted feedback_supported);
+    the mandatory case "Ngọ Môn không thuộc trục nghi lễ" (all keywords
+    present, relation reversed) must be classify_contradiction.
+  ablations_a3: >
+    Disabling the source-link check accepts fabricated/untrusted/unverified
+    locators (source-error gold cases predicted feedback_supported);
+    INV-LN-08-03: no claim of source support without a verified locator.
+
+mandatory_counterexamples:
+  - id: keyword_complete_but_reversed
+    description: >
+      Answer contains ALL canonical keywords yet REVERSES the historical
+      relation: "Ngọ Môn không thuộc trục nghi lễ" / "Ngọ Môn is NOT on the
+      ritual axis". Keyword matching alone would accept it; the correct
+      decision is classify_contradiction, never feedback_supported.
+  - id: correct_paraphrase_no_exact_keywords
+    description: >
+      Correct synonym paraphrase with no canonical keyword:
+      "vị trí Ngọ Môn nằm trên tuyến không gian phục vụ nghi thức". The
+      decision must be preserve_semantics, never feedback_incomplete.
+  - id: fabricated_source_locator
+    description: >
+      Plausible affirmative answer citing a fabricated locator
+      (SOURCE-FABRICATED). The decision must be classify_source_error.
+  - id: generic_partial_reasoning
+    description: >
+      Answer identifies only the generic monument class ("công trình kiến
+      trúc thời Nguyễn") without the spatial-ritual relation. The decision
+      must be feedback_incomplete.
+
+estimation_unit: one case
+grouping_unit: historical claim + source edition + answer template
+denominator_rule: >
+  All 120 T3 holdout cases per method/seed; no exclusion. The contract
+  abstention label (abstain_insufficient_data) is scored like any decision;
+  no case is dropped for being abstained.
+
+tuning_budget:
+  dev_split_only: true
+  grid: none (deterministic policy; no hyperparameter search)
+  seeds: [11, 23, 37]
+
+integrity:
+  inference_inputs_contain_gold_material: false
+  synthetic_annotation_is_human: false
+  abstention_distinct_from_reject: true
+  keyword_matching_alone_never_grants_correctness: true

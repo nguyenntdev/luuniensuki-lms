@@ -1,0 +1,1022 @@
+{
+  "n_total": 120,
+  "n_correct": 96,
+  "n_errors": 24,
+  "accuracy": 0.8,
+  "error_rate": 0.2,
+  "accuracy_wilson_ci_95": [
+    0.7196332649371805,
+    0.8617552352115975
+  ],
+  "accuracy_clopper_pearson_ci_95": [
+    0.7171901091020599,
+    0.8674524324552813
+  ],
+  "error_rate_wilson_ci_95": [
+    0.13824476478840256,
+    0.2803667350628196
+  ],
+  "error_rate_clopper_pearson_ci_95": [
+    0.13254756754471878,
+    0.28280989089794006
+  ],
+  "per_class": {
+    "assign_fact_retrieval": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "block_explanation": {
+      "n": 24,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "postpone": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "reject_invalid_scheduler": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "schedule_eligible": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    }
+  },
+  "confusion": {
+    "assign_fact_retrieval->assign_fact_retrieval": 24,
+    "block_explanation->schedule_eligible": 24,
+    "postpone->postpone": 24,
+    "reject_invalid_scheduler->reject_invalid_scheduler": 24,
+    "schedule_eligible->schedule_eligible": 24
+  },
+  "predictions_sha256": "d8f3c1f4bccb19928b7cb6ef4b2a81bae9fdbc92ff17f95e2f4890c3efcebf39",
+  "gold_sha256": "9ad3880e1d05c62701f342c1300f176887eb54a4b039beda294cc0cb7fdbd069",
+  "label_map": {},
+  "cases": [
+    {
+      "case_id": "LN-03-HO-00001",
+      "group_id": "LN-03-grp-001",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00002",
+      "group_id": "LN-03-grp-002",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00003",
+      "group_id": "LN-03-grp-003",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00004",
+      "group_id": "LN-03-grp-004",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00005",
+      "group_id": "LN-03-grp-005",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00006",
+      "group_id": "LN-03-grp-006",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00007",
+      "group_id": "LN-03-grp-007",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00008",
+      "group_id": "LN-03-grp-008",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00009",
+      "group_id": "LN-03-grp-009",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00010",
+      "group_id": "LN-03-grp-010",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00011",
+      "group_id": "LN-03-grp-011",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00012",
+      "group_id": "LN-03-grp-012",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00013",
+      "group_id": "LN-03-grp-013",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00014",
+      "group_id": "LN-03-grp-014",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00015",
+      "group_id": "LN-03-grp-015",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00016",
+      "group_id": "LN-03-grp-016",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00017",
+      "group_id": "LN-03-grp-017",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00018",
+      "group_id": "LN-03-grp-018",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00019",
+      "group_id": "LN-03-grp-019",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00020",
+      "group_id": "LN-03-grp-020",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00021",
+      "group_id": "LN-03-grp-021",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00022",
+      "group_id": "LN-03-grp-022",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00023",
+      "group_id": "LN-03-grp-023",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00024",
+      "group_id": "LN-03-grp-024",
+      "gold": "schedule_eligible",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00025",
+      "group_id": "LN-03-grp-025",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00026",
+      "group_id": "LN-03-grp-026",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00027",
+      "group_id": "LN-03-grp-027",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00028",
+      "group_id": "LN-03-grp-028",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00029",
+      "group_id": "LN-03-grp-029",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00030",
+      "group_id": "LN-03-grp-030",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00031",
+      "group_id": "LN-03-grp-031",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00032",
+      "group_id": "LN-03-grp-032",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00033",
+      "group_id": "LN-03-grp-033",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00034",
+      "group_id": "LN-03-grp-034",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00035",
+      "group_id": "LN-03-grp-035",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00036",
+      "group_id": "LN-03-grp-036",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00037",
+      "group_id": "LN-03-grp-037",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00038",
+      "group_id": "LN-03-grp-038",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00039",
+      "group_id": "LN-03-grp-039",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00040",
+      "group_id": "LN-03-grp-040",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00041",
+      "group_id": "LN-03-grp-041",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00042",
+      "group_id": "LN-03-grp-042",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00043",
+      "group_id": "LN-03-grp-043",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00044",
+      "group_id": "LN-03-grp-044",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00045",
+      "group_id": "LN-03-grp-045",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00046",
+      "group_id": "LN-03-grp-046",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00047",
+      "group_id": "LN-03-grp-047",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00048",
+      "group_id": "LN-03-grp-048",
+      "gold": "assign_fact_retrieval",
+      "pred": "assign_fact_retrieval",
+      "pred_mapped": "assign_fact_retrieval",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00049",
+      "group_id": "LN-03-grp-049",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00050",
+      "group_id": "LN-03-grp-050",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00051",
+      "group_id": "LN-03-grp-051",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00052",
+      "group_id": "LN-03-grp-052",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00053",
+      "group_id": "LN-03-grp-053",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00054",
+      "group_id": "LN-03-grp-054",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00055",
+      "group_id": "LN-03-grp-055",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00056",
+      "group_id": "LN-03-grp-056",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00057",
+      "group_id": "LN-03-grp-057",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00058",
+      "group_id": "LN-03-grp-058",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00059",
+      "group_id": "LN-03-grp-059",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00060",
+      "group_id": "LN-03-grp-060",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00061",
+      "group_id": "LN-03-grp-061",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00062",
+      "group_id": "LN-03-grp-062",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00063",
+      "group_id": "LN-03-grp-063",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00064",
+      "group_id": "LN-03-grp-064",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00065",
+      "group_id": "LN-03-grp-065",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00066",
+      "group_id": "LN-03-grp-066",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00067",
+      "group_id": "LN-03-grp-067",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00068",
+      "group_id": "LN-03-grp-068",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00069",
+      "group_id": "LN-03-grp-069",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00070",
+      "group_id": "LN-03-grp-070",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00071",
+      "group_id": "LN-03-grp-071",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00072",
+      "group_id": "LN-03-grp-072",
+      "gold": "postpone",
+      "pred": "postpone",
+      "pred_mapped": "postpone",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00073",
+      "group_id": "LN-03-grp-073",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00074",
+      "group_id": "LN-03-grp-074",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00075",
+      "group_id": "LN-03-grp-075",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00076",
+      "group_id": "LN-03-grp-076",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00077",
+      "group_id": "LN-03-grp-077",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00078",
+      "group_id": "LN-03-grp-078",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00079",
+      "group_id": "LN-03-grp-079",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00080",
+      "group_id": "LN-03-grp-080",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00081",
+      "group_id": "LN-03-grp-081",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00082",
+      "group_id": "LN-03-grp-082",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00083",
+      "group_id": "LN-03-grp-083",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00084",
+      "group_id": "LN-03-grp-084",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00085",
+      "group_id": "LN-03-grp-085",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00086",
+      "group_id": "LN-03-grp-086",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00087",
+      "group_id": "LN-03-grp-087",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00088",
+      "group_id": "LN-03-grp-088",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00089",
+      "group_id": "LN-03-grp-089",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00090",
+      "group_id": "LN-03-grp-090",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00091",
+      "group_id": "LN-03-grp-091",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00092",
+      "group_id": "LN-03-grp-092",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00093",
+      "group_id": "LN-03-grp-093",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00094",
+      "group_id": "LN-03-grp-094",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00095",
+      "group_id": "LN-03-grp-095",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00096",
+      "group_id": "LN-03-grp-096",
+      "gold": "reject_invalid_scheduler",
+      "pred": "reject_invalid_scheduler",
+      "pred_mapped": "reject_invalid_scheduler",
+      "correct": true
+    },
+    {
+      "case_id": "LN-03-HO-00097",
+      "group_id": "LN-03-grp-097",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00098",
+      "group_id": "LN-03-grp-098",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00099",
+      "group_id": "LN-03-grp-099",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00100",
+      "group_id": "LN-03-grp-100",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00101",
+      "group_id": "LN-03-grp-101",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00102",
+      "group_id": "LN-03-grp-102",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00103",
+      "group_id": "LN-03-grp-103",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00104",
+      "group_id": "LN-03-grp-104",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00105",
+      "group_id": "LN-03-grp-105",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00106",
+      "group_id": "LN-03-grp-106",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00107",
+      "group_id": "LN-03-grp-107",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00108",
+      "group_id": "LN-03-grp-108",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00109",
+      "group_id": "LN-03-grp-109",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00110",
+      "group_id": "LN-03-grp-110",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00111",
+      "group_id": "LN-03-grp-111",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00112",
+      "group_id": "LN-03-grp-112",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00113",
+      "group_id": "LN-03-grp-113",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00114",
+      "group_id": "LN-03-grp-114",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00115",
+      "group_id": "LN-03-grp-115",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00116",
+      "group_id": "LN-03-grp-116",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00117",
+      "group_id": "LN-03-grp-117",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00118",
+      "group_id": "LN-03-grp-118",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00119",
+      "group_id": "LN-03-grp-119",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    },
+    {
+      "case_id": "LN-03-HO-00120",
+      "group_id": "LN-03-grp-120",
+      "gold": "block_explanation",
+      "pred": "schedule_eligible",
+      "pred_mapped": "schedule_eligible",
+      "correct": false
+    }
+  ]
+}

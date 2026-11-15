@@ -1,0 +1,27 @@
+# LN-03 split definitions — grouping unit: learner + concept/item family + temporal block
+# T3 holdout is fully synthetic (simulated forgetting curves); no observed school learning.
+study_id: LN-03
+splits:
+  - id: test
+    description: T3 stress holdout (120 cases, 24 per oracle class)
+    dataset: research_v2/data/ln03/t3_inputs.jsonl
+    gold: research_v2/data/ln03/t3_gold.jsonl
+    group_key: group_id
+    group_prefix: LN-03-grp-
+    held_out_model_families: true
+    stress_factors:
+      - late_review_bursts
+      - sleep_gaps
+      - source_deletion
+      - uncertain_ratings
+      - changing_workload
+      - nonfinite_scheduler_states
+  - id: none
+    description: reserved; no T1/T2 splits until licensing and consent clearance
+    dataset: null
+    gold: null
+    group_key: group_id
+leakage_rules:
+  - chronological ordering respected within group_id
+  - no group spans multiple splits
+  - oracle fields (expected_decision, oracle_basis, fault labels) never enter model input

@@ -13,8 +13,9 @@
 
 \title{\textbf{Cognitively Constrained Heritage Trails \& Route Optimization: \\
 Topological Route Planning with Epistemic Verification in Cultural Field Inquiry (LN-06)}}
-\author{\textbf{Lưu Niên Sứ Ký Research Consortium} \\
-Huế Monuments Conservation Center \& Institute of Information Technology}
+% TODO: finalize author list, order, affiliations, and institutional consent.
+\author{\textbf{Author Name(s) to be finalized} \\
+\small Affiliation to be confirmed}
 \date{November 2026}
 
 \newtheorem{definition}{Definition}
@@ -26,17 +27,17 @@ Huế Monuments Conservation Center \& Institute of Information Technology}
 \maketitle
 
 \begin{abstract}
-Designing field-based learning itineraries across complex cultural heritage landscapes---such as the Imperial Citadel of Huế and the UNESCO Memory of the World Nine Dynastic Urns (\textit{Cửu Đỉnh})---presents a fundamental tension between spatial proximity and cognitive scaffolding. Conventional tourist routing systems employ spatial Traveling Salesperson Problem (TSP) heuristics that minimize geographic transit distance, routinely leading to severe pedagogical incoherence where advanced synthesis tasks precede foundational epistemological encounters. In this paper, we formalize the \textit{Cognitively Constrained Heritage Trail} as a directed acyclic graph (DAG) routing problem governed by five domain invariants: prerequisite dependency satisfaction, source authenticity verification, strict temporal budgeting, outcome coverage, and acyclicity. We implement an exact polynomial-time topological planning engine and evaluate it against an independent 120-case holdout dataset spanning five declared fault archetypes (\textit{nominal}, \textit{unreachable\_checkpoint}, \textit{source\_gap\_in\_monument}, \textit{prerequisite\_cycle}, and \textit{over\_time\_budget}). While standard spatial TSP heuristics ($B_0$) and greedy topological ordering without budget bounding ($B_1$) achieve only $20.00\%$ accuracy with up to $2.80$ prerequisite violations per route ($336$ total), our cognitively constrained policy ($I_1$) achieves $100.00\%$ decision accuracy [$95\%$ CI: $96.90\%$--$100.00\%$], zero prerequisite violations ($p < 10^{-21}$), and rigorous rejection of uncorroborated heritage stops. Ablation experiments ($A_1$--$A_3$) demonstrate that isolating any individual constraint introduces deterministic pedagogical failures, validating the indivisible nature of cognitive, temporal, and epistemic bounds in educational heritage field studies.
+Designing field-based learning itineraries across complex cultural heritage landscapes---such as the Imperial Citadel of Huế and the UNESCO Memory of the World Nine Dynastic Urns (\textit{Cửu Đỉnh})---presents a fundamental tension between spatial proximity and cognitive scaffolding. Conventional tourist routing systems employ spatial Traveling Salesperson Problem (TSP) heuristics that minimize geographic transit distance, routinely leading to severe pedagogical incoherence where advanced synthesis tasks precede foundational epistemological encounters. In this paper, we formalize the \textit{Cognitively Constrained Heritage Trail} as a directed acyclic graph (DAG) routing problem governed by five domain invariants: prerequisite dependency satisfaction, source authenticity verification, strict temporal budgeting, outcome coverage, and acyclicity. We implement an exact branch-and-bound planning engine that selects a minimum-cost feasible stop subset under outcome-coverage and transitive-prerequisite constraints (deterministically tie-broken by stop id) before topological sequencing, and evaluate it against a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) spanning five declared fault archetypes (\textit{nominal}, \textit{unreachable\_checkpoint}, \textit{source\_gap\_in\_monument}, \textit{prerequisite\_cycle}, and \textit{over\_time\_budget}). While standard spatial TSP heuristics ($B_0$) and greedy topological ordering without budget bounding ($B_1$) achieve only $20.00\%$ accuracy with up to $2.80$ prerequisite violations per route ($336$ total), our cognitively constrained policy ($I_1$) achieves $100.00\%$ decision accuracy [$95\%$ CI: $96.90\%$--$100.00\%$], zero prerequisite violations ($p < 10^{-21}$), and rigorous rejection of uncorroborated heritage stops. Ablation experiments ($A_1$--$A_3$) demonstrate that isolating any individual constraint introduces deterministic pedagogical failures, validating the indivisible nature of cognitive, temporal, and epistemic bounds in educational heritage field studies.
 \end{abstract}
 
 \section{Introduction}
-Spatial orientation in open-air cultural monuments is rarely aligned with instructional progression. In the Imperial City of Huế (Đại Nội), physical monuments are arranged according to classical geomantic and dynastic axes: entering through the South Meridian Gate (\textit{Ngọ Môn}), traversing the imperial court to the Palace of Supreme Harmony (\textit{Điện Thái Hòa}), turning westward to the Ancestral Temple (\textit{Thế Tổ Miếu}), and accessing the courtyard sheltering the Nine Dynastic Urns (\textit{Cửu Đỉnh}). 
+Spatial orientation in open-air cultural monuments is rarely aligned with instructional progression. In the Imperial City of Huế (Đại Nội), physical monuments are arranged according to classical geomantic and dynastic axes: entering through the South Meridian Gate (\textit{Ngọ Môn}), traversing the imperial court to the Palace of Supreme Harmony (\textit{Điện Thái Hòa}), turning westward to the Ancestral Temple (\textit{Thế Tổ Miếu}), and accessing the courtyard sheltering the Nine Dynastic Urns (\textit{Cửu Đỉnh}) \cite{nguyen2026cuudinh}. 
 
 When automated mobile tour apps or digital learning management systems plan student field trips, they universally treat itinerary generation as a spatial optimization problem:
 \begin{equation}
 \min_{\pi} \sum_{i=1}^{n-1} d(s_{\pi(i)}, s_{\pi(i+1)})
 \end{equation}
-where $d(\cdot, \cdot)$ denotes physical Euclidean or walking network distance. However, cultural monuments encode dense hierarchical meaning. For example, understanding the bas-relief motifs of dynastic sovereignty on the bronze urns (e.g., the Eastern Sea \textit{Biển Đông} on Cao Đỉnh or the Bạch Đằng River on Huyền Đỉnh) requires prior mastery of:
+where $d(\cdot, \cdot)$ denotes physical Euclidean or walking network distance. However, cultural monuments encode dense hierarchical meaning, and historical-reasoning research emphasizes that source corroboration and contextualization cannot be deferred until after orientation \cite{vanlehn2006behavior}. For example, understanding the bas-relief motifs of dynastic sovereignty on the bronze urns (e.g., the Eastern Sea \textit{Biển Đông} on Cao Đỉnh or the Bạch Đằng River on Huyền Đỉnh) requires prior mastery of the staged competencies described in the GDPT 2018 history curriculum \cite{moet2018gdpt}, namely:
 \begin{enumerate}
     \item Physical and spatial orientation within the royal precinct (S1 competency);
     \item Dynastic chronology and ceremonial rank under Emperor Minh Mạng (S2 competency);
@@ -44,9 +45,21 @@ where $d(\cdot, \cdot)$ denotes physical Euclidean or walking network distance. 
     \item Multi-source historical argumentation and territorial sovereignty claims (S4 competency).
 \end{enumerate}
 
-When unconstrained spatial algorithms schedule checkpoints purely based on proximity, learners are repeatedly assigned high-order analytical tasks before acquiring foundational contextual knowledge. In empirical heritage education, this inversion results in severe cognitive overload, fragmented recall, and reliance on unverified internet speculation.
+When unconstrained spatial algorithms schedule checkpoints purely based on proximity, learners are repeatedly assigned high-order analytical tasks before acquiring foundational contextual knowledge. In empirical heritage education, this inversion results in severe cognitive overload, fragmented recall, and reliance on unverified internet speculation, undermining the self-regulatory planning that field inquiry is meant to cultivate \cite{zimmerman2000self}.
 
 This investigation introduces Study \textbf{LN-06}: a formal framework for \textit{Cognitively Constrained Heritage Trails}. We formulate trail generation as a multi-constrained topological sort over a pedagogical dependency graph $(V, E)$, bounded by real-world educational field constraints: 45-minute or 90-minute secondary school class period allocations, physical checkpoint reachability, and cryptographic primary-source authentication.
+
+\section{Research Questions}
+
+\begin{enumerate}[label=\textbf{RQ\arabic*}, leftmargin=2.4em]
+    \item \textbf{RQ1 (Formulation):} Can cognitively constrained heritage trails be formulated as a multi-constraint DAG routing problem whose invariants (prerequisite precedence, temporal budget, reachability, source gating, acyclicity) are exactly checkable in polynomial time?
+    \item \textbf{RQ2 (Route Quality):} On a synthetic held-out test set with programmatic annotation templates (no human adjudication), does the constrained planner (I1) satisfy more pedagogical constraints than spatial TSP (B0) and budget-free greedy topological ordering (B1)?
+    \item \textbf{RQ3 (Ablation Isolation):} Does removing any single constraint (A1--A3) produce the precise, stratum-specific failure pattern associated with that constraint?
+\end{enumerate}
+
+\subsection{Research Gap and Novelty}
+
+Automated itinerary planning has overwhelmingly been treated as a Travelling Salesman Problem variant, while pedagogical sequencing research emphasizes prerequisite ordering and staged comprehension \cite{moet2018gdpt}. Topological sorting has been available since Kahn's algorithm \cite{kahn1962topological}, and field inquiry is known to depend on self-regulatory planning and monitoring \cite{zimmerman2000self}. What has been missing is a formalization that binds spatial routing simultaneously to epistemic source verification and classroom time budgets, grounded in the documentary heritage of the Cửu Đỉnh \cite{nguyen2026cuudinh}. This study contributes that joint formulation, an exact planner, and a reproducible synthetic fault-stratified held-out test set rather than a human-adjudicated field trial.
 
 \section{Formal Problem Formulation \& Domain Invariants}
 
@@ -102,7 +115,7 @@ The dependency graph $G = (S, E)$ where $(u, v) \in E \iff P_u \cap R_v \ne \emp
 \end{invariant}
 
 \section{Algorithmic Implementation}
-The intervention policy $I_1$ executes the five-stage evaluation detailed in Algorithm~\ref{alg:cognitive_planner}.
+The intervention policy $I_1$ executes the evaluation detailed in Algorithm~\ref{alg:cognitive_planner}. Rather than scheduling every stop involved in the transitive prerequisite closure of the target outcomes, the planner performs an exact \textbf{branch-and-bound} search over feasible stop subsets and returns a \textbf{minimum-cost} subset that satisfies the \textbf{outcome-coverage} constraint (every target outcome in $\mathcal{O}^*$ is provided) and the \textbf{transitive-prerequisite} constraints (every stop admitted together with all of its transitive prerequisites, all admitted stops feasible in $A$, and no admitted stop failing source gating). Among subsets of equal total cost, the search applies deterministic tie-breaking by \textbf{stop id}, making the returned plan reproducible across runs. The resulting subset is then sequenced with Kahn's algorithm for topological sorting \cite{kahn1962topological}. Branch-and-bound is an exhaustive search with worst-case exponential running time; on the benchmark instances of Section~\ref{sec:holdout} it completes without exhausting practical resources, but no polynomial-time optimality claim is made.
 
 \begin{algorithm}[ht]
 \caption{Cognitively Constrained Heritage Trail Planner ($I_1$)}
@@ -122,24 +135,26 @@ The intervention policy $I_1$ executes the five-stage evaluation detailed in Alg
     \STATE $r_{\text{unreach}} \leftarrow |S_{\text{needed}} \setminus A| / |S_{\text{needed}}|$
     \RETURN $\langle \texttt{"no\_feasible\_route"}, [], 0, \text{cov}, 0, r_{\text{unreach}} \rangle$
 \ENDIF
-\STATE $\text{TotalCost} \leftarrow \sum_{s \in S_{\text{needed}}} c_s$
-\IF{$\text{TotalCost} > B$}
+\STATE $\Pi^* \leftarrow \text{BranchAndBoundMinCostSubset}(S_{\text{needed}}, \mathcal{O}^*, B)$
+\COMMENT{Exact minimum-cost subset search: minimize $\sum_{s \in X} c_s$ over $X \subseteq S_{\text{needed}}$ subject to $\mathcal{O}^* \subseteq \bigcup_{s \in X} P_s$ and $R_s \subseteq \bigcup_{u \in X} P_u$ for every $s \in X$ (transitive prerequisites included in $X$), with admissible lower bounds for pruning and deterministic tie-breaking by stop id.}
+\IF{$\Pi^* = \emptyset$}
     \RETURN $\langle \texttt{"cost\_exceeded"}, [], \text{TotalCost}, 1.0, 0 \rangle$
 \ENDIF
-\STATE $\pi \leftarrow \text{KahnTopologicalSort}(S_{\text{needed}}, E)$
+\STATE $\text{TotalCost} \leftarrow \sum_{s \in \Pi^*} c_s$
+\STATE $\pi \leftarrow \text{KahnTopologicalSort}(\Pi^*, E)$
 \STATE $\text{violations} \leftarrow \text{ComputePrerequisiteViolations}(\pi)$
 \RETURN $\langle \texttt{"find\_valid\_route"}, \pi, \text{TotalCost}, 1.0, \text{violations} \rangle$
 \end{algorithmic}
 \end{algorithm}
 
-\section{Experimental Methodology \& Independent Holdout}
+\section{Experimental Methodology and Held-Out Test Set}\label{sec:holdout}
 
-\subsection{Holdout Dataset Design}
-To evaluate model generalization beyond training fixtures, we constructed an independent 120-case holdout dataset:
+\subsection{Held-Out Test Set Design}
+To evaluate model generalization beyond training fixtures, we constructed a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication):
 \begin{equation}
-\mathcal{D}_{\text{holdout}} = \{ (x_i, y_i^*, \text{expert}_i) \}_{i=1}^{120}
+\mathcal{D}_{\text{holdout}} = \{ (x_i, y_i^*, t_i) \}_{i=1}^{120}
 \end{equation}
-stored at \texttt{research/fixtures/holdout/LN-06\_holdout.jsonl}. The holdout comprises exactly five balanced fault archetypes ($n = 24$ cases each):
+where $t_i$ denotes the programmatic annotation-template id used to derive label $y_i^*$. The set is stored at \texttt{research/fixtures/holdout/LN-06\_holdout.jsonl} and comprises exactly five balanced fault archetypes ($n = 24$ cases each):
 \begin{enumerate}
     \item \textbf{Nominal ($n=24$):} Valid DAG configurations with sufficient budgets ($B = 75$ min), full physical accessibility, and verified primary sources.
     \item \textbf{Unreachable Checkpoint ($n=24$):} Intermediate scaffolding stops removed from $A$ ($|S_{\text{needed}} \setminus A| \ge 1$), testing whether planners naively skip steps or accurately detect pedagogical breakages.
@@ -162,12 +177,12 @@ We evaluate six experimental conditions:
 \section{Empirical Results}
 
 \subsection{Overall Benchmark Performance}
-Table~\ref{tab:holdout_results} summarizes the performance across all 120 independent holdout scenarios.
+Table~\ref{tab:holdout_results} summarizes the performance across all 120 synthetic held-out scenarios.
 
 \begin{table*}[t]
 \centering
 \small
-\caption{Empirical evaluation of trail planning policies on the 120-case independent holdout dataset.}
+\caption{Empirical evaluation of trail planning policies on the synthetic 120-case held-out test set (programmatic annotation templates; no human adjudication).}
 \label{tab:holdout_results}
 \begin{tabular}{llcccccc}
 \toprule
@@ -248,8 +263,17 @@ During secondary school field excursions in Huế, teachers manage cohorts of 30
 
 Furthermore, by strictly enforcing \textbf{INV-LN-06-04}, our engine prevents the proliferation of historical misconceptions. During the colonial era and early modern tourism, several motifs on Cửu Đỉnh were erroneously romanticized or misattributed in folk guides. By grounding every checkpoint in verified epigraphy from \textit{Đại Nam Thực Lục Chính Biên}, the platform guarantees that student inquiry is anchored in authentic archival records.
 
+\subsection{Threats to Validity}
+
+\begin{itemize}
+    \item \textbf{Internal validity:} Labels for the held-out test set derive from programmatic annotation templates, so systematic template error would inflate measured accuracy uniformly across conditions. Deterministic seeds and hashing control nondeterminism only.
+    \item \textbf{External validity:} Stop catalogs and dwell costs are calibrated to Huế heritage sites and 45--90 minute school periods; real site closures, crowding, and weather are modelled only through the accessibility set $A$.
+    \item \textbf{Construct validity:} ``Outcome coverage'' counts learning outcomes nominally provided by visited stops; it does not verify that students actually attain them.
+    \item \textbf{Statistical validity:} With $n=24$ per stratum, Wilson intervals are wide and several conditions sit at 0\% or 100\%. The reported $t$-tests on violation counts assume approximate normality. All findings are software-policy estimates on a \emph{synthetic} held-out test set, not human-adjudicated external validation.
+\end{itemize}
+
 \section{Conclusion}
-Study LN-06 demonstrates that heritage trail generation cannot be treated as a purely spatial distance minimization problem. By formulating trail construction as a multi-constrained DAG optimization problem over pedagogical dependencies, archival sources, and temporal budgets, the Lưu Niên platform eliminates prerequisite violations, prevents instructional deadlocks, and guarantees epistemic fidelity. Benchmark evaluation on an independent 120-case holdout dataset confirms that the intervention achieves $100\%$ policy correctness, whereas conventional spatial and unconstrained topological heuristics fail in $80\%$ of non-nominal pedagogical scenarios.
+Study LN-06 demonstrates that heritage trail generation cannot be treated as a purely spatial distance minimization problem. By formulating trail construction as a multi-constrained DAG optimization problem over pedagogical dependencies, archival sources, and temporal budgets, the Lưu Niên platform eliminates prerequisite violations, prevents instructional deadlocks, and guarantees epistemic fidelity. Benchmark evaluation on a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) confirms that the intervention achieves $100\%$ policy correctness, whereas conventional spatial and unconstrained topological heuristics fail in $80\%$ of non-nominal pedagogical scenarios.
 
 \bibliographystyle{IEEEtran}
 \begin{thebibliography}{10}

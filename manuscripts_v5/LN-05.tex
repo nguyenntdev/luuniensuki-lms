@@ -24,17 +24,17 @@
 \newtheorem{theorem}{Theorem}
 
 \title{\textbf{Evidence-Based Mastery Gamification and Anti-Replay Idempotency in Cultural Heritage LMS}\\[0.5em]
-\large Formal Invariants, Game Economy Integrity, and Empirical Holdout Evaluation in Study LN-05}
-\author{\textbf{Lưu Niên Sứ Ký Research Consortium}\\
-National Heritage Computing Initiative \& Digital Humanities Laboratory\\
-\texttt{research@luuniensuki.vn}}
+\large Formal Invariants, Game Economy Integrity, and Empirical Held-Out Evaluation in Study LN-05}
+% TODO: finalize author list, order, affiliations, and institutional consent.
+\author{\textbf{Author Name(s) to be finalized}\\
+\small Affiliation to be confirmed}
 \date{November 2026}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Educational gamification architectures routinely suffer from ``pointsification''—the uncritical substitution of superficial engagement metrics (XP accumulation, click streaks, unverified task completions) for authentic competency attainment. In digital heritage education, this vulnerability precipitates runaway badge inflation, debases epistemic standards, and incentivizes client-side replay attacks and telemetry forgery. We present the formal architecture, threat model, and empirical holdout evaluation for Study LN-05 within the \textit{Lưu Niên Sứ Ký} learning management system, situated in the epigraphic and iconographic curriculum of the Nine Dynastic Urns of Huế (\textit{Cửu Đỉnh}). We formulate five foundational pedagogical invariants: (1) server-enforced actor provenance, (2) cryptographic anti-replay idempotency, (3) criterion-referenced competency evidence verification ($S_k \ge \theta$), (4) schema and policy version freshness, and (5) strict decoupling of engagement points from mastery badges. On an independent 120-case holdout dataset spanning five orthogonal fault strata (nominal, duplicate event replay, missing competency evidence, client-spoofed XP, and stale policy versions), the intervention policy ($I_1$) achieves a \textbf{0.0\% false mastery award rate} (95\% CI: $[0.0\%, 3.8\%]$) and \textbf{100.0\% badge precision} (95\% CI: $[86.2\%, 100.0\%]$), whereas the existing XP-only baseline ($B_0$) exhibits a \textbf{100.0\% false mastery rate} (precision $20.0\%$, McNemar $\chi^2 = 94.01, p < 10^{-15}$) and a stronger streak-and-deduplication baseline ($B_1$) fails on \textbf{75.0\%} of fault cases (precision $25.0\%$, $\chi^2 = 70.01, p < 10^{-15}$). Component ablations isolate the exact necessity of each architectural subsystem: disabling anti-replay ($A_2$) specifically admits duplicate replay attacks ($25.0\%$ error), while disabling provenance verification ($A_3$) admits client-forged XP ($25.0\%$ error). We provide a formal game economy integrity analysis demonstrating how criterion-gated mastery preserves badge scarcity, eliminates counterfeit credentials, and maintains intrinsic motivation without compromising low-bandwidth equity.
+Educational gamification architectures routinely suffer from ``pointsification''—the uncritical substitution of superficial engagement metrics (XP accumulation, click streaks, unverified task completions) for authentic competency attainment. In digital heritage education, this vulnerability precipitates runaway badge inflation, debases epistemic standards, and incentivizes client-side replay attacks and telemetry forgery. We present the formal architecture, threat model, and empirical held-out evaluation for Study LN-05 within the \textit{Lưu Niên Sứ Ký} learning management system, situated in the epigraphic and iconographic curriculum of the Nine Dynastic Urns of Huế (\textit{Cửu Đỉnh}). We formulate five foundational pedagogical invariants: (1) server-enforced actor provenance, (2) cryptographic anti-replay idempotency, (3) criterion-referenced competency evidence verification ($S_k \ge \theta$), (4) schema and policy version freshness, and (5) strict decoupling of engagement points from mastery badges. On a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) spanning five orthogonal fault strata (nominal, duplicate event replay, missing competency evidence, client-spoofed XP, and stale policy versions), the intervention policy ($I_1$) achieves a \textbf{0.0\% false mastery award rate} (95\% CI: $[0.0\%, 3.8\%]$) and \textbf{100.0\% badge precision} (95\% CI: $[86.2\%, 100.0\%]$), whereas the existing XP-only baseline ($B_0$) exhibits a \textbf{100.0\% false mastery rate} (precision $20.0\%$, McNemar $\chi^2 = 94.01, p < 10^{-15}$) and a stronger streak-and-deduplication baseline ($B_1$) fails on \textbf{75.0\%} of fault cases (precision $25.0\%$, $\chi^2 = 70.01, p < 10^{-15}$). Component ablations isolate the exact necessity of each architectural subsystem: disabling anti-replay ($A_2$) specifically admits duplicate replay attacks ($25.0\%$ error), while disabling provenance verification ($A_3$) admits client-forged XP ($25.0\%$ error). We provide a formal game economy integrity analysis demonstrating how criterion-gated mastery preserves badge scarcity, eliminates counterfeit credentials, and maintains intrinsic motivation without compromising low-bandwidth equity.
 \end{abstract}
 
 \noindent\textbf{Keywords:} Evidence-Based Gamification, Mastery Learning, Anti-Replay Idempotency, Cultural Heritage LMS, Cửu Đỉnh Huế, Educational Game Economy, Epistemic Integrity.
@@ -50,7 +50,19 @@ In the context of the \textit{Lưu Niên Sứ Ký} platform—a gamified learnin
     \item \textbf{Extrinsic Motivation Crowding-Out:} In accordance with Self-Determination Theory (SDT) \cite{ryan2000self}, when rewards are perceived as arbitrary, unearned, or easily gamable, learner intrinsic motivation and authentic curiosity decline, replaced by instrumental gaming of the system.
 \end{enumerate}
 
-Study LN-05 addresses these challenges by formalizing and deploying an \textbf{Evidence-Based Mastery Gamification Engine} with cryptographic anti-replay idempotency and server-side criterion verification. This manuscript reports the formal mathematical specification of our invariants, provides an empirical benchmark across frozen and independent holdout datasets, evaluates component ablations, and analyzes the game economy integrity of the system.
+Study LN-05 addresses these challenges by formalizing and deploying an \textbf{Evidence-Based Mastery Gamification Engine} with cryptographic anti-replay idempotency and server-side criterion verification. This manuscript reports the formal mathematical specification of our invariants, provides an empirical benchmark across frozen and synthetic held-out datasets, evaluates component ablations, and analyzes the game economy integrity of the system.
+
+\section{Research Questions}
+
+\begin{enumerate}[label=\textbf{RQ\arabic*}, leftmargin=2.4em]
+    \item \textbf{RQ1 (Integrity Invariants):} Can server-side actor provenance, cryptographic anti-replay idempotency, criterion-referenced evidence verification, and policy freshness be formalized as jointly necessary invariants for mastery-badge issuance?
+    \item \textbf{RQ2 (False-Mastery Elimination):} On a synthetic held-out test set with programmatic annotation templates (no human adjudication), does the proof-of-mastery policy (I1) eliminate false mastery awards relative to XP-only (B0) and streak-with-deduplication (B1) baselines?
+    \item \textbf{RQ3 (Orthogonal Attribution):} Does each architectural ablation (A1--A3) fail on exactly the fault stratum its removed subsystem is responsible for, confirming non-redundancy?
+\end{enumerate}
+
+\subsection{Research Gap and Novelty}
+
+Gamification research shows that poorly designed reward structures can undermine rather than support motivation \cite{deterding2011game, hamari2014does} and that extrinsic rewards may crowd out intrinsic interest under self-determination theory \cite{ryan2000self}. Mastery learning provides the criterion-referenced alternative to threshold-based point accrual \cite{bloom1968mastery}. Security engineering offers well-understood principles for trustworthy audit trails and complete mediation \cite{saltzer1975protection}. These strands have not previously been combined into a formal, mechanized issuance policy in which engagement points are provably decoupled from mastery credentials, nor evaluated against a reproducible fault-stratified synthetic test set with explicit anti-replay and provenance threats.
 
 \section{Pedagogical Invariants and Threat Model}
 
@@ -118,7 +130,7 @@ Engagement rewards (general XP, daily login streaks, aesthetic badges) and Epist
 
 \section{System Architecture and Implementation}
 
-The LN-05 mastery engine is integrated into the hybrid Axum/Rust and FastAPI/Python architecture of \textit{Lưu Niên Sứ Ký}. The request workflow operates as follows:
+The LN-05 mastery engine is integrated into the hybrid Axum/Rust and FastAPI/Python architecture of \textit{Lưu Niên Sứ Ký}. The request workflow follows the classical security principles of complete mediation and fail-safe defaults \cite{saltzer1975protection} and operates as follows:
 \begin{enumerate}
     \item \textbf{Task Execution \& Ingestion:} When a student completes an inquiry task (e.g., identifying the sovereign significance of \textit{Bạch Đằng giang} on \textit{Nghị Đỉnh}), the assessment engine computes score $S_k$ via an authenticated rubric grading service.
     \item \textbf{Cryptographic Event Chaining:} Successful completions emit an append-only event record signed by the server with a cryptographically secure UUIDv4 and HMAC-SHA256 signature, stored in PostgreSQL with a unique constraint on idempotency keys.
@@ -141,22 +153,22 @@ We evaluate six experimental conditions to assess policy conformance and compone
 \subsection{Datasets}
 \begin{itemize}[leftmargin=*]
     \item \textbf{Primary Concrete Benchmark ($N = 720$):} A frozen synthetic benchmark comprising 144 cases per fault stratum across all nine urns and four competency dimensions.
-    \item \textbf{Independent Holdout Dataset ($N = 120$):} A newly generated, strictly isolated holdout dataset (\texttt{research/fixtures/holdout/LN-05\_holdout.jsonl}) comprising exactly 24 cases for each of the five fault types:
+    \item \textbf{Held-Out Test Set ($N = 120$):} A newly generated, strictly isolated held-out test set with programmatic annotation templates (no human adjudication) (\texttt{research/fixtures/holdout/LN-05\_holdout.jsonl}) comprising exactly 24 cases for each of the five fault types:
     \begin{equation}
     N_{\text{holdout}} = 24 \times 5 = 120 \quad (\text{Nominal: } 24, \text{ Negative Fault Cases: } 96)
     \end{equation}
-    The holdout dataset incorporates diverse learner profiles (novice, balanced, epigraphy-focused, low-bandwidth networks), authentic Cửu Đỉnh motifs, and varied competency requirements ($S_1$--$S_4$).
+    The held-out test set incorporates diverse learner profiles (novice, balanced, epigraphy-focused, low-bandwidth networks), authentic Cửu Đỉnh motifs, and varied competency requirements ($S_1$--$S_4$).
 \end{itemize}
 
 \section{Empirical Evaluation Results}
 
-\subsection{Holdout Dataset Performance}
-Table~\ref{tab:ln-05-holdout-benchmark} reports the empirical evaluation across all six conditions evaluated on the independent 120-case holdout dataset.
+\subsection{Held-Out Test Set Performance}
+Table~\ref{tab:ln-05-holdout-benchmark} reports the empirical evaluation across all six conditions evaluated on the synthetic 120-case held-out test set.
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Empirical Evaluation on Independent 120-Case Holdout Dataset (LN-05 Evidence-Based Mastery Gamification)}
+\caption{Empirical Evaluation on Synthetic 120-Case Held-Out Test Set (LN-05 Evidence-Based Mastery Gamification; programmatic annotation templates, no human adjudication)}
 \label{tab:ln-05-holdout-benchmark}
 \begin{tabular}{llcccccc}
 \toprule
@@ -172,7 +184,7 @@ A3 & Ablation: disable\_provenance (accept client actor) & 24 / 96 & 25.0\% & [1
 \end{tabular}
 \par\smallskip
 \begin{minipage}{0.98\linewidth}\footnotesize
-Evaluation on $N=120$ independent holdout cases (24 nominal cases with genuine competency evidence, 96 fault cases across 4 orthogonal fault archetypes: event replay duplicates, missing/insufficient competency evidence, client-spoofed XP injections, and stale policy version revalidation). False Rate denotes false mastery award rate on eligible fault cases (lower is better; ideal: 0\%). Precision denotes genuine competency masteries among total badges awarded (higher is better; ideal: 100\%). Paired McNemar tests evaluate fault blocking discordant pairs against Intervention I1 (df = 1, continuity-corrected).
+Evaluation on $N=120$ held-out test cases (24 nominal cases with genuine competency evidence, 96 fault cases across 4 orthogonal fault archetypes: event replay duplicates, missing/insufficient competency evidence, client-spoofed XP injections, and stale policy version revalidation). False Rate denotes false mastery award rate on eligible fault cases (lower is better; ideal: 0\%). Precision denotes genuine competency masteries among total badges awarded (higher is better; ideal: 100\%). Paired McNemar tests evaluate fault blocking discordant pairs against Intervention I1 (df = 1, continuity-corrected).
 \end{minipage}
 \end{table}
 
@@ -248,10 +260,19 @@ Because verification operates on lightweight cryptographic tokens and structured
 \section{Discussion, Limitations, and Epistemic Honesty}
 
 \subsection{Epistemic Boundaries of Software Verification}
-In accordance with the epistemic standards of the Lưu Niên Sứ Ký Research Consortium, we explicitly distinguish between \textbf{algorithmic policy correctness} and \textbf{human pedagogical efficacy}:
+We explicitly distinguish between \textbf{algorithmic policy correctness} and \textbf{human pedagogical efficacy}:
 \begin{itemize}[leftmargin=*]
     \item \textbf{What this evaluation proves:} The LN-05 intervention deterministic software engine correctly enforces Invariants 1--5, completely eliminates false mastery awards under five adversarial and fault conditions ($p < 10^{-15}$), and guarantees mathematical idempotency.
     \item \textbf{What this evaluation does NOT prove:} These benchmark evaluations are conducted on formalized synthetic scenarios; they do not represent uncontrolled longitudinal classroom learning gains or guarantee that students will achieve higher standardized test scores. Real human learning outcomes require formal double-blind educational intervention studies.
+\end{itemize}
+
+\subsection{Threats to Validity}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Internal validity:} Oracle labels are generated by deterministic programmatic annotation templates rather than human adjudication; a flaw in the templates biases every reported false-mastery and precision figure. Frozen seeds and hashes control reproducibility only.
+    \item \textbf{External validity:} Scenarios are drawn from Cửu Đỉnh iconography and four competency dimensions; adversarial strategies in real deployments (e.g., compromised server keys) are outside the modelled threat set.
+    \item \textbf{Construct validity:} ``Mastery'' is operationalized as $S_k \ge \theta$ over authenticated rubric evidence; this proxy may not coincide with durable historical competence.
+    \item \textbf{Statistical validity:} The 0/96 false-mastery result yields a Wilson interval of roughly $[0\%, 3.8\%]$, i.e.\ the true rate could plausibly be as high as a few percent. All claims are internal software-policy estimates on a \emph{synthetic} held-out test set, not human-adjudicated external validation.
 \end{itemize}
 
 \subsection{Pedagogical Risks of Gamifying Sacred Heritage}
@@ -259,7 +280,7 @@ The Nine Dynastic Urns of Huế are national treasures and sacred imperial regal
 
 \section{Conclusion}
 
-Study LN-05 demonstrates that educational gamification does not need to compromise on epistemic rigor or architectural security. By establishing server-enforced actor provenance, cryptographic anti-replay idempotency, and criterion-referenced competency evidence verification, the LN-05 mastery engine achieves zero false mastery awards on an independent 120-case holdout dataset while preserving perfect badge precision. All benchmark traces, holdout datasets, and evaluation scripts are publicly archived to enable complete scientific reproducibility.
+Study LN-05 demonstrates that educational gamification does not need to compromise on epistemic rigor or architectural security. By establishing server-enforced actor provenance, cryptographic anti-replay idempotency, and criterion-referenced competency evidence verification, the LN-05 mastery engine achieves zero false mastery awards on a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) while preserving perfect badge precision. All benchmark traces, held-out test sets, and evaluation scripts are publicly archived to enable complete scientific reproducibility.
 
 \begin{thebibliography}{99}
 \bibitem{bloom1968mastery}

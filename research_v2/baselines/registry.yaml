@@ -1,0 +1,40 @@
+# Research V2 Baseline Registry
+# C0 = sanity baseline (cannot support SOTA). C1 = serious classical (required).
+# C2 = original published model, only if source/license/task compatible.
+baselines:
+  - method_id: baselines_b0
+    tier: C0
+    study_scope: all
+    attribution: "reimplementation (sanity, not a comparator for SOTA)"
+    comparable_task: true
+    license: internal
+    claims_allowed: "sanity check only; never a SOTA claim"
+  - method_id: baselines_c1
+    tier: C1
+    study_scope: all
+    attribution: "reimplementation of a classical algorithm (NOT the authors' code)"
+    comparable_task: true
+    license: internal-reimplementation
+    claims_allowed: "serious classical comparator"
+  - method_id: ablations_a1
+    tier: C1-ablation
+    study_scope: all
+    attribution: "ablation of the proposed policy by removing one mechanism"
+    comparable_task: true
+    license: internal
+  - method_id: ablations_a2
+    tier: C1-ablation
+    study_scope: all
+  - method_id: ablations_a3
+    tier: C1-ablation
+    study_scope: all
+  - method_id: c2_published
+    tier: C2
+    study_scope: all
+    attribution: "NOT RUN"
+    comparable_task: false
+    status: BLOCKED
+    blocked_reason: >
+      No original published model was available with compatible source,
+      weights and license for these policy tasks. Importing published
+      performance numbers into a V2 table is forbidden and was not done.

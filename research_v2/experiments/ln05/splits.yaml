@@ -1,0 +1,26 @@
+# LN-05 split definition.
+#
+# Grouping unit per LN-05-09: actor ID + task ID + replay family + session.
+# The T3 holdout contains 120 single-delivery cases, each its own replay
+# family (group_id is unique per case), so the split is group-disjoint by
+# construction. No case appears in more than one split; there is no dev split
+# because thresholds are fixed by the design spec, not tuned (prereg:
+# tuning_budget.search = none).
+split_id: test
+study_id: LN-05
+dataset: research_v2/data/ln05/t3_inputs.jsonl
+group_key: group_id
+splits:
+  test:
+    group_selector: all
+    description: >-
+      Sealed T3 holdout: 120 synthetic adversarial cases across five decision
+      families (grant / replay / forged / stale / competency-denied), 24 each.
+    n_cases: 120
+    n_groups: 120
+leakage_controls:
+  - gold files are evaluator-only; predictions never contain expected decisions
+  - case inputs carry no oracle, fault id, cohort or annotation provenance keys
+  - replay families never straddle splits (one family = one group_id = one case)
+  - dedup ledger epochs are bounded per run by dataset_sha256, so state cannot
+    leak between matrix cells or seeds

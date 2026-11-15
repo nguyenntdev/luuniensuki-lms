@@ -152,6 +152,126 @@ def test_over_budget_intervention(sample_stops):
     assert plan.route_cost == 60
 
 
+def test_alternate_providers_selects_single_cheapest_stop():
+    """Two stops provide the same target; only the cheaper one is visited."""
+    stops = [
+        HeritageStop(id="stop-a", cost=40, provides=["target"], requires=[]),
+        HeritageStop(id="stop-b", cost=45, provides=["target"], requires=[]),
+    ]
+    plan = evaluate_route_intervention(
+        stops=stops,
+        available_stops=["stop-a", "stop-b"],
+        target_outcomes=["target"],
+        time_budget_minutes=50,
+        checkpoint_claim_verified=True,
+    )
+    assert plan.decision == "find_valid_route"
+    assert plan.route_cost == 40
+    assert plan.stop_sequence == ["stop-a"]
+    assert plan.prerequisite_violation_count == 0
+
+
+def test_alternate_providers_with_prerequisites_minimize_closure_cost():
+    """Selection minimises total closure cost across alternative prerequisite chains."""
+    stops = [
+        HeritageStop(id="base-p", cost=5, provides=["prereq-p"], requires=[]),
+        HeritageStop(id="base-q", cost=40, provides=["prereq-q"], requires=[]),
+        HeritageStop(id="provider-a", cost=40, provides=["target"], requires=["prereq-p"]),
+        HeritageStop(id="provider-b", cost=10, provides=["target"], requires=["prereq-q"]),
+    ]
+    plan = evaluate_route_intervention(
+        stops=stops,
+        available_stops=["base-p", "base-q", "provider-a", "provider-b"],
+        target_outcomes=["target"],
+        time_budget_minutes=45,
+        checkpoint_claim_verified=True,
+    )
+    assert plan.decision == "find_valid_route"
+    assert plan.route_cost == 45
+    assert plan.stop_sequence == ["base-p", "provider-a"]
+    assert plan.prerequisite_violation_count == 0
+
+
+def test_alternate_providers_tie_break_is_deterministic():
+    """Equal-cost providers resolve deterministically by stop id regardless of input order."""
+    stops_forward = [
+        HeritageStop(id="stop-b", cost=40, provides=["target"], requires=[]),
+        HeritageStop(id="stop-a", cost=40, provides=["target"], requires=[]),
+    ]
+    stops_reversed = list(reversed(stops_forward))
+    kwargs = dict(
+        available_stops=["stop-a", "stop-b"],
+        target_outcomes=["target"],
+        time_budget_minutes=50,
+        checkpoint_claim_verified=True,
+    )
+    plan_forward = evaluate_route_intervention(stops=stops_forward, **kwargs)
+    plan_reversed = evaluate_route_intervention(stops=stops_reversed, **kwargs)
+    assert plan_forward.decision == "find_valid_route"
+    assert plan_forward.stop_sequence == ["stop-a"]
+    assert plan_reversed.stop_sequence == plan_forward.stop_sequence
+    assert plan_reversed.route_cost == plan_forward.route_cost
+
+
+def test_single_provider_behavior_unchanged(sample_stops):
+    """Single provider per outcome keeps prior cost and budget semantics."""
+    common = dict(
+        stops=sample_stops,
+        available_stops=["ngo-mon", "dien-thai-hoa", "the-mieu", "cuu-dinh"],
+        target_outcomes=["spatial_layout", "ritual_context", "commemoration", "heritage_interpretation"],
+        checkpoint_claim_verified=True,
+    )
+    feasible = evaluate_route_intervention(time_budget_minutes=60, **common)
+    assert feasible.decision == "find_valid_route"
+    assert feasible.route_cost == 60
+    assert feasible.stop_sequence == ["ngo-mon", "dien-thai-hoa", "the-mieu", "cuu-dinh"]
+
+    over_budget = evaluate_route_intervention(time_budget_minutes=59, **common)
+    assert over_budget.decision == "cost_exceeded"
+    assert over_budget.route_cost == 60
+
+
+def test_alternate_providers_gates_still_fire():
+    """Source, reachability, and cycle gates remain active with alternate providers."""
+    stops = [
+        HeritageStop(id="stop-a", cost=40, provides=["target"], requires=[]),
+        HeritageStop(id="stop-b", cost=45, provides=["target"], requires=[]),
+    ]
+    source_gap = evaluate_route_intervention(
+        stops=stops,
+        available_stops=["stop-a", "stop-b"],
+        target_outcomes=["target"],
+        time_budget_minutes=50,
+        checkpoint_claim_verified=False,
+    )
+    assert source_gap.decision == "reject_checkpoint_source"
+
+    unreachable = evaluate_route_intervention(
+        stops=stops,
+        available_stops=[],
+        target_outcomes=["target"],
+        time_budget_minutes=50,
+        checkpoint_claim_verified=True,
+    )
+    assert unreachable.decision == "no_feasible_route"
+    assert "unreachable_stop" in unreachable.reason_codes
+
+    cyclic = [
+        HeritageStop(id="stop-a", cost=40, provides=["target"], requires=["prereq"]),
+        HeritageStop(id="stop-b", cost=45, provides=["target"], requires=["prereq"]),
+        HeritageStop(id="dep-a", cost=5, provides=["prereq"], requires=["target"]),
+    ]
+    cycle = evaluate_route_intervention(
+        stops=cyclic,
+        available_stops=["stop-a", "stop-b", "dep-a"],
+        target_outcomes=["target"],
+        time_budget_minutes=50,
+        checkpoint_claim_verified=True,
+    )
+    assert cycle.decision == "reject_cycle"
+    assert "prerequisite_cycle" in cycle.reason_codes
+
+
 def test_baseline_evaluation(sample_stops):
     """Test baseline naive routing produces prerequisite violations."""
     plan = evaluate_route_baseline(

@@ -28,10 +28,10 @@
 
 \title{\textbf{Topological Graph Routing and Epistemic Depth Gating in Secondary Heritage Curricula:\\An Empirical Evaluation of Bruner's Spiral Progression Model (Study LN-01)}}
 
+% TODO: finalize author list, order, affiliations, and institutional consent.
 \author{
-    \textbf{Lưu Niên Sứ Ký Research Consortium}\\
-    \textit{Pedagogical Systems and Epistemic Policy Division}\\
-    \texttt{\{research, curriculum-lab\}@histolab.icu}
+    Author Name(s) to be finalized \\
+    \small Affiliation to be confirmed
 }
 \date{November 2026}
 
@@ -39,7 +39,7 @@
 \maketitle
 
 \begin{abstract}
-Designing secondary humanities curricula that systematically revisit cultural heritage concepts across multiple grades without descending into redundant rote repetition remains an open pedagogical challenge. In Vietnam's 2018 General Education Program (\textit{Chương trình GDPT 2018}), local education modules (\textit{Giáo dục địa phương} - GDĐP) across Grades 10, 11, and 12 investigate the UNESCO World Cultural Heritage of the Huế Monuments Complex and the Nine Dynastic Urns (\textit{Cửu Đỉnh}). However, conventional digital courseware frequently represents curriculum sequences as naive linear playlists, causing cognitive stagnation, prerequisite dependency deadlocks, or misalignments with official ministerial standards. To address this structural limitation, we operationalize Jerome Bruner's spiral curriculum theory alongside John Biggs' constructive alignment framework into a formal, directed acyclic graph (DAG) progression engine with four executable domain invariants: topological cycle elimination, monotonic grade developmental ordering, mandatory regulatory curriculum anchor crosswalking, and strict Bloom cognitive complexity gating. We evaluate the software policy across an authoritative 720-scenario synthetic baseline and an independently annotated 120-case educator holdout dataset ($N=120$) spanning five stratified failure modes (nominal spiral, grade boundary inversion, anchor misalignment, Bloom depth leap, and prerequisite cycles). Empirical evaluations across six policy variants reveal that naive linear sequencing (B0) incurs an 80.00\% error rate ($96/120$ faults admitted), while topological sort without cognitive gating (B1) permits a 60.00\% error rate ($72/120$). In contrast, the full spiral DAG policy with cognitive depth gating (I1) achieves complete fault elimination (0.00\% error rate, 95\% bootstrap CI $[0.0\%, 0.0\%]$, paired McNemar $\chi^2 = 94.01, p = 2.52 \times 10^{-29}$ vs. B0; $\chi^2 = 70.01, p = 4.24 \times 10^{-22}$ vs. B1). Architectural component ablations (A1--A3) confirm that topological acyclicity, regulatory crosswalking, and cognitive ascent are mutually orthogonal and indispensable. We discuss the implications for automated learning path synthesis in digital humanities and present the epistemic boundary separating software policy verification from longitudinal classroom learning outcomes.
+Designing secondary humanities curricula that systematically revisit cultural heritage concepts across multiple grades without descending into redundant rote repetition remains an open pedagogical challenge. In Vietnam's 2018 General Education Program (\textit{Chương trình GDPT 2018}), local education modules (\textit{Giáo dục địa phương} - GDĐP) across Grades 10, 11, and 12 investigate the UNESCO World Cultural Heritage of the Huế Monuments Complex and the Nine Dynastic Urns (\textit{Cửu Đỉnh}). However, conventional digital courseware frequently represents curriculum sequences as naive linear playlists, causing cognitive stagnation, prerequisite dependency deadlocks, or misalignments with official ministerial standards. To address this structural limitation, we operationalize Jerome Bruner's spiral curriculum theory alongside John Biggs' constructive alignment framework into a formal, directed acyclic graph (DAG) progression engine with four executable domain invariants: topological cycle elimination, monotonic grade developmental ordering, mandatory regulatory curriculum anchor crosswalking, and strict Bloom cognitive complexity gating. We evaluate the software policy across a frozen 720-scenario synthetic baseline and a synthetic 120-case held-out test set ($N=120$) with programmatic annotation templates (no human adjudication) spanning five stratified failure modes (nominal spiral, grade boundary inversion, anchor misalignment, Bloom depth leap, and prerequisite cycles). Empirical evaluations across six policy variants reveal that naive linear sequencing (B0) incurs an 80.00\% error rate ($96/120$ faults admitted), while topological sort without cognitive gating (B1) permits a 60.00\% error rate ($72/120$). In contrast, the full spiral DAG policy with cognitive depth gating (I1) achieves complete fault elimination (0.00\% error rate, Wilson/Clopper--Pearson intervals reported because the naive bootstrap is degenerate at zero, paired McNemar $\chi^2 = 94.01, p = 2.52 \times 10^{-29}$ vs. B0; $\chi^2 = 70.01, p = 4.24 \times 10^{-22}$ vs. B1). Architectural component ablations (A1--A3) confirm that topological acyclicity, regulatory crosswalking, and cognitive ascent are mutually orthogonal and indispensable. We discuss the implications for automated learning path synthesis in digital humanities and present the epistemic boundary separating software policy verification from longitudinal classroom learning outcomes.
 \end{abstract}
 
 \noindent\textbf{Keywords:} Spiral Curriculum, Constructive Alignment, Bloom's Taxonomy, Directed Acyclic Graph, Historical Reasoning, Local Heritage Education, Cửu Đỉnh Huế, Epistemic Policy Verification.
@@ -63,15 +63,30 @@ Despite these statutory guidelines, contemporary digital Learning Management Sys
     \item \textbf{Regulatory Anchor Misalignment:} Modules are assembled without traceable crosswalk links to official ministerial curriculum standards, invalidating student progress records during institutional accreditation.
 \end{itemize}
 
-To solve these systemic challenges, we formulate, implement, and empirically evaluate the **LN-01 Spiral Curriculum Progression Graph Engine** within the \textit{Lưu Niên Sứ Ký} digital heritage platform. We model the progression of heritage learning objectives as a constrained Directed Acyclic Graph (DAG) and define four mathematically enforceable domain invariants.
+To solve these systemic challenges, we formulate, implement, and empirically evaluate the \textbf{LN-01 Spiral Curriculum Progression Graph Engine} within the \textit{Lưu Niên Sứ Ký} digital heritage platform. We model the progression of heritage learning objectives as a constrained Directed Acyclic Graph (DAG) and define four mathematically enforceable domain invariants.
 
 This manuscript provides the following contributions:
 \begin{enumerate}
     \item \textbf{Theoretical Formalization of Spiral Progression:} We formalize Jerome Bruner's spiral curriculum and Biggs' constructive alignment as a constrained graph system $\mathcal{G} = \langle V, E, \alpha, \lambda, \gamma \rangle$ equipped with topological sortability, grade monotonicity, regulatory anchor completeness, and Bloom complexity ascent.
-    \item \textbf{Independent 120-Case Expert Holdout Dataset:} We design and curate an independent 120-case holdout dataset (`research/fixtures/holdout/LN-01_holdout.jsonl`), balanced across 5 failure archetypes ($24$ cases each), annotated and audited by a panel of secondary history and provincial curriculum specialists in Thừa Thiên Huế.
-    \item \textbf{Rigorous Empirical Benchmarking:} We benchmark the intervention policy (I1) against a naive linear baseline (B0), a topological DAG baseline without cognitive gating (B1), and three specific component ablations (A1--A3). We report exact false acceptance rates, 95\% bootstrap confidence intervals ($B=10,000$), paired McNemar tests with continuity corrections, and paired Wilcoxon signed-rank tests.
+    \item \textbf{Synthetic 120-Case Held-Out Test Set:} We design and generate a 120-case held-out test set (\texttt{research/fixtures/holdout/LN-01\_holdout.jsonl}), balanced across 5 failure archetypes ($24$ cases each), labelled with programmatic annotation templates (no human adjudication).
+    \item \textbf{Rigorous Empirical Benchmarking:} We benchmark the intervention policy (I1) against a naive linear baseline (B0), a topological DAG baseline without cognitive gating (B1), and three specific component ablations (A1--A3). We report exact false acceptance rates, 95\% Wilson/Clopper--Pearson confidence intervals (used instead of bootstrap intervals, which are degenerate at a zero observed error rate), paired McNemar tests with continuity corrections, and paired Wilcoxon signed-rank tests.
     \item \textbf{Epistemic Demarcation:} We clearly establish the methodological boundary separating automated software policy verification from ungrounded longitudinal claims regarding student psychological gains.
 \end{enumerate}
+
+
+\section{Research Questions}
+
+This study addresses three study-specific research questions:
+
+\begin{enumerate}[label=\textbf{RQ\arabic*}, leftmargin=2.4em]
+    \item \textbf{RQ1 (Structural Correctness):} Can Bruner's spiral curriculum and Biggs' constructive alignment be operationalized as a set of four executable graph invariants (cognitive ascent, acyclicity, regulatory anchor completeness, and grade monotonicity) that deterministically reject structurally invalid secondary heritage curricula?
+    \item \textbf{RQ2 (Comparative Efficacy):} On a synthetic held-out test set with programmatic annotation templates (no human adjudication), does the full spiral DAG policy (I1) reduce false acceptance of flawed curriculum scenarios relative to naive linear sequencing (B0) and topological sorting without cognitive gating (B1)?
+    \item \textbf{RQ3 (Component Necessity):} Are the four invariants mutually orthogonal, such that ablating any single verification layer (A1--A3) produces a deterministic, stratum-specific increase in false acceptances?
+\end{enumerate}
+
+\subsection{Research Gap and Novelty}
+
+Existing learner-modeling and curriculum-sequencing literature models progression either as linear playlists or as unconstrained knowledge-tracing dependencies \cite{corbett1994knowledge, pelanek2017bayesian}. Cognitive-load research further warns that such unconstrained ordering can invert developmental prerequisites and induce overload \cite{sweller2011cognitive}. Spiral curriculum theory has long called for revisiting content at deepening cognitive levels \cite{bruner1960process, harden2000spiral}, yet it has rarely been reduced to an executable, machine-checkable invariant system tied to ministerial curriculum anchors \cite{biggs2011teaching, moet2018general}. This study's novelty is the formalization of spiral progression, historical-reasoning depth \cite{vandrie2008historical}, and Bloom cognitive gating \cite{krathwohl2002revision} as a jointly enforced attributed-DAG policy with an explicit, reproducible fault taxonomy, evaluated against a synthetic held-out test set with programmatic annotation templates rather than human expert adjudication.
 
 \section{Pedagogical Invariants and Formal Graph Theory}
 
@@ -165,24 +180,24 @@ Any edge $(u, v)$ where $\gamma(u) > \gamma(v)$ or $\gamma(v) < 10$ is rejected 
 
 \section{System Architecture and Implementation}
 
-The LN-01 policy engine is implemented in Python 3.12 under `research/spiral/progression_graph.py` and exposed via the standardized research adapter `research.integrations.ln01:run_policy`. The architecture decouples graph validation into modular evaluation layers:
+The LN-01 policy engine is implemented in Python 3.12 under \texttt{research/spiral/progression\_graph.py} and exposed via the standardized research adapter \texttt{research.integrations.ln01:run\_policy}. The architecture decouples graph validation into modular evaluation layers:
 
 \begin{enumerate}
     \item \textbf{Cycle Detection Layer:} Runs a linear-time $\mathcal{O}(|\mathcal{V}| + |\mathcal{E}|)$ three-color DFS traversal. When a cycle is intercepted, the traversal unwinds the recursion stack to extract the exact offending cycle path for debugging and administrative repair.
     \item \textbf{Grade Developmental Sequence Validator:} Iterates across declared prerequisite edges $\mathcal{E}$, asserting $\gamma(u) \le \gamma(v)$ and range boundaries $[10, 12]$.
-    \item \textbf{Curriculum Crosswalk Layer (`curriculum_crosswalk.py`):} Cross-references node grade bands against the immutable registry of authorized GDĐP anchors (e.g., \texttt{GDĐP-HUE-10-ART}, \texttt{GDĐP-HUE-11-HISTORY}, \texttt{GDĐP-HUE-12-HERITAGE}), computing the exact fraction of unmapped outcomes.
+    \item \textbf{Curriculum Crosswalk Layer (\texttt{curriculum\_crosswalk.py}):} Cross-references node grade bands against the immutable registry of authorized GDĐP anchors (e.g., \texttt{GDĐP-HUE-10-ART}, \texttt{GDĐP-HUE-11-HISTORY}, \texttt{GDĐP-HUE-12-HERITAGE}), computing the exact fraction of unmapped outcomes.
     \item \textbf{Bloom Cognitive Depth Gating Layer:} Validates that target tasks deepen cognitive operations beyond their direct predecessors ($\beta(v) > \beta(u)$).
 \end{enumerate}
 
-The policy returns a deterministic `ProgressionDecision` object containing the decision string, human-readable Vietnamese and English reason codes, policy version strings, and structured observable metadata (cycle counts, violating edges, unmapped outcome fractions).
+The policy returns a deterministic \texttt{ProgressionDecision} object containing the decision string, human-readable Vietnamese and English reason codes, policy version strings, and structured observable metadata (cycle counts, violating edges, unmapped outcome fractions).
 
 \section{Experimental Design and Empirical Evaluation}
 
 \subsection{Dataset Construction and Stratification}
 
-To provide rigorous, unbiased validation beyond the original 720 synthetic scenarios (`research/fixtures/LN-01_concrete.jsonl`), we constructed an independent 120-case holdout dataset (`research/fixtures/holdout/LN-01_holdout.jsonl`).
+To provide rigorous, unbiased validation beyond the original 720 synthetic scenarios (\texttt{research/fixtures/LN-01\_concrete.jsonl}), we constructed a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) at \texttt{research/fixtures/holdout/LN-01\_holdout.jsonl}.
 
-The holdout dataset is stratified into five orthogonal fault classes of exactly 24 cases each:
+The held-out test set is stratified into five orthogonal fault classes of exactly 24 cases each:
 \begin{enumerate}
     \item \textbf{Nominal Spiral Progression ($N=24$):} Fully compliant 3-node and 4-node spiral trajectories spanning Grades 10--12, ascending from motif observation ($\beta=1$) to archival corroboration ($\beta=2$) and heritage evaluation ($\beta=3/4$).
     \item \textbf{Grade Boundary Inversion ($N=24$):} Synthetic curricula containing developmental reversals along prerequisite edges (e.g., Grade 11 preceding Grade 10, or out-of-band Grade 9 tasks).
@@ -191,11 +206,11 @@ The holdout dataset is stratified into five orthogonal fault classes of exactly 
     \item \textbf{Prerequisite Dependency Cycles ($N=24$):} Synthetic networks containing cyclic deadlocks, including both intra-grade 2-cycles and inter-grade 3-node / 4-node loops.
 \end{enumerate}
 
-Every case in the holdout dataset is grounded in authentic cultural heritage entities from the Huế Monuments Complex (including Cao Đỉnh, Nhân Đỉnh, Chương Đỉnh, Ngọ Môn, Điện Thái Hòa, Thế Tổ Miếu, and royal mausoleums) and independently audited by a panel of four secondary history educators and provincial curriculum specialists from Thừa Thiên Huế.
+Every case in the held-out test set is grounded in authentic cultural heritage entities from the Huế Monuments Complex (including Cao Đỉnh, Nhân Đỉnh, Chương Đỉnh, Ngọ Môn, Điện Thái Hòa, Thế Tổ Miếu, and royal mausoleums) and is generated with programmatic annotation templates (no human adjudication).
 
 \subsection{Evaluated Policy Configurations}
 
-We evaluate six policy variants across the 120 holdout scenarios:
+We evaluate six policy variants across the 120 held-out scenarios:
 \begin{itemize}
     \item \textbf{B0 (Naive Linear Sequence):} Baseline representing unconstrained content playlists. Blindly accepts all sequences without checking cycles, grade sequences, anchors, or cognitive depth.
     \item \textbf{B1 (Topological Sort Baseline):} Stronger engineering baseline that verifies prerequisite DAG acyclicity via topological sort, but performs no cognitive depth or curriculum anchor checks.
@@ -206,14 +221,15 @@ We evaluate six policy variants across the 120 holdout scenarios:
 \end{itemize}
 
 \subsection{Statistical Methodology}
+\label{sec:statistics}
 
-For each condition, we report total classification errors, overall error rates, and 95\% non-parametric bootstrap confidence intervals generated via $B = 10,000$ resamples. To test for statistical significance against the intervention policy (I1), we compute paired two-sided McNemar tests with Edwards continuity correction, alongside exact binomial tests on discordant pairs and paired Wilcoxon signed-rank tests.
+For each condition, we report total classification errors and overall error rates. Because several conditions exhibit a zero observed error rate, the naive bootstrap is degenerate; we therefore report Wilson/Clopper--Pearson intervals, which remain well-defined at 0 and 1. To test for statistical significance against the intervention policy (I1), we compute paired two-sided McNemar tests with Edwards continuity correction, alongside exact binomial tests on discordant pairs and paired Wilcoxon signed-rank tests.
 
 \section{Empirical Results}
 
-\subsection{Holdout Summary Benchmark}
+\subsection{Held-Out Summary Benchmark}
 
-Table~\ref{tab:ln01_holdout_summary} presents the overall benchmark results on the 120-case independent holdout dataset.
+Table~\ref{tab:ln01_holdout_summary} presents the overall benchmark results on the synthetic 120-case held-out test set.
 
 \input{results/LN-01_holdout_results.tex}
 
@@ -221,7 +237,7 @@ The naive linear baseline (B0) fails on 96 of 120 cases, exhibiting an 80.00\% e
 
 The stronger topological baseline (B1) correctly resolves topological sorting and intercepts all 24 prerequisite cycles. However, because it lacks pedagogical awareness regarding cognitive levels and regulatory anchors, it admits all remaining flaws, yielding a 60.00\% error rate (72 errors, 95\% CI $[50.8\%, 68.3\%]$). The performance differential between I1 and B1 is statistically decisive (McNemar $\chi^2 = 70.01, p = 4.24 \times 10^{-22}$; Wilcoxon $p = 2.15 \times 10^{-17}$).
 
-In contrast, the full spiral intervention policy (I1) achieves an exact **0.00\% error rate** (0 errors out of 120 cases, 95\% CI $[0.0\%, 0.0\%]$, 100.0\% accuracy), correctly accepting all 24 nominal spiral progressions and rejecting all 96 flawed curricula with precise, verifiable reason codes.
+In contrast, the full spiral intervention policy (I1) achieves an exact \textbf{0.00\% error rate} (0 errors out of 120 cases; Wilson/Clopper--Pearson intervals are reported because the naive bootstrap is degenerate at zero, 100.0\% accuracy), correctly accepting all 24 nominal spiral progressions and rejecting all 96 flawed curricula with precise, verifiable reason codes.
 
 \subsection{Fault-Stratified Error Matrix}
 
@@ -245,19 +261,28 @@ The Nine Dynastic Urns represent a unique educational testbed due to their multi
 
 \section{Limitations and Epistemic Honesty}
 
-In accordance with the epistemic integrity mandates of the \textit{Lưu Niên Sứ Ký} consortium, we state explicit boundaries regarding the scope and generalizability of our findings:
+In keeping with an explicit epistemic-integrity policy, we state boundaries regarding the scope and generalizability of our findings:
 \begin{enumerate}
-    \item \textbf{Software Policy Invariants vs. Student Psychological Gains:} This study evaluates deterministic software policy conformance on synthetically constructed, expert-audited curriculum scenarios. While the policy mathematically prevents circular deadlocks and cognitive stagnation, software verification cannot serve as an empirical proxy for human learning outcomes, historical empathy, or retention without formal longitudinal classroom trials.
+    \item \textbf{Software Policy Invariants vs. Student Psychological Gains:} This study evaluates deterministic software policy conformance on synthetically constructed curriculum scenarios labelled with programmatic annotation templates (no human adjudication). While the policy mathematically prevents circular deadlocks and cognitive stagnation, software verification cannot serve as an empirical proxy for human learning outcomes, historical empathy, or retention without formal longitudinal classroom trials.
     \item \textbf{Granularity of Bloom Categorization:} The cognitive level assignment $\beta(v) \in \{1, \dots, 6\}$ relies on educator objective tagging. In actual classroom deployments, ambiguous task phrasing authored by novice instructors may require natural language processing (NLP) validation to prevent semantic drift.
     \item \textbf{Curricular Scope:} The current anchor registry is calibrated specifically to the 2018 General Education Program for Thừa Thiên Huế. Adaptation to other provinces requires expanding the regulatory crosswalk tables.
 \end{enumerate}
 
+\subsection{Threats to Validity}
+
+\begin{itemize}
+    \item \textbf{Internal validity:} Labels in the held-out test set are produced by deterministic programmatic annotation templates rather than human judgement; any template error propagates directly into the reported error rates. All scenarios are materialized from frozen seeds and hashed, which controls nondeterminism but cannot rule out template defects.
+    \item \textbf{External validity:} The anchor registry is calibrated to the Thừa Thiên Huế GDĐP curriculum and the Cửu Đỉnh corpus; generalization to other provinces or subjects is untested.
+    \item \textbf{Construct validity:} Bloom level assignment $\beta(v)$ is an ordinal proxy for cognitive demand and may not capture the full complexity of authentic historical reasoning.
+    \item \textbf{Statistical validity:} The primary endpoint is a software-policy classification rate on $N=120$ synthetic cases. With a zero observed error rate, naive bootstrap intervals are degenerate; Wilson/Clopper--Pearson intervals are therefore reported instead. These are internal software-conformance estimates and are \emph{not} human-adjudicated external validation.
+\end{itemize}
+
 \section{Conclusion}
 
-The LN-01 study demonstrates that Jerome Bruner's spiral curriculum and Biggs' constructive alignment can be operationalized into a deterministic graph engine that eliminates curriculum deadlocks and cognitive stagnation. Across an independent 120-case holdout dataset audited by secondary education experts, the full spiral DAG policy with Bloom cognitive depth gating achieved complete fault elimination (0.00\% error rate), drastically outperforming conventional linear playlists (80.00\% error rate) and topological baselines (60.00\% error rate). By establishing verifiable pedagogical invariants within automated learning systems, digital heritage platforms can ensure that cultural education remains intellectually rigorous, developmentally sequenced, and anchored in authorized scholarship.
+The LN-01 study demonstrates that Jerome Bruner's spiral curriculum and Biggs' constructive alignment can be operationalized into a deterministic graph engine that eliminates curriculum deadlocks and cognitive stagnation. Across a synthetic 120-case held-out test set labelled with programmatic annotation templates (no human adjudication), the full spiral DAG policy with Bloom cognitive depth gating achieved complete fault elimination (0.00\% error rate), drastically outperforming conventional linear playlists (80.00\% error rate) and topological baselines (60.00\% error rate). By establishing verifiable pedagogical invariants within automated learning systems, digital heritage platforms can ensure that cultural education remains intellectually rigorous, developmentally sequenced, and anchored in authorized scholarship.
 
 \section*{Evidence Availability and Reproducibility}
-All test fixtures, educator holdout datasets, evaluation scripts, and cryptographic execution logs are permanently archived in the repository under:
+All test fixtures, held-out test datasets, evaluation scripts, and cryptographic execution logs are permanently archived in the repository under:
 \begin{itemize}
     \item Holdout dataset: \texttt{research/fixtures/holdout/LN-01\_holdout.jsonl}
     \item Evaluation script: \texttt{research/tools/evaluate\_ln01\_holdout.py}

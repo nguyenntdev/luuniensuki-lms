@@ -9,6 +9,9 @@ Evaluates Evidence-Grounded Learning Analytics & Teacher Intervention Rules.
 3. conflicting_assessment_signals: Contradictory performance signals across assessment modalities (INV-LN-09-05).
 4. unverified_curriculum_task: Evidence derived from uncalibrated or unverified source tasks (INV-LN-09-02).
 5. stale_mastery_data: Outdated mastery observations (>30 days old) requiring knowledge refresh.
+
+NOTE: All annotation records in this generator are deterministic programmatic
+templates. They are NOT real expert adjudication, human review, or consensus.
 """
 import hashlib
 import json
@@ -141,12 +144,12 @@ def generate_holdout_cases():
                 "signals_conflict": signals_conflict,
             }
 
-            input_bytes = json.dumps(case_input, sort_keys=True).encode("utf-8")
+            input_bytes = json.dumps(case_input, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
             input_hash = hashlib.sha256(input_bytes).hexdigest()
 
             row = {
                 "case_id": case_id,
-                "cohort": "INDEPENDENT_HOLDOUT",
+                "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
                 "fault_id": fault_id,
                 "canonical_fault": {
                     "nominal": "nominal",
@@ -157,6 +160,7 @@ def generate_holdout_cases():
                 }[fault_id],
                 "input": case_input,
                 "input_hash": input_hash,
+                "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
                 "materializer_version": "2.1-holdout",
                 "oracle": {
                     "basis": "INSTRUCTIONAL_RECOMMENDATIONS_DOMAIN_INVARIANT",
@@ -178,7 +182,7 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as f:
         for c in cases:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+            f.write(json.dumps(c, ensure_ascii=False, separators=(",", ":")) + "\n")
 
     print(f"Generated {len(cases)} holdout cases at {out_path}")
     fault_counts = {}

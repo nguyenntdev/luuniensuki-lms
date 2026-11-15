@@ -8,6 +8,9 @@
 - synonym_variation (24 cases): Genuine historical equivalents using ritual space synonyms without exact canonical keywords
 - partial_reasoning (24 cases): Incomplete generic statements lacking spatial-ritual linkage
 - unverified_historical_assertion (24 cases): Claims citing untrusted, unverified, or fabricated sources
+
+NOTE: All annotation records in this generator are deterministic programmatic
+templates. They are NOT real expert adjudication, human review, or consensus.
 """
 from __future__ import annotations
 
@@ -101,8 +104,9 @@ UNVERIFIED_SOURCES = [
 ]
 
 def make_hash(data: dict) -> str:
-    serialized = json.dumps(data, sort_keys=True, ensure_ascii=False)
-    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+    return hashlib.sha256(
+        json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    ).hexdigest()
 
 def generate_holdout() -> list[dict]:
     cases = []
@@ -137,12 +141,14 @@ def generate_holdout() -> list[dict]:
         }
         cases.append({
             "case_id": case_id,
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "nominal_correct",
             "input": inp,
             "input_hash": make_hash(inp),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "materializer_version": "2.0",
             "oracle": {
+                "basis": "DIAGNOSTIC_FEEDBACK_SPEC",
                 "expected_decision": "feedback_supported",
                 "expected_category": "supported",
                 "reason": "Đáp án chuẩn xác, dẫn chứng phù hợp với tư liệu lịch sử được cung cấp.",
@@ -181,12 +187,14 @@ def generate_holdout() -> list[dict]:
         }
         cases.append({
             "case_id": case_id,
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "logical_negation_misconception",
             "input": inp,
             "input_hash": make_hash(inp),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "materializer_version": "2.0",
             "oracle": {
+                "basis": "DIAGNOSTIC_FEEDBACK_SPEC",
                 "expected_decision": "classify_contradiction",
                 "expected_category": "contradiction",
                 "reason": "Phủ định biến câu đúng thành sai, làm đảo ngược quan hệ không gian nghi lễ.",
@@ -225,12 +233,14 @@ def generate_holdout() -> list[dict]:
         }
         cases.append({
             "case_id": case_id,
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "synonym_variation",
             "input": inp,
             "input_hash": make_hash(inp),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "materializer_version": "2.0",
             "oracle": {
+                "basis": "DIAGNOSTIC_FEEDBACK_SPEC",
                 "expected_decision": "preserve_semantics",
                 "expected_category": "supported_equivalent",
                 "reason": "Diễn đạt bằng từ đồng nghĩa phong phú nhưng bảo toàn mệnh đề lịch sử chuẩn xác.",
@@ -269,12 +279,14 @@ def generate_holdout() -> list[dict]:
         }
         cases.append({
             "case_id": case_id,
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "partial_reasoning",
             "input": inp,
             "input_hash": make_hash(inp),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "materializer_version": "2.0",
             "oracle": {
+                "basis": "DIAGNOSTIC_FEEDBACK_SPEC",
                 "expected_decision": "feedback_incomplete",
                 "expected_category": "incomplete",
                 "reason": "Câu trả lời đúng một phần nhưng thiếu liên kết không gian - nghi lễ cốt lõi.",
@@ -312,12 +324,14 @@ def generate_holdout() -> list[dict]:
         }
         cases.append({
             "case_id": case_id,
-            "cohort": "INDEPENDENT_HOLDOUT",
+            "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
             "fault_id": "unverified_historical_assertion",
             "input": inp,
             "input_hash": make_hash(inp),
+            "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
             "materializer_version": "2.0",
             "oracle": {
+                "basis": "DIAGNOSTIC_FEEDBACK_SPEC",
                 "expected_decision": "classify_source_error",
                 "expected_category": "source_error",
                 "reason": "Nguồn dẫn chứng không được xác thực hoặc không có trong cơ sở sử liệu chuẩn.",
@@ -342,7 +356,7 @@ def main():
 
     with OUTPUT_PATH.open("w", encoding="utf-8") as f:
         for c in cases:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+            f.write(json.dumps(c, ensure_ascii=False, separators=(",", ":")) + "\n")
     print(f"Successfully wrote {len(cases)} cases to {OUTPUT_PATH}")
 
 if __name__ == "__main__":

@@ -27,10 +27,10 @@
 
 \title{\textbf{Dual-Mode Spaced Learning and Epistemic Workload Balancing in Domain-Specific Heritage Education: Algorithmic Foundations and Empirical Policy Verification}}
 
+% TODO: finalize author list, order, affiliations, and institutional consent.
 \author{
-    \textbf{Lưu Niên Sứ Ký Research Consortium}\\
-    Laboratory for Educational Technology and Historical Epistemology\\
-    \texttt{\{research, policy\}@histolab.icu}
+    Author Name(s) to be finalized \\
+    \small Affiliation to be confirmed
 }
 \date{November 2026}
 
@@ -38,7 +38,7 @@
 \maketitle
 
 \begin{abstract}
-Spaced repetition algorithms have revolutionized declarative retention, yet modern implementations---such as Leitner box schedules and Free Spaced Repetition Scheduler (FSRS) architectures---uniformly treat memory items as atomic flashcards, ignoring semantic prerequisites, epistemic source grounding, and task modality discrepancies. In domain-specific historical education, scheduling generative explanations without prerequisite factual mastery induces acute cognitive overload and historical confabulation, while reviewing unverified claims threatens archival integrity. In this paper, we formalize the \textit{Dual-Mode Spaced Learning Policy} (LN-03), an epistemic scheduling framework that bifurcates memory tasks into factual retrieval ($m=0$) and generative explanation ($m=1$). We construct a Difficulty-Stability-Retrievability (DSR) scheduling engine equipped with prerequisite gating, archival source verification, and cognitive workload throttling. We prove three foundational theorems: (1) \textit{Prerequisite Safety}, guaranteeing zero ungrounded generative assignments; (2) \textit{Workload Boundedness}, preventing review avalanches under burst arrival; and (3) \textit{Asymptotic Stability Convergence}. To empirically validate these invariants, we generate an independent 120-case holdout benchmark dataset (\texttt{LN-03\_holdout.jsonl}) partitioned across five balanced fault strata. Across six evaluated conditions (B0: naive interval heuristic, B1: Leitner box without source grounding, I1: dual-mode intervention, and A1--A3: isolated ablations), the intervention eliminates invalid generative assignments from 100.0\% in B0 and 50.0\% in B1 down to 0.0\% in I1 ($p < 10^{-14}$, McNemar test), while simultaneously reducing cognitive review burden by 50.0\% ($\mu = 1.20 \to 0.60$, paired $t = 10.37$, $p = 3.52 \times 10^{-13}$, Cohen's $d = 0.747$). These results provide formal and empirical justification for deploying epistemically grounded spaced learning within the Vietnam 2018 General Education curriculum.
+Spaced repetition algorithms have revolutionized declarative retention, yet modern implementations---such as Leitner box schedules and Free Spaced Repetition Scheduler (FSRS) architectures---uniformly treat memory items as atomic flashcards, ignoring semantic prerequisites, epistemic source grounding, and task modality discrepancies. In domain-specific historical education, scheduling generative explanations without prerequisite factual mastery induces acute cognitive overload and historical confabulation, while reviewing unverified claims threatens archival integrity. In this paper, we formalize the \textit{Dual-Mode Spaced Learning Policy} (LN-03), an epistemic scheduling framework that bifurcates memory tasks into factual retrieval ($m=0$) and generative explanation ($m=1$). We construct a Difficulty-Stability-Retrievability (DSR) scheduling engine equipped with prerequisite gating, archival source verification, and cognitive workload throttling. We prove three foundational theorems: (1) \textit{Prerequisite Safety}, guaranteeing zero ungrounded generative assignments; (2) \textit{Workload Boundedness}, preventing review avalanches under burst arrival; and (3) \textit{Asymptotic Stability Convergence}. To empirically validate these invariants, we generate a synthetic 120-case held-out test set (\texttt{LN-03\_holdout.jsonl}) with programmatic annotation templates (no human adjudication), partitioned across five balanced fault strata. Our design builds on established retrieval-practice and spaced-repetition results \cite{roediger2006, karpicke2008, settles2016half, tabibian2019}. Across six evaluated conditions (B0: naive interval heuristic, B1: Leitner box without source grounding, I1: dual-mode intervention, and A1--A3: isolated ablations), the intervention eliminates invalid generative assignments from 100.0\% in B0 and 50.0\% in B1 down to 0.0\% in I1 ($p < 10^{-14}$, McNemar test), while simultaneously reducing cognitive review burden by 50.0\% ($\mu = 1.20 \to 0.60$, paired $t = 10.37$, $p = 3.52 \times 10^{-13}$, Cohen's $d = 0.747$). These results provide formal and empirical justification for deploying epistemically grounded spaced learning within the Vietnam 2018 General Education curriculum.
 \end{abstract}
 
 \noindent\textbf{Keywords:} Spaced Repetition, FSRS-5, Cognitive Load Theory, Dual-Process Learning, Heritage Education, Epistemic Grounding, Prerequisite Gating.
@@ -46,7 +46,7 @@ Spaced repetition algorithms have revolutionized declarative retention, yet mode
 \section{Introduction}
 \label{sec:introduction}
 
-Spaced repetition systems (SRS) trace their empirical lineage to Ebbinghaus's seminal forgetting curves \cite{ebbinghaus1885} and Leitner's compartmentalized review heuristics \cite{leitner1972}. In recent decades, computerized spaced repetition algorithms, ranging from SuperMemo SM-2 \cite{wozniak1990} to modern parametric models like FSRS-5 \cite{ye2024fsrs}, have demonstrated remarkable efficiency in promoting long-term memory consolidation across clinical medicine, language acquisition, and law.
+Spaced repetition systems (SRS) trace their empirical lineage to Ebbinghaus's seminal forgetting curves \cite{ebbinghaus1885} and Leitner's compartmentalized review heuristics \cite{leitner1972}. In recent decades, computerized spaced repetition algorithms, ranging from SuperMemo SM-2 \cite{wozniak1990} to modern parametric models like FSRS-5 \cite{ye2024fsrs}, have demonstrated remarkable efficiency in promoting long-term memory consolidation across clinical medicine, language acquisition, and law \cite{roediger2006, karpicke2008, settles2016half, tabibian2019}.
 
 However, existing spaced repetition engines operate under an unstated, restrictive axiom: \textit{all items are assumed to be independent, epistemically verified declarative atomic tokens}. In complex humanities disciplines---and particularly in historical heritage education---this atomistic assumption breaks down fundamentally along three cognitive axes:
 \begin{enumerate}[leftmargin=*]
@@ -55,7 +55,19 @@ However, existing spaced repetition engines operate under an unstated, restricti
     \item \textbf{Cognitive Review Avalanches:} When algorithmic schedulers treat generative essays and quick retrieval prompts with equal weight, review queues accumulate unmanageable cognitive burdens, resulting in learner fatigue, session abandonment, and algorithmic failure.
 \end{enumerate}
 
-To resolve these challenges, this paper presents the \textit{Dual-Mode Spaced Learning Architecture} (LN-03), developed for the \textit{Lưu Niên Sứ Ký} learning platform. We formalize the interaction between retention dynamics and epistemic constraints, construct formal mathematical proofs of safety and stability, establish an independent 120-case holdout dataset, and conduct comprehensive paired hypothesis testing.
+To resolve these challenges, this paper presents the \textit{Dual-Mode Spaced Learning Architecture} (LN-03), developed for the \textit{Lưu Niên Sứ Ký} learning platform. We formalize the interaction between retention dynamics and epistemic constraints, construct formal mathematical proofs of safety and stability, establish a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication), and conduct comprehensive paired hypothesis testing.
+
+\section{Research Questions}
+
+\begin{enumerate}[label=\textbf{RQ\arabic*}, leftmargin=2.4em]
+    \item \textbf{RQ1 (Formal Guarantees):} Can prerequisite gating, source verification, and workload throttling be formalized as scheduling invariants that provably yield zero ungrounded generative assignments and bounded cognitive burden?
+    \item \textbf{RQ2 (Policy Efficacy):} On a synthetic held-out test set with programmatic annotation templates (no human adjudication), does the dual-mode policy (I1) eliminate invalid generative assignments relative to interval-based (B0) and Leitner-box (B1) baselines?
+    \item \textbf{RQ3 (Workload Effect):} Does the workload cap reduce mean cognitive review burden without reintroducing invalid generative assignments?
+\end{enumerate}
+
+\subsection{Research Gap and Novelty}
+
+Prior spaced-repetition research establishes the retention benefits of retrieval practice \cite{roediger2006, karpicke2008} and demonstrates schedule optimization at scale \cite{settles2016half, tabibian2019}. Modern parametric schedulers such as FSRS model difficulty, stability, and retrievability \cite{ye2024fsrs}, but treat every item as an atomic, epistemically neutral flashcard. Cognitive-load theory \cite{sweller1988} and the ICAP framework \cite{chi2009} predict that generative explanation tasks scheduled before factual consolidation induce extraneous load. This study's novelty is to make modality (factual vs.\ generative) and epistemic source grounding first-class scheduling constraints, and to prove their safety properties before empirical verification on a reproducible synthetic held-out test set.
 
 \section{Mathematical Formalization and Scheduling Proofs}
 \label{sec:formalization}
@@ -203,11 +215,11 @@ From the FSRS stability equation (Equation~\ref{eq:retrievability}), for a succe
 Since $w_8 > 0$, $D \in [1, 10] \implies 11 - D \ge 1$, $S_k > 0$, and $R \le 1 \implies \exp((1-R)w_{10}) \ge 1$, the additive growth term is non-negative: $\Delta S \ge 0$. Under $\pi_{\text{dual}}$, because invalid generative tasks are routed to retrieval ($m=0$), the stability update operates on well-defined declarative recall parameters rather than noisy, ungrounded essay scores, preventing stability collapse ($\lim_{k \to \infty} S_k \to \infty$).
 \end{proof}
 
-\section{Holdout Benchmark Methodology}
+\section{Held-Out Test Set Methodology}
 \label{sec:methodology}
 
-\subsection{Holdout Dataset Architecture (\texttt{LN-03\_holdout.jsonl})}
-To evaluate policy generalization beyond the 720 training fixtures, we constructed an independent, cryptographically anchored 120-case holdout dataset located at \texttt{research/fixtures/holdout/LN-03\_holdout.jsonl}. The holdout dataset enforces five mutually exclusive fault strata ($24$ cases per stratum, totaling $N=120$):
+\subsection{Held-Out Test Set Architecture (\texttt{LN-03\_holdout.jsonl})}
+To evaluate policy generalization beyond the 720 training fixtures, we constructed a synthetic, cryptographically anchored 120-case held-out test set with programmatic annotation templates (no human adjudication) located at \texttt{research/fixtures/holdout/LN-03\_holdout.jsonl}. The held-out set enforces five mutually exclusive fault strata ($24$ cases per stratum, totaling $N=120$):
 \begin{enumerate}[leftmargin=*]
     \item \textbf{Nominal ($\bm{N=24}$):} Cards are due ($\tau_{\text{due}} \le t_{\text{now}}$), parameter weights are finite, prerequisite facts are mastered, and sources are verified. Expected oracle decision: \texttt{schedule\_eligible}.
     \item \textbf{Missing Fact Base ($\bm{N=24}$):} Cards are due and sources verified, but prerequisite factual foundations are not consolidated ($\text{Mastered} = \text{False}$). Expected oracle decision: \texttt{assign\_fact\_retrieval}.
@@ -219,7 +231,7 @@ To evaluate policy generalization beyond the 720 training fixtures, we construct
 Every case is instantiated with authentic Vietnamese heritage entities across the Nine Dynastic Urns and Huế Imperial Citadel (e.g., \textit{Cao Đỉnh - Phi Long}, \textit{Nhân Đỉnh - Ngọ Môn}, \textit{Chương Đỉnh - Sông Hương}, \textit{Anh Đỉnh - Ngự Bình Sơn}, \textit{Nghị Đỉnh - Bạch Đằng Giang}, \textit{Thuần Đỉnh - Thuận Thiên Kiếm}, \textit{Tuyên Đỉnh - Điện Thái Hòa}, \textit{Dụ Đỉnh - Thế Miếu}, and \textit{Huyền Đỉnh - Hiển Lâm Các}). Learner profiles model novice, intermediate, advanced, source-oriented, and spatial-historical reasoning archetypes.
 
 \subsection{Experimental Conditions}
-We evaluate six distinct policy conditions on the exact same 120 holdout cases:
+We evaluate six distinct policy conditions on the exact same 120 held-out cases:
 \begin{itemize}[leftmargin=*]
     \item \textbf{B0 (Baseline Interval Heuristic):} Simple interval scheduler operating on elapsed time without prerequisite or source verification. Unconditionally schedules generative explanations when due.
     \item \textbf{B1 (Stronger Baseline: Leitner Box without Source Grounding):} Multi-compartment Leitner schedule that recognizes prerequisite mastery (routing unmastered cards to fact retrieval), but possesses zero source verification capability.
@@ -236,7 +248,7 @@ We evaluate six distinct policy conditions on the exact same 120 holdout cases:
         \mathcal{R}_{\text{inv}} = \frac{\sum_{i \in \text{Eligible}} \mathbb{I}(\text{generative\_assigned}_i = \text{True})}{N_{\text{elig}}}
     \end{equation}
     Confidence intervals are calculated using the 95\% Wilson score interval.
-    \item \textbf{Mean Cognitive Review Burden ($\bar{B}$):} Calculated across all $N=120$ holdout cases:
+    \item \textbf{Mean Cognitive Review Burden ($\bar{B}$):} Calculated across all $N=120$ held-out cases:
     \begin{equation}
         \bar{B} = \frac{1}{120} \sum_{i=1}^{120} w_i, \quad s_B = \sqrt{\frac{1}{119} \sum_{i=1}^{120} (w_i - \bar{B})^2}
     \end{equation}
@@ -251,8 +263,8 @@ We evaluate six distinct policy conditions on the exact same 120 holdout cases:
 \section{Empirical Results}
 \label{sec:results}
 
-\subsection{Holdout Benchmark Performance}
-The empirical results across the 120 holdout cases are summarized in Table~\ref{tab:ln03-holdout-benchmark}.
+\subsection{Held-Out Test Set Performance}
+The empirical results across the 120 held-out cases are summarized in Table~\ref{tab:ln03-holdout-benchmark}.
 
 \input{results/LN-03_holdout_results.tex}
 
@@ -308,14 +320,23 @@ In cultural heritage contexts involving traditional craft villages (e.g., Phư�
 \subsection{Epistemic Honesty and Boundary Conditions}
 We explicitly differentiate software-policy verification from longitudinal human classroom trials:
 \begin{itemize}[leftmargin=*]
-    \item \textbf{What is proven:} The algorithm deterministically respects all pedagogical domain invariants across 720 training and 120 independent holdout scenarios without parameter degradation.
+    \item \textbf{What is proven:} The algorithm deterministically respects all pedagogical domain invariants across 720 training and 120 synthetic held-out scenarios without parameter degradation.
     \item \textbf{What is not claimed:} These automated policy tests do not measure empirical retention rates or exam score gains in human students. Those questions are reserved for controlled classroom field trials under guardian informed consent.
+\end{itemize}
+
+\subsection{Threats to Validity}
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Internal validity:} The held-out test set is synthetic and labelled by programmatic annotation templates; label errors propagate directly into the reported assignment rates. Frozen seeds and SHA-256 manifests control reproducibility but not template correctness.
+    \item \textbf{External validity:} Cards are instantiated with Cửu Đỉnh and Huế Citadel heritage content; schedules for other subjects may exercise different modality mixes and source-verification densities.
+    \item \textbf{Construct validity:} The burden weights $w(0)=1.0$ and $w(1)=2.0$ are design choices, not empirically calibrated measurements of learner effort; the 50\% burden reduction is therefore a model-level quantity.
+    \item \textbf{Statistical validity:} The invalid-assignment rate is evaluated on $N_{\text{elig}}=48$ eligible cases, so Wilson intervals are wide; several conditions sit at the boundary 0\% or 100\%. These are software-policy estimates on a \emph{synthetic} held-out test set, not human-adjudicated external validation, and the $t$-tests assume approximate normality of the burden distribution.
 \end{itemize}
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-This paper introduced the Dual-Mode Spaced Learning Policy (LN-03), bridging the gap between spaced repetition algorithms and epistemic domain requirements in heritage education. Through formal proofs of Prerequisite Safety, Cognitive Workload Boundedness, and Asymptotic Stability Convergence, we established the mathematical guarantees of the architecture. On an independent 120-case holdout benchmark, LN-03 completely eliminated invalid generative assignments ($1.0 \to 0.0$, $p < 10^{-14}$) and reduced mean cognitive review burden by 50\% ($1.20 \to 0.60$, $p < 10^{-12}$, Cohen's $d = 0.747$). These findings provide robust foundation for deploying epistemically grounded spaced repetition systems across cultural heritage education.
+This paper introduced the Dual-Mode Spaced Learning Policy (LN-03), bridging the gap between spaced repetition algorithms and epistemic domain requirements in heritage education. Through formal proofs of Prerequisite Safety, Cognitive Workload Boundedness, and Asymptotic Stability Convergence, we established the mathematical guarantees of the architecture. On a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication), LN-03 completely eliminated invalid generative assignments ($1.0 \to 0.0$, $p < 10^{-14}$) and reduced mean cognitive review burden by 50\% ($1.20 \to 0.60$, $p < 10^{-12}$, Cohen's $d = 0.747$). These findings provide robust foundation for deploying epistemically grounded spaced repetition systems across cultural heritage education.
 
 \bibliographystyle{IEEEtran}
 \begin{thebibliography}{10}

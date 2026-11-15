@@ -11,10 +11,10 @@
 
 \title{\textbf{Universal Design for Learning in Immersive Heritage Systems:}\\
 \large Pedagogical Affordance Preservation and Multimodal Equivalence across 3D, 2D Rubbings, and Auditory Media (Study LN-07)}
+% TODO: finalize author list, order, affiliations, and institutional consent.
 \author{
-  \textbf{Lưu Niên Sử Ký Research Consortium}\\
-  \textit{Pedagogical Software Systems and Cultural Epigraphy Laboratory}\\
-  Huế, Vietnam
+  Author Name(s) to be finalized \\
+  \small Affiliation to be confirmed
 }
 \date{November 2026}
 
@@ -24,14 +24,14 @@
 \begin{abstract}
 Immersive 3D web platforms increasingly dominate cultural heritage education, yet severe disparities in client hardware, mobile network bandwidth, and assistive technology readiness frequently disenfranchise learners in resource-constrained environments. Conventional fallback mechanisms in learning management systems typically rely either on naive failure (crashing on WebGL failure) or static image substitutes that strip away essential cognitive affordances (such as relief depth, spatial orientation, and epigraphic detail). 
 
-In this paper, we formalize and empirically evaluate \textbf{Study LN-07}, a Universal Design for Learning (UDL 3.0) policy engine enforcing \textit{functional pedagogical equivalence} across heterogeneous media modalities. Rooted in the 162 relief motifs of the Nine Dynastic Urns (\textit{Cửu Đỉnh}) and monuments of the Imperial Citadel of Huế, the platform models four distinct media representations: interactive 3D WebGL meshes, high-resolution authentic ink rubbings (\textit{bản dập nổi}), synchronized auditory guides, and semantic text transcripts. We evaluate the proposed intervention against two baselines (naive 3D-only B0 and naive static image fallback B1) and three architectural ablations (A1--A3) on an independent 120-case holdout dataset stratified across five hardware and accessibility failure modes ($n = 24$ per stratum). 
+In this paper, we formalize and empirically evaluate \textbf{Study LN-07}, a Universal Design for Learning (UDL 3.0) policy engine enforcing \textit{functional pedagogical equivalence} across heterogeneous media modalities. Rooted in the 162 relief motifs of the Nine Dynastic Urns (\textit{Cửu Đỉnh}) and monuments of the Imperial Citadel of Huế \cite{unesco2024cuudinh}, and in the competencies targeted by the national history curriculum \cite{moet2018gdpt}, the platform models four distinct media representations: interactive 3D WebGL meshes, high-resolution authentic ink rubbings (\textit{bản dập nổi}), synchronized auditory guides, and semantic text transcripts. We evaluate the proposed intervention against two baselines (naive 3D-only B0 and naive static image fallback B1) and three architectural ablations (A1--A3) on a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) stratified across five hardware and accessibility failure modes ($n = 24$ per stratum). 
 
-Empirical evaluation demonstrates that while B0 and B1 achieve only a $20.0\%$ overall task feasibility rate with severe equity disparities (Disparity Ratio $= 0.000$; 144 and 120 missing affordances, respectively), the UDL intervention policy achieves $100.0\%$ task feasibility ($95\%$ Wilson CI: $[96.9\%, 100.0\%]$) with zero missing affordances and complete equity parity (Disparity Ratio $= 1.000$). Paired McNemar tests confirm statistically decisive improvements over existing practices ($\chi^2 = 94.01, p = 2.52 \times 10^{-29}$). All evaluation traces, holdout datasets, and reproducible runner harnesses are cryptographically pinned and publicly archived.
+Empirical evaluation demonstrates that while B0 and B1 achieve only a $20.0\%$ overall task feasibility rate with severe equity disparities (Disparity Ratio $= 0.000$; 144 and 120 missing affordances, respectively), the UDL intervention policy achieves $100.0\%$ task feasibility ($95\%$ Wilson CI: $[96.9\%, 100.0\%]$) with zero missing affordances and complete equity parity (Disparity Ratio $= 1.000$). Paired McNemar tests confirm statistically decisive improvements over existing practices ($\chi^2 = 94.01, p = 2.52 \times 10^{-29}$). All evaluation traces, held-out test sets, and reproducible runner harnesses are cryptographically pinned and publicly archived.
 \end{abstract}
 
 \section{Introduction}
 
-The integration of WebGL-based three-dimensional (3D) representations into learning management systems (LMS) has offered unprecedented opportunities for visual exploration of cultural heritage. When engaging with complex material artifacts---such as the 162 bronze relief motifs of the Nine Dynastic Urns (\textit{Cửu Đỉnh}, cast 1835--1837) and the wooden architecture of the Imperial Citadel of Huế---interactive 3D models allow students to examine spatial proportions, viewing angles, and volumetric depth.
+The integration of WebGL-based three-dimensional (3D) representations into learning management systems (LMS) has offered unprecedented opportunities for visual exploration of cultural heritage, consistent with multimedia-learning evidence that well-designed visual representations support comprehension \cite{mayer2002multimedia}. When engaging with complex material artifacts---such as the 162 bronze relief motifs of the Nine Dynastic Urns (\textit{Cửu Đỉnh}, cast 1835--1837) and the wooden architecture of the Imperial Citadel of Huế---interactive 3D models allow students to examine spatial proportions, viewing angles, and volumetric depth.
 
 However, in mainstream educational deployments across Vietnam, significant digital divides persist. In remote provincial classrooms and rural mobile environments, learners access educational portals via constrained 2G/3G connections ($< 500\text{ kbps}$), legacy mobile devices incapable of compiling heavy WebGL shader pipelines, or assistive technologies such as screen readers for learners with visual impairments. 
 
@@ -43,17 +43,29 @@ Existing engineering practices suffer from two catastrophic failure modes:
 
 To address these challenges, we formalize the principles of Universal Design for Learning (UDL 3.0) into an executable software policy engine. Rather than treating media modalities as cosmetic alternatives, our framework guarantees that any fallback representation preserves the required cognitive affordances, satisfies WCAG 2.2 accessibility standards, and respects hardware and network budgets without compromising academic standards.
 
+\section{Research Questions}
+
+\begin{enumerate}[label=\textbf{RQ\arabic*}, leftmargin=2.4em]
+    \item \textbf{RQ1 (Equivalence Formalization):} Can ``functional pedagogical equivalence'' across 3D, 2D rubbing, audio, and text be formalized as an affordance-subset constraint that is machine-checkable under device constraints?
+    \item \textbf{RQ2 (Feasibility and Equity):} On a synthetic held-out test set with programmatic annotation templates (no human adjudication), does the UDL policy (I1) raise task feasibility and close the disparity ratio relative to 3D-only (B0) and static-image (B1) fallbacks?
+    \item \textbf{RQ3 (Affordance Necessity):} Does ablating explicit affordance checking (A2) or accessibility checking (A3) reintroduce stratified feasibility failures that the full policy prevents?
+\end{enumerate}
+
+\subsection{Research Gap and Novelty}
+
+UDL has an extensive normative literature \cite{rose2002teaching, cast2018udl}, and WCAG 2.2 defines testable accessibility criteria \cite{w3c2023wcag}. Multimedia-learning research establishes modality effects on comprehension \cite{mayer2002multimedia} and cognitive-load theory explains why some substitutions overload or underspecify the task \cite{sweller1998cognitive}. However, fallback selection in practice is usually an engineering afterthought that checks asset availability rather than affordance preservation. This study's novelty is to treat multimodal fallback as a constrained optimization over required affordances, grounded in the documented heritage of the Cửu Đỉnh \cite{unesco2024cuudinh} and curriculum competencies \cite{moet2018gdpt}, and to evaluate it on a reproducible synthetic held-out test set.
+
 \section{Theoretical Foundations and Pedagogical Invariants}
 
 \subsection{Universal Design for Learning (UDL 3.0)}
-Universal Design for Learning provides a framework to optimize teaching and learning based on scientific insights into how humans learn. UDL is organized into three foundational principles:
+Universal Design for Learning provides a framework to optimize teaching and learning based on scientific insights into how humans learn \cite{rose2002teaching, cast2018udl}. UDL is organized into three foundational principles:
 \begin{itemize}
     \item \textbf{Multiple Means of Representation:} Presenting information and content in different formats (perception, language, mathematical symbols, comprehension).
     \item \textbf{Multiple Means of Action and Expression:} Offering learners diverse ways to navigate learning environments and express knowledge (physical action, expressive skills, executive functioning).
     \item \textbf{Multiple Means of Engagement:} Tapping into learners' interests, offering appropriate challenges, and increasing motivation.
 \end{itemize}
 
-In cultural heritage education, multimodality is not merely an accessibility patch; it is an epistemological asset. For instance, traditional Vietnamese bronze casting and architectural epigraphy rely extensively on paper rubbings (\textit{bản dập}), where moistened paper and ink pads lift raised surface reliefs into high-contrast two-dimensional graphics. A high-resolution rubbing captures fine textural and stroke details that may be obscured by lighting glare in a 3D polygonal model, while consuming less than $6\%$ of the network bandwidth.
+In cultural heritage education, multimodality is not merely an accessibility patch; it is an epistemological asset. For instance, traditional Vietnamese bronze casting and architectural epigraphy rely extensively on paper rubbings (\textit{bản dập}), where moistened paper and ink pads lift raised surface reliefs into high-contrast two-dimensional graphics. A high-resolution rubbing captures fine textural and stroke details that may be obscured by lighting glare in a 3D polygonal model, while consuming less than $6\%$ of the network bandwidth. This reflects cognitive-load considerations: modality substitution is only defensible when it preserves the affordances the task demands \cite{sweller1998cognitive}.
 
 \subsection{Formal Pedagogical Invariants}
 The software policy engine enforces five strict pedagogical domain invariants:
@@ -89,10 +101,10 @@ The policy selects the optimal modality $m^*$ that satisfies:
 \end{equation}
 If $A_{\text{req}} \not\subseteq A_{m^*}$, the policy flags a fallback failure and registers a missing affordance count $\Delta A = |A_{\text{req}} \setminus A_{m^*}|$.
 
-\section{Experimental Benchmark on Independent Holdout}
+\section{Experimental Benchmark on Synthetic Held-Out Test Set}
 
-\subsection{Independent Holdout Dataset Construction}
-To prevent benchmark overfitting and establish external software validity, we generated an independent 120-case holdout dataset (\texttt{research/fixtures/holdout/LN-07\_holdout.jsonl}). The dataset is partitioned into five balanced strata of $n = 24$ cases each:
+\subsection{Held-Out Test Set Construction}
+To prevent benchmark overfitting we generated a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) (\texttt{research/fixtures/holdout/LN-07\_holdout.jsonl}). The dataset is partitioned into five balanced strata of $n = 24$ cases each:
 \begin{enumerate}
     \item \textbf{Nominal 3D Available ($n=24$):} High-speed broadband ($>3000\text{ kbps}$), WebGL enabled, standard pointer navigation.
     \item \textbf{WebGL Context Loss ($n=24$):} Device GPU crashes or hardware virtualization fails ($\text{WebGL} = \text{False}$).
@@ -116,7 +128,7 @@ We evaluate six experimental conditions:
 \section{Empirical Results and Comparative Evaluation}
 
 \subsection{Overall Benchmark Results}
-The overall evaluation across all 120 independent holdout scenarios is summarized in Table~\ref{tab:ln07-holdout-evaluation}.
+The overall evaluation across all 120 synthetic held-out scenarios is summarized in Table~\ref{tab:ln07-holdout-evaluation}.
 
 \input{results/LN-07_holdout_results.tex}
 
@@ -146,7 +158,7 @@ Under Intervention I1, the Disparity Ratio is exactly \textbf{1.000}, reflecting
 
 \section{Accessibility Compliance (WCAG 2.2 Level AA)}
 
-The intervention was rigorously audited against the W3C Web Content Accessibility Guidelines (WCAG 2.2 Level AA):
+The intervention was checked against the W3C Web Content Accessibility Guidelines (WCAG 2.2 Level AA) \cite{w3c2023wcag}:
 \begin{itemize}
     \item \textbf{Guideline 1.1.1 (Non-text Content):} All 2D rubbings and 3D scenes provide text equivalents and ARIA descriptors detailing the physical, historical, and symbolic attributes of the relic.
     \item \textbf{Guideline 1.2.1 (Audio-only Prerecorded):} Every auditory guide is backed by a deterministic, timestamped verbatim text transcript, ensuring deaf and hard-of-hearing learners retain full cognitive access.
@@ -159,6 +171,15 @@ The intervention was rigorously audited against the W3C Web Content Accessibilit
 \subsection{Software Policy Conformance vs. Human Learning}
 In alignment with strict epistemic honesty guidelines, we emphasize that these empirical benchmarks evaluate \textit{automated software policy behavior} on deterministically constructed historical scenarios. They prove that the platform mathematically guarantees pedagogical affordance preservation and eliminates systemic accessibility failures in software execution. They do not constitute longitudinal, controlled psychological studies of student cognitive retention in physical classrooms.
 
+\subsection{Threats to Validity}
+
+\begin{itemize}
+    \item \textbf{Internal validity:} Affordance labels and oracle feasibility decisions come from programmatic annotation templates, not human accessibility auditors; template omissions would systematically understate missing affordances.
+    \item \textbf{External validity:} Device profiles (WebGL loss, 80--100 kbps links, screen readers) are simulated rather than measured on real student hardware, and the corpus is limited to Huế heritage content.
+    \item \textbf{Construct validity:} The affordance set $A_{\text{req}}$ is a design encoding of what a task requires; reasonable experts could disagree on the required set, and our encoding is not validated against human raters.
+    \item \textbf{Statistical validity:} With $N=120$ and $n=24$ per stratum, Wilson intervals are wide and several rates are at the 0\%/100\% boundary. All findings are internal software-conformance estimates on a \emph{synthetic} held-out test set and are not human-adjudicated external validation.
+\end{itemize}
+
 \subsection{Preserving Cultural Dignity Through Low-Bandwidth Kits}
 A crucial insight from Study LN-07 is that traditional craft techniques (such as ink rubbings) are not obsolete artifacts, but technologically sophisticated information-compression formats. By elevating the 2D rubbing to a first-class pedagogical equivalent of a 3D model, the platform honors the material history of Vietnamese artisans while ensuring that students in under-resourced schools receive an authentic, dignified, and rigorous cultural education.
 
@@ -166,7 +187,7 @@ A crucial insight from Study LN-07 is that traditional craft techniques (such as
 
 Study LN-07 demonstrates that Universal Design for Learning principles can be rigorously formalized into executable software invariants. By replacing naive URL presence checks and static image fallbacks with an affordance-preserving multimodal engine, learning platforms can eliminate the digital divide in cultural heritage education.
 
-All artifacts, including the 120-case independent holdout dataset (\texttt{research/fixtures/holdout/LN-07\_holdout.jsonl}), evaluation runner (\texttt{research/tools/evaluate\_ln07\_holdout.py}), and metric outputs (\texttt{research\_artifacts/LN-07/holdout\_evaluation/}), are pinned to Git commit \texttt{9bd4bd98f0b8} and archived for full reproducibility.
+All artifacts, including the 120-case synthetic held-out test set (\texttt{research/fixtures/holdout/LN-07\_holdout.jsonl}), evaluation runner (\texttt{research/tools/evaluate\_ln07\_holdout.py}), and metric outputs (\texttt{research\_artifacts/LN-07/holdout\_evaluation/}), are pinned to Git commit \texttt{9bd4bd98f0b8} and archived for full reproducibility.
 
 \begin{thebibliography}{99}
 \bibitem{rose2002teaching}

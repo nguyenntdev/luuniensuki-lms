@@ -1,0 +1,56 @@
+{
+  "hash_standard": "sha256(sort_keys,compact,utf8)",
+  "total_cases": 1200,
+  "files": {
+    "LN-01_holdout.jsonl": {
+      "sha256": "5f366c60b0134cd82099786faa19d3bcf78d572e9b7e28903f3ba5fa913e6d9f",
+      "cases": 120,
+      "all_input_hashes_valid": true
+    },
+    "LN-02_holdout.jsonl": {
+      "sha256": "656f98c1c809bdd7abc3b99710bbeb7d38957e247f0fa27dcc9528296a0222b7",
+      "cases": 120,
+      "all_input_hashes_valid": true
+    },
+    "LN-03_holdout.jsonl": {
+      "sha256": "80e91df893901987e4b56facd72a1e168950ee83fcd9482d4bb63b74ffd2c36e",
+      "cases": 120,
+      "all_input_hashes_valid": true
+    },
+    "LN-04_holdout.jsonl": {
+      "sha256": "3579d049071e0843777f360e3011b469e6281e0618d1961854b842b6e4547aab",
+      "cases": 120,
+      "all_input_hashes_valid": true
+    },
+    "LN-05_holdout.jsonl": {
+      "sha256": "908c4e2fa444556891918c25dedce459e727297dbed3e803cbcf926a2c5bf729",
+      "cases": 120,
+      "all_input_hashes_valid": true
+    },
+    "LN-06_holdout.jsonl": {
+      "sha256": "046d07980a41a358ada650441c79b19208ebd674e7500ed82dd299a8bc068d10",
+      "cases": 120,
+      "all_input_hashes_valid": true
+    },
+    "LN-07_holdout.jsonl": {
+      "sha256": "b11c0501884be2beaa81bcb9bca1644bee502cbad92ccfbeb0d828d6aa088e08",
+      "cases": 120,
+      "all_input_hashes_valid": true
+    },
+    "LN-08_holdout.jsonl": {
+      "sha256": "f6caa44644e90bfdba1d9e9567eabde4cc5d6899c4efc2e97989f82e7c937a09",
+      "cases": 120,
+      "all_input_hashes_valid": true
+    },
+    "LN-09_holdout.jsonl": {
+      "sha256": "00f268e9f1f5f5a87c073d038bef324e96f75bf42c3b1e5e58e0bb894147fe6c",
+      "cases": 120,
+      "all_input_hashes_valid": true
+    },
+    "LN-10_holdout.jsonl": {
+      "sha256": "f9d8e07f5253942092c57b0887d3995646374851c4bf6b9966f2b38ccf74e2bf",
+      "cases": 120,
+      "all_input_hashes_valid": true
+    }
+  }
+}

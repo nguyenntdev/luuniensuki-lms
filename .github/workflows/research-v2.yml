@@ -1,0 +1,51 @@
+name: Research V2
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'research_v2/**'
+      - 'tests/research_v2/**'
+      - 'research/fixtures/holdout/**'
+      - '.github/workflows/research-v2.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'research_v2/**'
+      - 'tests/research_v2/**'
+      - 'research/fixtures/holdout/**'
+      - '.github/workflows/research-v2.yml'
+
+jobs:
+  research-v2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt numpy scipy pyyaml
+      - name: Compile research_v2
+        run: python -m compileall -q research_v2
+      - name: Research V2 contract + auditing tests
+        run: pytest -q tests/research_v2
+      - name: Inspect repository (strict)
+        run: python -m research_v2.scripts.inspect_repo --strict
+      - name: Verify integrity (legacy + v2, strict)
+        run: python -m research_v2.scripts.verify_integrity --legacy-and-v2 --strict
+      - name: Materialize V2 datasets
+        run: python -m research_v2.scripts.materialize_datasets --all
+      - name: Run matrix dry-run (LN-06)
+        run: python -m research_v2.scripts.run_matrix --study LN-06 --tier T3 --seed 11 --dry-run
+      - name: Run full matrix (strict)
+        run: python -m research_v2.scripts.run_matrix --all --tier T1,T2,T3 --strict
+      - name: Aggregate (preregistered only)
+        run: python -m research_v2.scripts.aggregate --all --preregistered-only
+      - name: Freeze release (clean-tree assertion)
+        run: python -m research_v2.scripts.freeze_release --all --assert-clean

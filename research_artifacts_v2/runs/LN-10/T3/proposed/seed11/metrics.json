@@ -1,0 +1,1022 @@
+{
+  "n_total": 120,
+  "n_correct": 120,
+  "n_errors": 0,
+  "accuracy": 1.0,
+  "error_rate": 0.0,
+  "accuracy_wilson_ci_95": [
+    0.9689808335812966,
+    1.0
+  ],
+  "accuracy_clopper_pearson_ci_95": [
+    0.9697270274225799,
+    1.0
+  ],
+  "error_rate_wilson_ci_95": [
+    0.0,
+    0.031019166418703486
+  ],
+  "error_rate_clopper_pearson_ci_95": [
+    0.0,
+    0.03027297257742007
+  ],
+  "per_class": {
+    "allow_authorized_transition": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "deny_transition": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "reject_premature_submit": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "request_reflection": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "resolve_revision_conflict": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    }
+  },
+  "confusion": {
+    "allow_authorized_transition->allow_authorized_transition": 24,
+    "deny_transition->deny_transition": 24,
+    "reject_premature_submit->reject_premature_submit": 24,
+    "request_reflection->request_reflection": 24,
+    "resolve_revision_conflict->resolve_revision_conflict": 24
+  },
+  "predictions_sha256": "aca6b1cc12ea98ef5d7e23573f468310dbdcb0785ee5f436522b9e93a42a6fe9",
+  "gold_sha256": "d294f69c9464b5685e9c16e4ede92fe0ac04cd084402048f294ba0f36a5801e3",
+  "label_map": {},
+  "cases": [
+    {
+      "case_id": "LN-10-HOLD-00001",
+      "group_id": "LN-10-grp-001",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00002",
+      "group_id": "LN-10-grp-002",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00003",
+      "group_id": "LN-10-grp-003",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00004",
+      "group_id": "LN-10-grp-004",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00005",
+      "group_id": "LN-10-grp-005",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00006",
+      "group_id": "LN-10-grp-006",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00007",
+      "group_id": "LN-10-grp-007",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00008",
+      "group_id": "LN-10-grp-008",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00009",
+      "group_id": "LN-10-grp-009",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00010",
+      "group_id": "LN-10-grp-010",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00011",
+      "group_id": "LN-10-grp-011",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00012",
+      "group_id": "LN-10-grp-012",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00013",
+      "group_id": "LN-10-grp-013",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00014",
+      "group_id": "LN-10-grp-014",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00015",
+      "group_id": "LN-10-grp-015",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00016",
+      "group_id": "LN-10-grp-016",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00017",
+      "group_id": "LN-10-grp-017",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00018",
+      "group_id": "LN-10-grp-018",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00019",
+      "group_id": "LN-10-grp-019",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00020",
+      "group_id": "LN-10-grp-020",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00021",
+      "group_id": "LN-10-grp-021",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00022",
+      "group_id": "LN-10-grp-022",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00023",
+      "group_id": "LN-10-grp-023",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00024",
+      "group_id": "LN-10-grp-024",
+      "gold": "allow_authorized_transition",
+      "pred": "allow_authorized_transition",
+      "pred_mapped": "allow_authorized_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00025",
+      "group_id": "LN-10-grp-025",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00026",
+      "group_id": "LN-10-grp-026",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00027",
+      "group_id": "LN-10-grp-027",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00028",
+      "group_id": "LN-10-grp-028",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00029",
+      "group_id": "LN-10-grp-029",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00030",
+      "group_id": "LN-10-grp-030",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00031",
+      "group_id": "LN-10-grp-031",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00032",
+      "group_id": "LN-10-grp-032",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00033",
+      "group_id": "LN-10-grp-033",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00034",
+      "group_id": "LN-10-grp-034",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00035",
+      "group_id": "LN-10-grp-035",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00036",
+      "group_id": "LN-10-grp-036",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00037",
+      "group_id": "LN-10-grp-037",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00038",
+      "group_id": "LN-10-grp-038",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00039",
+      "group_id": "LN-10-grp-039",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00040",
+      "group_id": "LN-10-grp-040",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00041",
+      "group_id": "LN-10-grp-041",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00042",
+      "group_id": "LN-10-grp-042",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00043",
+      "group_id": "LN-10-grp-043",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00044",
+      "group_id": "LN-10-grp-044",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00045",
+      "group_id": "LN-10-grp-045",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00046",
+      "group_id": "LN-10-grp-046",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00047",
+      "group_id": "LN-10-grp-047",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00048",
+      "group_id": "LN-10-grp-048",
+      "gold": "request_reflection",
+      "pred": "request_reflection",
+      "pred_mapped": "request_reflection",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00049",
+      "group_id": "LN-10-grp-049",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00050",
+      "group_id": "LN-10-grp-050",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00051",
+      "group_id": "LN-10-grp-051",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00052",
+      "group_id": "LN-10-grp-052",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00053",
+      "group_id": "LN-10-grp-053",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00054",
+      "group_id": "LN-10-grp-054",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00055",
+      "group_id": "LN-10-grp-055",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00056",
+      "group_id": "LN-10-grp-056",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00057",
+      "group_id": "LN-10-grp-057",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00058",
+      "group_id": "LN-10-grp-058",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00059",
+      "group_id": "LN-10-grp-059",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00060",
+      "group_id": "LN-10-grp-060",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00061",
+      "group_id": "LN-10-grp-061",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00062",
+      "group_id": "LN-10-grp-062",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00063",
+      "group_id": "LN-10-grp-063",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00064",
+      "group_id": "LN-10-grp-064",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00065",
+      "group_id": "LN-10-grp-065",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00066",
+      "group_id": "LN-10-grp-066",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00067",
+      "group_id": "LN-10-grp-067",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00068",
+      "group_id": "LN-10-grp-068",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00069",
+      "group_id": "LN-10-grp-069",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00070",
+      "group_id": "LN-10-grp-070",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00071",
+      "group_id": "LN-10-grp-071",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00072",
+      "group_id": "LN-10-grp-072",
+      "gold": "deny_transition",
+      "pred": "deny_transition",
+      "pred_mapped": "deny_transition",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00073",
+      "group_id": "LN-10-grp-073",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00074",
+      "group_id": "LN-10-grp-074",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00075",
+      "group_id": "LN-10-grp-075",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00076",
+      "group_id": "LN-10-grp-076",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00077",
+      "group_id": "LN-10-grp-077",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00078",
+      "group_id": "LN-10-grp-078",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00079",
+      "group_id": "LN-10-grp-079",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00080",
+      "group_id": "LN-10-grp-080",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00081",
+      "group_id": "LN-10-grp-081",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00082",
+      "group_id": "LN-10-grp-082",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00083",
+      "group_id": "LN-10-grp-083",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00084",
+      "group_id": "LN-10-grp-084",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00085",
+      "group_id": "LN-10-grp-085",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00086",
+      "group_id": "LN-10-grp-086",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00087",
+      "group_id": "LN-10-grp-087",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00088",
+      "group_id": "LN-10-grp-088",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00089",
+      "group_id": "LN-10-grp-089",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00090",
+      "group_id": "LN-10-grp-090",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00091",
+      "group_id": "LN-10-grp-091",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00092",
+      "group_id": "LN-10-grp-092",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00093",
+      "group_id": "LN-10-grp-093",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00094",
+      "group_id": "LN-10-grp-094",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00095",
+      "group_id": "LN-10-grp-095",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00096",
+      "group_id": "LN-10-grp-096",
+      "gold": "resolve_revision_conflict",
+      "pred": "resolve_revision_conflict",
+      "pred_mapped": "resolve_revision_conflict",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00097",
+      "group_id": "LN-10-grp-097",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00098",
+      "group_id": "LN-10-grp-098",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00099",
+      "group_id": "LN-10-grp-099",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00100",
+      "group_id": "LN-10-grp-100",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00101",
+      "group_id": "LN-10-grp-101",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00102",
+      "group_id": "LN-10-grp-102",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00103",
+      "group_id": "LN-10-grp-103",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00104",
+      "group_id": "LN-10-grp-104",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00105",
+      "group_id": "LN-10-grp-105",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00106",
+      "group_id": "LN-10-grp-106",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00107",
+      "group_id": "LN-10-grp-107",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00108",
+      "group_id": "LN-10-grp-108",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00109",
+      "group_id": "LN-10-grp-109",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00110",
+      "group_id": "LN-10-grp-110",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00111",
+      "group_id": "LN-10-grp-111",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00112",
+      "group_id": "LN-10-grp-112",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00113",
+      "group_id": "LN-10-grp-113",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00114",
+      "group_id": "LN-10-grp-114",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00115",
+      "group_id": "LN-10-grp-115",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00116",
+      "group_id": "LN-10-grp-116",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00117",
+      "group_id": "LN-10-grp-117",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00118",
+      "group_id": "LN-10-grp-118",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00119",
+      "group_id": "LN-10-grp-119",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    },
+    {
+      "case_id": "LN-10-HOLD-00120",
+      "group_id": "LN-10-grp-120",
+      "gold": "reject_premature_submit",
+      "pred": "reject_premature_submit",
+      "pred_mapped": "reject_premature_submit",
+      "correct": true
+    }
+  ]
+}

@@ -8,6 +8,9 @@ Pedagogical Invariants:
 - INV-LN-05-03: Mastery badge requires genuine competency evidence (score >= threshold on verified task).
 - INV-LN-05-04: Outdated event policy versions require revalidation.
 - INV-LN-05-05: Separation of XP/streaks from competency mastery.
+
+NOTE: All annotation records in this generator are deterministic programmatic
+templates. They are NOT real expert adjudication, human review, or consensus.
 """
 
 import json
@@ -245,15 +248,16 @@ def generate_holdout_cases() -> List[Dict[str, Any]]:
                 "skill_evidence": skill_evidence,
             }
 
-            input_bytes = json.dumps(scenario_input, sort_keys=True).encode("utf-8")
+            input_bytes = json.dumps(scenario_input, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
             input_hash = hashlib.sha256(input_bytes).hexdigest()
 
             record = {
                 "case_id": case_id,
-                "cohort": "INDEPENDENT_HOLDOUT",
+                "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
                 "fault_id": fault_id,
                 "input": scenario_input,
                 "input_hash": input_hash,
+                "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
                 "materializer_version": "2.0-holdout",
                 "oracle": {
                     "basis": "DESIGN_SPEC_EMPIRICAL_HOLDOUT",
@@ -307,7 +311,7 @@ def main():
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as f:
         for c in cases:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+            f.write(json.dumps(c, ensure_ascii=False, separators=(",", ":")) + "\n")
     print(f"Generated {len(cases)} holdout cases to {out_path}")
 
     # Verify intervention matches oracle 100%

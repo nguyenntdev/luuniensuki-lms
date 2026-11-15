@@ -1,0 +1,23 @@
+# LN-02 split policy: grouped holdout on learner profile groups.
+study_id: LN-02
+split_policy: grouped_holdout
+splits:
+  - split_id: test
+    description: >-
+      Sealed evaluation split. Every case in t3_inputs.jsonl belongs to this
+      split; group_id identifies the synthetic learner profile cohort so
+      that paired comparisons stay within group.
+    group_key: group_id
+    dataset: research_v2/data/ln02/t3_inputs.jsonl
+    gold: research_v2/data/ln02/t3_gold.jsonl
+    n_cases: 120
+    n_groups: 120
+    gold_sealed: true
+    gold_oracle_basis: SYNTHETIC_PREREGISTERED_RULE_ORACLE
+    gold_provenance: PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION
+leakage_controls:
+  - gold labels are read only by research_v2.evaluation after predictions are persisted
+  - forbidden keys (oracle, expected_decision, gold, fault_id, cohort, ...) are stripped
+    from model inputs by research_v2.contracts.input_masking.mask_case_input
+  - case_id / fault_id never route any decision branch in any LN-02 method
+  - dev/test information boundary respected; thresholds preregistered as constants

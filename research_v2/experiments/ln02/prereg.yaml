@@ -1,0 +1,89 @@
+# LN-02 preregistration: Non-Compensatory Prerequisite-Aware Adaptive Learning.
+# Frozen before any evaluation run against the sealed gold labels.
+study_id: LN-02
+title: >-
+  Non-compensatory prerequisite-aware adaptive learning: multi-dimensional
+  mastery gating with calibrated abstention vs scalar classical baselines
+research_problem: >-
+  Predict eligible next learning activities under partial/missing mastery of
+  four interpretable history competencies (S1 spatial, S2 temporal,
+  S3 evidence, S4 argumentation) with hard prerequisite constraints.
+hypotheses:
+  H1_primary: >-
+    The proposed non-compensatory multi-dimensional gate achieves higher
+    decision accuracy than the strongest classical scalar baseline (C1) on
+    the T3 stress suite, driven by prerequisite safety and calibrated
+    abstention.
+  H2_mechanism: >-
+    Each mechanism-isolating ablation (a1 no prerequisites, a2 no abstention,
+    a3 single latent skill) strictly degrades accuracy relative to the
+    proposed policy on the stress cases targeted by the removed mechanism.
+  H3_mandatory_case: >-
+    On learners with a high aggregate observed score but at least one
+    necessary skill below its prerequisite threshold, the proposed policy
+    must remediate, never recommend (non-compensatory conjunction).
+primary_endpoint:
+  name: decision_accuracy
+  definition: >-
+    Exact-match accuracy of the 5-label decision (recommend_eligible,
+    remediate_first, abstain_insufficient_data, reject_cycle,
+    reject_invalid_score) against the sealed synthetic preregistered rule
+    oracle.
+  higher_is_better: true
+secondary_endpoints:
+  - name: prerequisite_safety
+    definition: >-
+      Zero false-eligible decisions among prerequisite-violating gold cases
+      (remediate_first / reject_cycle gold labels).
+    higher_is_better: true
+  - name: abstention_coverage
+    definition: >-
+      Fraction of unobserved-required-dimension gold cases answered with the
+      calibrated abstain label.
+    higher_is_better: true
+  - name: conditional_recommendation_utility
+    definition: >-
+      Among non-refused decisions, the fraction of eligible recommendations
+      that match the gold eligible label.
+    higher_is_better: true
+comparators:
+  - id: baselines_b0
+    role: SANITY_ONLY
+    provenance: ORIGINAL_CODE_VERIFIED
+    note: naive aggregate-score threshold; negative control
+  - id: baselines_c1
+    role: MATCHED_CLASSICAL
+    provenance: REIMPLEMENTATION
+    note: Rasch 1-PL scalar ability with a separate target-competency gate
+  - id: ablations_a1
+    role: ABLATION
+    provenance: ORIGINAL_CODE_VERIFIED
+    note: removes the non-compensatory prerequisite gate
+  - id: ablations_a2
+    role: ABLATION
+    provenance: ORIGINAL_CODE_VERIFIED
+    note: disables calibrated abstention (imputes unobserved as 0)
+  - id: ablations_a3
+    role: ABLATION
+    provenance: ORIGINAL_CODE_VERIFIED
+    note: collapses mastery to one scalar latent skill
+thresholds:
+  aggregate_score_threshold_b0: 0.5
+  mastery_uncertainty_eps_proposed: 0.0
+calibration_policy:
+  dev_groups_used: []  # thresholds are preregistered constants, dev-frozen
+  notes: >-
+    All thresholds fixed a priori from the domain rubric; no test-case
+    information is used for calibration.
+seeds: [11, 23, 37]
+split_policy: grouped_holdout
+analysis_plan:
+  paired: true
+  unit_of_analysis: case
+  grouping_unit: learner_profile_id_x_item_source_family_x_timestamp_cohort
+  metrics_module: research_v2.evaluation.metrics.compute_metrics
+  study_diagnostics: research_v2.methods.ln02.metrics.summarize
+  retain_all_failures: true
+claim_boundary: >-
+  Recommendation policy quality on synthetic preregistered stress scenarios
+  only; no claim about real learner improvement without longitudinal data.

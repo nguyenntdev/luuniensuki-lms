@@ -1,0 +1,96 @@
+# LN-10 — Process-Verifiable Self-Regulated Learning with Reflection Gates
+# Pre-registration: locked before any T3 holdout evaluation.
+study_id: LN-10
+title: "Process-Verifiable Self-Regulated Learning with Reflection Gates"
+tier: T3
+oracle_basis: ZIMMERMAN_SRL_CYCLICAL_INVARIANT
+claim_boundary: >
+  Workflow integrity and reflection opportunity only; increased metacognition
+  or SRL competence requires validated psychometric measures and is not
+  claimed by this study.
+
+primary_endpoint:
+  name: valid_state_transition_acceptance_at_bounded_invalid_risk
+  unit: paired_case_decision
+  decision_rule: >
+    Paired exact-match decision accuracy against the
+    ZIMMERMAN_SRL_CYCLICAL_INVARIANT oracle, with false-acceptance rate
+    (bounded invalid-transition risk) and false-rejection rate (learner
+    burden) as the two sensitive error axes. Zero false acceptance achieved
+    by blanket rejection never wins: the false-rejection axis is reported
+    alongside and a method is only credited when both are controlled.
+
+primary_contrast:
+  intervention: proposed
+  comparator: baselines_c1
+  test: mcnemar_exact
+  alpha: 0.05
+  correction: holm
+
+secondary_metrics:
+  - false_acceptance_rate
+  - false_rejection_rate
+  - conflict_detection_rate
+  - reflection_gate_enforcement_rate
+  - wall_ms_per_case
+
+ablation_hypotheses:
+  ablations_a1: >
+    Removing the reflection gate increases false acceptance of premature
+    submits and unjustified revisions (gold reject_premature_submit /
+    request_reflection predicted allow_authorized_transition).
+  ablations_a2: >
+    Removing the concurrency/conflict control makes the mandatory
+    two-conflicting-offline-edits case silently applied (gold
+    resolve_revision_conflict predicted allow_authorized_transition).
+  ablations_a3: >
+    Removing the ownership check lets unauthorized actors move projects
+    (gold deny_transition predicted allow_authorized_transition).
+
+mandatory_counterexamples:
+  - id: two_conflicting_offline_edits_same_version
+    description: >
+      Two offline edits target the same project version with divergent
+      payloads (different new_goal/action/rationale). The decision must be
+      resolve_revision_conflict: detect the conflict and reject/postpone
+      into a visible conflict-resolution state; silently applying either
+      edit is the regression under test (INV-LN-10-04).
+  - id: completion_without_reflection
+    description: >
+      Project completion (submit) with reflection_completed=false; decision
+      must be reject_premature_submit (INV-LN-10-03: checklist progress is
+      not self-regulated learning).
+  - id: legitimate_stage_repeat_same_owner
+    description: >
+      The same owner legitimately re-observes the same stage; the decision
+      must be allow_authorized_transition (false-rejection protection: a
+      dummy refusal cannot win).
+  - id: empty_reflection_text_with_flags
+    description: >
+      Reflection claimed complete but the rationale/reflection text is empty;
+      flag claims alone never satisfy the gate.
+
+estimation_unit: one case
+grouping_unit: project + student/owner + assignment template + event trace family
+denominator_rule: >
+  All 120 T3 holdout cases per method/seed; no exclusion. Postpone is a
+  distinct native family and is scored as-is; every decision is scored.
+
+tuning_budget:
+  dev_split_only: true
+  grid: none (deterministic policy; no hyperparameter search)
+  seeds: [11, 23, 37]
+
+comparator_provenance:
+  baselines_b0: REIMPLEMENTATION
+  baselines_c1: REIMPLEMENTATION
+  legacy_adapter: ORIGINAL_CODE_VERIFIED
+
+integrity:
+  inference_inputs_contain_gold_material: false
+  synthetic_annotation_is_human: false
+  no_t3_synthetic_as_school_learning: true
+  exact_solver_claim: >
+    The decision procedure is a deterministic finite-state gate chain
+    (polynomial, O(n) in edits/log length); no NP-hard subproblem is claimed
+    and no solver is used.

@@ -1,0 +1,1022 @@
+{
+  "n_total": 120,
+  "n_correct": 72,
+  "n_errors": 48,
+  "accuracy": 0.6,
+  "error_rate": 0.4,
+  "accuracy_wilson_ci_95": [
+    0.5105602479246307,
+    0.6832359187916286
+  ],
+  "accuracy_clopper_pearson_ci_95": [
+    0.5066106947209386,
+    0.688332206288702
+  ],
+  "error_rate_wilson_ci_95": [
+    0.31676408120837146,
+    0.4894397520753693
+  ],
+  "error_rate_clopper_pearson_ci_95": [
+    0.3116677937112981,
+    0.49338930527906144
+  ],
+  "per_class": {
+    "cost_exceeded": {
+      "n": 24,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "find_valid_route": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "no_feasible_route": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "reject_checkpoint_source": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "reject_cycle": {
+      "n": 24,
+      "correct": 0,
+      "accuracy": 0.0
+    }
+  },
+  "confusion": {
+    "cost_exceeded->find_valid_route": 24,
+    "find_valid_route->find_valid_route": 24,
+    "no_feasible_route->no_feasible_route": 24,
+    "reject_checkpoint_source->reject_checkpoint_source": 24,
+    "reject_cycle->find_valid_route": 24
+  },
+  "predictions_sha256": "4480e4a3ac3589aa59228e4d03047fe8c25ee493d680673e02fd52d41504b05d",
+  "gold_sha256": "8a37802ac3eb162eddc119852046d008af81ed33b359e2198d21425d5c1c2deb",
+  "label_map": {},
+  "cases": [
+    {
+      "case_id": "LN-06-HOLD-00001",
+      "group_id": "LN-06-grp-001",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00002",
+      "group_id": "LN-06-grp-002",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00003",
+      "group_id": "LN-06-grp-003",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00004",
+      "group_id": "LN-06-grp-004",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00005",
+      "group_id": "LN-06-grp-005",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00006",
+      "group_id": "LN-06-grp-006",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00007",
+      "group_id": "LN-06-grp-007",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00008",
+      "group_id": "LN-06-grp-008",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00009",
+      "group_id": "LN-06-grp-009",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00010",
+      "group_id": "LN-06-grp-010",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00011",
+      "group_id": "LN-06-grp-011",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00012",
+      "group_id": "LN-06-grp-012",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00013",
+      "group_id": "LN-06-grp-013",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00014",
+      "group_id": "LN-06-grp-014",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00015",
+      "group_id": "LN-06-grp-015",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00016",
+      "group_id": "LN-06-grp-016",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00017",
+      "group_id": "LN-06-grp-017",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00018",
+      "group_id": "LN-06-grp-018",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00019",
+      "group_id": "LN-06-grp-019",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00020",
+      "group_id": "LN-06-grp-020",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00021",
+      "group_id": "LN-06-grp-021",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00022",
+      "group_id": "LN-06-grp-022",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00023",
+      "group_id": "LN-06-grp-023",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00024",
+      "group_id": "LN-06-grp-024",
+      "gold": "find_valid_route",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00025",
+      "group_id": "LN-06-grp-025",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00026",
+      "group_id": "LN-06-grp-026",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00027",
+      "group_id": "LN-06-grp-027",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00028",
+      "group_id": "LN-06-grp-028",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00029",
+      "group_id": "LN-06-grp-029",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00030",
+      "group_id": "LN-06-grp-030",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00031",
+      "group_id": "LN-06-grp-031",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00032",
+      "group_id": "LN-06-grp-032",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00033",
+      "group_id": "LN-06-grp-033",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00034",
+      "group_id": "LN-06-grp-034",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00035",
+      "group_id": "LN-06-grp-035",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00036",
+      "group_id": "LN-06-grp-036",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00037",
+      "group_id": "LN-06-grp-037",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00038",
+      "group_id": "LN-06-grp-038",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00039",
+      "group_id": "LN-06-grp-039",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00040",
+      "group_id": "LN-06-grp-040",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00041",
+      "group_id": "LN-06-grp-041",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00042",
+      "group_id": "LN-06-grp-042",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00043",
+      "group_id": "LN-06-grp-043",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00044",
+      "group_id": "LN-06-grp-044",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00045",
+      "group_id": "LN-06-grp-045",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00046",
+      "group_id": "LN-06-grp-046",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00047",
+      "group_id": "LN-06-grp-047",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00048",
+      "group_id": "LN-06-grp-048",
+      "gold": "no_feasible_route",
+      "pred": "no_feasible_route",
+      "pred_mapped": "no_feasible_route",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00049",
+      "group_id": "LN-06-grp-049",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00050",
+      "group_id": "LN-06-grp-050",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00051",
+      "group_id": "LN-06-grp-051",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00052",
+      "group_id": "LN-06-grp-052",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00053",
+      "group_id": "LN-06-grp-053",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00054",
+      "group_id": "LN-06-grp-054",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00055",
+      "group_id": "LN-06-grp-055",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00056",
+      "group_id": "LN-06-grp-056",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00057",
+      "group_id": "LN-06-grp-057",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00058",
+      "group_id": "LN-06-grp-058",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00059",
+      "group_id": "LN-06-grp-059",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00060",
+      "group_id": "LN-06-grp-060",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00061",
+      "group_id": "LN-06-grp-061",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00062",
+      "group_id": "LN-06-grp-062",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00063",
+      "group_id": "LN-06-grp-063",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00064",
+      "group_id": "LN-06-grp-064",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00065",
+      "group_id": "LN-06-grp-065",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00066",
+      "group_id": "LN-06-grp-066",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00067",
+      "group_id": "LN-06-grp-067",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00068",
+      "group_id": "LN-06-grp-068",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00069",
+      "group_id": "LN-06-grp-069",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00070",
+      "group_id": "LN-06-grp-070",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00071",
+      "group_id": "LN-06-grp-071",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00072",
+      "group_id": "LN-06-grp-072",
+      "gold": "reject_checkpoint_source",
+      "pred": "reject_checkpoint_source",
+      "pred_mapped": "reject_checkpoint_source",
+      "correct": true
+    },
+    {
+      "case_id": "LN-06-HOLD-00073",
+      "group_id": "LN-06-grp-073",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00074",
+      "group_id": "LN-06-grp-074",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00075",
+      "group_id": "LN-06-grp-075",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00076",
+      "group_id": "LN-06-grp-076",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00077",
+      "group_id": "LN-06-grp-077",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00078",
+      "group_id": "LN-06-grp-078",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00079",
+      "group_id": "LN-06-grp-079",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00080",
+      "group_id": "LN-06-grp-080",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00081",
+      "group_id": "LN-06-grp-081",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00082",
+      "group_id": "LN-06-grp-082",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00083",
+      "group_id": "LN-06-grp-083",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00084",
+      "group_id": "LN-06-grp-084",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00085",
+      "group_id": "LN-06-grp-085",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00086",
+      "group_id": "LN-06-grp-086",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00087",
+      "group_id": "LN-06-grp-087",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00088",
+      "group_id": "LN-06-grp-088",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00089",
+      "group_id": "LN-06-grp-089",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00090",
+      "group_id": "LN-06-grp-090",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00091",
+      "group_id": "LN-06-grp-091",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00092",
+      "group_id": "LN-06-grp-092",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00093",
+      "group_id": "LN-06-grp-093",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00094",
+      "group_id": "LN-06-grp-094",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00095",
+      "group_id": "LN-06-grp-095",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00096",
+      "group_id": "LN-06-grp-096",
+      "gold": "reject_cycle",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00097",
+      "group_id": "LN-06-grp-097",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00098",
+      "group_id": "LN-06-grp-098",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00099",
+      "group_id": "LN-06-grp-099",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00100",
+      "group_id": "LN-06-grp-100",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00101",
+      "group_id": "LN-06-grp-101",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00102",
+      "group_id": "LN-06-grp-102",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00103",
+      "group_id": "LN-06-grp-103",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00104",
+      "group_id": "LN-06-grp-104",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00105",
+      "group_id": "LN-06-grp-105",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00106",
+      "group_id": "LN-06-grp-106",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00107",
+      "group_id": "LN-06-grp-107",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00108",
+      "group_id": "LN-06-grp-108",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00109",
+      "group_id": "LN-06-grp-109",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00110",
+      "group_id": "LN-06-grp-110",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00111",
+      "group_id": "LN-06-grp-111",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00112",
+      "group_id": "LN-06-grp-112",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00113",
+      "group_id": "LN-06-grp-113",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00114",
+      "group_id": "LN-06-grp-114",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00115",
+      "group_id": "LN-06-grp-115",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00116",
+      "group_id": "LN-06-grp-116",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00117",
+      "group_id": "LN-06-grp-117",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00118",
+      "group_id": "LN-06-grp-118",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00119",
+      "group_id": "LN-06-grp-119",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    },
+    {
+      "case_id": "LN-06-HOLD-00120",
+      "group_id": "LN-06-grp-120",
+      "gold": "cost_exceeded",
+      "pred": "find_valid_route",
+      "pred_mapped": "find_valid_route",
+      "correct": false
+    }
+  ]
+}

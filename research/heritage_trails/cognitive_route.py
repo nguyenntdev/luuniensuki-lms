@@ -26,6 +26,78 @@ from backend.domain.heritage_checkpoints import (
 POLICY_VERSION = "LN-06-cognitive-trails-v1.0"
 
 
+def _min_cost_stop_subset(
+    stops: Sequence[HeritageStop],
+    allowed_ids: set[str],
+    target_set: set[str],
+) -> Optional[set[str]]:
+    """Return a minimum-cost stop subset covering targets and prerequisite closure.
+
+    Alternative providers of the same outcome are mutually exclusive: the search
+    picks one provider per outcome rather than including every alternative.
+    Returns None when targets (or provided prerequisites) cannot be covered.
+    """
+    by_id = {s.id: s for s in stops}
+    provider_options: dict[str, list[HeritageStop]] = defaultdict(list)
+    for s in stops:
+        if s.id in allowed_ids:
+            for outcome in s.provides:
+                provider_options[outcome].append(s)
+    for outcome in provider_options:
+        provider_options[outcome].sort(key=lambda s: (s.cost, s.id))
+
+    provided_anywhere = {outcome for s in stops for outcome in s.provides}
+    can_prune = all(s.cost >= 0 for s in stops)
+    best: Optional[tuple[int, tuple[str, ...]]] = None
+    visited: set[tuple[frozenset[str], frozenset[str]]] = set()
+
+    def search(
+        selected: frozenset[str],
+        needed: frozenset[str],
+        covered: frozenset[str],
+    ) -> None:
+        nonlocal best
+        state = (selected, needed)
+        if state in visited:
+            return
+        visited.add(state)
+
+        total = sum(by_id[sid].cost for sid in selected)
+        if can_prune and best is not None and total > best[0]:
+            return
+
+        pending = {
+            outcome
+            for outcome in needed
+            if outcome not in covered
+            and (outcome in provided_anywhere or outcome in target_set)
+        }
+        if not pending:
+            candidate = (total, tuple(sorted(selected)))
+            if best is None or candidate < best:
+                best = candidate
+            return
+
+        outcome = min(pending, key=lambda o: (len(provider_options.get(o, ())), o))
+        options = provider_options.get(outcome, [])
+        if not options:
+            return
+
+        for stop in options:
+            if stop.id in selected:
+                continue
+            search(
+                selected | {stop.id},
+                needed | {req for req in stop.requires},
+                covered | set(stop.provides),
+            )
+
+    search(frozenset(), frozenset(target_set), frozenset())
+    if best is None:
+        return None
+    return set(best[1])
+
+
 def evaluate_route_intervention(
     stops: Sequence[HeritageStop],
     available_stops: Sequence[str],
@@ -96,11 +168,11 @@ def evaluate_route_intervention(
                 policy_version=POLICY_VERSION,
             )
 
-    # 3. Check reachability of target outcomes and required prerequisites
+    # 3. Select the minimum-cost stop subset covering targets and prerequisites
     available_set = set(available_stops)
     target_set = set(target_outcomes)
 
-    # Resolve required stops via transitive dependencies
+    # Resolve required stops via transitive dependencies (diagnostic closure)
     needed_outcomes = set(target_set)
     needed_stops: set[str] = set()
     added = True
@@ -114,30 +186,34 @@ def evaluate_route_intervention(
                         needed_outcomes.add(req)
                     added = True
 
-    if enforce_reachability:
+    selected_ids = _min_cost_stop_subset(stops, available_set, target_set)
+
+    if enforce_reachability and selected_ids is None:
         missing_needed = needed_stops - available_set
         provided_by_avail: set[str] = set()
         for s in stops:
             if s.id in available_set:
                 provided_by_avail.update(s.provides)
 
-        if missing_needed or not target_set.issubset(provided_by_avail):
-            # Compute unreachable checkpoint rate
-            total_req_stops = len(needed_stops) if needed_stops else len(stops)
-            unreach_rate = len(missing_needed) / total_req_stops if total_req_stops > 0 else 1.0
-            return RoutePlan(
-                decision="no_feasible_route",
-                reason_codes=["unreachable_stop"],
-                stop_sequence=[],
-                route_cost=0,
-                outcome_coverage=len(target_set & provided_by_avail) / len(target_set) if target_set else 0.0,
-                prerequisite_violation_count=0,
-                unreachable_checkpoint_rate=round(unreach_rate, 4),
-                policy_version=POLICY_VERSION,
-            )
+        # Compute unreachable checkpoint rate
+        total_req_stops = len(needed_stops) if needed_stops else len(stops)
+        unreach_rate = len(missing_needed) / total_req_stops if total_req_stops > 0 else 1.0
+        return RoutePlan(
+            decision="no_feasible_route",
+            reason_codes=["unreachable_stop"],
+            stop_sequence=[],
+            route_cost=0,
+            outcome_coverage=len(target_set & provided_by_avail) / len(target_set) if target_set else 0.0,
+            prerequisite_violation_count=0,
+            unreachable_checkpoint_rate=round(unreach_rate, 4),
+            policy_version=POLICY_VERSION,
+        )
 
-    # 4. Compute cost
-    stops_to_visit = [s for s in stops if s.id in needed_stops]
+    if selected_ids is None:
+        selected_ids = needed_stops
+
+    # 4. Compute cost of the chosen minimal subset
+    stops_to_visit = [s for s in stops if s.id in selected_ids]
     total_cost = sum(s.cost for s in stops_to_visit)
 
     if enforce_budget and total_cost > time_budget_minutes:

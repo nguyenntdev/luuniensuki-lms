@@ -1,0 +1,72 @@
+# LN-09 preregistration — Source-Auditable Teacher Decision Support under Incomplete Learning Analytics
+study_id: LN-09
+title: "Source-auditable teacher decision support: evidence-gated abstention vs naive and EMA baselines"
+status: PLANNED_NOT_EXECUTED_BY_PREREG
+primary_metric: actionable_recommendation_precision
+secondary_metrics:
+  - false_accept_rate
+  - false_reject_rate
+  - k_anonymity_suppression_rate
+decision_space: [recommend_action, descriptive_only, abstain_insufficient_data, require_teacher_override]
+label_space_divergence: >
+  The shared contract label space research_v2.contracts.label_space.LN09_DECISIONS
+  uses the V2 abstraction framing (recommend_action / descriptive_only /
+  abstain_insufficient_data / require_teacher_override). The frozen T3 gold for
+  LN-09 uses the legacy engine's decision vocabulary (propose_explained_action /
+  abstain_missing_evidence / abstain_conflict / abstain_unverified_source /
+  request_refresh / descriptive_summary_only). Predictions are emitted in the
+  gold-compatible legacy vocabulary so the sealed evaluator scores them
+  verbatim; the deterministic legacy->V2 bridge lives in
+  research_v2.methods.ln09.metrics (evaluator-side only). This divergence is
+  documented, not silently absorbed.
+hypotheses:
+  H1: >
+    The proposed source-auditable policy (missingness mask + verified-source
+    gate + freshness gate + k-anonymity suppression + explicit conflict
+    visibility) achieves higher actionable recommendation precision than B0
+    (always propose on any risk signal) and C1 (EMA threshold alerts without
+    k-anonymity or source audit) on the frozen T3 holdout.
+  H2: >
+    The mandatory counterexample family — a student flagged HIGH RISK with NO
+    actionable evidence (missing logs) — never yields a deficit inference:
+    the proposed method abstains (abstain_missing_evidence) or hands off
+    descriptively; zero false accepts on the missing-evidence gold family.
+  H3: >
+    Every ablation is strictly worse than the proposed method on at least one
+    error family that the removed mechanism is responsible for: a1 (no
+    descriptive fallback) loses the explicit abstention certificate on
+    missing-evidence cases; a2 (no freshness/source check) false-accepts stale
+    and unverified-source cases; a3 (no k-anonymity) fails to suppress small
+    cohorts (n < 5).
+comparators:
+  - id: baselines_b0
+    role: SANITY_ONLY
+    comparability: REIMPLEMENTATION
+    note: "Always proposes an action on any risk signal; must never be reported as a strong baseline."
+  - id: baselines_c1
+    role: MATCHED_CLASSICAL
+    comparability: REIMPLEMENTATION
+    note: "EMA moving-average threshold alerts; no k-anonymity, no source audit (classical)."
+  - id: ablations_a1
+    role: ABLATION
+    comparability: CONFIG_FLAG_OF_PROPOSED
+    note: "Removes the descriptive-only fallback / explicit abstention certificate."
+  - id: ablations_a2
+    role: ABLATION
+    comparability: CONFIG_FLAG_OF_PROPOSED
+    note: "Removes freshness and source-verification gates."
+  - id: ablations_a3
+    role: ABLATION
+    comparability: CONFIG_FLAG_OF_PROPOSED
+    note: "Removes the k-anonymity privacy threshold."
+stats:
+  ci_method: wilson_95_primary_clopper_pearson_95_sensitivity
+  paired_test: mcnemar_exact
+  multiple_comparisons: holm
+  grouping_unit: "learner + teacher + course term + intervention context"
+  min_evidence_n: 5
+falsification:
+  - "An always-accept and an always-reject control must never both score perfectly."
+  - "If primary metric is not computable (missing paired cases), gate = EVIDENCE_INSUFFICIENT."
+  - "Any deficit inference from missing logs (false accept on the missing-evidence family) falsifies H2."
+oracle_protocol: evaluator_only_after_prediction_export

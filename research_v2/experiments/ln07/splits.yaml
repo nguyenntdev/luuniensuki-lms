@@ -1,0 +1,25 @@
+# LN-07 split plan (09_SPLITS_AND_LEAKAGE).
+study_id: LN-07
+tier: T3
+split_strategy: group_holdout
+group_key: group_id
+grouping_unit: heritage artifact + modality family + device profile
+splits:
+  - split_id: test
+    description: >
+      Sealed T3 holdout. 120 cases in 120 independent groups
+      (LN-07-grp-001 .. LN-07-grp-120); one case per group, zero shared
+      groups with any dev/audit material. 24 cases per decision stratum
+      (choose_feasible_modality, choose_accessible_fallback,
+      choose_low_data_fallback, choose_accessible_audio_text,
+      choose_curated_archive_fallback).
+    inputs: research_v2/data/ln07/t3_inputs.jsonl
+    gold: research_v2/data/ln07/t3_gold.jsonl
+    n_cases: 120
+    sealed: true
+leakage_controls:
+  - inference inputs contain no oracle, expected_decision, fault_id, cohort
+    or annotation-provenance fields (enforced by research_v2.contracts)
+  - case-level input_sha256 recorded for every row
+  - group IDs never overlap across splits
+  - gold read only by the evaluator after predictions are persisted

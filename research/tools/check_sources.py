@@ -146,6 +146,119 @@ def verify_spec(spec: Optional[pathlib.Path] = None) -> Dict[str, Any]:
     return {"issues": issues, "stats": stats}
 
 
+def verify_holdouts(root: Optional[pathlib.Path] = None) -> Dict[str, Any]:
+    """Fail-closed integrity validation of all synthetic held-out test sets.
+
+    Enforces the canonical hash standard (sha256 of sort_keys + compact + utf8
+    JSON of each row's ``input``), unique case ids, the SYNTHETIC_HELD_OUT_TEST_SET
+    cohort label, absence of oracle leakage inside ``input``, presence of the
+    annotation provenance marker, and a matching ``holdout_manifest.json``.
+    """
+    holdout_dir = (root or ROOT) / "fixtures" / "holdout"
+    issues: List[str] = []
+    stats: Dict[str, Any] = {"files": {}, "total_cases": 0}
+    if not holdout_dir.is_dir():
+        issues.append(f"Holdout directory missing: {holdout_dir}")
+        return {"issues": issues, "stats": stats}
+
+    total = 0
+    files_stats: Dict[str, Any] = {}
+    for study in [f"LN-{i:02d}" for i in range(1, 11)]:
+        f = holdout_dir / f"{study}_holdout.jsonl"
+        if not f.is_file():
+            issues.append(f"Missing holdout file: {f.name}")
+            continue
+        seen: set[str] = set()
+        n = 0
+        file_ok = True
+        for lineno, line in enumerate(f.open(encoding="utf-8"), 1):
+            if not line.strip():
+                continue
+            n += 1
+            try:
+                row = json.loads(line)
+                if row.get("paper_id") != study:
+                    raise AssertionError(f"paper_id {row.get('paper_id')!r} != {study}")
+                if row.get("cohort") != "SYNTHETIC_HELD_OUT_TEST_SET":
+                    raise AssertionError(f"cohort not SYNTHETIC_HELD_OUT_TEST_SET: {row.get('cohort')!r}")
+                if row.get("input_hash") != jsonhash(row.get("input")):
+                    raise AssertionError("input_hash does not match canonical hash of input")
+                inp = row.get("input", {})
+                if "oracle" in inp or "expected_decision" in inp:
+                    raise AssertionError("data leakage: oracle/expected_decision inside input")
+                if not row.get("annotation_provenance"):
+                    raise AssertionError("missing annotation_provenance")
+                cid = row.get("case_id")
+                if not cid or cid in seen:
+                    raise AssertionError(f"duplicate or missing case_id: {cid}")
+                seen.add(cid)
+            except Exception as e:
+                file_ok = False
+                issues.append(f"{f.name}:{lineno}: {e}")
+                if len(issues) > 50:
+                    break
+        total += n
+        files_stats[f.name] = {
+            "cases": n,
+            "sha256": h(f),
+            "all_input_hashes_valid": file_ok,
+        }
+        if not file_ok:
+            issues.append(f"{study}: holdout integrity failed")
+        elif n != 120:
+            issues.append(f"{study}: expected 120 holdout cases, found {n}")
+
+    stats["files"] = files_stats
+    stats["total_cases"] = total
+    if total != 1200:
+        issues.append(f"expected 1200 total holdout cases, found {total}")
+
+    manifest_path = holdout_dir / "holdout_manifest.json"
+    if not manifest_path.is_file():
+        issues.append("Missing holdout_manifest.json")
+    else:
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if manifest.get("hash_standard") != "sha256(sort_keys,compact,utf8)":
+                issues.append("holdout_manifest hash_standard mismatch")
+            if manifest.get("total_cases") != total:
+                issues.append(f"holdout_manifest total_cases {manifest.get('total_cases')} != {total}")
+            for name, info in files_stats.items():
+                entry = manifest.get("files", {}).get(name, {})
+                if entry.get("sha256") != info["sha256"]:
+                    issues.append(f"holdout_manifest sha256 mismatch for {name}")
+                if entry.get("cases") != info["cases"]:
+                    issues.append(f"holdout_manifest case-count mismatch for {name}")
+        except Exception as e:
+            issues.append(f"Cannot parse holdout_manifest.json: {e}")
+
+    return {"issues": issues, "stats": stats}
+
+
+def write_holdout_manifest(root: Optional[pathlib.Path] = None) -> pathlib.Path:
+    """Regenerate holdout_manifest.json from the on-disk held-out test sets.
+
+    Byte-deterministic: the manifest is a pure function of fixture content and
+    contains no wall-clock timestamp, so identical fixtures always yield an
+    identical manifest.
+    """
+    holdout_dir = (root or ROOT) / "fixtures" / "holdout"
+    files: Dict[str, Any] = {}
+    total = 0
+    for f in sorted(holdout_dir.glob("LN-*_holdout.jsonl")):
+        n = sum(1 for line in f.open(encoding="utf-8") if line.strip())
+        total += n
+        files[f.name] = {"sha256": h(f), "cases": n, "all_input_hashes_valid": True}
+    manifest = {
+        "hash_standard": "sha256(sort_keys,compact,utf8)",
+        "total_cases": total,
+        "files": files,
+    }
+    out = holdout_dir / "holdout_manifest.json"
+    out.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return out
+
+
 def verify_manuscripts(ms: pathlib.Path) -> Dict[str, Any]:
     issues: List[str] = []
     stats: Dict[str, Any] = {}
@@ -178,14 +291,25 @@ def main():
     ap.add_argument("--spec", type=pathlib.Path, default=None, help="Path to spec directory (optional; defaults to repo research/fixtures)")
     ap.add_argument("--manuscripts", type=pathlib.Path, default=None)
     ap.add_argument("--output", type=pathlib.Path, default=None)
+    ap.add_argument(
+        "--write-holdout-manifest",
+        action="store_true",
+        help="Regenerate holdout_manifest.json from current fixtures, then validate",
+    )
     a = ap.parse_args()
 
+    if a.write_holdout_manifest:
+        written = write_holdout_manifest()
+        print(f"Wrote {written}")
+
     s = verify_spec(a.spec)
-    status = "PASS" if not s["issues"] else "FAIL"
+    holdouts = verify_holdouts(ROOT.parent / "research" if (ROOT.parent / "research").is_dir() else ROOT)
+    status = "PASS" if not s["issues"] and not holdouts["issues"] else "FAIL"
     out: Dict[str, Any] = {
         "status": status,
         "spec": str((a.spec or ROOT).resolve()),
         "spec_validation": s,
+        "holdout_validation": holdouts,
     }
     if a.manuscripts:
         mm = verify_manuscripts(a.manuscripts.resolve())
@@ -202,7 +326,10 @@ def main():
         "status": out["status"],
         "spec_verified": s["stats"]["sha256_entries_verified"],
         "fixture_total": sum(x["rows"] for x in s["stats"]["fixtures"].values()),
-        "issues": s["issues"] + (out.get("manuscripts_validation", {}).get("issues", [])),
+        "holdout_total": holdouts["stats"]["total_cases"],
+        "issues": s["issues"]
+        + holdouts["issues"]
+        + (out.get("manuscripts_validation", {}).get("issues", [])),
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return 0 if out["status"] == "PASS" else 1

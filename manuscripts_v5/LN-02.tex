@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[vietnamese,english]{babel}
 \usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{mathtools}
 \usepackage{booktabs}
 \usepackage{geometry}
 \usepackage{hyperref}
@@ -15,10 +16,10 @@
 \title{\textbf{Prerequisite-Aware Adaptive Learning in Heritage LMS:}\\
 \large Rigorous Verification of 4D Historical Competencies (S1--S4) Under Vietnamese GDPT 2018 Standards}
 
+% TODO: finalize author list, order, affiliations, and institutional consent.
 \author{
-  \textbf{Lưu Niên Sứ Ký Research Consortium} \\
-  \textit{Adaptive Systems \& Epistemic Measurement Taskforce} \\
-  \small Academic Research Collaboration (Hue, Vietnam)
+  Author Name(s) to be finalized \\
+  \small Affiliation to be confirmed
 }
 
 \date{November 2026}
@@ -31,7 +32,7 @@ Adaptive learning platforms in cultural heritage education frequently suffer fro
 
 This paper investigates the algorithmic formalization and empirical verification of a prerequisite-aware adaptive policy (LN-02) deployed on the \textit{Lưu Niên Sứ Ký} gamified learning platform for the UNESCO-inscribed Cửu Đỉnh (Nine Dynastic Urns of Hue). We rigorously contrast this multi-dimensional prerequisite policy (I1) against a scalar greedy baseline (B0), a Rasch Item Response Theory proxy without graph topology (B1), and three systematic structural ablations (A1: unconstrained progression, A2: collapsed 1D latent ability, A3: non-abstaining zero-imputation). 
 
-Beyond synthetic regression suites, we evaluate the models against an independent 120-case holdout dataset annotated by six external disciplinary experts spanning five fault archetypes: nominal valid progression, missing hard prerequisites, latent unobserved dimensions, cyclic dependency anomalies, and domain out-of-range telemetry. Empirical results demonstrate that the proposed policy achieves $100.0\%$ decision concordance with expert consensus (95\% CI: $[96.9\%, 100.0\%]$), eliminating prerequisite violations entirely ($0.0\%$ vs.\ $100.0\%$ for B0, B1, and A1; $p = 2.67 \times 10^{-6}$, paired McNemar test). Crucially, the abstention mechanism prevents epistemic injustice by refusing recommendation when prerequisite telemetry is missing rather than penalizing learners with synthetic failure.
+Beyond synthetic regression suites, we evaluate the models against a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) spanning five fault archetypes: nominal valid progression, missing hard prerequisites, latent unobserved dimensions, cyclic dependency anomalies, and domain out-of-range telemetry. Empirical results demonstrate that the proposed policy achieves $100.0\%$ decision concordance with the programmatically generated oracle labels (95\% CI: $[96.9\%, 100.0\%]$), eliminating prerequisite violations entirely ($0.0\%$ vs.\ $100.0\%$ for B0, B1, and A1; $p = 2.67 \times 10^{-6}$, paired McNemar test). Crucially, the abstention mechanism prevents epistemic injustice by refusing recommendation when prerequisite telemetry is missing rather than penalizing learners with synthetic failure.
 \end{abstract}
 
 \section{Introduction and Theoretical Framework}
@@ -49,6 +50,18 @@ Historical thinking is fundamentally multi-perspectival and multi-dimensional \c
 When an educational engine uses aggregate scoring or unidimensional IRT, a learner with high general verbal proficiency ($S_4 = 0.85$) and strong chronological recall ($S_2 = 0.82$) can achieve an aggregate composite score of $0.68$, readily clearing a standard $0.50$ pass threshold. However, if this student possesses severe deficits in spatial coordinates ($S_1 = 0.22$) or source corroboration ($S_3 = 0.28$), recommending an advanced interpretive task regarding the Nine Dynastic Urns (Cửu Đỉnh) results in \textit{compensatory masking}. The student attempts complex causal synthesis while fundamentally misidentifying the geographic motif or misinterpreting the relief's epigraphic provenance.
 
 This paper presents the design, mathematical formulation, formal invariants, and empirical evaluation of Study LN-02: a Prerequisite-Aware Adaptive Learning Policy Engine engineered for the \textit{Lưu Niên Sứ Ký} heritage learning platform.
+
+\section{Research Questions}
+
+\begin{enumerate}[label=\textbf{RQ\arabic*}, leftmargin=2.4em]
+    \item \textbf{RQ1 (Formalization):} Can the four non-compensatory historical competencies $S_1$--$S_4$ of the Vietnamese GDPT 2018 History curriculum \cite{moet2018gdpt} be encoded as an executable prerequisite-gated decision policy that refuses compensatory trade-offs across dimensions?
+    \item \textbf{RQ2 (Comparative Accuracy):} On a synthetic held-out test set with programmatic annotation templates (no human adjudication), does the prerequisite-aware policy (I1) outperform a scalar greedy baseline (B0) and a Rasch/1PL item-response proxy (B1) in decision accuracy and prerequisite-violation rate?
+    \item \textbf{RQ3 (Abstention Ethics):} Does an explicit abstention mechanism for unobserved dimensions prevent the epistemic injustice introduced by zero-imputation ablations (A3) while preserving detection of genuinely missing prerequisites?
+\end{enumerate}
+
+\subsection{Research Gap and Novelty}
+
+Adaptive educational systems have largely been built on unidimensional latent-trait estimation such as IRT \cite{rasch1960probabilistic} and knowledge tracing \cite{piech2015deep}, with tutoring behaviour studied mostly in well-structured procedural domains \cite{vanlehn2006behavior, anderson2001taxonomy}. Historical reasoning, by contrast, is explicitly multidimensional \cite{seixas2013big, van2008historical}, so scalar compensatory models can mask severe deficits in one dimension. Existing work has not formalized non-compensatory gating over the four GDPT 2018 historical competencies \cite{moet2018gdpt} together with graph acyclicity, range validation, and explicit abstention as a single verifiable policy. This study contributes that formalization plus a reproducible synthetic fault-stratified held-out test set, rather than a human-expert-adjudicated benchmark.
 
 \section{System Architecture and Mathematical Formulation}
 
@@ -129,9 +142,9 @@ We evaluate five distinct algorithmic formulations under identical input conditi
     \item \textbf{Ablation A3 (No Abstention):} Disables epistemic abstention; imputes unobserved dimensions as $0.0$ and applies dimensional checks.
 \end{itemize}
 
-\section{External Holdout Benchmark Methodology}
+\section{Synthetic Held-Out Test Set Methodology}
 
-To prevent data contamination and circular synthetic verification, an independent $120$-case holdout evaluation set was generated and registered at \texttt{research/fixtures/holdout/LN-02\_holdout.jsonl}. The holdout comprises exactly $24$ cases across five controlled fault strata:
+To prevent data contamination and circular synthetic verification, a synthetic $120$-case held-out evaluation set with programmatic annotation templates (no human adjudication) was generated and registered at \texttt{research/fixtures/holdout/LN-02\_holdout.jsonl}. The set comprises exactly $24$ cases across five controlled fault strata:
 \begin{enumerate}[leftmargin=2.0em]
     \item \textbf{Nominal Valid ($N=24$):} Clean DAG topology, fully observed mastery vectors ($\mathcal{C}=1.0$), all prerequisites satisfied ($\mathbf{m}_u \ge \boldsymbol{\tau}$). Ground truth: \texttt{recommend\_eligible}.
     \item \textbf{Missing Prerequisite ($N=24$):} Highly proficient overall ($s_{\text{observed}} > 0.65$), but with a severe deficit in one required prerequisite dimension ($m_{u, d} \ll \tau_d$). Ground truth: \texttt{remediate\_first}.
@@ -140,16 +153,16 @@ To prevent data contamination and circular synthetic verification, an independen
     \item \textbf{Out-of-Range Telemetry ($N=24$):} Observed scores or mastery values violate the bounded interval $[0, 1]$ (e.g., $1.85, -0.35$). Ground truth: \texttt{reject\_invalid\_score}.
 \end{enumerate}
 
-Every case is linked to verified historical monuments of the Hue Imperial Citadel and Cửu Đỉnh motifs (e.g., \textit{Cao Đỉnh} Dragon motif, \textit{Nhân Đỉnh} Perfume River motif, Ngọ Môn Gate, Thế Tổ Miếu). Six external disciplinary experts independently reviewed and signed off on the consensus oracle decisions and pedagogical rationales.
+Every case is linked to verified historical monuments of the Hue Imperial Citadel and Cửu Đỉnh motifs (e.g., \textit{Cao Đỉnh} Dragon motif, \textit{Nhân Đỉnh} Perfume River motif, Ngọ Môn Gate, Thế Tổ Miếu). Oracle decisions and pedagogical rationales are generated by deterministic programmatic annotation templates (no human adjudication); the held-out set is synthetic rather than an externally validated corpus.
 
 \section{Empirical Results and Statistical Analysis}
 
-The evaluation was executed deterministically across all $120$ holdout cases. Table~\ref{tab:holdout-main} reports overall decision accuracy, 95\% Wilson score confidence intervals, prerequisite violation rates on the critical missing prerequisite stratum ($N=24$), and total unjustified recommendations.
+The evaluation was executed deterministically across all $120$ held-out cases. Table~\ref{tab:holdout-main} reports overall decision accuracy, 95\% Wilson score confidence intervals, prerequisite violation rates on the critical missing prerequisite stratum ($N=24$), and total unjustified recommendations.
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Performance comparison on the independent 120-case external expert holdout dataset.}
+\caption{Performance comparison on the synthetic 120-case held-out test set (programmatic annotation templates; no human adjudication).}
 \label{tab:holdout-main}
 \begin{tabular}{lcccccc}
 \toprule
@@ -213,6 +226,15 @@ Ablation A2 demonstrates that even when graph cycles and data ranges are verifie
 
 \subsection{Epistemic Honesty vs.\ Default Zero-Imputation (A3)}
 Ablation A3 illustrates a crucial design distinction. When unobserved traits are imputed as $0.0$, A3 successfully blocks premature task recommendation on the missing prerequisite stratum, but fails completely on the unobserved dimension stratum ($0.0\%$ accuracy). Imputing $0.0$ forces the engine into an unwarranted remediation loop (\texttt{remediate\_first}), incorrectly diagnosing the student as incompetent rather than simply unassessed. Policy I1's explicit abstention state (\texttt{abstain\_insufficient\_data}) correctly triggers diagnostic probes rather than remedial drills.
+
+\subsection{Threats to Validity}
+
+\begin{itemize}[leftmargin=1.5em]
+    \item \textbf{Internal validity:} Oracle labels in the held-out test set come from deterministic programmatic annotation templates, not from human educators; any defect in those templates directly biases all reported accuracies. Seeds and hashes control nondeterminism but not template correctness.
+    \item \textbf{External validity:} The corpus is restricted to Huế Imperial Citadel monuments and Cửu Đỉnh motifs under the Thừa Thiên Huế GDĐP curriculum. Transfer to other provinces, subjects, or learner populations is untested.
+    \item \textbf{Construct validity:} Competency scores $m_{u,d}$ and cut-scores $\tau_d$ are operational proxies for pedagogically meaningful mastery thresholds; the mapping from rubric evidence to $[0,1]$ scores is not itself validated against human raters.
+    \item \textbf{Statistical validity:} With $N=24$ per stratum, Wilson intervals are wide, and several conditions reach a boundary value of 0 or 1 where asymptotic approximations are fragile. All results are internal software-policy estimates on a \emph{synthetic} held-out test set and do not constitute human-adjudicated external validation.
+\end{itemize}
 
 \section{Conclusion}
 This study validates that the LN-02 adaptive prerequisite engine rigorously enforces Vietnamese GDPT 2018 historical competencies on the Cửu Đỉnh platform. By enforcing multi-dimensional prerequisite gating, acyclicity verification, domain range constraints, and epistemic abstention, the policy eliminates compensatory masking entirely, providing a verified mathematical foundation for heritage learning technologies.

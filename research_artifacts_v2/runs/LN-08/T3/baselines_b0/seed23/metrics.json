@@ -1,0 +1,1022 @@
+{
+  "n_total": 120,
+  "n_correct": 48,
+  "n_errors": 72,
+  "accuracy": 0.4,
+  "error_rate": 0.6,
+  "accuracy_wilson_ci_95": [
+    0.31676408120837146,
+    0.4894397520753693
+  ],
+  "accuracy_clopper_pearson_ci_95": [
+    0.3116677937112981,
+    0.49338930527906144
+  ],
+  "error_rate_wilson_ci_95": [
+    0.5105602479246307,
+    0.6832359187916286
+  ],
+  "error_rate_clopper_pearson_ci_95": [
+    0.5066106947209386,
+    0.688332206288702
+  ],
+  "per_class": {
+    "classify_contradiction": {
+      "n": 24,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "classify_source_error": {
+      "n": 24,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "feedback_incomplete": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "feedback_supported": {
+      "n": 24,
+      "correct": 24,
+      "accuracy": 1.0
+    },
+    "preserve_semantics": {
+      "n": 24,
+      "correct": 0,
+      "accuracy": 0.0
+    }
+  },
+  "confusion": {
+    "classify_contradiction->feedback_supported": 24,
+    "classify_source_error->feedback_supported": 24,
+    "feedback_incomplete->feedback_incomplete": 24,
+    "feedback_supported->feedback_supported": 24,
+    "preserve_semantics->feedback_incomplete": 24
+  },
+  "predictions_sha256": "93bbf5fc85d0afce616940c5f85a4e6c719f54781d402a696a79c9d93ce5b40f",
+  "gold_sha256": "6d1db2cc0d58bd15db9a29998917bded2141ecd4d5170cdc941e7c8e1c1a8a0a",
+  "label_map": {},
+  "cases": [
+    {
+      "case_id": "LN-08-HOLD-00001",
+      "group_id": "LN-08-grp-001",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00002",
+      "group_id": "LN-08-grp-002",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00003",
+      "group_id": "LN-08-grp-003",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00004",
+      "group_id": "LN-08-grp-004",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00005",
+      "group_id": "LN-08-grp-005",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00006",
+      "group_id": "LN-08-grp-006",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00007",
+      "group_id": "LN-08-grp-007",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00008",
+      "group_id": "LN-08-grp-008",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00009",
+      "group_id": "LN-08-grp-009",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00010",
+      "group_id": "LN-08-grp-010",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00011",
+      "group_id": "LN-08-grp-011",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00012",
+      "group_id": "LN-08-grp-012",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00013",
+      "group_id": "LN-08-grp-013",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00014",
+      "group_id": "LN-08-grp-014",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00015",
+      "group_id": "LN-08-grp-015",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00016",
+      "group_id": "LN-08-grp-016",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00017",
+      "group_id": "LN-08-grp-017",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00018",
+      "group_id": "LN-08-grp-018",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00019",
+      "group_id": "LN-08-grp-019",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00020",
+      "group_id": "LN-08-grp-020",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00021",
+      "group_id": "LN-08-grp-021",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00022",
+      "group_id": "LN-08-grp-022",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00023",
+      "group_id": "LN-08-grp-023",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00024",
+      "group_id": "LN-08-grp-024",
+      "gold": "feedback_supported",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00025",
+      "group_id": "LN-08-grp-025",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00026",
+      "group_id": "LN-08-grp-026",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00027",
+      "group_id": "LN-08-grp-027",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00028",
+      "group_id": "LN-08-grp-028",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00029",
+      "group_id": "LN-08-grp-029",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00030",
+      "group_id": "LN-08-grp-030",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00031",
+      "group_id": "LN-08-grp-031",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00032",
+      "group_id": "LN-08-grp-032",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00033",
+      "group_id": "LN-08-grp-033",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00034",
+      "group_id": "LN-08-grp-034",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00035",
+      "group_id": "LN-08-grp-035",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00036",
+      "group_id": "LN-08-grp-036",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00037",
+      "group_id": "LN-08-grp-037",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00038",
+      "group_id": "LN-08-grp-038",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00039",
+      "group_id": "LN-08-grp-039",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00040",
+      "group_id": "LN-08-grp-040",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00041",
+      "group_id": "LN-08-grp-041",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00042",
+      "group_id": "LN-08-grp-042",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00043",
+      "group_id": "LN-08-grp-043",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00044",
+      "group_id": "LN-08-grp-044",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00045",
+      "group_id": "LN-08-grp-045",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00046",
+      "group_id": "LN-08-grp-046",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00047",
+      "group_id": "LN-08-grp-047",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00048",
+      "group_id": "LN-08-grp-048",
+      "gold": "classify_contradiction",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00049",
+      "group_id": "LN-08-grp-049",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00050",
+      "group_id": "LN-08-grp-050",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00051",
+      "group_id": "LN-08-grp-051",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00052",
+      "group_id": "LN-08-grp-052",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00053",
+      "group_id": "LN-08-grp-053",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00054",
+      "group_id": "LN-08-grp-054",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00055",
+      "group_id": "LN-08-grp-055",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00056",
+      "group_id": "LN-08-grp-056",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00057",
+      "group_id": "LN-08-grp-057",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00058",
+      "group_id": "LN-08-grp-058",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00059",
+      "group_id": "LN-08-grp-059",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00060",
+      "group_id": "LN-08-grp-060",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00061",
+      "group_id": "LN-08-grp-061",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00062",
+      "group_id": "LN-08-grp-062",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00063",
+      "group_id": "LN-08-grp-063",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00064",
+      "group_id": "LN-08-grp-064",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00065",
+      "group_id": "LN-08-grp-065",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00066",
+      "group_id": "LN-08-grp-066",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00067",
+      "group_id": "LN-08-grp-067",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00068",
+      "group_id": "LN-08-grp-068",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00069",
+      "group_id": "LN-08-grp-069",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00070",
+      "group_id": "LN-08-grp-070",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00071",
+      "group_id": "LN-08-grp-071",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00072",
+      "group_id": "LN-08-grp-072",
+      "gold": "preserve_semantics",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00073",
+      "group_id": "LN-08-grp-073",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00074",
+      "group_id": "LN-08-grp-074",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00075",
+      "group_id": "LN-08-grp-075",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00076",
+      "group_id": "LN-08-grp-076",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00077",
+      "group_id": "LN-08-grp-077",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00078",
+      "group_id": "LN-08-grp-078",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00079",
+      "group_id": "LN-08-grp-079",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00080",
+      "group_id": "LN-08-grp-080",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00081",
+      "group_id": "LN-08-grp-081",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00082",
+      "group_id": "LN-08-grp-082",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00083",
+      "group_id": "LN-08-grp-083",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00084",
+      "group_id": "LN-08-grp-084",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00085",
+      "group_id": "LN-08-grp-085",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00086",
+      "group_id": "LN-08-grp-086",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00087",
+      "group_id": "LN-08-grp-087",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00088",
+      "group_id": "LN-08-grp-088",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00089",
+      "group_id": "LN-08-grp-089",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00090",
+      "group_id": "LN-08-grp-090",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00091",
+      "group_id": "LN-08-grp-091",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00092",
+      "group_id": "LN-08-grp-092",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00093",
+      "group_id": "LN-08-grp-093",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00094",
+      "group_id": "LN-08-grp-094",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00095",
+      "group_id": "LN-08-grp-095",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00096",
+      "group_id": "LN-08-grp-096",
+      "gold": "feedback_incomplete",
+      "pred": "feedback_incomplete",
+      "pred_mapped": "feedback_incomplete",
+      "correct": true
+    },
+    {
+      "case_id": "LN-08-HOLD-00097",
+      "group_id": "LN-08-grp-097",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00098",
+      "group_id": "LN-08-grp-098",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00099",
+      "group_id": "LN-08-grp-099",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00100",
+      "group_id": "LN-08-grp-100",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00101",
+      "group_id": "LN-08-grp-101",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00102",
+      "group_id": "LN-08-grp-102",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00103",
+      "group_id": "LN-08-grp-103",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00104",
+      "group_id": "LN-08-grp-104",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00105",
+      "group_id": "LN-08-grp-105",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00106",
+      "group_id": "LN-08-grp-106",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00107",
+      "group_id": "LN-08-grp-107",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00108",
+      "group_id": "LN-08-grp-108",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00109",
+      "group_id": "LN-08-grp-109",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00110",
+      "group_id": "LN-08-grp-110",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00111",
+      "group_id": "LN-08-grp-111",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00112",
+      "group_id": "LN-08-grp-112",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00113",
+      "group_id": "LN-08-grp-113",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00114",
+      "group_id": "LN-08-grp-114",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00115",
+      "group_id": "LN-08-grp-115",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00116",
+      "group_id": "LN-08-grp-116",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00117",
+      "group_id": "LN-08-grp-117",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00118",
+      "group_id": "LN-08-grp-118",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00119",
+      "group_id": "LN-08-grp-119",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    },
+    {
+      "case_id": "LN-08-HOLD-00120",
+      "group_id": "LN-08-grp-120",
+      "gold": "classify_source_error",
+      "pred": "feedback_supported",
+      "pred_mapped": "feedback_supported",
+      "correct": false
+    }
+  ]
+}

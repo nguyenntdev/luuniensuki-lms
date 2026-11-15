@@ -1,0 +1,92 @@
+# LN-07 — Cognitive-Equivalent Multimodal Heritage Learning under Resource Constraints
+# Pre-registration: locked before any T3 holdout evaluation.
+study_id: LN-07
+title: "Cognitive-Equivalent Multimodal Heritage Learning under Resource Constraints"
+tier: T3
+oracle_basis: DESIGN_SPEC_EMPIRICAL_HOLDOUT
+claim_boundary: >
+  Accessibility functionality and task-feasibility verdicts only; full WCAG
+  compliance requires manual audit and is not claimed by this study. T3
+  synthetic stress events are never represented as observed school learning.
+
+primary_endpoint:
+  name: task_feasibility_rate
+  unit: paired_case_decision
+  decision_rule: >
+    Paired exact-match decision accuracy against the DESIGN_SPEC_EMPIRICAL_HOLDOUT
+    oracle on the five routing strata, with false completion (accepting a
+    modality that omits a required affordance, e.g. a raster fallback without
+    the required inscription) as the sensitive error axis.
+
+primary_contrast:
+  intervention: proposed
+  comparator: baselines_c1
+  test: mcnemar_exact
+  alpha: 0.05
+  correction: holm
+
+secondary_metrics:
+  - false_completion_rate
+  - false_rejection_rate
+  - missing_affordance_recall
+  - per_class_confusion
+  - wall_ms_per_case
+
+ablation_hypotheses:
+  ablations_a1: >
+    Removing the transcript requirement accepts audio paths without
+    transcript equivalence on transcript-required tasks (false accepts on
+    the WCAG 1.2.1 axis).
+  ablations_a2: >
+    Removing the keyboard/ARIA (screen-reader) checks accepts
+    keyboard-inaccessible or screen-reader-opaque modalities (false accepts
+    on the WCAG 2.1.1 / 4.1.2 axes).
+  ablations_a3: >
+    Removing the inscription-affordance check accepts a raster fallback that
+    HAS an image but OMITS the inscription the task requires as pedagogically
+    complete — the mandatory counterexample the proposed engine exists to
+    prevent.
+
+mandatory_counterexamples:
+  - id: raster_image_but_missing_inscription
+    description: >
+      2D raster/rubbing fallback whose image is available but whose affordance
+      set omits the inscription the task requires. Expected: NOT pedagogically
+      complete; flag the missing affordance and route to a sufficient modality
+      or reject (reject_missing_affordance when none exists).
+  - id: audio_spatial_shape_without_description
+    description: >
+      Audio variant that cannot convey the required spatial shape/relations
+      without a description track. Expected: not equivalent on the spatial
+      affordance axis unless a description affordance is present.
+  - id: webgl_ok_but_input_device_cannot_manipulate
+    description: >
+      WebGL renders, but the input device cannot manipulate the 3D model
+      (keyboard-only learner, non-keyboard variant). Expected:
+      reject_inaccessible_option unless a keyboard-operable sufficient
+      modality exists.
+  - id: text_only_complete_task_semantics
+    description: >
+      Text-only mode carrying complete task semantics (including inscription
+      transcription). Expected: acceptable accessible path
+      (choose_accessible_audio_text stratum), NOT a rejection.
+
+estimation_unit: one case
+grouping_unit: heritage artifact + modality family + device profile
+denominator_rule: >
+  All 120 T3 holdout cases per method/seed; no exclusion. Every decision is
+  scored; no abstain label exists in the LN-07 native space.
+
+tuning_budget:
+  dev_split_only: true
+  grid: none (deterministic policy; no hyperparameter search)
+  seeds: [11, 23, 37]
+
+integrity:
+  inference_inputs_contain_gold_material: false
+  synthetic_annotation_is_human: false
+  equivalence_rule: >
+    A modality is equivalent only when every required affordance is preserved.
+    Image existence (available + alt_text) never substitutes for inscription,
+    transcript or description affordances; no accessibility pass is granted
+    merely because a URL exists.

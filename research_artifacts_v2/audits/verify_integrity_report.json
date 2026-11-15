@@ -1,0 +1,25 @@
+{
+  "repo_root": "/home/clue/Documents/luuniensuki-lms",
+  "legacy": {
+    "issues": [],
+    "cases_by_study": {
+      "LN-01": 120,
+      "LN-02": 120,
+      "LN-03": 120,
+      "LN-04": 120,
+      "LN-05": 120,
+      "LN-06": 120,
+      "LN-07": 120,
+      "LN-08": 120,
+      "LN-09": 120,
+      "LN-10": 120
+    },
+    "total_cases": 1200
+  },
+  "v2": {
+    "issues": [],
+    "manifest_present": true
+  },
+  "status": "PASS",
+  "issues": []
+}

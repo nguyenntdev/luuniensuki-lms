@@ -1,0 +1,23 @@
+# LN-04 split definitions.
+# T3 holdout was generated programmatically (SYNTHETIC_HELD_OUT_TEST_SET,
+# PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION) and sealed before method runs.
+splits:
+  - id: test
+    description: sealed 120-case T3 stress holdout (injection, leakage, source-gap, nominal)
+    inputs: research_v2/data/ln04/t3_inputs.jsonl
+    gold: research_v2/data/ln04/t3_gold.jsonl
+    n_cases: 120
+    group_key: group_id
+    synthetic_cohort: SYNTHETIC_HELD_OUT_TEST_SET
+    provenance: PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION
+
+leakage_controls:
+  - "Gold records are evaluator-only; predictions are oracle-free."
+  - "group_id is a per-case family label; no gold material enters features."
+  - "Case order and content fixed; seeds vary method-side randomness only."
+
+composition:
+  injection: 24
+  leakage_locked_answer: 24
+  source_gap: 48        # 12 unverified + 12 draft + 24 out_of_scope
+  nominal_hint_fade: 24

@@ -1,0 +1,114 @@
+# LN-05 preregistration — Evidence-Gated Mastery Credentials and Anti-Replay
+# Gamification. Frozen before any T3 holdout evaluation; changes after data
+# sight require a new prereg version and an honest deviation log.
+study_id: LN-05
+title: >-
+  Evidence-Gated Mastery Credentials and Anti-Replay Gamification
+prereg_version: "1.0.0"
+created: "2026-11-15"
+claim_boundary: >-
+  Credential integrity only (false awards vs legitimate awards under replay,
+  forgery, concurrency and staleness threats). No claims about intrinsic
+  motivation or actual educational attainment.
+
+research_problem: >-
+  Decide badge issuance for authentic competencies under adversarial client
+  actions, replay and concurrent submissions, with exactly-once awards.
+
+primary_endpoint:
+  name: security_utility_frontier
+  definition: >-
+    False award rate (grants among threat/replay deliveries) versus legitimate
+    award recall (grants among genuinely eligible learners). Both sides are
+    always reported together; driving FAR to zero while destroying recall is
+    not a win.
+  estimation_unit: actor_id + task_id + replay_family + session
+  positive_class: grant_if_eligible
+  abstain_handling: >-
+    Every non-grant decision keeps its distinct family (replay / provenance /
+    staleness / competency); abstention and rejection families are never merged
+    into a single reject count.
+
+mandatory_counterexamples:
+  - id: LN05-CE-1
+    description: same valid submission delivered 100 times concurrently
+    expectation: exactly ONE grant; all other 99 deliveries rejected as replay
+  - id: LN05-CE-2
+    description: credential/evidence revoked between evidence and award
+    expectation: no grant without fresh verified evidence
+  - id: LN05-CE-3
+    description: clock-skewed duplicate with a new timestamp
+    expectation: content-derived dedup key still rejects the redelivery
+  - id: LN05-CE-4
+    description: legitimate learner offline retry
+    expectation: retry with the same dedup key is rejected as replay, not re-awarded
+
+hard_constraints:
+  - server_only_actor_provenance
+  - atomic_idempotent_dedup_ledger
+  - multi_dimension_competency_proof
+  - policy_version_freshness
+  - deterministic_predictions_for_identical_inputs
+
+datasets:
+  - id: ln05_t3_holdout
+    inputs: research_v2/data/ln05/t3_inputs.jsonl
+    gold: research_v2/data/ln05/t3_gold.jsonl
+    inputs_sha256: 481f9038e89e842dba30a1a1c971b1e401ec59efebe217b27583cff369d038f1
+    gold_sha256: 6354cabad27d01db94afed8a45c81cbac04603b868a21b38ff0f83652e8c7822
+    oracle_basis: DESIGN_SPEC_EMPIRICAL_HOLDOUT
+    annotation_provenance: PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION
+    threat_models:
+      - replay_and_reordered_events
+      - concurrent_duplicate_submissions
+      - forged_client_xp
+      - stale_policy_versions
+
+methods_registered:
+  - id: proposed
+    role: I1_intervention
+    comparator_status: REIMPLEMENTATION
+  - id: baselines_b0
+    role: C0_sanity
+    comparator_status: REIMPLEMENTATION
+    note: SANITY_ONLY; award on event count; never cited as a strong baseline
+  - id: baselines_c1
+    role: C1_strong_classical
+    comparator_status: REIMPLEMENTATION
+    note: timestamp-windowed streak with window idempotency; no competency proof
+  - id: ablations_a1
+    role: ablation_xp_only
+    comparator_status: REIMPLEMENTATION
+  - id: ablations_a2
+    role: ablation_no_anti_replay
+    comparator_status: REIMPLEMENTATION
+  - id: ablations_a3
+    role: ablation_no_provenance_check
+    comparator_status: REIMPLEMENTATION
+
+comparability:
+  shared_inputs: research_v2/data/ln05/t3_inputs.jsonl
+  shared_label_space: legacy dataset vocabulary (bijection to V2 label space in
+    research_v2/methods/ln05/labels.py)
+  shared_budget: deterministic single-pass policy evaluation per case
+  pairing: same case_ids across all methods; seeds vary only runner metadata
+  ablation_divergence_required: true
+  no_shared_predict_function_between_distinct_baselines: true
+
+tuning_budget:
+  dev_split: none available (sealed T3 holdout only)
+  search: none; thresholds fixed from the design spec (min_level from badge
+    definition, streak_threshold=1, streak_window=60s)
+  cpu_budget_per_method: negligible (pure-python rule evaluation)
+  early_stop: not applicable
+
+success_criteria:
+  - exactly one grant across 100 concurrent identical deliveries
+  - zero forged-event grants under any seed
+  - legitimate award recall on eligible population >= 0.90
+  - every ablation diverges from proposed on its targeted threat family
+
+release_gate:
+  evaluator_only_gold_access: true
+  oracle_free_predictions: true
+  negative_results_preserved: true

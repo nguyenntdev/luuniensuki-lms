@@ -1,0 +1,72 @@
+# LN-03 preregistration — Evidence-Grounded Dual-Mode Spaced Learning (T3)
+study_id: LN-03
+title: Evidence-Grounded Dual-Mode Spaced Learning
+tier: T3
+dataset: research_v2/data/ln03/t3_inputs.jsonl
+gold: research_v2/data/ln03/t3_gold.jsonl
+gold_oracle_basis: PEDAGOGICAL_SPEC_DUAL_MODE
+claim_boundary: >
+  Software scheduling and predictive performance only. Learner retention cannot
+  be asserted: T3 rows are simulated forgetting-curve scenarios, never observed
+  school learning outcomes.
+primary_metric: invalid_generative_assignment_rate
+secondary_metrics:
+  - schedule_decision_accuracy_evaluator_side
+  - due_date_postpone_precision
+  - unsupported_generative_assignment_count
+mandatory_case: generative task assigned before any stable fact recall -> must not assign (remediate/postpone)
+methods:
+  - id: proposed
+    role: intervention
+    module: research_v2.methods.ln03.proposed
+    config:
+      fact_stability_min_repetitions: 2
+      stability_days_floor: 1.0
+      postpone_if_not_due: true
+      fact_stability_enabled: true
+      source_gate_enabled: true
+      due_scheduling_enabled: true
+  - id: baselines_b0
+    role: c0_sanity_negative_control
+    module: research_v2.methods.ln03.baselines_b0
+    comparator_status: REIMPLEMENTATION
+    sanity_only: true
+    config: {}
+  - id: baselines_c1
+    role: c1_strong_classical
+    module: research_v2.methods.ln03.baselines_c1
+    comparator_status: REIMPLEMENTATION
+    algorithm_reference: Leitner 5-box (classical gradations 1,2,3,4,5 days)
+    config:
+      postpone_if_not_due: false
+  - id: ablations_a1
+    role: ablation
+    module: research_v2.methods.ln03.ablations_a1
+    disabled_mechanism: source_gate_enabled
+  - id: ablations_a2
+    role: ablation
+    module: research_v2.methods.ln03.ablations_a2
+    disabled_mechanism: fact_stability_enabled
+  - id: ablations_a3
+    role: ablation
+    module: research_v2.methods.ln03.ablations_a3
+    disabled_mechanism: due_scheduling_enabled
+seeds: [11, 23, 37]
+split_id: test
+group_key: group_id
+decision_space_note: >
+  Native policy labels follow the legacy dual-mode engine (schedule_eligible,
+  assign_fact_retrieval, postpone, reject_invalid_scheduler, block_explanation),
+  which the PEDAGOGICAL_SPEC_DUAL_MODE gold oracle encodes. The frozen
+  contracts.label_space.LN03_DECISIONS space differs (remediate_first,
+  reject_missing_fact, reject_absent_source); native labels are validated
+  strictly and the contract mapping is diagnostic-only, never a silent rewrite.
+leakage_controls:
+  - oracle_version_in_evaluator_only
+  - mask_case_input before StudyInput construction
+  - predictions contain no expected_decision / fault_id / gold fields
+ablation_divergence_expectation: >
+  Each ablation must diverge from proposed on at least the cases its disabled
+  mechanism governs (a1: unverified-source cases; a2: unstable-fact cases;
+  a3: not-yet-due cases). If an ablation matches proposed exactly, report no
+  difference honestly; never fabricate a p-value.

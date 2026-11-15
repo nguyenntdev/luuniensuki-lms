@@ -177,6 +177,122 @@ def bootstrap_ci(
     return {"point": point, "ci_lower": ci_lower, "ci_upper": ci_upper, "se": se}
 
 
+def wilson_score_interval(
+    successes: int, n: int, confidence: float = 0.95
+) -> Tuple[float, float]:
+    """Wilson score confidence interval for a binomial proportion.
+
+    Unlike the percentile bootstrap, this interval does not collapse to
+    [0%, 0%] when the observed number of failures is zero. It is the default
+    interval reported for proportion/rate metrics.
+    """
+    if n <= 0:
+        return 0.0, 0.0
+    z = float(stats.norm.ppf(1.0 - (1.0 - confidence) / 2.0))
+    p = successes / n
+    denom = 1.0 + z * z / n
+    center = (p + z * z / (2.0 * n)) / denom
+    spread = z * math.sqrt((p * (1.0 - p) + z * z / (4.0 * n)) / n) / denom
+    lower = max(0.0, center - spread)
+    upper = min(1.0, center + spread)
+    return float(lower), float(upper)
+
+
+def clopper_pearson_interval(
+    successes: int, n: int, confidence: float = 0.95
+) -> Tuple[float, float]:
+    """Clopper-Pearson (exact) confidence interval for a binomial proportion.
+
+    Uses the Beta quantile formulation. Guarantees nominal coverage and is
+    conservative; reported alongside Wilson for proportion metrics.
+    """
+    if n <= 0:
+        return 0.0, 0.0
+    k = int(successes)
+    alpha = 1.0 - confidence
+    lower = 0.0 if k <= 0 else float(stats.beta.ppf(alpha / 2.0, k, n - k + 1))
+    upper = 1.0 if k >= n else float(stats.beta.ppf(1.0 - alpha / 2.0, k + 1, n - k))
+    return max(0.0, lower), min(1.0, upper)
+
+
+def holm_bonferroni(pvalues: List[float]) -> List[float]:
+    """Holm-Bonferroni step-down family-wise error rate correction."""
+    m = len(pvalues)
+    if m == 0:
+        return []
+    order = sorted(range(m), key=lambda i: pvalues[i])
+    adjusted = [1.0] * m
+    running = 0.0
+    for rank, idx in enumerate(order):
+        candidate = min(1.0, (m - rank) * float(pvalues[idx]))
+        running = max(running, candidate)
+        adjusted[idx] = running
+    return adjusted
+
+
+def benjamini_hochberg(pvalues: List[float]) -> List[float]:
+    """Benjamini-Hochberg step-up false discovery rate correction."""
+    m = len(pvalues)
+    if m == 0:
+        return []
+    order = sorted(range(m), key=lambda i: pvalues[i])
+    adjusted = [1.0] * m
+    running = 1.0
+    for rank in range(m - 1, -1, -1):
+        idx = order[rank]
+        candidate = min(1.0, float(pvalues[idx]) * m / (rank + 1))
+        running = min(running, candidate)
+        adjusted[idx] = running
+    return adjusted
+
+
+def summarize_metric(
+    values: np.ndarray,
+    is_proportion: bool,
+    b: int = 2000,
+    rng: Optional[np.random.Generator] = None,
+    ci: float = 0.95,
+) -> Dict[str, Any]:
+    """Summarize a metric with an interval appropriate to its scale.
+
+    - Proportions/rates: Wilson score interval is the primary interval and is
+      aliased to ``ci_lower``/``ci_upper``/``ci_95``; Clopper-Pearson exact
+      interval is also emitted. The percentile bootstrap is retained for
+      reference as ``bootstrap_ci_95``.
+    - Continuous/count metrics: percentile bootstrap is used and remains the
+      primary interval.
+    """
+    boot = bootstrap_ci(values, b=b, rng=rng, ci=ci)
+    out: Dict[str, Any] = {
+        "point": boot["point"],
+        "ci_lower": boot["ci_lower"],
+        "ci_upper": boot["ci_upper"],
+        "se": boot["se"],
+        "ci_95": [boot["ci_lower"], boot["ci_upper"]],
+        "ci_method": "bootstrap_percentile",
+        "bootstrap_ci_95": [boot["ci_lower"], boot["ci_upper"]],
+    }
+    if is_proportion:
+        n = int(len(values))
+        successes = int(round(float(np.sum(values)))) if n > 0 else 0
+        wilson = wilson_score_interval(successes, n, confidence=ci)
+        cp = clopper_pearson_interval(successes, n, confidence=ci)
+        out.update(
+            {
+                "n": n,
+                "successes": successes,
+                "wilson_ci_95": [wilson[0], wilson[1]],
+                "clopper_pearson_ci_95": [cp[0], cp[1]],
+                # Alias the primary interval to the recommended proportion CI.
+                "ci_lower": wilson[0],
+                "ci_upper": wilson[1],
+                "ci_95": [wilson[0], wilson[1]],
+                "ci_method": "wilson_score",
+            }
+        )
+    return out
+
+
 def bootstrap_paired_diff_ci(
     x: np.ndarray, y: np.ndarray, b: int = 2000, rng: Optional[np.random.Generator] = None, ci: float = 0.95
 ) -> Dict[str, float]:
@@ -458,23 +574,32 @@ def analyze_study(
 
     for cid, cdata in conditions_data.items():
         rows = cdata["rows"]
-        # Primary metric on eligible cases
+        # Primary metric on eligible cases.
+        # "sum" kinds are unbounded counts -> continuous interval; all other
+        # primary kinds are binary indicators -> proportion interval.
+        primary_is_proportion = kind != "sum"
         p_vals_elig, elig_rows, _ = extract_primary_values(study_id, rows, filter_eligible=True)
-        boot_prim = bootstrap_ci(p_vals_elig, b=resamples, rng=rng)
+        prim_summary = summarize_metric(
+            p_vals_elig, is_proportion=primary_is_proportion, b=resamples, rng=rng
+        )
 
-        # Accuracy across all 720 cases
+        # Accuracy across all 720 cases (binary -> proportion interval)
         oracle_matches = np.array([int(r.get("oracle_match") is True) for r in rows], dtype=float)
-        boot_oracle = bootstrap_ci(oracle_matches, b=resamples, rng=rng)
+        oracle_summary = summarize_metric(
+            oracle_matches, is_proportion=True, b=resamples, rng=rng
+        )
 
-        # Elapsed ms latency
+        # Elapsed ms latency (continuous -> bootstrap interval)
         elapsed_times = np.array([float(r.get("elapsed_ms", 0.0)) for r in rows], dtype=float)
-        boot_latency = bootstrap_ci(elapsed_times, b=resamples, rng=rng)
+        latency_summary = summarize_metric(
+            elapsed_times, is_proportion=False, b=resamples, rng=rng
+        )
 
         # Secondary metrics
         sec_summaries: Dict[str, Any] = {
-            "oracle_match_rate": boot_oracle,
+            "oracle_match_rate": oracle_summary,
             "elapsed_ms": {
-                **boot_latency,
+                **latency_summary,
                 "median": float(np.median(elapsed_times)),
                 "std": float(np.std(elapsed_times, ddof=1)),
             },
@@ -483,7 +608,12 @@ def analyze_study(
             sec_vals = [extract_secondary_value(study_id, r, sec_name) for r in rows]
             valid_sec = np.array([v for v in sec_vals if v is not None], dtype=float)
             if len(valid_sec) > 0:
-                sec_summaries[sec_name] = bootstrap_ci(valid_sec, b=resamples, rng=rng)
+                sec_summaries[sec_name] = summarize_metric(
+                    valid_sec,
+                    is_proportion=(sec_type == "binary"),
+                    b=resamples,
+                    rng=rng,
+                )
 
         # Fault stratum breakdown & confusion matrix
         strata = ["nominal"] + list(eligible_faults or [])
@@ -522,13 +652,18 @@ def analyze_study(
 
             # Primary metric for this stratum
             p_vals_stratum, _, _ = extract_primary_values(study_id, f_rows, filter_eligible=False)
-            stratum_boot = bootstrap_ci(p_vals_stratum, b=resamples, rng=rng)
+            stratum_summary = summarize_metric(
+                p_vals_stratum,
+                is_proportion=primary_is_proportion,
+                b=resamples,
+                rng=rng,
+            )
 
             fault_breakdowns[fault_name] = {
                 "n": f_n,
                 "oracle_matches": f_matches,
                 "accuracy": f_accuracy,
-                "primary_metric": stratum_boot,
+                "primary_metric": stratum_summary,
                 "confusion_matrix": contingency,
                 "decisions": decision_counts,
                 "reason_codes": reason_counts,
@@ -544,7 +679,7 @@ def analyze_study(
                 "direction": spec[4],
                 "numerator": cdata["study_metric"]["numerator"],
                 "denominator": cdata["study_metric"]["denominator"],
-                **boot_prim,
+                **prim_summary,
             },
             "secondary_metrics": sec_summaries,
             "fault_breakdown": fault_breakdowns,
@@ -611,14 +746,21 @@ def analyze_study(
                 "eligible_n": len(i1_prim_vals),
                 "i1_point": cond_summaries["I1"]["primary_metric"]["point"],
                 "i1_ci_95": [cond_summaries["I1"]["primary_metric"]["ci_lower"], cond_summaries["I1"]["primary_metric"]["ci_upper"]],
+                "i1_ci_method": cond_summaries["I1"]["primary_metric"]["ci_method"],
+                "i1_wilson_ci_95": cond_summaries["I1"]["primary_metric"].get("wilson_ci_95"),
+                "i1_clopper_pearson_ci_95": cond_summaries["I1"]["primary_metric"].get("clopper_pearson_ci_95"),
                 "comp_point": cond_summaries[comp_id]["primary_metric"]["point"],
                 "comp_ci_95": [cond_summaries[comp_id]["primary_metric"]["ci_lower"], cond_summaries[comp_id]["primary_metric"]["ci_upper"]],
+                "comp_ci_method": cond_summaries[comp_id]["primary_metric"]["ci_method"],
+                "comp_wilson_ci_95": cond_summaries[comp_id]["primary_metric"].get("wilson_ci_95"),
+                "comp_clopper_pearson_ci_95": cond_summaries[comp_id]["primary_metric"].get("clopper_pearson_ci_95"),
                 "diff_point": diff_boot["diff_point"],
                 "diff_ci_95": [diff_boot["diff_ci_lower"], diff_boot["diff_ci_upper"]],
                 "diff_se": diff_boot["diff_se"],
                 "test_type": paired_test_type,
                 "test_statistic": stat,
                 "p_value": pval,
+                "p_value_raw": pval,
                 "significance": signif,
                 "cohens_d_paired": d_paired,
                 "cohens_d_pooled": d_pooled,
@@ -661,15 +803,28 @@ def analyze_study(
             "i1_point": cond_summaries["I1"]["primary_metric"]["point"],
             "i1_ci_lower": cond_summaries["I1"]["primary_metric"]["ci_lower"],
             "i1_ci_upper": cond_summaries["I1"]["primary_metric"]["ci_upper"],
+            "i1_ci_method": cond_summaries["I1"]["primary_metric"]["ci_method"],
+            "i1_wilson_ci_lower": (cond_summaries["I1"]["primary_metric"].get("wilson_ci_95") or [None, None])[0],
+            "i1_wilson_ci_upper": (cond_summaries["I1"]["primary_metric"].get("wilson_ci_95") or [None, None])[1],
+            "i1_cp_ci_lower": (cond_summaries["I1"]["primary_metric"].get("clopper_pearson_ci_95") or [None, None])[0],
+            "i1_cp_ci_upper": (cond_summaries["I1"]["primary_metric"].get("clopper_pearson_ci_95") or [None, None])[1],
             "comp_point": cond_summaries[comp_id]["primary_metric"]["point"],
             "comp_ci_lower": cond_summaries[comp_id]["primary_metric"]["ci_lower"],
             "comp_ci_upper": cond_summaries[comp_id]["primary_metric"]["ci_upper"],
+            "comp_ci_method": cond_summaries[comp_id]["primary_metric"]["ci_method"],
+            "comp_wilson_ci_lower": (cond_summaries[comp_id]["primary_metric"].get("wilson_ci_95") or [None, None])[0],
+            "comp_wilson_ci_upper": (cond_summaries[comp_id]["primary_metric"].get("wilson_ci_95") or [None, None])[1],
+            "comp_cp_ci_lower": (cond_summaries[comp_id]["primary_metric"].get("clopper_pearson_ci_95") or [None, None])[0],
+            "comp_cp_ci_upper": (cond_summaries[comp_id]["primary_metric"].get("clopper_pearson_ci_95") or [None, None])[1],
             "diff_point": diff_boot["diff_point"],
             "diff_ci_lower": diff_boot["diff_ci_lower"],
             "diff_ci_upper": diff_boot["diff_ci_upper"],
             "paired_test_type": paired_test_type,
             "test_statistic": stat,
             "p_value": pval,
+            "p_value_raw": pval,
+            "p_value_holm": None,
+            "p_value_bh": None,
             "significance": signif,
             "odds_ratio_haldane": or_val if or_val is not None else "NA",
             "cohens_d_paired": format_cohens(d_paired, d_note),
@@ -697,15 +852,28 @@ def analyze_study(
             "i1_point": cond_summaries["I1"]["secondary_metrics"]["oracle_match_rate"]["point"],
             "i1_ci_lower": cond_summaries["I1"]["secondary_metrics"]["oracle_match_rate"]["ci_lower"],
             "i1_ci_upper": cond_summaries["I1"]["secondary_metrics"]["oracle_match_rate"]["ci_upper"],
+            "i1_ci_method": cond_summaries["I1"]["secondary_metrics"]["oracle_match_rate"]["ci_method"],
+            "i1_wilson_ci_lower": (cond_summaries["I1"]["secondary_metrics"]["oracle_match_rate"].get("wilson_ci_95") or [None, None])[0],
+            "i1_wilson_ci_upper": (cond_summaries["I1"]["secondary_metrics"]["oracle_match_rate"].get("wilson_ci_95") or [None, None])[1],
+            "i1_cp_ci_lower": (cond_summaries["I1"]["secondary_metrics"]["oracle_match_rate"].get("clopper_pearson_ci_95") or [None, None])[0],
+            "i1_cp_ci_upper": (cond_summaries["I1"]["secondary_metrics"]["oracle_match_rate"].get("clopper_pearson_ci_95") or [None, None])[1],
             "comp_point": cond_summaries[comp_id]["secondary_metrics"]["oracle_match_rate"]["point"],
             "comp_ci_lower": cond_summaries[comp_id]["secondary_metrics"]["oracle_match_rate"]["ci_lower"],
             "comp_ci_upper": cond_summaries[comp_id]["secondary_metrics"]["oracle_match_rate"]["ci_upper"],
+            "comp_ci_method": cond_summaries[comp_id]["secondary_metrics"]["oracle_match_rate"]["ci_method"],
+            "comp_wilson_ci_lower": (cond_summaries[comp_id]["secondary_metrics"]["oracle_match_rate"].get("wilson_ci_95") or [None, None])[0],
+            "comp_wilson_ci_upper": (cond_summaries[comp_id]["secondary_metrics"]["oracle_match_rate"].get("wilson_ci_95") or [None, None])[1],
+            "comp_cp_ci_lower": (cond_summaries[comp_id]["secondary_metrics"]["oracle_match_rate"].get("clopper_pearson_ci_95") or [None, None])[0],
+            "comp_cp_ci_upper": (cond_summaries[comp_id]["secondary_metrics"]["oracle_match_rate"].get("clopper_pearson_ci_95") or [None, None])[1],
             "diff_point": om_diff["diff_point"],
             "diff_ci_lower": om_diff["diff_ci_lower"],
             "diff_ci_upper": om_diff["diff_ci_upper"],
             "paired_test_type": "mcnemar",
             "test_statistic": om_mcn["statistic"],
             "p_value": om_mcn["p_value"],
+            "p_value_raw": om_mcn["p_value"],
+            "p_value_holm": None,
+            "p_value_bh": None,
             "significance": om_signif,
             "odds_ratio_haldane": om_mcn["odds_ratio_haldane"],
             "cohens_d_paired": format_cohens(d_p_om, d_n_om),
@@ -803,8 +971,8 @@ def analyze_holdouts(
         i1_elapsed = np.array([float(r["elapsed_ms"]) for r in i1_rows], dtype=float)
         b0_elapsed = np.array([float(r["elapsed_ms"]) for r in b0_rows], dtype=float)
 
-        boot_i1 = bootstrap_ci(i1_matches, b=resamples, rng=rng)
-        boot_b0 = bootstrap_ci(b0_matches, b=resamples, rng=rng)
+        boot_i1 = summarize_metric(i1_matches, is_proportion=True, b=resamples, rng=rng)
+        boot_b0 = summarize_metric(b0_matches, is_proportion=True, b=resamples, rng=rng)
         diff_boot = bootstrap_paired_diff_ci(i1_matches, b0_matches, b=resamples, rng=rng)
 
         mcn = compute_mcnemar(i1_matches, b0_matches)
@@ -871,15 +1039,28 @@ def analyze_holdouts(
             "i1_point": boot_i1["point"],
             "i1_ci_lower": boot_i1["ci_lower"],
             "i1_ci_upper": boot_i1["ci_upper"],
+            "i1_ci_method": boot_i1["ci_method"],
+            "i1_wilson_ci_lower": boot_i1["wilson_ci_95"][0],
+            "i1_wilson_ci_upper": boot_i1["wilson_ci_95"][1],
+            "i1_cp_ci_lower": boot_i1["clopper_pearson_ci_95"][0],
+            "i1_cp_ci_upper": boot_i1["clopper_pearson_ci_95"][1],
             "comp_point": boot_b0["point"],
             "comp_ci_lower": boot_b0["ci_lower"],
             "comp_ci_upper": boot_b0["ci_upper"],
+            "comp_ci_method": boot_b0["ci_method"],
+            "comp_wilson_ci_lower": boot_b0["wilson_ci_95"][0],
+            "comp_wilson_ci_upper": boot_b0["wilson_ci_95"][1],
+            "comp_cp_ci_lower": boot_b0["clopper_pearson_ci_95"][0],
+            "comp_cp_ci_upper": boot_b0["clopper_pearson_ci_95"][1],
             "diff_point": diff_boot["diff_point"],
             "diff_ci_lower": diff_boot["diff_ci_lower"],
             "diff_ci_upper": diff_boot["diff_ci_upper"],
             "paired_test_type": "mcnemar",
             "test_statistic": mcn["statistic"],
             "p_value": mcn["p_value"],
+            "p_value_raw": mcn["p_value"],
+            "p_value_holm": None,
+            "p_value_bh": None,
             "significance": format_significance(mcn["p_value"]),
             "odds_ratio_haldane": mcn["odds_ratio_haldane"],
             "cohens_d_paired": format_cohens(d_p, d_n),
@@ -889,6 +1070,142 @@ def analyze_holdouts(
         })
 
     return holdout_results, holdout_table_rows
+
+
+def _sanitize_for_json(value: Any) -> Any:
+    """Recursively convert non-finite floats to null for strict JSON output."""
+    if isinstance(value, dict):
+        return {k: _sanitize_for_json(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_sanitize_for_json(v) for v in value]
+    if isinstance(value, (np.floating, float)):
+        f = float(value)
+        return f if math.isfinite(f) else None
+    if isinstance(value, np.integer):
+        return int(value)
+    if isinstance(value, np.bool_):
+        return bool(value)
+    return value
+
+
+def _apply_multiple_testing(entries: List[Dict[str, Any]], family: str) -> Dict[str, Any]:
+    """Apply Holm-Bonferroni and Benjamini-Hochberg to a family of p-values.
+
+    Mutates each entry to attach ``p_value_holm`` and ``p_value_bh`` alongside
+    the existing raw p-value. Returns a compact family summary.
+    """
+    raw = [float(e.get("p_value_raw", e.get("p_value", 1.0))) for e in entries]
+    holm = holm_bonferroni(raw)
+    bh = benjamini_hochberg(raw)
+    for entry, h, b, r in zip(entries, holm, bh, raw):
+        entry.setdefault("p_value_raw", r)
+        entry["p_value_holm"] = h
+        entry["p_value_bh"] = b
+    return {
+        "family": family,
+        "n_tests": len(entries),
+        "methods": ["holm_bonferroni_fwer", "benjamini_hochberg_fdr"],
+        "min_raw_p": min(raw) if raw else None,
+        "max_raw_p": max(raw) if raw else None,
+        "n_significant_raw_p05": sum(1 for p in raw if p < 0.05),
+        "n_significant_holm_p05": sum(1 for p in holm if p < 0.05),
+        "n_significant_bh_p05": sum(1 for p in bh if p < 0.05),
+        "holm_monotonic_adjusted_ge_raw": all(h + 1e-15 >= r for h, r in zip(holm, raw)),
+        "bh_monotonic_adjusted_ge_raw": all(b + 1e-15 >= r for b, r in zip(bh, raw)),
+    }
+
+
+def sensitivity_analysis(
+    studies_results: Dict[str, Any],
+    holdout_results: Dict[str, Any],
+    large_effect_threshold: float = 0.474,
+) -> Dict[str, Any]:
+    """Drop-one-study influence analysis on scale-free aggregate effects.
+
+    Per the aggregation rule, raw unstandardized differences are never pooled.
+    This sensitivity analysis therefore aggregates only scale-free standardized
+    effects (absolute Cliff's delta) and reports whether each leave-one-out
+    estimate preserves the original "Large" qualitative conclusion.
+    """
+    cliffs: Dict[str, float] = {}
+    for sid, sdata in studies_results.items():
+        comp = sdata.get("comparisons", {}).get("I1_vs_B0", {}).get("primary_metric")
+        if comp and comp.get("cliffs_delta") is not None:
+            cliffs[sid] = abs(float(comp["cliffs_delta"]))
+
+    study_ids = sorted(cliffs)
+    full_mean = float(np.mean([cliffs[s] for s in study_ids])) if study_ids else None
+    drop_one: Dict[str, Any] = {}
+    if full_mean is not None:
+        for sid in study_ids:
+            remaining = [cliffs[o] for o in study_ids if o != sid]
+            loo_mean = float(np.mean(remaining)) if remaining else None
+            delta = (loo_mean - full_mean) if loo_mean is not None else None
+            drop_one[sid] = {
+                "omitted_study": sid,
+                "loo_mean_abs_cliffs_delta_i1_vs_b0": loo_mean,
+                "delta_vs_full": delta,
+                "loo_interpretation": (
+                    "Large" if loo_mean is not None and loo_mean >= large_effect_threshold else
+                    ("Medium" if loo_mean is not None and loo_mean >= 0.33 else
+                     ("Small" if loo_mean is not None and loo_mean >= 0.147 else "Negligible"))
+                ),
+            }
+        max_dev_id = max(drop_one, key=lambda k: abs(drop_one[k]["delta_vs_full"] or 0.0))
+        max_dev = abs(drop_one[max_dev_id]["delta_vs_full"] or 0.0)
+        stable = all(
+            (v["loo_mean_abs_cliffs_delta_i1_vs_b0"] is not None
+             and v["loo_mean_abs_cliffs_delta_i1_vs_b0"] >= large_effect_threshold)
+            for v in drop_one.values()
+        )
+    else:
+        max_dev_id = None
+        max_dev = None
+        stable = False
+
+    holdout_improvements = {
+        sid: float(h["diff_accuracy"]["diff_point"]) for sid, h in holdout_results.items()
+    }
+    holdout_full_mean = (
+        float(np.mean(list(holdout_improvements.values()))) if holdout_improvements else None
+    )
+    holdout_drop_one: Dict[str, Any] = {}
+    if holdout_full_mean is not None:
+        for sid in sorted(holdout_improvements):
+            remaining = [v for k, v in holdout_improvements.items() if k != sid]
+            loo_mean = float(np.mean(remaining)) if remaining else None
+            holdout_drop_one[sid] = {
+                "omitted_study": sid,
+                "loo_mean_accuracy_improvement": loo_mean,
+                "delta_vs_full": (loo_mean - holdout_full_mean) if loo_mean is not None else None,
+                "loo_direction_preserved": (loo_mean is not None and loo_mean > 0.0),
+            }
+        holdout_stable = all(v["loo_direction_preserved"] for v in holdout_drop_one.values())
+    else:
+        holdout_stable = False
+
+    return {
+        "method": "leave_one_study_out_influence_on_scale_free_aggregates",
+        "aggregation_unit_note": "Only scale-free standardized effects (absolute Cliff's delta) and proportion-scale holdout improvements are aggregated; raw mixed-unit differences remain unpooled.",
+        "primary_i1_vs_b0_abs_cliffs_delta": {
+            "full_mean": full_mean,
+            "n_studies": len(study_ids),
+            "large_effect_threshold": large_effect_threshold,
+            "max_influence_study": max_dev_id,
+            "max_abs_deviation": max_dev,
+            "conclusions_stable_all_leave_one_out_large": bool(stable),
+            "drop_one": drop_one,
+        },
+        "holdout_accuracy_improvement": {
+            "full_mean": holdout_full_mean,
+            "max_influence_study": (
+                max(holdout_drop_one, key=lambda k: abs(holdout_drop_one[k]["delta_vs_full"] or 0.0))
+                if holdout_drop_one else None
+            ),
+            "conclusions_stable_positive_improvement": bool(holdout_stable),
+            "drop_one": holdout_drop_one,
+        },
+    }
 
 
 def run_meta_analysis(
@@ -950,11 +1267,81 @@ def run_meta_analysis(
     holdout_diffs = [h["diff_accuracy"]["diff_point"] for h in holdout_results.values()]
     holdout_cliffs = [abs(h["cliffs_delta"]) for h in holdout_results.values()]
 
+    # Multiple-testing correction across study comparisons.
+    # Family 1 (confirmatory): all primary I1-vs-comparator tests (10 studies x 4).
+    # Family 2 (secondary): all oracle_match I1-vs-comparator tests.
+    primary_family: List[Dict[str, Any]] = []
+    oracle_family: List[Dict[str, Any]] = []
+    for sid, sdata in studies_results.items():
+        for comp_key, comp in sdata["comparisons"].items():
+            primary_family.append(comp["primary_metric"])
+            om = comp.get("oracle_match", {}).get("mcnemar")
+            if om is not None:
+                oracle_family.append(om)
+
+    primary_correction = _apply_multiple_testing(primary_family, "study_primary_comparisons")
+    oracle_correction = _apply_multiple_testing(oracle_family, "study_oracle_match_comparisons")
+
+    sensitivity = sensitivity_analysis(studies_results, holdout_results)
+
+    # Propagate corrected p-values into the CSV table rows.
+    for row in all_table_rows:
+        sid = row.get("study_id")
+        comp_key = row.get("comparison")
+        if sid in studies_results and comp_key in studies_results[sid]["comparisons"]:
+            comp = studies_results[sid]["comparisons"][comp_key]
+            target = (
+                comp["oracle_match"]["mcnemar"]
+                if row.get("metric_key") == "oracle_match_rate"
+                else comp["primary_metric"]
+            )
+            row["p_value_raw"] = target.get("p_value_raw")
+            row["p_value_holm"] = target.get("p_value_holm")
+            row["p_value_bh"] = target.get("p_value_bh")
+    # Holdout rows are a separate confirmatory family.
+    holdout_entries = [h["mcnemar"] for h in holdout_results.values()]
+    holdout_family = _apply_multiple_testing(holdout_entries, "holdout_oracle_match_comparisons")
+    for row in all_table_rows:
+        if row.get("dataset") == "holdout":
+            sid = row.get("study_id")
+            if sid in holdout_results:
+                mcn = holdout_results[sid]["mcnemar"]
+                row["p_value_raw"] = mcn.get("p_value_raw")
+                row["p_value_holm"] = mcn.get("p_value_holm")
+                row["p_value_bh"] = mcn.get("p_value_bh")
+
+    ci_rationale = (
+        "Interval choice is metric-scale specific. Binomial proportions and error/accuracy rates use "
+        "the Wilson score interval as the primary interval (ci_lower/ci_upper/ci_95) because it retains "
+        "non-zero width at 0 and 1; the Clopper-Pearson exact interval is also reported "
+        "(clopper_pearson_ci_95) for conservative coverage. Continuous and unbounded count metrics use "
+        "the percentile bootstrap (ci_method=bootstrap_percentile) with bootstrap_ci_95 retained. "
+        "Paired differences use the paired bootstrap. Multiple-testing correction applies "
+        "Holm-Bonferroni (family-wise error) and Benjamini-Hochberg (false discovery rate) to the "
+        "confirmatory study comparisons: p_value_raw is the uncorrected value, p_value_holm and "
+        "p_value_bh are the adjusted values. Non-finite floats are serialized as JSON null."
+    )
+
     summary_report = {
         "metadata": {
             "title": "Comprehensive Statistical Meta-Analysis of 10 Educational Research Studies",
             "scope": "FROZEN SYNTHETIC SOFTWARE POLICY BENCHMARK (7,200 SCENARIOS, 36,000 EXECUTIONS) + 10 HOLDOUTS (1,200 SCENARIOS)",
             "aggregation_methodology_note": "Unstandardized raw differences are NOT averaged across studies because metric units vary (rates vs counts per route). Only scale-free standardized effect sizes (Cliff's delta) and study-specific effects are reported.",
+            "ci_rationale": ci_rationale,
+            "ci_methodology": {
+                "proportions_and_rates": "wilson_score (primary) + clopper_pearson_exact (secondary)",
+                "continuous_and_counts": "percentile_bootstrap",
+                "paired_differences": "paired_percentile_bootstrap",
+                "equivalent_asymptotic_option": "For large-sample continuous metrics a t-interval is asymptotically equivalent to the reported bootstrap interval; bootstrap is used to avoid normality assumptions on skewed latency/count data.",
+            },
+            "multiple_testing_correction": {
+                "methods": ["holm_bonferroni", "benjamini_hochberg"],
+                "applied_to": "all study I1-vs-comparator tests, plus the holdout I1_vs_B0 family",
+                "primary_family": primary_correction,
+                "oracle_match_family": oracle_correction,
+                "holdout_family": holdout_family,
+            },
+            "strict_json": True,
             "bootstrap_resamples": resamples,
             "random_seed": seed,
             "total_studies": len(studies_results),
@@ -968,7 +1355,13 @@ def run_meta_analysis(
             "fixtures_dir": str(fixtures_dir),
         },
         "meta_summary": {
-            "all_10_studies_statistically_significant_i1_vs_b0": True,
+            "all_10_studies_statistically_significant_i1_vs_b0": all(
+                sdata["comparisons"].get("I1_vs_B0", {})
+                .get("primary_metric", {})
+                .get("p_value_holm", 1.0) < 0.05
+                for sdata in studies_results.values()
+            ),
+            "multiple_testing_note": "Significance flags above use Holm-Bonferroni-adjusted p-values across the confirmatory I1-vs-comparator family.",
             "cross_study_aggregation_note": "Averaging raw unstandardized differences across incompatible metric units (rates vs counts) is deliberately omitted to preserve scientific validity. See study-specific comparisons below.",
             "mean_cohens_d_pooled_i1_vs_b0": float(np.mean(primary_i1_vs_b0_cohens)) if primary_i1_vs_b0_cohens else "infinite_separation_across_all_binary_benchmarks",
             "mean_cliffs_delta_i1_vs_b0": float(np.mean(primary_i1_vs_b0_cliffs)),
@@ -977,13 +1370,17 @@ def run_meta_analysis(
             "holdout_mean_cliffs_delta": float(np.mean(holdout_cliffs)),
             "holdout_all_10_statistically_significant": all(h["mcnemar"]["p_value"] < 0.05 for h in holdout_results.values()),
         },
+        "sensitivity_analysis": sensitivity,
         "studies": studies_results,
         "holdout_generalization": holdout_results,
     }
 
-    # Write output JSON
+    # Write output JSON (strict: no Infinity/NaN)
     output_json.parent.mkdir(parents=True, exist_ok=True)
-    output_json.write_text(json.dumps(summary_report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    output_json.write_text(
+        json.dumps(_sanitize_for_json(summary_report), ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
     print(f"Saved complete JSON report: {output_json}")
 
     # Write output CSV

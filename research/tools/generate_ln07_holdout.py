@@ -9,6 +9,9 @@ Universal Design for Learning (UDL) & Multimodal Pedagogical Equivalence.
 - low_bandwidth_device (24 cases): Remote/rural school or constrained mobile connection (50-100 kbps)
 - visual_impairment_screen_reader (24 cases): Assistive technology user with screen reader & keyboard navigation
 - missing_monument_asset (24 cases): CDN/server 3D asset missing or corrupted (404/checksum failure)
+
+NOTE: All annotation records in this generator are deterministic programmatic
+templates. They are NOT real expert adjudication, human review, or consensus.
 """
 from __future__ import annotations
 
@@ -58,8 +61,9 @@ TASK_DEFINITIONS = [
 
 
 def make_deterministic_hash(data: dict) -> str:
-    serialized = json.dumps(data, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+    return hashlib.sha256(
+        json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    ).hexdigest()
 
 
 def generate_cases() -> list[dict]:
@@ -194,10 +198,11 @@ def generate_cases() -> list[dict]:
 
                 record = {
                     "case_id": cid,
-                    "cohort": "INDEPENDENT_HOLDOUT",
+                    "cohort": "SYNTHETIC_HELD_OUT_TEST_SET",
                     "fault_id": fault_id,
                     "input": scenario_input,
                     "input_hash": input_hash,
+                    "annotation_provenance": "PROGRAMMATIC_TEMPLATE_NO_HUMAN_ADJUDICATION",
                     "materializer_version": "2.0-holdout",
                     "oracle": {
                         "basis": "DESIGN_SPEC_EMPIRICAL_HOLDOUT",
@@ -218,7 +223,7 @@ def main():
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         for c in cases:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+            f.write(json.dumps(c, ensure_ascii=False, separators=(",", ":")) + "\n")
 
     print(f"Generated {len(cases)} cases into {OUTPUT_PATH}")
     fault_counts = {}

@@ -1,0 +1,87 @@
+{
+  "hash_standard": "sha256(sort_keys,compact,utf8)",
+  "tier": "T3",
+  "datasets": [
+    {
+      "study_id": "LN-01",
+      "n_cases": 120,
+      "inputs_path": "research_v2/data/ln01/t3_inputs.jsonl",
+      "inputs_sha256": "a41463be1cc4867f2bc1962eddf85bc36d7daeb8e04aa49455900e6d24290b5d",
+      "gold_path": "research_v2/data/ln01/t3_gold.jsonl",
+      "gold_sha256": "ebcae63f1fc1c3d99ad0bca1913870b543eb1e611c19eaaf73132bef51728155"
+    },
+    {
+      "study_id": "LN-02",
+      "n_cases": 120,
+      "inputs_path": "research_v2/data/ln02/t3_inputs.jsonl",
+      "inputs_sha256": "b25fffcf551e292143c02f8d7ac72241cb81ca166619534cd1f35e7d33f95b4e",
+      "gold_path": "research_v2/data/ln02/t3_gold.jsonl",
+      "gold_sha256": "0e95b07c404fd08851b0df9b49762ecbe071ca98609deaa7eb11239fd435c64b"
+    },
+    {
+      "study_id": "LN-03",
+      "n_cases": 120,
+      "inputs_path": "research_v2/data/ln03/t3_inputs.jsonl",
+      "inputs_sha256": "2b78db48d5e58f56642efac57c86dfab036d579b193ebb779054c33bcdc3a47a",
+      "gold_path": "research_v2/data/ln03/t3_gold.jsonl",
+      "gold_sha256": "d5c9e5e5933736ca671630d33f87df4f28d36221e65b7e82b5d852ad5dbe0e26"
+    },
+    {
+      "study_id": "LN-04",
+      "n_cases": 120,
+      "inputs_path": "research_v2/data/ln04/t3_inputs.jsonl",
+      "inputs_sha256": "afe843ae80ff78ac16fe137f01954b7dbe1bb32bea68a3e60f0c0b5b5bcee6c7",
+      "gold_path": "research_v2/data/ln04/t3_gold.jsonl",
+      "gold_sha256": "3f914c309d53167fb7b83f33aa3dddeb43281274a29a0438770cb6e8ba3602b5"
+    },
+    {
+      "study_id": "LN-05",
+      "n_cases": 120,
+      "inputs_path": "research_v2/data/ln05/t3_inputs.jsonl",
+      "inputs_sha256": "481f9038e89e842dba30a1a1c971b1e401ec59efebe217b27583cff369d038f1",
+      "gold_path": "research_v2/data/ln05/t3_gold.jsonl",
+      "gold_sha256": "6354cabad27d01db94afed8a45c81cbac04603b868a21b38ff0f83652e8c7822"
+    },
+    {
+      "study_id": "LN-06",
+      "n_cases": 120,
+      "inputs_path": "research_v2/data/ln06/t3_inputs.jsonl",
+      "inputs_sha256": "eb223b8fc5ff9078265e26260233ef269228b25ae4fa9a2c623d5c520a2570f1",
+      "gold_path": "research_v2/data/ln06/t3_gold.jsonl",
+      "gold_sha256": "d7ee8593c2a8dabe0066b2483cfcee7bd159aeaab466d0094810ee19f1a5a296"
+    },
+    {
+      "study_id": "LN-07",
+      "n_cases": 120,
+      "inputs_path": "research_v2/data/ln07/t3_inputs.jsonl",
+      "inputs_sha256": "f7995139e7e77ae181e2c5e0da5cadd453b66f55f13c08672b3d82334b0343b5",
+      "gold_path": "research_v2/data/ln07/t3_gold.jsonl",
+      "gold_sha256": "b7af2c166eccb0bfca4fce267c283fd4ee3b0b137f9f5c537d8fa7b52682172a"
+    },
+    {
+      "study_id": "LN-08",
+      "n_cases": 120,
+      "inputs_path": "research_v2/data/ln08/t3_inputs.jsonl",
+      "inputs_sha256": "26a78dc028821c7e85e94922627972674cc52205121165ac8c36fb3eb292dfed",
+      "gold_path": "research_v2/data/ln08/t3_gold.jsonl",
+      "gold_sha256": "b1ac89762cf7302c3383d9ca08cc392aa607c18813c8615a4b4b42244e46e04b"
+    },
+    {
+      "study_id": "LN-09",
+      "n_cases": 120,
+      "inputs_path": "research_v2/data/ln09/t3_inputs.jsonl",
+      "inputs_sha256": "013b61a277431fddc92a41937747162d6d210e5bb6d7ccd46fa3e8aae5d73d37",
+      "gold_path": "research_v2/data/ln09/t3_gold.jsonl",
+      "gold_sha256": "9535ff73ad1f4ffc2515994ab35c2e1599da7ca127a3cece74ffadcc23dff9f8"
+    },
+    {
+      "study_id": "LN-10",
+      "n_cases": 120,
+      "inputs_path": "research_v2/data/ln10/t3_inputs.jsonl",
+      "inputs_sha256": "f365e272ea5f52db6d58da5282cc8d4f0f2981031b3112085b746d05910fc7bb",
+      "gold_path": "research_v2/data/ln10/t3_gold.jsonl",
+      "gold_sha256": "233e7177bbcccd881769099a36b55c202de036821c64532b238adc19580c8b98"
+    }
+  ],
+  "total_cases": 1200
+}

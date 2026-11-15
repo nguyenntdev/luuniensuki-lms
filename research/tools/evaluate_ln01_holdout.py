@@ -17,17 +17,85 @@ Computes:
 - Generates JSON, CSV, and LaTeX table artifacts
 """
 
+import argparse
 import json
 import math
 from pathlib import Path
+import sys
+from typing import Any, Dict, List
+
 import numpy as np
 from scipy import stats
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
 from research.integrations.ln01 import run_policy
 
-HOLDOUT_PATH = Path("/home/clue/Documents/luuniensuki-lms/research/fixtures/holdout/LN-01_holdout.jsonl")
-ARTIFACTS_DIR = Path("/home/clue/Documents/luuniensuki-lms/research_artifacts/LN-01/holdout")
-MANUSCRIPTS_RESULTS_DIR = Path("/home/clue/Documents/luuniensuki-lms/manuscripts_v5/results")
+
+def holm_bonferroni(pvalues: List[float]) -> List[float]:
+    """Holm-Bonferroni step-down family-wise error rate correction."""
+    m = len(pvalues)
+    if m == 0:
+        return []
+    order = sorted(range(m), key=lambda i: pvalues[i])
+    adjusted = [1.0] * m
+    running = 0.0
+    for rank, idx in enumerate(order):
+        candidate = min(1.0, (m - rank) * float(pvalues[idx]))
+        running = max(running, candidate)
+        adjusted[idx] = running
+    return adjusted
+
+
+def benjamini_hochberg(pvalues: List[float]) -> List[float]:
+    """Benjamini-Hochberg step-up false discovery rate correction."""
+    m = len(pvalues)
+    if m == 0:
+        return []
+    order = sorted(range(m), key=lambda i: pvalues[i])
+    adjusted = [1.0] * m
+    running = 1.0
+    for rank in range(m - 1, -1, -1):
+        idx = order[rank]
+        candidate = min(1.0, float(pvalues[idx]) * m / (rank + 1))
+        running = min(running, candidate)
+        adjusted[idx] = running
+    return adjusted
+
+
+def apply_multiple_testing(comparisons: Dict[str, Dict[str, Any]], key: str = "exact_p_value") -> Dict[str, Any]:
+    """Attach Holm-Bonferroni and Benjamini-Hochberg adjusted p-values in place.
+
+    Adjusted p-values are always >= raw p-values (monotone step procedures).
+    Returns a compact family summary for serialization.
+    """
+    keys = list(comparisons.keys())
+    raw = [float(comparisons[k][key]) for k in keys]
+    holm = holm_bonferroni(raw)
+    bh = benjamini_hochberg(raw)
+    for k, r, h, b in zip(keys, raw, holm, bh):
+        comparisons[k]["p_value_raw"] = r
+        comparisons[k]["p_value_holm"] = h
+        comparisons[k]["p_value_bh"] = b
+    return {
+        "family": "ln01_holdout_pairwise_i1_vs_comparators",
+        "n_tests": len(keys),
+        "methods": ["holm_bonferroni_fwer", "benjamini_hochberg_fdr"],
+        "raw_p_key": key,
+        "min_raw_p": min(raw) if raw else None,
+        "max_raw_p": max(raw) if raw else None,
+        "n_significant_raw_p05": sum(1 for p in raw if p < 0.05),
+        "n_significant_holm_p05": sum(1 for p in holm if p < 0.05),
+        "n_significant_bh_p05": sum(1 for p in bh if p < 0.05),
+        "holm_monotonic_adjusted_ge_raw": all(h + 1e-15 >= r for h, r in zip(holm, raw)),
+        "bh_monotonic_adjusted_ge_raw": all(b + 1e-15 >= r for b, r in zip(bh, raw)),
+    }
+
+HOLDOUT_PATH = REPO_ROOT / "research/fixtures/holdout/LN-01_holdout.jsonl"
+ARTIFACTS_DIR = REPO_ROOT / "research_artifacts/LN-01/holdout"
+MANUSCRIPTS_RESULTS_DIR = REPO_ROOT / "manuscripts_v5/results"
 
 CONDITIONS = [
     {
@@ -108,6 +176,57 @@ def bootstrap_ci(binary_correct_array, num_bootstraps=10000, alpha=0.05, seed=42
     return mean, float(low), float(high)
 
 
+def wilson_score_interval(successes, n, confidence=0.95):
+    """Wilson score interval for a binomial proportion (non-degenerate at 0/1)."""
+    if n <= 0:
+        return 0.0, 0.0
+    z = stats.norm.ppf(1 - (1 - confidence) / 2)
+    p = successes / n
+    denom = 1 + z**2 / n
+    center = (p + z**2 / (2 * n)) / denom
+    spread = z * math.sqrt((p * (1 - p) + z**2 / (4 * n)) / n) / denom
+    return float(max(0.0, center - spread)), float(min(1.0, center + spread))
+
+
+def clopper_pearson_interval(successes, n, confidence=0.95):
+    """Clopper-Pearson (exact) interval for a binomial proportion."""
+    if n <= 0:
+        return 0.0, 0.0
+    alpha = 1 - confidence
+    lower = 0.0 if successes <= 0 else float(stats.beta.ppf(alpha / 2, successes, n - successes + 1))
+    upper = 1.0 if successes >= n else float(stats.beta.ppf(1 - alpha / 2, successes + 1, n - successes))
+    return float(max(0.0, lower)), float(min(1.0, upper))
+
+
+def _sanitize_for_json(value):
+    """Recursively convert non-finite floats to None for strict JSON output."""
+    if isinstance(value, dict):
+        return {k: _sanitize_for_json(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_sanitize_for_json(v) for v in value]
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, np.floating):
+        f = float(value)
+        return f if math.isfinite(f) else None
+    if isinstance(value, np.integer):
+        return int(value)
+    if isinstance(value, np.bool_):
+        return bool(value)
+    return value
+
+
+def _write_strict_json(path, payload):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(
+            _sanitize_for_json(payload),
+            f,
+            indent=2,
+            ensure_ascii=False,
+            allow_nan=False,
+        )
+
+
 def compute_mcnemar(correct_a, correct_b):
     """Compute McNemar test between two paired binary classifiers.
     
@@ -138,8 +257,8 @@ def compute_mcnemar(correct_a, correct_b):
     # Exact two-sided binomial p-value
     exact_p = float(stats.binomtest(b, total_discordant, p=0.5, alternative='two-sided').pvalue) if total_discordant > 0 else 1.0
     
-    # Odds ratio
-    odds_ratio = (b / c) if c > 0 else float('inf') if b > 0 else 1.0
+    # Odds ratio (None for undefined/infinite to satisfy strict JSON)
+    odds_ratio = (b / c) if c > 0 else None
     
     return {
         "contingency": {"n11": n11, "n10": n10, "n01": n01, "n00": n00},
@@ -215,6 +334,10 @@ def main():
         total_correct = sum(correct_flags)
         total_errors = n_cases - total_correct
         error_rate, ci_low, ci_high = bootstrap_ci(correct_flags)
+        wilson_low, wilson_high = wilson_score_interval(total_errors, n_cases)
+        cp_low, cp_high = clopper_pearson_interval(total_errors, n_cases)
+        acc_wilson_low, acc_wilson_high = wilson_score_interval(total_correct, n_cases)
+        acc_cp_low, acc_cp_high = clopper_pearson_interval(total_correct, n_cases)
 
         results_by_cond[cond_id] = {
             "condition": cond,
@@ -225,6 +348,10 @@ def main():
             "error_rate": round(error_rate, 4),
             "ci_95_low": round(ci_low, 4),
             "ci_95_high": round(ci_high, 4),
+            "error_rate_wilson_ci_95": [round(wilson_low, 4), round(wilson_high, 4)],
+            "error_rate_clopper_pearson_ci_95": [round(cp_low, 4), round(cp_high, 4)],
+            "accuracy_wilson_ci_95": [round(acc_wilson_low, 4), round(acc_wilson_high, 4)],
+            "accuracy_clopper_pearson_ci_95": [round(acc_cp_low, 4), round(acc_cp_high, 4)],
             "fault_breakdown": fault_stats,
             "correct_array": correct_flags,
         }
@@ -241,14 +368,18 @@ def main():
             "wilcoxon": wilcoxon,
         }
 
-    # Summary table output
-    print("\n" + "=" * 90)
-    print(f"{'Condition':<35} | {'Errors':<8} | {'Error Rate':<12} | {'95% CI':<18} | {'Accuracy':<10}")
-    print("-" * 90)
+        # Summary table output
+    print("\n" + "=" * 118)
+    print(f"{'Condition':<35} | {'Errors':<8} | {'Error Rate':<12} | {'Wilson 95% CI':<22} | {'Clopper-Pearson 95% CI':<26} | {'Accuracy':<10}")
+    print("-" * 118)
     for cond_id, res in results_by_cond.items():
         ci_str = f"[{res['ci_95_low']*100:.1f}%, {res['ci_95_high']*100:.1f}%]"
-        print(f"{res['condition']['name']:<35} | {res['total_errors']:<8} | {res['error_rate']*100:>6.2f}%     | {ci_str:<18} | {res['accuracy']*100:>6.2f}%")
-    print("=" * 90)
+        w_str = f"[{res['error_rate_wilson_ci_95'][0]*100:.1f}%, {res['error_rate_wilson_ci_95'][1]*100:.1f}%]"
+        cp_str = f"[{res['error_rate_clopper_pearson_ci_95'][0]*100:.1f}%, {res['error_rate_clopper_pearson_ci_95'][1]*100:.1f}%]"
+        print(f"{res['condition']['name']:<35} | {res['total_errors']:<8} | {res['error_rate']*100:>6.2f}%     | {w_str:<22} | {cp_str:<26} | {res['accuracy']*100:>6.2f}%")
+    print("=" * 118)
+    print("Note: ci_95 is the Wilson score interval for the error rate (non-degenerate at 0%/100%); "
+          "Clopper-Pearson exact and legacy percentile bootstrap are retained for reference.")
 
     print("\nFault-Stratified Error Breakdown (24 cases per fault):")
     header = f"{'Condition':<15} | " + " | ".join([f"{f[:14]:<14}" for f in FAULT_TYPES])
@@ -278,6 +409,13 @@ def main():
             "holdout_fixture": str(HOLDOUT_PATH),
             "total_cases": n_cases,
             "bootstrap_samples": 10000,
+            "ci_rationale": (
+                "Proportion metrics (error rate, accuracy) report Wilson score as the primary interval "
+                "(error_rate_wilson_ci_95 / accuracy_wilson_ci_95) plus Clopper-Pearson exact intervals "
+                "(error_rate_clopper_pearson_ci_95 / accuracy_clopper_pearson_ci_95). The legacy percentile "
+                "bootstrap is retained as ci_95 but is degenerate at 0% error. Non-finite values are null."
+            ),
+            "strict_json": True,
         },
         "conditions": {
             cid: {
@@ -288,6 +426,11 @@ def main():
                 "error_rate": r["error_rate"],
                 "accuracy": r["accuracy"],
                 "ci_95": [r["ci_95_low"], r["ci_95_high"]],
+                "ci_95_method": "bootstrap_percentile",
+                "error_rate_wilson_ci_95": r["error_rate_wilson_ci_95"],
+                "error_rate_clopper_pearson_ci_95": r["error_rate_clopper_pearson_ci_95"],
+                "accuracy_wilson_ci_95": r["accuracy_wilson_ci_95"],
+                "accuracy_clopper_pearson_ci_95": r["accuracy_clopper_pearson_ci_95"],
                 "fault_breakdown": r["fault_breakdown"],
             }
             for cid, r in results_by_cond.items()
@@ -298,12 +441,10 @@ def main():
     ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
     MANUSCRIPTS_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Save JSON results
+    # Save JSON results (strict: no Infinity/NaN)
     json_path = ARTIFACTS_DIR / "LN-01_holdout_results.json"
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(serializable_results, f, indent=2, ensure_ascii=False)
-    with open(MANUSCRIPTS_RESULTS_DIR / "LN-01_holdout_results.json", "w", encoding="utf-8") as f:
-        json.dump(serializable_results, f, indent=2, ensure_ascii=False)
+    _write_strict_json(json_path, serializable_results)
+    _write_strict_json(MANUSCRIPTS_RESULTS_DIR / "LN-01_holdout_results.json", serializable_results)
 
     # Save CSV results
     csv_rows = []
@@ -317,6 +458,14 @@ def main():
             "ci_95_low": r["ci_95_low"],
             "ci_95_high": r["ci_95_high"],
             "accuracy": r["accuracy"],
+            "error_rate_wilson_ci_low": r["error_rate_wilson_ci_95"][0],
+            "error_rate_wilson_ci_high": r["error_rate_wilson_ci_95"][1],
+            "error_rate_cp_ci_low": r["error_rate_clopper_pearson_ci_95"][0],
+            "error_rate_cp_ci_high": r["error_rate_clopper_pearson_ci_95"][1],
+            "accuracy_wilson_ci_low": r["accuracy_wilson_ci_95"][0],
+            "accuracy_wilson_ci_high": r["accuracy_wilson_ci_95"][1],
+            "accuracy_cp_ci_low": r["accuracy_clopper_pearson_ci_95"][0],
+            "accuracy_cp_ci_high": r["accuracy_clopper_pearson_ci_95"][1],
         }
         for f in FAULT_TYPES:
             row[f"{f}_errors"] = r["fault_breakdown"][f]["errors"]
@@ -352,11 +501,11 @@ def generate_latex_tables(results_by_cond, comparisons):
     lines.append("\\begin{table}[htbp]")
     lines.append("\\centering")
     lines.append("\\small")
-    lines.append("\\caption{Independent Holdout Benchmark ($N=120$ Expert-Audited Scenarios): Overall Progression Error Rates, 95\\% Bootstrap CIs, and Paired Statistical Tests against Intervention (I1).}")
+    lines.append("\\caption{Independent Holdout Benchmark ($N=120$ Expert-Audited Scenarios): Overall Progression Error Rates, 95\\% Wilson Score CIs, and Paired Statistical Tests against Intervention (I1).}")
     lines.append("\\label{tab:ln01_holdout_summary}")
     lines.append("\\begin{tabular}{llrrcc}")
     lines.append("\\toprule")
-    lines.append("\\textbf{ID} & \\textbf{Method / Configuration} & \\textbf{Errors} & \\textbf{Error Rate (\\%)} & \\textbf{95\\% Bootstrap CI} & \\textbf{McNemar $p$} \\\\")
+    lines.append("\\textbf{ID} & \\textbf{Method / Configuration} & \\textbf{Errors} & \\textbf{Error Rate (\\%)} & \\textbf{95\\% Wilson CI} & \\textbf{McNemar $p$} \\\\")
     lines.append("\\midrule")
 
     for cid in ["B0", "B1", "A1", "A2", "A3", "I1"]:
@@ -364,7 +513,8 @@ def generate_latex_tables(results_by_cond, comparisons):
         name = r["condition"]["name"].replace("_", "\\_")
         errs = r["total_errors"]
         rate = f"{r['error_rate']*100:.2f}\\%"
-        ci = f"[{r['ci_95_low']*100:.1f}\\%, {r['ci_95_high']*100:.1f}\\%]"
+        wlo, whi = r["error_rate_wilson_ci_95"]
+        ci = f"[{wlo*100:.1f}\\%, {whi*100:.1f}\\%]"
         if cid == "I1":
             p_val = "--- (Ref)"
         else:
@@ -379,7 +529,7 @@ def generate_latex_tables(results_by_cond, comparisons):
     lines.append("\\end{tabular}")
     lines.append("\\par\\smallskip")
     lines.append("\\begin{minipage}{0.96\\linewidth}\\footnotesize")
-    lines.append("\\textit{Note:} $N=120$ independent test cases with 5 stratified categories (24 cases per fault stratum). Bootstrap iterations $B=10,000$. Paired two-sided McNemar tests with Edwards continuity correction evaluate significant discordance against I1.")
+    lines.append("\\textit{Note:} $N=120$ independent test cases with 5 stratified categories (24 cases per fault stratum). Per-condition rate intervals use the Wilson score method (Clopper-Pearson exact intervals also computed). Paired two-sided McNemar tests with Edwards continuity correction evaluate significant discordance against I1.")
     lines.append("\\end{minipage}")
     lines.append("\\end{table}")
     lines.append("")

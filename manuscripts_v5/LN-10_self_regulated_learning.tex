@@ -28,10 +28,10 @@
 
 \title{\textbf{Architecting Cyclical Metacognition in Digital Heritage Inquiry:\\An Empirical Evaluation of Zimmerman's Self-Regulated Learning State Machine with Atomic Reflection Gating (Study LN-10)}}
 
+% TODO: finalize author list, order, affiliations, and institutional consent.
 \author{
-    \textbf{Lưu Niên Sứ Ký Research Consortium}\\
-    \textit{Pedagogical Systems and Epistemic Policy Division}\\
-    \texttt{\{research, srl-lab\}@histolab.icu}
+    Author Name(s) to be finalized \\
+    \small Affiliation to be confirmed
 }
 \date{November 2026}
 
@@ -39,14 +39,14 @@
 \maketitle
 
 \begin{abstract}
-Project-based learning (PBL) in secondary cultural heritage education frequently degenerates into passive task checklist completion, wherein students advance superficially through inquiry milestones without cultivating genuine metacognitive self-regulation. To address this failure mode, we operationalize Barry Zimmerman's cyclical model of Self-Regulated Learning (SRL)---spanning Forethought, Performance, and Self-Reflection phases---into a deterministic, finite state machine governing student inquiry in the \textit{Lưu Niên Sứ Ký} digital learning platform. Implemented for the Hue Heritage Urban Inquiry Project (\textit{Chuyên đề Đô thị Di sản Huế}), the state machine enforces atomic reflection gates, optimistic concurrency control for offline field data capture, learner ownership verification, and mandatory pedagogical rationale for goal revisions. We formulate five core pedagogical invariants and evaluate the software policy against an independent 120-case holdout dataset across five fault conditions (nominal, missing forethought rationale, unauthorized actor, offline version conflict, and skipped reflection gate). Comparative benchmark results across six configurations demonstrate that naive linear checklists (B0) yield a catastrophic 100.0\% unjustified transition rate ($96/96$ violations admitted), and timestamp-based progress trackers (B1) allow 50.0\% of unjustified transitions ($48/96$). In contrast, the Zimmerman cyclical SRL state machine (I1) achieves complete violation elimination (0.0\% unjustified transition rate, 95\% CI $[0.0\%, 3.8\%]$, McNemar $\chi^2 = 94.01, p = 3.14 \times 10^{-22}$ vs. B0; $\chi^2 = 46.02, p = 1.17 \times 10^{-11}$ vs. B1) with 100.0\% reflection compliance and 100.0\% nominal preservation ($24/24$). Architectural ablations confirm that reflection gates (A1), concurrency control (A2), and ownership verification (A3) are mutually orthogonal and indispensable. We discuss the implications for digital humanities learning environments and delineate the methodological firewall separating synthetic software-policy verification from longitudinal human learning outcomes.
+Project-based learning (PBL) in secondary cultural heritage education frequently degenerates into passive task checklist completion, wherein students advance superficially through inquiry milestones without cultivating genuine metacognitive self-regulation. To address this failure mode, we operationalize Barry Zimmerman's cyclical model of Self-Regulated Learning (SRL)---spanning Forethought, Performance, and Self-Reflection phases---into a deterministic, finite state machine governing student inquiry in the \textit{Lưu Niên Sứ Ký} digital learning platform. Implemented for the Hue Heritage Urban Inquiry Project (\textit{Chuyên đề Đô thị Di sản Huế}), the state machine enforces atomic reflection gates, optimistic concurrency control for offline field data capture, learner ownership verification, and mandatory pedagogical rationale for goal revisions. We formulate five core pedagogical invariants and evaluate the software policy against a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) across five fault conditions (nominal, missing forethought rationale, unauthorized actor, offline version conflict, and skipped reflection gate). Comparative benchmark results across six configurations demonstrate that naive linear checklists (B0) yield a catastrophic 100.0\% unjustified transition rate ($96/96$ violations admitted), and timestamp-based progress trackers (B1) allow 50.0\% of unjustified transitions ($48/96$). In contrast, the Zimmerman cyclical SRL state machine (I1) achieves complete violation elimination (0.0\% unjustified transition rate, 95\% CI $[0.0\%, 3.8\%]$, McNemar $\chi^2 = 94.01, p = 3.14 \times 10^{-22}$ vs. B0; $\chi^2 = 46.02, p = 1.17 \times 10^{-11}$ vs. B1) with 100.0\% reflection compliance and 100.0\% nominal preservation ($24/24$). Architectural ablations confirm that reflection gates (A1), concurrency control (A2), and ownership verification (A3) are mutually orthogonal and indispensable. We discuss the implications for digital humanities learning environments and delineate the methodological firewall separating synthetic software-policy verification from longitudinal human learning outcomes.
 \end{abstract}
 
 \noindent\textbf{Keywords:} Self-Regulated Learning, Metacognitive Scaffolding, Finite State Machine, Digital Heritage Education, Zimmerman Cyclical Model, Epistemic Truth Gate, Cửu Đỉnh Huế.
 
 \section{Introduction}
 
-In secondary historical and humanities education, inquiry-based project learning (PBL) has long been championed as an antidote to rote memorization \cite{zimmerman2000attaining, pintrich2004conceptual}. Under the 2018 General Education Curriculum of Vietnam (\textit{Chương trình Giáo dục phổ thông 2018}), the elective humanities curriculum for Grades 11 and 12 introduces specialized study topics (\textit{Chuyên đề học tập Lịch sử}), notably including Topic 11.2: ``Preservation and Promotion of Cultural Heritage Values'' (\textit{Bảo tồn và phát huy giá trị di sản văn hóa}) and Topic 12.1: ``The Historical Urban Space of Huế'' (\textit{Không gian đô thị lịch sử Huế}). Within these topics, students investigate tangible heritage artifacts, such as the Nine Dynastic Urns (\textit{Cửu Đỉnh}, cast 1835--1837) and imperial defensive monuments of the Nguyễn Dynasty, formulating evidence-backed conservation proposals.
+In secondary historical and humanities education, inquiry-based project learning (PBL) has long been championed as an antidote to rote memorization \cite{zimmerman2000attaining, pintrich2004conceptual}. Under the 2018 General Education Curriculum of Vietnam (\textit{Chương trình Giáo dục phổ thông 2018}), the elective humanities curriculum for Grades 11 and 12 introduces specialized study topics (\textit{Chuyên đề học tập Lịch sử}), notably including Topic 11.2: ``Preservation and Promotion of Cultural Heritage Values'' (\textit{Bảo tồn và phát huy giá trị di sản văn hóa}) and Topic 12.1: ``The Historical Urban Space of Huế'' (\textit{Không gian đô thị lịch sử Huế}) \cite{moet2018curriculum}. Within these topics, students investigate tangible heritage artifacts, such as the Nine Dynastic Urns (\textit{Cửu Đỉnh}, cast 1835--1837) and imperial defensive monuments of the Nguyễn Dynasty, formulating evidence-backed conservation proposals grounded in primary chronicles and statutes \cite{phan1837dainam, khamdinh1851hoidien}.
 
 However, deploying digital platforms in high-school inquiry environments reveals a persistent failure mode termed \textit{surface compliance} or ``checklist gaming'' \cite{baker2008gaming, azevedo2005scaffolding}. When educational software models projects as linear checklists (e.g., Task $1 \to$ Task $2 \to$ Submission), learners exhibit predictable sub-optimal behaviors:
 \begin{enumerate}[label=(\alph*)]
@@ -56,27 +56,39 @@ However, deploying digital platforms in high-school inquiry environments reveals
     \item \textbf{Unreflective Task Ticking:} Equating the mere mechanical checking of boxes with genuine historical competence.
 \end{enumerate}
 
-To overcome these structural defects, we present the design, implementation, and empirical verification of the **LN-10 Self-Regulated Learning (SRL) Project State Machine**, integrated into the \textit{Lưu Niên Sứ Ký} platform. Drawing upon Barry Zimmerman's canonical social cognitive model of self-regulated learning \cite{zimmerman2000attaining, zimmerman2002becoming}, we translate the tripartite cycle of Forethought, Performance, and Self-Reflection into a formal, executable state machine governing project transitions. Rather than relying on passive advisory notifications, our system enforces \textit{atomic reflection gating}: milestones cannot be advanced, goals cannot be revised, and proposals cannot be finalized without cryptographically verified, student-authored metacognitive reflection and pedagogical justification.
+To overcome these structural defects, we present the design, implementation, and empirical verification of the \textbf{LN-10 Self-Regulated Learning (SRL) Project State Machine}, integrated into the \textit{Lưu Niên Sứ Ký} platform. Drawing upon Barry Zimmerman's canonical social cognitive model of self-regulated learning \cite{zimmerman2000attaining, zimmerman2002becoming}, we translate the tripartite cycle of Forethought, Performance, and Self-Reflection into a formal, executable state machine governing project transitions. Rather than relying on passive advisory notifications, our system enforces \textit{atomic reflection gating}: milestones cannot be advanced, goals cannot be revised, and proposals cannot be finalized without cryptographically verified, student-authored metacognitive reflection and pedagogical justification.
 
 This paper provides four primary contributions:
 \begin{enumerate}
     \item \textbf{Formal Cyclical State Machine Formulation:} We formalize Zimmerman's tripartite SRL cycle as a deterministic transition system $\mathcal{M} = \langle S, A, T, \delta, \Phi \rangle$ with five explicit pedagogical invariants governing student agency, rationale verification, and collaborative concurrency.
-    \item \textbf{Independent 120-Case Holdout Benchmark:} We construct a balanced, 120-case independent holdout dataset (`research/fixtures/holdout/LN-10_holdout.jsonl`) spanning five orthogonal fault archetypes ($24$ cases each) grounded in authentic Huế cultural heritage monuments and varied learner profiles.
+    \item \textbf{Synthetic 120-Case Held-Out Test Set:} We construct a balanced, 120-case held-out test set with programmatic annotation templates (no human adjudication) (\texttt{research/fixtures/holdout/LN-10\_holdout.jsonl}) spanning five orthogonal fault archetypes ($24$ cases each) grounded in authentic Huế cultural heritage monuments and varied learner profiles.
     \item \textbf{Empirical Multi-Condition Evaluation:} We evaluate the SRL policy against five alternative conditions: naive linear checklist (B0), timestamp-based progress tracker (B1), full Zimmerman cyclical SRL (I1), and three component ablations (A1--A3). We compute exact unjustified transition rates, 95\% Wilson confidence intervals, reflection compliance rates, and paired McNemar tests.
     \item \textbf{Epistemic Truth Boundary:} We articulate the methodological firewall separating synthetic policy verification from uncontrolled classroom claims, establishing that deterministic state gating is a necessary structural scaffold for self-regulation, but does not substitute for longitudinal observational studies.
 \end{enumerate}
 
+\section{Research Questions}
+
+\begin{enumerate}[label=\textbf{RQ\arabic*}, leftmargin=2.4em]
+    \item \textbf{RQ1 (SRL Operationalization):} Can Zimmerman's Forethought--Performance--Self-Reflection cycle be operationalized as a deterministic finite state machine whose reflection and rationale gates are enforced atomically?
+    \item \textbf{RQ2 (Unjustified-Transition Elimination):} On a synthetic held-out test set with programmatic annotation templates (no human adjudication), does the cyclical SRL state machine (I1) eliminate unjustified transitions relative to linear checklists (B0) and timestamp trackers (B1)?
+    \item \textbf{RQ3 (Gate Orthogonality):} Do reflection/rationale gating, optimistic concurrency, and ownership verification each block a distinct failure class, such that no single gate compensates for another's absence?
+\end{enumerate}
+
+\subsection{Research Gap and Novelty}
+
+Zimmerman's cyclical model and related SRL frameworks describe what learners should do \cite{zimmerman2000attaining, zimmerman2002becoming, pintrich2004conceptual}, and the literature documents that learners often game checklist-style environments rather than self-regulate \cite{baker2008gaming, azevedo2005scaffolding}. Prior work has examined SRL with hypermedia and prior knowledge \cite{moos2008self} and consolidated the field in handbooks \cite{schunk2018handbook, winne1998studying}. What has been missing is a formal state machine that makes metacognitive reflection a hard precondition for progress while simultaneously enforcing optimistic concurrency over offline field data \cite{lamport1978time}, tied to Vietnamese heritage curriculum topics \cite{moet2018curriculum} and archival primary sources \cite{phan1837dainam, khamdinh1851hoidien}. This study contributes that mechanized formulation and a reproducible synthetic fault-stratified held-out test set, not a human-adjudicated classroom study.
+
 \section{Theoretical Foundations and Pedagogical Invariants}
 
 \subsection{Zimmerman's Cyclical Phase Model of SRL}
-Self-regulated learning refers to self-generated thoughts, feelings, and actions that are planned and cyclically adapted to the attainment of personal goals \cite{zimmerman2000attaining}. Zimmerman's model posits three recurring phases:
+Self-regulated learning refers to self-generated thoughts, feelings, and actions that are planned and cyclically adapted to the attainment of personal goals \cite{zimmerman2000attaining, winne1998studying}. Zimmerman's model posits three recurring phases:
 \begin{itemize}
     \item \textbf{Forethought Phase:} Task analysis (goal setting, strategic planning) and self-motivation beliefs (self-efficacy, outcome expectations, intrinsic value).
     \item \textbf{Performance Phase:} Self-control (task strategies, self-instruction, attention focusing) and self-observation (metacognitive monitoring, self-recording).
     \item \textbf{Self-Reflection Phase:} Self-judgment (self-evaluation against evidence, causal attribution) and self-reaction (self-satisfaction, adaptive vs. defensive inferences).
 \end{itemize}
 
-Crucially, self-reflection feeds directly back into forethought for subsequent inquiry cycles. In digital heritage inquiry, when a student discovers that a newly retrieved archival source (e.g., from \textit{Đại Nam Thực Lục}) contradicts their initial conservation thesis, a self-regulated learner must reflectively appraise the discrepancy and revise their project plan with explicit rationale, rather than ignoring the contradiction or blindly checking off the milestone.
+Crucially, self-reflection feeds directly back into forethought for subsequent inquiry cycles, a pattern documented in hypermedia and higher-education settings \cite{moos2008self, schunk2018handbook}. In digital heritage inquiry, when a student discovers that a newly retrieved archival source (e.g., from \textit{Đại Nam Thực Lục}) contradicts their initial conservation thesis, a self-regulated learner must reflectively appraise the discrepancy and revise their project plan with explicit rationale, rather than ignoring the contradiction or blindly checking off the milestone.
 
 \begin{figure}[htbp]
 \centering
@@ -124,6 +136,8 @@ Every material revision to a project plan or objective must encapsulate an authe
 \begin{invariant}[\textbf{Metacognitive Grounding - INV-LN-10-03}]
 Simple checklist completion shall never be equated with self-regulated mastery. Advancing to final submission strictly requires completion of structured self-reflection records assessing learning difficulties, evidence quality, and planned adaptations.
 \end{invariant}
+
+The use of explicit version expectations to order concurrent updates follows long-established results on logical clocks and event ordering \cite{lamport1978time}.
 
 \begin{invariant}[\textbf{Optimistic Concurrency Control - INV-LN-10-04}]
 Concurrent modifications initiated from disconnected or offline mobile clients must trigger deterministic conflict resolution ($\mathtt{RESOLVE\_REVISION\_CONFLICT}$) rather than silently overwriting server state via last-write-wins.
@@ -222,7 +236,7 @@ Only transitions passing all four verification gates yield $\mathtt{ALLOW\_AUTHO
 \section{Metacognitive Scaffolding in the Hue Heritage Context}
 
 \subsection{Curricular Integration: Chuyên đề Đô thị Di sản Huế}
-The state machine was deployed within the specialized historical inquiry module centered on the **Nine Dynastic Urns (\textit{Cửu Đỉnh})** and the urban fortification of Huế. Students engage in projects spanning four thematic trajectories:
+The state machine was deployed within the specialized historical inquiry module centered on the \textbf{Nine Dynastic Urns (\textit{Cửu Đỉnh})} and the urban fortification of Huế. Students engage in projects spanning four thematic trajectories:
 \begin{enumerate}
     \item \textbf{Iconographic Maritime Sovereignty:} Tracing bas-relief carvings on Cao Đỉnh (\textit{Biển Đông} - Eastern Sea, \textit{Bạch Đằng} River) to analyze 19th-century geopolitical consciousness.
     \item \textbf{Ecological and Botanical Heritage:} Correlating flora and fauna depicted on Nhân Đỉnh and Chương Đỉnh with historical biodiversity records.
@@ -251,10 +265,10 @@ To satisfy Invariant INV-LN-10-05 while supporting metacognition, the platform p
 
 By coupling reflection verification directly to the state machine's transition guards, reflection transforms from an easily discarded post-hoc survey into an indispensable pedagogical prerequisite for milestone completion.
 
-\section{Empirical Evaluation and Holdout Benchmark}
+\section{Empirical Evaluation and Held-Out Test Set}
 
-\subsection{Holdout Dataset Construction}
-To test the software policy under unyielding verification standards, we generated an independent 120-case holdout dataset (`research/fixtures/holdout/LN-10_holdout.jsonl`). The dataset is completely segregated from training fixtures and comprises five balanced strata ($n=24$ each):
+\subsection{Held-Out Test Set Construction}
+To test the software policy under unyielding verification standards, we generated a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) (\texttt{research/fixtures/holdout/LN-10\_holdout.jsonl}). The dataset is completely segregated from training fixtures and comprises five balanced strata ($n=24$ each):
 \begin{enumerate}
     \item \textbf{Nominal ($n=24$):} Legitimate transitions executed by authorized project owners with matching versions, articulate rationales, and verified reflection records ($\mathtt{oracle} = \mathtt{allow\_authorized\_transition}$).
     \item \textbf{Missing Forethought Rationale ($n=24$):} Plan revisions attempted with empty or whitespace-only rationales ($\mathtt{oracle} = \mathtt{request\_reflection}$).
@@ -266,7 +280,7 @@ To test the software policy under unyielding verification standards, we generate
 Each scenario encapsulates genuine heritage monuments (Ngọ Môn, Điện Thái Hòa, Thế Tổ Miếu, Cao Đỉnh, Nhân Đỉnh, Chương Đỉnh, Lăng Tự Đức, Lăng Khải Định, Đàn Nam Giao, Sông Hương, Chùa Thiên Mụ, Kỳ Đài) and spans twelve synthetic learner accessibility profiles (\texttt{SYN-NOVICE}, \texttt{SYN-SPATIAL}, \texttt{SYN-SOURCE}, \texttt{SYN-LOWNET}, \texttt{SYN-NO3D}, etc.).
 
 \subsection{Experimental Conditions}
-We evaluate six distinct policy configurations on the identical holdout input stream:
+We evaluate six distinct policy configurations on the identical held-out input stream:
 \begin{itemize}
     \item \textbf{B0 (Naive Linear Checklist):} The legacy baseline representing typical LMS checklists. Advances project stages unconditionally upon request; ignores reflection state, ownership, and concurrency.
     \item \textbf{B1 (Timestamp Progress Tracker):} A stronger baseline tracking timestamps, actor ownership, and version concurrency, but omitting reflection and rationale gates.
@@ -287,12 +301,12 @@ We compute:
 \end{itemize}
 
 \subsection{Empirical Results}
-Table~\ref{tab:holdout-results} reports the primary empirical findings on the 120-case independent holdout dataset.
+Table~\ref{tab:holdout-results} reports the primary empirical findings on the synthetic 120-case held-out test set.
 
 \begin{table}[htbp]
 \centering
 \small
-\caption{Empirical Benchmark on Independent 120-Case Holdout Dataset (LN-10 SRL State Machine)}
+\caption{Empirical Benchmark on Synthetic 120-Case Held-Out Test Set (LN-10 SRL State Machine; programmatic annotation templates, no human adjudication)}
 \label{tab:holdout-results}
 \begin{tabular}{lcrcccc}
 \toprule
@@ -308,7 +322,7 @@ Table~\ref{tab:holdout-results} reports the primary empirical findings on the 12
 \end{tabular}
 \par\smallskip
 \begin{minipage}{0.98\linewidth}\footnotesize
-\textit{Notes:} $N=120$ total holdout cases evaluated. Unjustified transitions evaluated across 96 fault cases ($24$ per fault archetype). Nominal preservation rate was 100.0\% ($24/24$) across all six conditions, verifying zero false-positive rejections. McNemar's tests compare discordant classifications directly against I1 with continuity correction ($\text{df}=1$).
+\textit{Notes:} $N=120$ total held-out cases evaluated. Unjustified transitions evaluated across 96 fault cases ($24$ per fault archetype). Nominal preservation rate was 100.0\% ($24/24$) across all six conditions, verifying zero false-positive rejections. McNemar's tests compare discordant classifications directly against I1 with continuity correction ($\text{df}=1$).
 \end{minipage}
 \end{table}
 
@@ -368,16 +382,17 @@ In reporting these findings, we enforce an explicit \textit{Epistemic Truth Gate
 
 Conflating software-policy verification with demonstrated student cognitive gains represents a pervasive form of scientific overclaiming in educational technology. We categorically reject this conflation.
 
-\subsection{Threats to Validity}
+\subsection{Specific Validity Threats}
 \begin{itemize}
     \item \textbf{Construct Validity:} While our fault taxonomy maps cleanly to Zimmerman's phases, synthetic scenario inputs may not capture the full chaotic breadth of adolescent classroom behavior (e.g., submitting humorous or nonsense reflection text). Future iterations will incorporate natural language depth scoring to assess reflection text substance.
-    \item \textbf{Internal Validity:} All holdout scenarios were materialized deterministically from frozen seeds and verified with SHA-256 hashes. Trace logs (`trace_*.jsonl`) confirm zero runtime exceptions and sub-millisecond execution latency ($\bar{t} < 0.05\,\text{ms}$ per decision), ruling out timing side-channels.
+    \item \textbf{Internal Validity:} All held-out scenarios were materialized deterministically from frozen seeds and verified with SHA-256 hashes. Trace logs (\texttt{trace\_*.jsonl}) confirm zero runtime exceptions and sub-millisecond execution latency ($\bar{t} < 0.05\,\text{ms}$ per decision), ruling out timing side-channels.
     \item \textbf{External Validity:} The heritage domain rules are grounded specifically in Vietnamese imperial monuments (Cửu Đỉnh Huế). Adapting the state machine to open-ended science or mathematics inquiry will require domain-specific rationale parsers.
+    \item \textbf{Statistical Validity:} The held-out test set is synthetic and labelled by deterministic programmatic annotation templates, not human adjudication. With $n=24$ per fault stratum, Wilson intervals are wide, and the intervention result sits at the 0\% boundary. All figures are internal software-policy estimates and do not constitute human-adjudicated external validation of student metacognitive growth.
 \end{itemize}
 
 \section{Conclusion and Future Directions}
 
-This paper presented the design, formalization, and empirical evaluation of the LN-10 Self-Regulated Learning Project State Machine. By embedding Zimmerman's tripartite cyclical model into a deterministic transition engine, the platform prevents the pervasive degeneration of digital project-based learning into superficial checklist completion. On an independent 120-case holdout dataset across five fault conditions, the cyclical SRL policy eliminated 100\% of unjustified transitions ($0/96$, $p < 10^{-20}$ vs. naive checklists) while achieving perfect reflection compliance ($100.0\%$) and nominal preservation ($100.0\%$).
+This paper presented the design, formalization, and empirical evaluation of the LN-10 Self-Regulated Learning Project State Machine. By embedding Zimmerman's tripartite cyclical model into a deterministic transition engine, the platform prevents the pervasive degeneration of digital project-based learning into superficial checklist completion. On a synthetic 120-case held-out test set with programmatic annotation templates (no human adjudication) across five fault conditions, the cyclical SRL policy eliminated 100\% of unjustified transitions ($0/96$, $p < 10^{-20}$ vs. naive checklists) while achieving perfect reflection compliance ($100.0\%$) and nominal preservation ($100.0\%$).
 
 Future work will expand the state machine in two key dimensions: (1) integrating natural language semantic analysis to calibrate reflection depth and provide formative hints when rationales lack sufficient historiographical grounding; and (2) conducting an IRB-approved longitudinal classroom field trial across high schools in Thừa Thiên Huế to evaluate the interplay between formal state machine constraints and teacher-mediated metacognitive growth.
 

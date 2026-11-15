@@ -97,8 +97,15 @@ jobs:
             git checkout -f ${{ github.sha }}
             echo "Current deployed commit: $(git rev-parse HEAD)"
 
-            echo "=== Building and Updating Backend Container ==="
+            echo "=== Building Backend Container ==="
             docker build -t dainoisuky-api:latest -f backend/Dockerfile .
+
+            echo "=== Applying Safe Database Migrations (alembic upgrade head) ==="
+            docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml run --rm api alembic upgrade head
+            echo "=== Verifying Applied Migration Revision (alembic current) ==="
+            docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml run --rm api alembic current
+
+            echo "=== Updating Backend Container ==="
             docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml up -d --no-deps api
 
             echo "=== Building Frontend Standalone Bundle ==="
