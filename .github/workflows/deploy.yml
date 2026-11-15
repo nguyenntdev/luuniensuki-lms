@@ -113,7 +113,7 @@ jobs:
                 echo "FATAL: no running database container found for migrations." >&2
                 exit 1
               fi
-              DB_NETWORK=$(docker inspect "$DB_CONTAINER" --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}' | head -n 1)
+              DB_NETWORK=$(docker inspect "$DB_CONTAINER" --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}} {{end}}' | awk '{print $1}')
               if [ -z "$DB_NETWORK" ]; then
                 echo "FATAL: database container $DB_CONTAINER has no network." >&2
                 exit 1
