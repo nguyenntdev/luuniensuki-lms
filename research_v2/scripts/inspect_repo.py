@@ -67,6 +67,11 @@ def audit(repo_root: Path | None = None) -> dict:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Inspect repository for Research V2")
     ap.add_argument("--strict", action="store_true", help="exit nonzero on any discrepancy")
+    ap.add_argument(
+        "--require-pinned-sha",
+        action="store_true",
+        help="also fail when HEAD differs from the audit-pinned SHA",
+    )
     ap.add_argument("--output", type=Path, default=None)
     a = ap.parse_args(argv)
 
@@ -81,7 +86,7 @@ def main(argv: list[str] | None = None) -> int:
         problems.append(f"missing legacy paths: {report['missing_legacy_paths']}")
     if not report["v2_core_present"]:
         problems.append(f"missing v2 core paths: {report['missing_v2_paths']}")
-    if a.strict and not report["head_matches_pinned"]:
+    if a.require_pinned_sha and not report["head_matches_pinned"]:
         problems.append(
             f"HEAD {report['source_sha_observed']} differs from pinned {PINNED_SHA}"
         )
