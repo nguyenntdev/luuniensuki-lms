@@ -90,7 +90,7 @@
       "study_id": "LN-07",
       "tier": "T3",
       "path": "research_v2/data/ln07/t3_inputs.jsonl",
-      "sha256": "f7995139e7e77ae181e2c5e0da5cadd453b66f55f13c08672b3d82334b0343b5",
+      "sha256": "507f027c57f186e8c3f95480e9b94c1249503b65401a581154e86743a9f7c61b",
       "cases": 120,
       "license": "internal-synthetic",
       "provenance": "synthetic",
@@ -139,6 +139,20 @@
       "source_url": null,
       "version": "v2-t3",
       "split_strategy": "group-holdout",
+      "blocked_reason": null
+    },
+    {
+      "dataset_id": "LN-10-T3S-stress",
+      "study_id": "LN-10",
+      "tier": "T3",
+      "path": "research_v2/data/ln10/t3s_inputs.jsonl",
+      "sha256": "3a73b1659072afb725e13ce8409d61702edde4678ee37058a73e563e8b52e8c9",
+      "cases": 24,
+      "license": "internal-synthetic",
+      "provenance": "synthetic",
+      "source_url": null,
+      "version": "v2-t3s",
+      "split_strategy": "pair-grouped",
       "blocked_reason": null
     },
     {

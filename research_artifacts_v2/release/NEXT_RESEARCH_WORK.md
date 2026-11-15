@@ -22,8 +22,8 @@ or externally-licensed evidence.
   group-cluster bootstrap to avoid overstating precision.
 - Group-level splits respect template family, but no true learner or time split
   exists because no real learner data exists.
-- Two studies (LN-06/07/09) have ablations that are not separable on the
-  synthetic T3 distribution; this is disclosed, not tuned.
+- Three studies (LN-06/07/09) have ablations that are not separable on the
+  synthetic T3 distribution; this is disclosed and reported as PARTIAL, not tuned.
 
 ## 3. Engineering follow-ups
 
@@ -33,9 +33,21 @@ or externally-licensed evidence.
 - Add a real dataset ingestion pipeline once T1/T2 data arrives, including
   de-duplication and distribution-shift checks (spec 03 sections 16–23).
 - Add plotting/table generation from `metrics.json` (currently CSV + markdown).
+- **Cross-seed runs are byte-identical** for the deterministic policies, so the
+  three seeds add no variance information. A stochastic or bootstrapped variant
+  is needed before any claim about seed robustness is made.
+- `run_index.json` is written per matrix invocation; add a global index that
+  aggregates every study matrix into one release-level file.
+- **Stratum coverage gaps:** LN-07's T3 gold has no transcript-failure stratum and
+  LN-09's T3 has no small-cohort (n<5) cases. Targeted counterexample tests cover
+  these mechanisms, but a dedicated stress dataset (like LN-10's T3S) would
+  strengthen the evidence and move those studies from PARTIAL toward PASS.
+- Add staging for the release freeze so generated artifacts are regenerated (not
+  committed ad hoc) in CI.
 
 ## 4. What must NOT be claimed
 
 - No claim of Q1/A* acceptance, journal acceptance, or venue likelihood.
 - No claim of human expert agreement, institutional endorsement, or learning gains.
 - No claim that synthetic ablations tied on T3 imply a mechanism is unnecessary.
+- No claim that synthetic held-out results generalize to real classrooms.

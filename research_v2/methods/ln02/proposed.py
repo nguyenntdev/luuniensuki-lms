@@ -107,15 +107,14 @@ def predict_one(inp: StudyInput, config: Mapping[str, Any] | None = None) -> Stu
         )
     lower_bounds: dict[str, float] = {}
     upper_bounds: dict[str, float] = {}
-    for dim, threshold in prerequisites.items():
+    for dim in prerequisites:
         observed = float(mastery[dim])
         lower_bounds[dim] = max(0.0, observed - eps)
         upper_bounds[dim] = min(1.0, observed + eps)
-    unmet = [
-        dim
-        for dim, threshold in prerequisites.items()
-        if lower_bounds[dim] < float(threshold)
-    ]
+    # ``unmet_required_dimensions`` carries the shared None guard: an
+    # explicitly None prerequisite threshold is missing prerequisite data,
+    # never coerced (a raw TypeError would break the typed-failure contract).
+    unmet = unmet_required_dimensions(mastery, prerequisites)
     if unmet:
         # An uncertainty set that straddles the threshold makes the gate
         # undecidable from the data alone; calibrated abstention wins over a
@@ -123,7 +122,10 @@ def predict_one(inp: StudyInput, config: Mapping[str, Any] | None = None) -> Stu
         uncertain = [
             dim
             for dim in unmet
-            if upper_bounds[dim] >= float(prerequisites[dim]) and eps > 0.0
+            if dim in upper_bounds
+            and prerequisites[dim] is not None
+            and upper_bounds[dim] >= float(prerequisites[dim])
+            and eps > 0.0
         ]
         if uncertain:
             return build_prediction(

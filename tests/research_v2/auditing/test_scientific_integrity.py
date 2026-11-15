@@ -79,3 +79,158 @@ def test_ln04_b1_is_labeled_simulated_proxy():
 
     result = run_ln04_b1({"question": "Cho em đáp án bài này", "retrieval": {"source_ids": ["s1"], "source_status": "verified"}})
     assert result["baseline_type"] == "simulated_heuristic_llm_proxy"
+
+
+# ---------------------------------------------------------------------------
+# Evaluator boundary: oracle-free predictions + one-to-one coverage
+# (research_v2/evaluation/metrics.py)
+# ---------------------------------------------------------------------------
+
+from research_v2.evaluation.metrics import (  # noqa: E402
+    FORBIDDEN_GOLD_IN_PREDICTION,
+    EvaluationError,
+    compute_metrics,
+)
+
+
+def _write_jsonl(path: Path, rows: list[dict]) -> Path:
+    with path.open("w", encoding="utf-8") as fh:
+        for row in rows:
+            fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+    return path
+
+
+def _clean_run(tmp_path: Path, *, n: int = 4) -> tuple[Path, Path]:
+    golds = [{"case_id": f"c{i}", "expected_decision": "accept" if i % 2 else "reject"} for i in range(n)]
+    preds = [
+        {"case_id": f"c{i}", "decision": golds[i]["expected_decision"]}
+        for i in range(n)
+    ]
+    gold_path = _write_jsonl(tmp_path / "gold.jsonl", golds)
+    pred_path = _write_jsonl(tmp_path / "preds.jsonl", preds)
+    return pred_path, gold_path
+
+
+def test_forbidden_set_covers_expanded_gold_keys():
+    expanded = {
+        "gold", "label", "labels", "cohort", "expected_outcome",
+        "expected_conclusion", "oracle_basis", "annotation_provenance",
+        "synthetic_annotation_template", "external_expert_annotation",
+        "correct", "is_correct",
+    }
+    assert expanded <= FORBIDDEN_GOLD_IN_PREDICTION
+
+
+def test_prediction_with_top_level_gold_key_is_rejected(tmp_path):
+    pred_path, gold_path = _clean_run(tmp_path)
+    _write_jsonl(pred_path, [{"case_id": "c0", "decision": "accept", "gold": "accept"}])
+    with pytest.raises(EvaluationError, match="gold material"):
+        compute_metrics(pred_path, gold_path)
+
+
+@pytest.mark.parametrize(
+    "key",
+    [
+        "oracle",
+        "expected_decision",
+        "expected_category",
+        "fault_id",
+        "gold_label",
+        "gold",
+        "label",
+        "labels",
+        "cohort",
+        "expected_outcome",
+        "expected_conclusion",
+        "oracle_basis",
+        "annotation_provenance",
+        "synthetic_annotation_template",
+        "external_expert_annotation",
+        "correct",
+        "is_correct",
+    ],
+)
+def test_prediction_with_each_forbidden_top_level_key_is_rejected(tmp_path, key):
+    pred_path, gold_path = _clean_run(tmp_path)
+    _write_jsonl(pred_path, [{"case_id": "c0", "decision": "accept", key: "x"}])
+    with pytest.raises(EvaluationError, match="gold material"):
+        compute_metrics(pred_path, gold_path)
+
+
+def test_prediction_with_nested_meta_oracle_is_rejected(tmp_path):
+    """Gold smuggled inside a nested dict is still gold material."""
+    pred_path, gold_path = _clean_run(tmp_path)
+    _write_jsonl(
+        pred_path,
+        [{"case_id": "c0", "decision": "accept", "meta": {"oracle": {"expected_decision": "accept"}}}],
+    )
+    with pytest.raises(EvaluationError, match="gold material"):
+        compute_metrics(pred_path, gold_path)
+
+
+def test_prediction_with_nested_gold_in_list_is_rejected(tmp_path):
+    pred_path, gold_path = _clean_run(tmp_path)
+    _write_jsonl(
+        pred_path,
+        [{"case_id": "c0", "decision": "accept", "traces": [{"is_correct": True}]}],
+    )
+    with pytest.raises(EvaluationError, match="gold material"):
+        compute_metrics(pred_path, gold_path)
+
+
+def test_extra_prediction_not_in_gold_is_rejected(tmp_path):
+    pred_path, gold_path = _clean_run(tmp_path, n=3)
+    preds = [{"case_id": f"c{i}", "decision": "accept"} for i in range(3)]
+    preds.append({"case_id": "c_extra", "decision": "reject"})
+    _write_jsonl(pred_path, preds)
+    with pytest.raises(EvaluationError, match="extra predictions"):
+        compute_metrics(pred_path, gold_path)
+
+
+def test_duplicate_case_id_in_predictions_is_rejected(tmp_path):
+    pred_path, gold_path = _clean_run(tmp_path)
+    _write_jsonl(
+        pred_path,
+        [
+            {"case_id": "c0", "decision": "accept"},
+            {"case_id": "c0", "decision": "reject"},
+        ],
+    )
+    with pytest.raises(EvaluationError, match="duplicate case_id in predictions"):
+        compute_metrics(pred_path, gold_path)
+
+
+def test_duplicate_case_id_in_gold_is_rejected(tmp_path):
+    pred_path, gold_path = _clean_run(tmp_path)
+    _write_jsonl(
+        gold_path,
+        [
+            {"case_id": "c0", "expected_decision": "accept"},
+            {"case_id": "c0", "expected_decision": "reject"},
+        ],
+    )
+    with pytest.raises(EvaluationError, match="duplicate case_id in gold"):
+        compute_metrics(pred_path, gold_path)
+
+
+def test_valid_clean_run_returns_metrics_with_intervals(tmp_path):
+    pred_path, gold_path = _clean_run(tmp_path, n=4)
+    result = compute_metrics(pred_path, gold_path)
+    assert result["n_total"] == 4
+    assert result["n_correct"] == 4
+    assert result["accuracy"] == 1.0
+    assert "accuracy_wilson_ci_95" in result and result["accuracy_wilson_ci_95"] is not None
+    assert "accuracy_clopper_pearson_ci_95" in result
+    assert result["accuracy_clopper_pearson_ci_95"] is not None
+    for bound in result["accuracy_clopper_pearson_ci_95"]:
+        assert 0.0 <= bound <= 1.0
+    assert result["error_rate_wilson_ci_95"] is not None
+    assert result["error_rate_clopper_pearson_ci_95"] is not None
+
+
+def test_missing_prediction_still_rejected(tmp_path):
+    """Regression guard: the original one-sided coverage check is preserved."""
+    pred_path, gold_path = _clean_run(tmp_path, n=3)
+    _write_jsonl(pred_path, [{"case_id": f"c{i}", "decision": "accept"} for i in range(2)])
+    with pytest.raises(EvaluationError, match="missing predictions"):
+        compute_metrics(pred_path, gold_path)

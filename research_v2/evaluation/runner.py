@@ -103,6 +103,28 @@ def run_experiment(matrix_path: Path, output_root: Path, strict: bool = True) ->
                 failed += 1
             continue
 
+        if gold_path is not None and not gold_path.is_file():
+            # A declared gold file that does not exist must never degrade into
+            # a metrics-free "success": treat every cell of this dataset as a
+            # failure (strict raises at the end; non-strict keeps going).
+            for method_id in cell.get("methods", []):
+                for seed in cell.get("seeds", [11]):
+                    summary.append(
+                        {
+                            "study_id": study_id,
+                            "tier": tier,
+                            "method_id": method_id,
+                            "seed": seed,
+                            "dataset_path": str(dataset_path.relative_to(repo_root)),
+                            "gold_path": str(gold_path.relative_to(repo_root)),
+                            "status": "FAIL",
+                            "error_code": "MISSING_GOLD",
+                            "metrics_status": "not_computed",
+                        }
+                    )
+                    failed += 1
+            continue
+
         rows = _load_jsonl(dataset_path)
         dataset_sha = sha256_file(dataset_path)
 
@@ -113,6 +135,7 @@ def run_experiment(matrix_path: Path, output_root: Path, strict: bool = True) ->
                 started = time.time()
                 status = "PASS"
                 error_code = None
+                metrics_status = "not_computed"
                 pred_rows: list[dict[str, Any]] = []
                 try:
                     predict_batch = _resolve_method(study_id, method_id)
@@ -172,22 +195,52 @@ def run_experiment(matrix_path: Path, output_root: Path, strict: bool = True) ->
                     "wall_ms": round(wall_ms, 3),
                     "status": status,
                     "error_code": error_code,
+                    "metrics_status": metrics_status,
                     "n_inputs": len(rows),
                 }
                 (cell_dir / "run_manifest.json").write_text(
                     json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
                 )
 
-                if status == "PASS" and gold_path and gold_path.is_file():
-                    try:
-                        metrics = compute_metrics(
-                            cell_dir / "predictions.jsonl", gold_path, label_map=label_map
+                # Gold is read only AFTER predictions are persisted, so the
+                # evaluator can never leak sealed material into a policy.
+                if status == "PASS" and gold_path is not None:
+                    if not gold_path.is_file():
+                        status = "FAIL"
+                        error_code = "MISSING_GOLD"
+                        metrics_status = "error"
+                        (cell_dir / "metrics_error.txt").write_text(
+                            f"declared gold file not found: {gold_path}\n", encoding="utf-8"
                         )
-                        (cell_dir / "metrics.json").write_text(
-                            json.dumps(metrics, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-                        )
-                    except Exception as exc:  # pragma: no cover
-                        (cell_dir / "metrics_error.txt").write_text(str(exc) + "\n", encoding="utf-8")
+                        failed += 1
+                    else:
+                        try:
+                            metrics = compute_metrics(
+                                cell_dir / "predictions.jsonl", gold_path, label_map=label_map
+                            )
+                            (cell_dir / "metrics.json").write_text(
+                                json.dumps(metrics, ensure_ascii=False, indent=2) + "\n",
+                                encoding="utf-8",
+                            )
+                            metrics_status = "ok"
+                        except Exception as exc:
+                            # Metrics failure must never masquerade as a pass:
+                            # mark the cell FAIL, keep the diagnosis on disk and
+                            # let other cells finish (strict raises at the end).
+                            status = "FAIL"
+                            error_code = type(exc).__name__
+                            metrics_status = "error"
+                            (cell_dir / "metrics_error.txt").write_text(
+                                str(exc) + "\n", encoding="utf-8"
+                            )
+                            failed += 1
+                    manifest["status"] = status
+                    manifest["error_code"] = error_code
+                    manifest["metrics_status"] = metrics_status
+                    (cell_dir / "run_manifest.json").write_text(
+                        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+                        encoding="utf-8",
+                    )
                 summary.append(manifest)
 
     index = {

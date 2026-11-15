@@ -13,6 +13,7 @@ from research_v2.contracts.canonical_hash import (
 )
 from research_v2.contracts.input_masking import mask_case_input
 from research_v2.contracts.label_space import (
+    ALLOWED_ORACLE_BASES,
     LabelSpaceError,
     validate_decision,
     validate_oracle_basis,
@@ -72,3 +73,65 @@ def test_label_space_validation():
     validate_oracle_basis("PEDAGOGICAL_DAG_CONSTRAINTS")
     with pytest.raises(LabelSpaceError):
         validate_oracle_basis("HUMAN_EXPERT_CONSENSUS")
+
+
+def test_oracle_rejected_at_depth_three_under_input():
+    with pytest.raises(ContractError, match="input.*meta.*oracle"):
+        StudyInput("LN-06", "c", "test", "g", {"input": {"meta": {"oracle": {}}}})
+
+
+def test_oracle_rejected_at_depth_three_under_sibling_container():
+    with pytest.raises(ContractError, match="context.*nested.*oracle"):
+        StudyInput("LN-06", "c", "test", "g", {"context": {"nested": {"oracle": 1}}})
+
+
+def test_forbidden_keys_at_depth_two_rejected():
+    for key in ("gold", "label", "fault_id", "cohort"):
+        with pytest.raises(ContractError, match=f"input.*{key}"):
+            StudyInput("LN-06", "c", "test", "g", {"input": {"meta": {key: 1}}})
+
+
+def test_list_nested_dict_with_forbidden_key_rejected():
+    with pytest.raises(ContractError, match=r"stops\[2\]\.oracle"):
+        StudyInput(
+            "LN-06",
+            "c",
+            "test",
+            "g",
+            {"stops": [{"id": "a"}, {"id": "b"}, {"oracle": {"gold": "x"}}]},
+        )
+
+
+def test_legitimate_deep_nested_features_accepted():
+    si = StudyInput(
+        "LN-06",
+        "c",
+        "test",
+        "g",
+        {
+            "context": {"meta": {"labels_of_interest": 1, "oracle_machine": False}},
+            "stops": [{"id": "a", "tags": [{"relabel": True}]}],
+            "input": {"meta": {"oracles_manual": "none"}},
+        },
+    )
+    assert si.to_dict()["case_id"] == "c"
+
+
+def test_mutation_after_construction_cannot_change_validated_content():
+    inner = {"budget": 50, "stops": [{"id": "a"}]}
+    si = StudyInput("LN-06", "c", "test", "g", inner)
+    before = canonical_json(si.features)
+    with pytest.raises(TypeError):
+        si.features["gold"] = {"expected_decision": "find_valid_route"}
+    with pytest.raises(TypeError):
+        si.features["stops"].append({"oracle": 1})
+    with pytest.raises(TypeError):
+        si.features["stops"][0]["gold"] = 1
+    assert canonical_json(si.features) == before
+    assert sha256_input(si.features) == sha256_input(
+        {"budget": 50, "stops": [{"id": "a"}]}
+    )
+
+
+def test_allowed_oracle_bases_contain_no_duplicates():
+    assert len(ALLOWED_ORACLE_BASES) == len(set(ALLOWED_ORACLE_BASES))

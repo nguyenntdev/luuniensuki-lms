@@ -112,6 +112,27 @@ def _as_float(value: Any) -> float | None:
     return None
 
 
+def coerce_finite_float(value: Any, *, field: str) -> float | None:
+    """Typed scalar coercion for decision-path comparisons.
+
+    Returns None when the value is None (unobserved), so callers can apply
+    the documented abstain/fallback semantics. Bools are rejected explicitly
+    (a boolean is not a measurement); any other non-numeric type raises a
+    typed :class:`MethodContractError` instead of a raw ``TypeError``.
+    """
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        raise MethodContractError(
+            f"{field} must be a finite number, got bool {value!r}"
+        )
+    if isinstance(value, (int, float)):
+        return float(value)
+    raise MethodContractError(
+        f"{field} must be a finite number, got {type(value).__name__} {value!r}"
+    )
+
+
 def is_valid_score(value: Any) -> bool:
     """A score is valid iff it is a finite number within [0.0, 1.0]."""
     number = _as_float(value)
@@ -207,8 +228,8 @@ def validate_scores(features: Mapping[str, Any]) -> bool:
     if score_observed is not None and not is_valid_score(score_observed):
         return False
 
-    for mastery in (_mastery_map(features),):
-        for value in mastery.values():
+    for mastery_map in (_mastery_map(features),):
+        for value in mastery_map.values():
             if value is not None and not is_valid_score(value):
                 return False
 
@@ -235,7 +256,7 @@ def unobserved_required_dimensions(
     return [
         dim
         for dim in prerequisites
-        if mastery.get(dim) is None or not isinstance(mastery.get(dim), (int, float))
+        if _as_float(mastery.get(dim)) is None
     ]
 
 
@@ -366,7 +387,6 @@ __all__ = [
     "FIELD_SCORE_OBSERVED",
     "FIELD_TARGET_TASK",
     "METHOD_VERSION_CORE",
-    "METHOD_VERSION_CORE",
     "RC_ABLATION_COLLAPSED",
     "RC_ABLATION_NO_ABSTENTION",
     "RC_ABLATION_NO_PREREQS",
@@ -380,6 +400,7 @@ __all__ = [
     "STUDY_ID",
     "MethodContractError",
     "build_prediction",
+    "coerce_finite_float",
     "competency_coverage",
     "detect_cycle",
     "has_cycle",

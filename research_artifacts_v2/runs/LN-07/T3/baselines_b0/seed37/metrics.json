@@ -54,7 +54,7 @@
     "choose_feasible_modality->choose_feasible_modality": 24,
     "choose_low_data_fallback->choose_feasible_modality": 24
   },
-  "predictions_sha256": "f0837c128027636c9d6bf562fe8cab155af9f2ab1694aeb20b8127c3bf8e241d",
+  "predictions_sha256": "7937e04a39aefae8f4882bc6d7f2564330c92226a83b5fbd5d1dab4f5b1568d2",
   "gold_sha256": "3594117af39d79dfd21eb39fb1cdc68ee1ae21826a830a5bcb5a1746f37c139b",
   "label_map": {},
   "cases": [

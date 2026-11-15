@@ -10,7 +10,14 @@ triggered gate determines the label, so families never collapse):
                            (INV-LN-05-01: client XP is not evidence).
 3. Event uniqueness        repeated ``event_id`` inside the batch, or a
                            ``dedup_key`` already consumed in this policy epoch
-                           -> ``deduplicate_events`` (INV-LN-05-02). The ledger
+                           -> ``deduplicate_events`` (INV-LN-05-02). The key is
+                           the SHA-256 of the *normalized submission identity*
+                           (learner, credential, task, evidence content, sorted
+                           event content); delivery-variant fields (timestamps,
+                           event/delivery/request ids, nonces, trace ids) are
+                           stripped before hashing, so a clock-skewed or
+                           re-tagged redelivery of the same submission maps to
+                           the consumed key and is rejected. The ledger
                            consumption is atomic: the first duplicate delivery
                            of an identical submission is the only replay that
                            can observe ``grant_if_eligible``; all later
@@ -30,25 +37,208 @@ label space (``reject_replay``, ``reject_spoofed_provenance``,
 ``research_v2.methods.ln05.labels.to_v2_decision``.
 
 Determinism: identical (features, config, seed) produce byte-identical
-predictions; the replay ledger is keyed by content hash, never by wall clock.
+predictions; the replay ledger is keyed by the normalized submission identity
+(never by wall clock or delivery metadata).
 """
 from __future__ import annotations
 
+import re
+import unicodedata
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from research_v2.contracts.canonical_hash import sha256_input
+from research_v2.contracts.canonical_hash import canonical_json, sha256_input
 from research_v2.contracts.types import StudyInput, StudyPrediction
 from research_v2.methods.ln05.labels import ReplayLedgerEntry, validate_v2_decision
 
 METHOD_ID = "proposed"
-METHOD_VERSION = "2.0.0"
+METHOD_VERSION = "2.1.0"
 
 DEFAULT_COMPETENCY_KEYS = ("S1", "S2", "S3", "S4")
 DEFAULT_BADGE_POLICY_VERSION = 2
 #: Freshness horizon: an event stamped under a policy version newer than the
 #: badge definition is also stale (badge definitions must be re-issued first).
 DEFAULT_SERVER_ACTOR = "server"
+
+# --------------------------------------------------------------------------
+# Normalized submission identity (INV-LN-05-02 / prereg LN05-CE-3, CE-4).
+#
+# The replay dedup key must be derived from WHAT was submitted, not HOW it was
+# delivered. Delivery-variant fields (clock stamps, transport ids, nonces) are
+# excluded; identity-bearing fields and the evidence content are included.
+# --------------------------------------------------------------------------
+
+#: Allowlist of identity-bearing fields per feature section. Everything else
+#: in a section is dropped before hashing; within reward events the per-event
+#: allowlist below applies.
+_IDENTITY_FIELDS: tuple[str, ...] = (
+    # Learner / profile identity
+    "learner_id",
+    "profile_id",
+    "actor_id",
+    "user_id",
+    # Credential identity
+    "badge_id",
+    "credential_id",
+    "requires_competency",
+    "min_level",
+    "policy_version",
+    # Task / assessment identity (a retry on a DIFFERENT task is new evidence)
+    "task_id",
+    "assessment_id",
+    "content_id",
+    "id",
+    "urn",
+    "type",
+    # Evidence content
+    "skill_evidence",
+    "competencies",
+    "verified_task",
+)
+#: Per-reward-event allowlist: the semantic content of an event (what was
+#: claimed, by whom, for how much). ``event_id`` and any delivery metadata are
+#: delivery variants, not submission identity.
+_EVENT_IDENTITY_FIELDS: tuple[str, ...] = ("actor", "kind", "xp")
+
+#: Delivery-variant field names excluded from identity. Any key containing
+#: "time" (timestamp, server_time, client_time, ...) or ending in a transport
+#: id suffix is a redelivery knob, not evidence. ``event_id`` is listed
+#: explicitly: rotating it must not mint a fresh dedup key (CE-3).
+_DELIVERY_VARIANT_FIELDS: frozenset[str] = frozenset(
+    {
+        "timestamp",
+        "created_at",
+        "submitted_at",
+        "client_id",
+        "request_id",
+        "event_id",
+        "delivery_id",
+        "delivery_attempt",
+        "nonce",
+        "trace_id",
+        "span_id",
+        "correlation_id",
+        "sequence_no",
+        "seq",
+        "attempt",
+        "received_at",
+        "processed_at",
+        "idempotency_token",
+        "message_id",
+        "case_id",
+        "seed",
+        "session_id",
+    }
+)
+_DELIVERY_VARIANT_SUFFIXES: tuple[str, ...] = ("_id", "_at", "_time", "_ts", "_token")
+_DELIVERY_VARIANT_SUBSTRINGS: tuple[str, ...] = ("time", "nonce", "trace")
+_IDENTITY_TIME_KEY_RE = re.compile(r"time|_ts$|_at$", re.IGNORECASE)
+
+
+def _is_delivery_variant(key: str) -> bool:
+    """True iff ``key`` names a delivery-variant (redelivery knob) field.
+
+    Delivery variants are excluded from the dedup identity: mutating them is a
+    redelivery of the same submission, never new evidence. Identity-bearing
+    ``*_id`` fields (learner/profile/task/badge) are exempt via the allowlist.
+    """
+    if key in _IDENTITY_FIELDS or key in _EVENT_IDENTITY_FIELDS:
+        return False
+    if key in _DELIVERY_VARIANT_FIELDS:
+        return True
+    lowered = key.lower()
+    if lowered.endswith(_DELIVERY_VARIANT_SUFFIXES):
+        return True
+    return any(marker in lowered for marker in _DELIVERY_VARIANT_SUBSTRINGS)
+
+
+def _canonicalize_evidence_content(value: Any) -> Any:
+    """Canonical form of evidence/submission content for identity hashing.
+
+    - mappings: delivery-variant keys dropped, remaining keys sorted;
+    - strings: NFC-normalized and whitespace-collapsed (a redelivery whose
+      text differs only by spacing/NFC form is the same evidence);
+    - lists: order-insensitive over items (event deliveries may arrive
+      reordered without changing the submission); items canonicalized;
+    - scalars: passed through unchanged (numeric equality is exact).
+    """
+    if isinstance(value, Mapping):
+        return {
+            key: _canonicalize_evidence_content(v)
+            for key, v in sorted(value.items())
+            if not _is_delivery_variant(key)
+        }
+    if isinstance(value, list):
+        items = [_canonicalize_evidence_content(v) for v in value]
+        return sorted(items, key=lambda item: canonical_json(item))
+    if isinstance(value, str):
+        return " ".join(unicodedata.normalize("NFC", value).split())
+    return value
+
+
+def _pick_identity_fields(section: Any, keys: tuple[str, ...]) -> dict[str, Any]:
+    """Extract only the allowlisted identity fields from a feature section."""
+    if not isinstance(section, Mapping):
+        return {}
+    return {k: _canonicalize_evidence_content(section[k]) for k in keys if k in section}
+
+
+def _submission_identity(
+    features: Mapping[str, Any],
+    *,
+    learner: Mapping[str, Any],
+    badge: Mapping[str, Any],
+    skill_evidence: Mapping[str, Any],
+    reward_events: list[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Normalized submission identity: the payload the dedup key is derived from.
+
+    Included (identity + content):
+    - learner/profile identity: ``learner_id`` / ``profile_id`` /
+      ``actor_id`` / ``user_id`` plus the competency profile (``competencies``);
+    - credential identity: badge id (``id``/``badge_id``/``credential_id``),
+      ``requires_competency``, ``min_level``, ``policy_version``;
+    - task/assessment identity: the heritage-task section (``content`` /
+      ``task`` mapping when present) via ``task_id`` / ``assessment_id`` /
+      ``content_id`` / ``id`` / ``urn`` / ``type`` — a retry on a different
+      task is genuinely new evidence and must derive a fresh key;
+    - evidence content: the full ``skill_evidence`` mapping;
+    - event content: per event, the allowlisted semantic fields
+      (``actor``/``kind``/``xp``), order-insensitively.
+
+    Excluded (delivery variants — mutating them is a redelivery, not new
+    evidence): ``timestamp``/``*_at``/anything containing "time",
+    ``event_id``/``*_id`` transport ids (client/request/delivery/trace/...),
+    ``nonce``, ``case_id``, ``seed``, ``session_id``.
+
+    Deterministic: identical submissions normalize to byte-identical payloads
+    (sorted keys, NFC + whitespace-collapsed strings, order-insensitive event
+    lists), so the derived SHA-256 key is stable across machines.
+    """
+    learner_keys = ("learner_id", "profile_id", "actor_id", "user_id", "competencies")
+    badge_keys = ("id", "badge_id", "credential_id", "requires_competency", "min_level", "policy_version")
+    task_keys = ("task_id", "assessment_id", "content_id", "id", "urn", "type")
+    task_section = None
+    for section_name in ("task", "content", "assessment"):
+        section = features.get(section_name)
+        if isinstance(section, Mapping):
+            task_section = section
+            break
+    if task_section is None:
+        task_section = badge.get("content") if isinstance(badge.get("content"), Mapping) else None
+    events_payload = [
+        _pick_identity_fields(ev, _EVENT_IDENTITY_FIELDS)
+        for ev in reward_events
+        if isinstance(ev, Mapping)
+    ]
+    events_payload.sort(key=lambda item: canonical_json(item))
+    return {
+        "learner": _pick_identity_fields(learner, learner_keys),
+        "credential": _pick_identity_fields(badge, badge_keys),
+        "task": _pick_identity_fields(task_section, task_keys) if task_section else {},
+        "evidence": _canonicalize_evidence_content(skill_evidence),
+        "events": events_payload,
+    }
 
 
 class PolicyInputError(ValueError):
@@ -68,14 +258,18 @@ class PolicyEpoch:
 
 
 class ReplayLedger:
-    """Atomic idempotency ledger over cryptographic dedup keys.
+    """Atomic idempotency ledger over normalized-submission-identity keys.
 
-    A dedup key is the canonical SHA-256 of the submission identity tuple
-    (learner profile, badge, verified evidence, ordered event identity). It is
-    *content derived*, so a clock-skewed redelivery with a fresh timestamp but
-    the same submission content maps to the same key and is rejected as a
-    replay. ``consume`` is check-and-set in one step; only one caller per key
-    can obtain ``True``.
+    A dedup key is the canonical SHA-256 of :func:`_submission_identity` —
+    learner/credential/task identity plus evidence and event content, with all
+    delivery-variant fields (timestamps, event/delivery/request ids, nonces)
+    stripped before hashing. It is *content derived over the normalized
+    identity*, so a clock-skewed redelivery with a fresh timestamp, or a
+    redelivery that rotated its ``event_id``/``nonce``, maps to the same key
+    and is rejected as a replay (CE-3); a genuinely new submission (different
+    evidence content or task) derives a fresh key and stays eligible (CE-4
+    semantics: identical retry is rejected, never re-awarded). ``consume`` is
+    check-and-set in one step; only one caller per key can obtain ``True``.
     """
 
     def __init__(self) -> None:
@@ -88,14 +282,22 @@ class ReplayLedger:
         badge: Mapping[str, Any],
         skill_evidence: Mapping[str, Any],
         reward_events: list[Mapping[str, Any]],
+        features: Mapping[str, Any] | None = None,
     ) -> str:
+        """SHA-256 over the normalized submission identity (stable, documented).
+
+        ``features`` (optional) carries the top-level task/assessment section
+        (``task``/``content``/``assessment``) when it lives outside the badge;
+        when omitted the identity is derived from the named sections alone.
+        """
         return sha256_input(
-            {
-                "learner": learner.get("profile_id"),
-                "badge": dict(badge),
-                "evidence": dict(skill_evidence),
-                "events": [dict(ev) for ev in reward_events],
-            }
+            _submission_identity(
+                features if features is not None else {},
+                learner=learner,
+                badge=badge,
+                skill_evidence=skill_evidence,
+                reward_events=reward_events,
+            )
         )
 
     def is_consumed(self, dedup_key: str) -> bool:
@@ -208,6 +410,7 @@ def gate_event_uniqueness(
         badge=_badge,
         skill_evidence=skill_evidence,
         reward_events=events,
+        features=f,
     )
     if ledger.is_consumed(dedup):
         return GateResult(
@@ -315,6 +518,7 @@ def evaluate(
         badge=badge,
         skill_evidence=skill_evidence,
         reward_events=events,
+        features=features,
     )
     evidence_sha = sha256_input(dict(skill_evidence))
     if config.get("anti_replay", True):

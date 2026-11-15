@@ -1,12 +1,18 @@
 """Verify integrity of legacy and V2 research data, fail-closed.
 
-Checks (all hard failures in strict mode):
+Checks (all hard failures by default):
   * every holdout fixture row's ``input_hash`` matches the canonical standard;
   * cohort labels are the synthetic held-out label;
   * oracle bases are allowed non-human bases;
   * no oracle leakage inside ``input``;
   * annotation provenance marker present;
-  * optional: dataset registry and manifest hashes.
+  * dataset manifest: recomputed sha256 of every on-disk file matches
+    ``entry.sha256`` and the JSONL line count matches ``entry.cases``.
+
+Exit semantics are fail-closed: any issue exits nonzero by default. Pass
+``--allow-failures`` explicitly for informational runs (exit 0 even with
+issues). ``--strict`` is accepted as a no-op alias kept for backwards
+compatibility with earlier callers.
 """
 from __future__ import annotations
 
@@ -15,7 +21,7 @@ import json
 import sys
 from pathlib import Path
 
-from research_v2.contracts.canonical_hash import sha256_input
+from research_v2.contracts.canonical_hash import sha256_file, sha256_input
 from research_v2.contracts.label_space import (
     ALLOWED_ORACLE_BASES,
     PROVENANCE_MARKER,
@@ -90,9 +96,10 @@ def verify_legacy(repo_root: Path) -> dict:
     return {"issues": issues, "cases_by_study": stats, "total_cases": total}
 
 
-def verify_v2(repo_root: Path) -> dict:
+def verify_v2(repo_root: Path, manifest_path: Path | None = None) -> dict:
     issues: list[str] = []
-    manifest_path = repo_root / "research_v2" / "data" / "manifest.json"
+    if manifest_path is None:
+        manifest_path = repo_root / "research_v2" / "data" / "manifest.json"
     if manifest_path.is_file():
         from research_v2.contracts.manifest import load_manifest, ManifestError
 
@@ -103,11 +110,24 @@ def verify_v2(repo_root: Path) -> dict:
             manifest = None
         if manifest is not None:
             for entry in manifest.entries:
-                p = repo_root / entry.path
                 if entry.provenance == "blocked":
                     continue
+                p = repo_root / entry.path
                 if not p.is_file():
                     issues.append(f"{entry.dataset_id}: missing file {entry.path}")
+                    continue
+                actual_sha = sha256_file(p)
+                if actual_sha != entry.sha256:
+                    issues.append(
+                        f"{entry.dataset_id}: sha256 mismatch for {entry.path} "
+                        f"(stored={entry.sha256!r} actual={actual_sha!r})"
+                    )
+                n_cases = sum(1 for line in p.open(encoding="utf-8") if line.strip())
+                if n_cases != entry.cases:
+                    issues.append(
+                        f"{entry.dataset_id}: case count mismatch for {entry.path} "
+                        f"(stored={entry.cases} actual={n_cases})"
+                    )
     return {"issues": issues, "manifest_present": manifest_path.is_file()}
 
 
@@ -115,7 +135,17 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Verify Research V2 integrity")
     ap.add_argument("--check", default=None, help="named check to run (read-first-and-scope, repo-sha-baseline)")
     ap.add_argument("--legacy-and-v2", action="store_true")
-    ap.add_argument("--strict", action="store_true")
+    ap.add_argument(
+        "--strict",
+        action="store_true",
+        help="no-op alias kept for backwards compatibility; failures are nonzero by default",
+    )
+    ap.add_argument(
+        "--allow-failures",
+        action="store_true",
+        help="informational mode: always exit 0 even when issues are found",
+    )
+    ap.add_argument("--manifest", type=Path, default=None, help="override path to the V2 dataset manifest")
     ap.add_argument("--output", type=Path, default=None)
     a = ap.parse_args(argv)
 
@@ -138,7 +168,7 @@ def main(argv: list[str] | None = None) -> int:
         }
     else:
         result["legacy"] = verify_legacy(root)
-        result["v2"] = verify_v2(root)
+        result["v2"] = verify_v2(root, a.manifest)
 
     all_issues = []
     for section in ("legacy", "v2"):
@@ -154,7 +184,7 @@ def main(argv: list[str] | None = None) -> int:
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"status": result["status"], "issues": all_issues[:20], "n_issues": len(all_issues)}, ensure_ascii=False, indent=2))
 
-    if a.strict and all_issues:
+    if all_issues and not a.allow_failures:
         return 1
     return 0
 

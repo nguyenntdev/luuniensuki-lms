@@ -46,7 +46,6 @@ def _dirty_source_paths(repo_root: Path) -> list[str]:
 def freeze(repo_root: Path, out_dir: Path, *, assert_clean: bool = True) -> dict:
     head = _git("rev-parse", "HEAD", cwd=repo_root)
     dirty_paths = _dirty_source_paths(repo_root)
-    dirty = bool(_git("status", "--porcelain", cwd=repo_root))
     if assert_clean and dirty_paths:
         raise RuntimeError(
             f"working tree has uncommitted SOURCE changes ({len(dirty_paths)}): "
@@ -66,7 +65,7 @@ def freeze(repo_root: Path, out_dir: Path, *, assert_clean: bool = True) -> dict
         "release_id": datetime.now(timezone.utc).strftime("v2-%Y%m%dT%H%M%SZ"),
         "source_commit": head,
         "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "working_tree_dirty": dirty,
+        "working_tree_dirty": bool(dirty_paths),
         "source_dirty_paths": dirty_paths,
         "n_files": len(files),
         "files": files,
@@ -81,13 +80,25 @@ def freeze(repo_root: Path, out_dir: Path, *, assert_clean: bool = True) -> dict
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Freeze Research V2 release")
     ap.add_argument("--all", action="store_true")
-    ap.add_argument("--assert-clean", action="store_true")
+    ap.add_argument(
+        "--allow-dirty-source",
+        action="store_true",
+        help=(
+            "Opt out of the clean-source assertion for informational runs; "
+            "uncommitted SOURCE changes are still recorded in the manifest."
+        ),
+    )
+    ap.add_argument(
+        "--assert-clean",
+        action="store_true",
+        help="Deprecated no-op: refusing dirty SOURCE trees is already the default.",
+    )
     ap.add_argument("--out", type=Path, default=None)
     a = ap.parse_args(argv)
     root = _repo_root()
     out = a.out or (root / "research_artifacts_v2" / "release")
     try:
-        manifest = freeze(root, out, assert_clean=a.assert_clean)
+        manifest = freeze(root, out, assert_clean=not a.allow_dirty_source)
     except RuntimeError as exc:
         print(f"FREEZE FAILED: {exc}", file=sys.stderr)
         return 1

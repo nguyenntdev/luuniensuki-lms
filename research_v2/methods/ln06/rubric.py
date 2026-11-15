@@ -5,18 +5,99 @@ as an INDEPENDENT feasibility checker: it re-derives the expected decision for
 a case from first principles (brute force over subsets for small instances),
 without importing the proposed solver. It is evaluator-side material and must
 never be imported by an inference-time policy.
+
+Independence guarantee: cycle certification is re-implemented inside this
+module (worklist dead-end cascade + least-fixpoint reachability probe) and
+shares no code with the proposed policy's ``cyclic_outcomes`` — if the
+policy's certification were wrong, this oracle remains able to disagree
+with it.
 """
 from __future__ import annotations
 
 import itertools
+from collections import deque
 from typing import Any
 
 from .dataset import Stop, TrailCase
-from .proposed import cyclic_outcomes
 
 
 class RubricError(ValueError):
     """Raised when the rubric cannot certify a case."""
+
+
+# ---------------------------------------------------------------------------
+# Independent cycle certification (no shared code with the proposed policy)
+# ---------------------------------------------------------------------------
+
+def _oracle_blocked_outcomes(stops: tuple[Stop, ...]) -> frozenset[str]:
+    """Independently certify which outcomes are blocked by circular prerequisites.
+
+    Re-implemented from first principles for oracle independence (the proposed
+    policy's ``cyclic_outcomes`` is deliberately NOT imported here, so a bug in
+    the policy cannot make oracle and policy agree wrongly).
+
+    Worklist cascade (Kahn-style reverse elimination): repeatedly retire any
+    stop that requires an outcome provided by no remaining stop — a missing
+    prerequisite, not a cycle — since it can never be visited; retiring removes
+    its outcomes from the provider index and repeats to a fixpoint.
+    Every outcome still provided by a surviving stop is then probed with a
+    least-fixpoint reachability search over prerequisite "generations": an
+    outcome becomes reachable when some surviving stop that provides it needs
+    only reachable prerequisites. An outcome that is provided yet unreachable
+    can only be explained by a circular dependency, because any acyclic
+    dependency chain bottoms out at requires-free stops, which are always
+    reachable. The least fixpoint exists and is unique (monotone operator on
+    a finite lattice), so the certification is deterministic.
+    """
+    if not stops:
+        return frozenset()
+    by_id = {s.id: s for s in stops}
+    providers: dict[str, set[str]] = {}
+    for s in stops:
+        for o in s.provides:
+            providers.setdefault(o, set()).add(s.id)
+    provided: set[str] = set(providers)
+
+    # Worklist cascade: retire stops whose prerequisites can never be met by
+    # any surviving stop. A stop is a dead end when some required outcome has
+    # no remaining provider at all (missing prerequisite). Retiring removes
+    # the stop's outcomes from the provider index, which may cascade. A stop
+    # that is the SOLE provider of one of its own required outcomes is NOT
+    # retired here: its outcome keeps a provider but can never be acquired,
+    # and the reachability probe below certifies it as cyclic (a deadlock).
+    dead: set[str] = set()
+    queue = deque(by_id)
+    while queue:
+        sid = queue.popleft()
+        if sid in dead:
+            continue
+        if not any(r not in provided for r in by_id[sid].requires):
+            continue
+        dead.add(sid)
+        for o in by_id[sid].provides:
+            if o in providers:
+                providers[o].discard(sid)
+                if not providers[o]:
+                    provided.discard(o)
+        queue.extend(by_id)
+
+    # Reachability probe over the surviving structure: an outcome is
+    # reachable when some surviving provider of it needs only already-
+    # reachable prerequisites (least fixpoint over prerequisite generations).
+    # Acyclic chains always bottom out at requires-free survivors, so a
+    # provided-but-unreachable outcome certifies a circular dependency.
+    reachable: set[str] = set()
+    changed = True
+    while changed:
+        newly = {
+            o
+            for o in provided
+            if o not in reachable
+            and any(all(r in reachable for r in by_id[p].requires) for p in providers[o])
+        }
+        changed = bool(newly)
+        reachable |= newly
+    return frozenset(provided - reachable)
 
 
 def _covers(targets: frozenset[str], chosen: tuple[str, ...], by_id: dict[str, Stop]) -> bool:
@@ -81,7 +162,7 @@ def brute_force_expected_decision(case: TrailCase, *, max_stops: int = 12) -> st
         )
     if not case.checkpoint_claim_verified:
         return "reject_checkpoint_source"
-    if cyclic_outcomes(case.stops):
+    if _oracle_blocked_outcomes(case.stops):
         return "reject_cycle"
 
     available = tuple(sorted(case.available_stops & set(by_id)))

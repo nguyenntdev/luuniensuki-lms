@@ -1,0 +1,18 @@
+{
+  "study_id": "LN-10",
+  "tier": "T3S",
+  "dataset_path": "research_v2/data/ln10/t3s_inputs.jsonl",
+  "dataset_sha256": "3a73b1659072afb725e13ce8409d61702edde4678ee37058a73e563e8b52e8c9",
+  "gold_path": "research_v2/data/ln10/t3s_gold.jsonl",
+  "method_id": "ablations_a3",
+  "seed": 37,
+  "split_id": "stress",
+  "source_commit": "6857442b3ec606e0d2273defdf4b8b940e83811e",
+  "python_version": "3.12.3",
+  "platform": "Linux-6.17.0-20-generic-x86_64-with-glibc2.39",
+  "wall_ms": 6.228,
+  "status": "PASS",
+  "error_code": null,
+  "metrics_status": "ok",
+  "n_inputs": 24
+}

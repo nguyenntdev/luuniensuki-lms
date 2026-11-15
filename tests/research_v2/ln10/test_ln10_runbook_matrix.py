@@ -24,7 +24,7 @@ def test_matrix_schema_and_cell():
     matrix = yaml.safe_load((EXPERIMENTS / "matrix.yaml").read_text())
     assert matrix["repo_root"] == "."
     cells = matrix["cells"]
-    assert len(cells) == 1
+    assert len(cells) == 2  # sealed T3 holdout + T3S stress cell
     cell = cells[0]
     assert cell["study"] == "LN-10"
     assert cell["tier"] == "T3"
@@ -34,8 +34,27 @@ def test_matrix_schema_and_cell():
     assert cell["seeds"] == [11, 23, 37]
     assert cell["split_id"] == "test"
     assert cell["group_key"] == "group_id"
-    # 1 cell x 6 methods x 3 seeds = 18 experiment cells.
-    assert len(cell["methods"]) * len(cell["seeds"]) == 18
+    # 2 cells x 6 methods x 3 seeds = 36 experiment cells.
+    assert sum(len(c["methods"]) * len(c["seeds"]) for c in cells) == 36
+
+
+def test_matrix_stress_cell_schema():
+    """Second cell: V2-authored T3S stress dataset on the same methods/seeds."""
+    matrix = yaml.safe_load((EXPERIMENTS / "matrix.yaml").read_text())
+    stress = [c for c in matrix["cells"] if c["split_id"] == "stress"]
+    assert len(stress) == 1
+    cell = stress[0]
+    assert cell["study"] == "LN-10"
+    assert cell["dataset"] == "research_v2/data/ln10/t3s_inputs.jsonl"
+    assert cell["gold"] == "research_v2/data/ln10/t3s_gold.jsonl"
+    assert cell["methods"] == MATRIX_METHODS
+    assert cell["seeds"] == [11, 23, 37]
+    assert cell["group_key"] == "group_id"
+    # Distinct tier label so stress outputs cannot overwrite the sealed T3
+    # run artifacts under research_artifacts_v2/runs/LN-10/T3/.
+    assert cell["tier"] != "T3"
+    assert (REPO_ROOT / cell["dataset"]).is_file()
+    assert (REPO_ROOT / cell["gold"]).is_file()
 
 
 def test_matrix_resolves_to_real_files():

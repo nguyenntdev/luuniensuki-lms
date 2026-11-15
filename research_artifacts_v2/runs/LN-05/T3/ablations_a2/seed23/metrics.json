@@ -54,7 +54,7 @@
     "reject_forged_event->reject_forged_event": 24,
     "revalidate_badge->revalidate_badge": 24
   },
-  "predictions_sha256": "911082d70447405638f3557f55d433008d66bfc8d3e3d345582c3e8b5cf26aed",
+  "predictions_sha256": "86db1a34294d29b47e6c838feefba0ea34e023a5d49bc62a848cfb6a04519517",
   "gold_sha256": "b5cba49affb0932bcd4964d4b83c77a76248d1803d9327fb212895b035be9b1e",
   "label_map": {},
   "cases": [

@@ -20,7 +20,6 @@ ALLOWED_ORACLE_BASES: frozenset[str] = frozenset(
         "DESIGN_SPEC_EMPIRICAL_HOLDOUT",
         "INSTRUCTIONAL_RECOMMENDATIONS_DOMAIN_INVARIANT",
         "DIAGNOSTIC_FEEDBACK_SPEC",
-        "SOCRATIC_SCAFFOLDING_SPEC",
         "PROMPT_INJECTION_DEFENSE_SPEC",
         "EPISTEMIC_SOURCE_INTEGRITY_SPEC",
         "ANSWER_LEAKAGE_DEFENSE_SPEC",
@@ -77,6 +76,29 @@ DECISIONS_BY_STUDY: Mapping[str, frozenset[str]] = {
     "LN-10": LN10_DECISIONS,
 }
 
+# Native (frozen gold) label spaces. Unlike the contract spaces above — which
+# are forward-looking vocabularies a study may migrate to — these mirror the
+# exact decision labels present in each study's frozen T3 gold file
+# (``research_v2/data/<study>/t3_gold.jsonl``). Engines whose gold uses a
+# legacy vocabulary validate against this registry so that any future drift
+# between emitted predictions and the frozen gold fails closed.
+# LN-01: enumerated from research_v2/data/ln01/t3_gold.jsonl (120 cases,
+# 24 per label; the contract space LN01_DECISIONS is a different, unused
+# path-planning vocabulary — see research_v2/methods/ln01/engine.py).
+LN01_NATIVE_DECISIONS: frozenset[str] = frozenset(
+    {
+        "accept",
+        "reject_cycle",
+        "reject_grade_order",
+        "reject_missing_anchor",
+        "reject_no_progression",
+    }
+)
+
+NATIVE_DECISIONS_BY_STUDY: Mapping[str, frozenset[str]] = {
+    "LN-01": LN01_NATIVE_DECISIONS,
+}
+
 
 class LabelSpaceError(ValueError):
     """Raised when a decision label is outside the study's declared space."""
@@ -89,6 +111,22 @@ def validate_decision(study_id: str, decision: str) -> None:
     if decision not in space:
         raise LabelSpaceError(
             f"{study_id}: decision {decision!r} not in declared label space {sorted(space)}"
+        )
+
+
+def validate_native_decision(study_id: str, decision: str) -> None:
+    """Validate ``decision`` against the study's frozen gold vocabulary.
+
+    Raises ``LabelSpaceError`` for an unknown study id or any label that does
+    not appear in the study's frozen T3 gold (fail-closed).
+    """
+    space = NATIVE_DECISIONS_BY_STUDY.get(study_id)
+    if space is None:
+        raise LabelSpaceError(f"unknown study_id for native label space: {study_id!r}")
+    if decision not in space:
+        raise LabelSpaceError(
+            f"{study_id}: decision {decision!r} not in native (frozen gold) "
+            f"label space {sorted(space)}"
         )
 
 

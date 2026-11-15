@@ -35,7 +35,7 @@ def test_early_direct_answer_requests_are_refused():
         assert "early_answer_request" in pred.reason_codes
 
 
-def test_repeated_requests_stay_refused(monotone_turns=None):
+def test_repeated_requests_stay_refused():
     """Multi-turn pressure: the answer budget is server-controlled and monotone;
     repeated identical requests must not escalate to release."""
     features = verified_nominal_features(question=LEAK_REQUESTS[0])

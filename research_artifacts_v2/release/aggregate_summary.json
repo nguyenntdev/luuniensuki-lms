@@ -1,5 +1,5 @@
 {
-  "n_cells": 180,
+  "n_cells": 198,
   "studies": {
     "LN-01": {
       "n_cells": 18,
@@ -934,7 +934,7 @@
           "error_rate": 0.2,
           "error_rate_wilson_low": 0.13824476478840256,
           "error_rate_wilson_high": 0.2803667350628196,
-          "predictions_sha256": "911082d70447405638f3557f55d433008d66bfc8d3e3d345582c3e8b5cf26aed"
+          "predictions_sha256": "86db1a34294d29b47e6c838feefba0ea34e023a5d49bc62a848cfb6a04519517"
         },
         {
           "study_id": "LN-05",
@@ -946,7 +946,7 @@
           "error_rate": 0.2,
           "error_rate_wilson_low": 0.13824476478840256,
           "error_rate_wilson_high": 0.2803667350628196,
-          "predictions_sha256": "911082d70447405638f3557f55d433008d66bfc8d3e3d345582c3e8b5cf26aed"
+          "predictions_sha256": "86db1a34294d29b47e6c838feefba0ea34e023a5d49bc62a848cfb6a04519517"
         },
         {
           "study_id": "LN-05",
@@ -958,7 +958,7 @@
           "error_rate": 0.2,
           "error_rate_wilson_low": 0.13824476478840256,
           "error_rate_wilson_high": 0.2803667350628196,
-          "predictions_sha256": "911082d70447405638f3557f55d433008d66bfc8d3e3d345582c3e8b5cf26aed"
+          "predictions_sha256": "86db1a34294d29b47e6c838feefba0ea34e023a5d49bc62a848cfb6a04519517"
         },
         {
           "study_id": "LN-05",
@@ -970,7 +970,7 @@
           "error_rate": 0.2,
           "error_rate_wilson_low": 0.13824476478840256,
           "error_rate_wilson_high": 0.2803667350628196,
-          "predictions_sha256": "9a4b1911d82027420f0a8675cfe2a80b661ef4d2fb1d70756d2dded1b42148b9"
+          "predictions_sha256": "11c7c5c756772dac588522c07e59d1715460ab9490d67476511e6a480861ef61"
         },
         {
           "study_id": "LN-05",
@@ -982,7 +982,7 @@
           "error_rate": 0.2,
           "error_rate_wilson_low": 0.13824476478840256,
           "error_rate_wilson_high": 0.2803667350628196,
-          "predictions_sha256": "9a4b1911d82027420f0a8675cfe2a80b661ef4d2fb1d70756d2dded1b42148b9"
+          "predictions_sha256": "11c7c5c756772dac588522c07e59d1715460ab9490d67476511e6a480861ef61"
         },
         {
           "study_id": "LN-05",
@@ -994,7 +994,7 @@
           "error_rate": 0.2,
           "error_rate_wilson_low": 0.13824476478840256,
           "error_rate_wilson_high": 0.2803667350628196,
-          "predictions_sha256": "9a4b1911d82027420f0a8675cfe2a80b661ef4d2fb1d70756d2dded1b42148b9"
+          "predictions_sha256": "11c7c5c756772dac588522c07e59d1715460ab9490d67476511e6a480861ef61"
         },
         {
           "study_id": "LN-05",
@@ -1078,7 +1078,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "cd67a8b504503cbc3886813a5076904c61a15b4f3bbd78d419ef54bd2394b6fb"
+          "predictions_sha256": "07b7520b3a90e26ea1c6554f9860f6e519215a2f37bcfa207fa2e4e6cd3f8654"
         },
         {
           "study_id": "LN-05",
@@ -1090,7 +1090,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "cd67a8b504503cbc3886813a5076904c61a15b4f3bbd78d419ef54bd2394b6fb"
+          "predictions_sha256": "07b7520b3a90e26ea1c6554f9860f6e519215a2f37bcfa207fa2e4e6cd3f8654"
         },
         {
           "study_id": "LN-05",
@@ -1102,7 +1102,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "cd67a8b504503cbc3886813a5076904c61a15b4f3bbd78d419ef54bd2394b6fb"
+          "predictions_sha256": "07b7520b3a90e26ea1c6554f9860f6e519215a2f37bcfa207fa2e4e6cd3f8654"
         }
       ]
     },
@@ -1340,7 +1340,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "76ff729c43fdbb8a5cc75b3d48870624bffb22d3c07811e6b1e6cd570f0e7de1"
+          "predictions_sha256": "08f0ff19ef25a5af6daa1c29fdc66c416e05f5ce7c3b83e439cec9872189d91b"
         },
         {
           "study_id": "LN-07",
@@ -1352,7 +1352,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "76ff729c43fdbb8a5cc75b3d48870624bffb22d3c07811e6b1e6cd570f0e7de1"
+          "predictions_sha256": "08f0ff19ef25a5af6daa1c29fdc66c416e05f5ce7c3b83e439cec9872189d91b"
         },
         {
           "study_id": "LN-07",
@@ -1364,7 +1364,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "76ff729c43fdbb8a5cc75b3d48870624bffb22d3c07811e6b1e6cd570f0e7de1"
+          "predictions_sha256": "08f0ff19ef25a5af6daa1c29fdc66c416e05f5ce7c3b83e439cec9872189d91b"
         },
         {
           "study_id": "LN-07",
@@ -1376,7 +1376,7 @@
           "error_rate": 0.2,
           "error_rate_wilson_low": 0.13824476478840256,
           "error_rate_wilson_high": 0.2803667350628196,
-          "predictions_sha256": "ab7cf9a1613516a5c638ae344dc107b5854df3667627c0b2ac333282f74f1c7d"
+          "predictions_sha256": "58969929308be18221f55bea79434884d70060920d63320b67113328970d7f75"
         },
         {
           "study_id": "LN-07",
@@ -1388,7 +1388,7 @@
           "error_rate": 0.2,
           "error_rate_wilson_low": 0.13824476478840256,
           "error_rate_wilson_high": 0.2803667350628196,
-          "predictions_sha256": "ab7cf9a1613516a5c638ae344dc107b5854df3667627c0b2ac333282f74f1c7d"
+          "predictions_sha256": "58969929308be18221f55bea79434884d70060920d63320b67113328970d7f75"
         },
         {
           "study_id": "LN-07",
@@ -1400,7 +1400,7 @@
           "error_rate": 0.2,
           "error_rate_wilson_low": 0.13824476478840256,
           "error_rate_wilson_high": 0.2803667350628196,
-          "predictions_sha256": "ab7cf9a1613516a5c638ae344dc107b5854df3667627c0b2ac333282f74f1c7d"
+          "predictions_sha256": "58969929308be18221f55bea79434884d70060920d63320b67113328970d7f75"
         },
         {
           "study_id": "LN-07",
@@ -1412,7 +1412,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "d24a55464c81aeed5a1ab48eb62113017148844f97325672239ca42074298043"
+          "predictions_sha256": "86aa85c43d79c49805619b7c3e6ad53175efe8c8e45087e277e6cf37c635ac39"
         },
         {
           "study_id": "LN-07",
@@ -1424,7 +1424,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "d24a55464c81aeed5a1ab48eb62113017148844f97325672239ca42074298043"
+          "predictions_sha256": "86aa85c43d79c49805619b7c3e6ad53175efe8c8e45087e277e6cf37c635ac39"
         },
         {
           "study_id": "LN-07",
@@ -1436,7 +1436,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "d24a55464c81aeed5a1ab48eb62113017148844f97325672239ca42074298043"
+          "predictions_sha256": "86aa85c43d79c49805619b7c3e6ad53175efe8c8e45087e277e6cf37c635ac39"
         },
         {
           "study_id": "LN-07",
@@ -1448,7 +1448,7 @@
           "error_rate": 0.8,
           "error_rate_wilson_low": 0.7196332649371805,
           "error_rate_wilson_high": 0.8617552352115975,
-          "predictions_sha256": "f0837c128027636c9d6bf562fe8cab155af9f2ab1694aeb20b8127c3bf8e241d"
+          "predictions_sha256": "7937e04a39aefae8f4882bc6d7f2564330c92226a83b5fbd5d1dab4f5b1568d2"
         },
         {
           "study_id": "LN-07",
@@ -1460,7 +1460,7 @@
           "error_rate": 0.8,
           "error_rate_wilson_low": 0.7196332649371805,
           "error_rate_wilson_high": 0.8617552352115975,
-          "predictions_sha256": "f0837c128027636c9d6bf562fe8cab155af9f2ab1694aeb20b8127c3bf8e241d"
+          "predictions_sha256": "7937e04a39aefae8f4882bc6d7f2564330c92226a83b5fbd5d1dab4f5b1568d2"
         },
         {
           "study_id": "LN-07",
@@ -1472,7 +1472,7 @@
           "error_rate": 0.8,
           "error_rate_wilson_low": 0.7196332649371805,
           "error_rate_wilson_high": 0.8617552352115975,
-          "predictions_sha256": "f0837c128027636c9d6bf562fe8cab155af9f2ab1694aeb20b8127c3bf8e241d"
+          "predictions_sha256": "7937e04a39aefae8f4882bc6d7f2564330c92226a83b5fbd5d1dab4f5b1568d2"
         },
         {
           "study_id": "LN-07",
@@ -1484,7 +1484,7 @@
           "error_rate": 0.8,
           "error_rate_wilson_low": 0.7196332649371805,
           "error_rate_wilson_high": 0.8617552352115975,
-          "predictions_sha256": "6208978c05fef8b79f9dcc111cfe76901e89c3758dd0b8bb90f319f2b7f5303c"
+          "predictions_sha256": "f5aa1f8ea4bf42f556fb92564dc63cfe7dbd078b70b4ec864d63d9c70aee55ec"
         },
         {
           "study_id": "LN-07",
@@ -1496,7 +1496,7 @@
           "error_rate": 0.8,
           "error_rate_wilson_low": 0.7196332649371805,
           "error_rate_wilson_high": 0.8617552352115975,
-          "predictions_sha256": "6208978c05fef8b79f9dcc111cfe76901e89c3758dd0b8bb90f319f2b7f5303c"
+          "predictions_sha256": "f5aa1f8ea4bf42f556fb92564dc63cfe7dbd078b70b4ec864d63d9c70aee55ec"
         },
         {
           "study_id": "LN-07",
@@ -1508,7 +1508,7 @@
           "error_rate": 0.8,
           "error_rate_wilson_low": 0.7196332649371805,
           "error_rate_wilson_high": 0.8617552352115975,
-          "predictions_sha256": "6208978c05fef8b79f9dcc111cfe76901e89c3758dd0b8bb90f319f2b7f5303c"
+          "predictions_sha256": "f5aa1f8ea4bf42f556fb92564dc63cfe7dbd078b70b4ec864d63d9c70aee55ec"
         },
         {
           "study_id": "LN-07",
@@ -1520,7 +1520,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "820c74c55b29be1b3fbcee0e4efb6f490156d58d22b3f41e9075af307e916ce1"
+          "predictions_sha256": "90d603d35978622824b01a2187a07dba28d0c6b4cffeb335209c39e59010be7f"
         },
         {
           "study_id": "LN-07",
@@ -1532,7 +1532,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "820c74c55b29be1b3fbcee0e4efb6f490156d58d22b3f41e9075af307e916ce1"
+          "predictions_sha256": "90d603d35978622824b01a2187a07dba28d0c6b4cffeb335209c39e59010be7f"
         },
         {
           "study_id": "LN-07",
@@ -1544,7 +1544,7 @@
           "error_rate": 0.0,
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
-          "predictions_sha256": "820c74c55b29be1b3fbcee0e4efb6f490156d58d22b3f41e9075af307e916ce1"
+          "predictions_sha256": "90d603d35978622824b01a2187a07dba28d0c6b4cffeb335209c39e59010be7f"
         }
       ]
     },
@@ -1991,7 +1991,7 @@
       ]
     },
     "LN-10": {
-      "n_cells": 18,
+      "n_cells": 36,
       "cells": [
         {
           "study_id": "LN-10",
@@ -2208,6 +2208,222 @@
           "error_rate_wilson_low": 0.0,
           "error_rate_wilson_high": 0.031019166418703486,
           "predictions_sha256": "aca6b1cc12ea98ef5d7e23573f468310dbdcb0785ee5f436522b9e93a42a6fe9"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "ablations_a1",
+          "seed": "11",
+          "n_total": 24,
+          "accuracy": 1.0,
+          "error_rate": 0.0,
+          "error_rate_wilson_low": 1.3877787807814457e-17,
+          "error_rate_wilson_high": 0.13797620467498017,
+          "predictions_sha256": "83a101b414401c11f7546661a44ab242509ab50cb814997c8b5353a8d5b8088f"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "ablations_a1",
+          "seed": "23",
+          "n_total": 24,
+          "accuracy": 1.0,
+          "error_rate": 0.0,
+          "error_rate_wilson_low": 1.3877787807814457e-17,
+          "error_rate_wilson_high": 0.13797620467498017,
+          "predictions_sha256": "83a101b414401c11f7546661a44ab242509ab50cb814997c8b5353a8d5b8088f"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "ablations_a1",
+          "seed": "37",
+          "n_total": 24,
+          "accuracy": 1.0,
+          "error_rate": 0.0,
+          "error_rate_wilson_low": 1.3877787807814457e-17,
+          "error_rate_wilson_high": 0.13797620467498017,
+          "predictions_sha256": "83a101b414401c11f7546661a44ab242509ab50cb814997c8b5353a8d5b8088f"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "ablations_a2",
+          "seed": "11",
+          "n_total": 24,
+          "accuracy": 0.16666666666666666,
+          "error_rate": 0.8333333333333334,
+          "error_rate_wilson_low": 0.6414692935030095,
+          "error_rate_wilson_high": 0.9332132367136705,
+          "predictions_sha256": "3e0988b14d02071d88a301840379b395383e46de3c416e05b2d5eaf04a7209bf"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "ablations_a2",
+          "seed": "23",
+          "n_total": 24,
+          "accuracy": 0.16666666666666666,
+          "error_rate": 0.8333333333333334,
+          "error_rate_wilson_low": 0.6414692935030095,
+          "error_rate_wilson_high": 0.9332132367136705,
+          "predictions_sha256": "3e0988b14d02071d88a301840379b395383e46de3c416e05b2d5eaf04a7209bf"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "ablations_a2",
+          "seed": "37",
+          "n_total": 24,
+          "accuracy": 0.16666666666666666,
+          "error_rate": 0.8333333333333334,
+          "error_rate_wilson_low": 0.6414692935030095,
+          "error_rate_wilson_high": 0.9332132367136705,
+          "predictions_sha256": "3e0988b14d02071d88a301840379b395383e46de3c416e05b2d5eaf04a7209bf"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "ablations_a3",
+          "seed": "11",
+          "n_total": 24,
+          "accuracy": 1.0,
+          "error_rate": 0.0,
+          "error_rate_wilson_low": 1.3877787807814457e-17,
+          "error_rate_wilson_high": 0.13797620467498017,
+          "predictions_sha256": "83a101b414401c11f7546661a44ab242509ab50cb814997c8b5353a8d5b8088f"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "ablations_a3",
+          "seed": "23",
+          "n_total": 24,
+          "accuracy": 1.0,
+          "error_rate": 0.0,
+          "error_rate_wilson_low": 1.3877787807814457e-17,
+          "error_rate_wilson_high": 0.13797620467498017,
+          "predictions_sha256": "83a101b414401c11f7546661a44ab242509ab50cb814997c8b5353a8d5b8088f"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "ablations_a3",
+          "seed": "37",
+          "n_total": 24,
+          "accuracy": 1.0,
+          "error_rate": 0.0,
+          "error_rate_wilson_low": 1.3877787807814457e-17,
+          "error_rate_wilson_high": 0.13797620467498017,
+          "predictions_sha256": "83a101b414401c11f7546661a44ab242509ab50cb814997c8b5353a8d5b8088f"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "baselines_b0",
+          "seed": "11",
+          "n_total": 24,
+          "accuracy": 0.16666666666666666,
+          "error_rate": 0.8333333333333334,
+          "error_rate_wilson_low": 0.6414692935030095,
+          "error_rate_wilson_high": 0.9332132367136705,
+          "predictions_sha256": "c6b8ed02ac18c8c27c619dfb832d1c831f38b10c7c1d1fa84416e6bf9306e6c2"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "baselines_b0",
+          "seed": "23",
+          "n_total": 24,
+          "accuracy": 0.16666666666666666,
+          "error_rate": 0.8333333333333334,
+          "error_rate_wilson_low": 0.6414692935030095,
+          "error_rate_wilson_high": 0.9332132367136705,
+          "predictions_sha256": "c6b8ed02ac18c8c27c619dfb832d1c831f38b10c7c1d1fa84416e6bf9306e6c2"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "baselines_b0",
+          "seed": "37",
+          "n_total": 24,
+          "accuracy": 0.16666666666666666,
+          "error_rate": 0.8333333333333334,
+          "error_rate_wilson_low": 0.6414692935030095,
+          "error_rate_wilson_high": 0.9332132367136705,
+          "predictions_sha256": "c6b8ed02ac18c8c27c619dfb832d1c831f38b10c7c1d1fa84416e6bf9306e6c2"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "baselines_c1",
+          "seed": "11",
+          "n_total": 24,
+          "accuracy": 0.16666666666666666,
+          "error_rate": 0.8333333333333334,
+          "error_rate_wilson_low": 0.6414692935030095,
+          "error_rate_wilson_high": 0.9332132367136705,
+          "predictions_sha256": "9e11da1102b8152f39a615f57b306cab335504b542a693619cf0911af41b499c"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "baselines_c1",
+          "seed": "23",
+          "n_total": 24,
+          "accuracy": 0.16666666666666666,
+          "error_rate": 0.8333333333333334,
+          "error_rate_wilson_low": 0.6414692935030095,
+          "error_rate_wilson_high": 0.9332132367136705,
+          "predictions_sha256": "9e11da1102b8152f39a615f57b306cab335504b542a693619cf0911af41b499c"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "baselines_c1",
+          "seed": "37",
+          "n_total": 24,
+          "accuracy": 0.16666666666666666,
+          "error_rate": 0.8333333333333334,
+          "error_rate_wilson_low": 0.6414692935030095,
+          "error_rate_wilson_high": 0.9332132367136705,
+          "predictions_sha256": "9e11da1102b8152f39a615f57b306cab335504b542a693619cf0911af41b499c"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "proposed",
+          "seed": "11",
+          "n_total": 24,
+          "accuracy": 1.0,
+          "error_rate": 0.0,
+          "error_rate_wilson_low": 1.3877787807814457e-17,
+          "error_rate_wilson_high": 0.13797620467498017,
+          "predictions_sha256": "e55e3ffe32f2c843af0afae13813d7af07aae71336740f831e4d7027dd5c4867"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "proposed",
+          "seed": "23",
+          "n_total": 24,
+          "accuracy": 1.0,
+          "error_rate": 0.0,
+          "error_rate_wilson_low": 1.3877787807814457e-17,
+          "error_rate_wilson_high": 0.13797620467498017,
+          "predictions_sha256": "e55e3ffe32f2c843af0afae13813d7af07aae71336740f831e4d7027dd5c4867"
+        },
+        {
+          "study_id": "LN-10",
+          "tier": "T3S",
+          "method_id": "proposed",
+          "seed": "37",
+          "n_total": 24,
+          "accuracy": 1.0,
+          "error_rate": 0.0,
+          "error_rate_wilson_low": 1.3877787807814457e-17,
+          "error_rate_wilson_high": 0.13797620467498017,
+          "predictions_sha256": "e55e3ffe32f2c843af0afae13813d7af07aae71336740f831e4d7027dd5c4867"
         }
       ]
     }

@@ -30,9 +30,29 @@ here:
 
 Decision labels follow the legacy/gold vocabulary so the frozen T3 gold is
 scoreable verbatim: ``accept``, ``reject_cycle``, ``reject_grade_order``,
-``reject_missing_anchor``, ``reject_no_progression``. This is a documented
-divergence from ``research_v2.contracts.label_space.LN01_DECISIONS`` (the
-path-planning framing); the T3 gold uses the legacy decision space.
+``reject_missing_anchor``, ``reject_no_progression``.
+
+Label-space contract (two vocabularies, documented divergence)
+--------------------------------------------------------------
+- ``research_v2.contracts.label_space.LN01_DECISIONS`` is the *forward-looking
+  contract* space: a path-planning vocabulary
+  (``find_valid_route`` / ``reject_cycle`` / ``no_feasible_route`` /
+  ``cost_exceeded``) framing LN-01 as route search. It is retained untouched
+  because other studies (e.g. LN-06) share the path-planning framing, but LN-01
+  has never emitted it.
+- ``research_v2.contracts.label_space.LN01_NATIVE_DECISIONS`` is the *frozen
+  gold* vocabulary: the exact five labels enumerated from
+  ``research_v2/data/ln01/t3_gold.jsonl`` (24 cases per label). They differ
+  because the frozen T3 gold was authored in the legacy spiral-progression
+  vocabulary, not the path-planning framing; regenerating gold in the contract
+  vocabulary would break frozen-dataset reproducibility (immutable sha256 in
+  ``research_v2/data/dataset_manifest.json``).
+
+Every decision emitted by ``evaluate_case`` is validated against the native
+space via ``validate_native_decision("LN-01", decision)``. An unknown label
+raises ``LabelSpaceError`` (fail-closed), so any future drift between engine
+predictions and the frozen gold is caught programmatically instead of silently
+scoring as an error class.
 
 All predictions are pure functions of (features, config, seed). No oracle,
 fault_id, cohort or expected_decision is ever read.
@@ -41,6 +61,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from research_v2.contracts.label_space import validate_native_decision
 from research_v2.contracts.types import ContractError, StudyInput, StudyPrediction
 
 STUDY_ID = "LN-01"
@@ -294,6 +315,28 @@ def check_true_cycle(
     return None
 
 
+def _emit(
+    inp: StudyInput,
+    decision: str,
+    reason_codes: tuple[str, ...],
+    evidence_ids: tuple[str, ...],
+) -> StudyPrediction:
+    """Build a StudyPrediction with the native (frozen gold) label space enforced.
+
+    Fail-closed: any label outside ``LN01_NATIVE_DECISIONS`` raises
+    ``LabelSpaceError`` rather than silently scoring as a wrong answer.
+    """
+    validate_native_decision(STUDY_ID, decision)
+    return StudyPrediction(
+        study_id=STUDY_ID,
+        case_id=inp.case_id,
+        decision=decision,
+        score=None,
+        reason_codes=reason_codes,
+        evidence_ids=evidence_ids,
+    )
+
+
 def evaluate_case(
     inp: StudyInput,
     config: Mapping[str, Any],
@@ -327,55 +370,45 @@ def evaluate_case(
     if not skip_cycle:
         cycle_code = check_true_cycle(nodes, progression_edges, redundancy_edges)
         if cycle_code is not None:
-            return StudyPrediction(
-                study_id=STUDY_ID,
-                case_id=inp.case_id,
-                decision=DECISION_REJECT_CYCLE,
-                score=None,
-                reason_codes=(RC_CYCLE,),
-                evidence_ids=evidence_ids,
+            return _emit(
+                inp,
+                DECISION_REJECT_CYCLE,
+                (RC_CYCLE,),
+                evidence_ids,
             )
 
     grade_code = check_grade_order(nodes, progression_edges)
     if grade_code is not None:
-        return StudyPrediction(
-            study_id=STUDY_ID,
-            case_id=inp.case_id,
-            decision=DECISION_REJECT_GRADE_ORDER,
-            score=None,
-            reason_codes=(grade_code,),
-            evidence_ids=evidence_ids,
+        return _emit(
+            inp,
+            DECISION_REJECT_GRADE_ORDER,
+            (grade_code,),
+            evidence_ids,
         )
 
     if not skip_anchor:
         anchor_code = check_anchor_coverage(nodes, anchor)
         if anchor_code is not None:
-            return StudyPrediction(
-                study_id=STUDY_ID,
-                case_id=inp.case_id,
-                decision=DECISION_REJECT_MISSING_ANCHOR,
-                score=None,
-                reason_codes=(RC_MISSING_ANCHOR,),
-                evidence_ids=evidence_ids,
+            return _emit(
+                inp,
+                DECISION_REJECT_MISSING_ANCHOR,
+                (RC_MISSING_ANCHOR,),
+                evidence_ids,
             )
 
     if not skip_depth:
         depth_code = check_bloom_progression(nodes, progression_edges)
         if depth_code is not None:
-            return StudyPrediction(
-                study_id=STUDY_ID,
-                case_id=inp.case_id,
-                decision=DECISION_REJECT_NO_PROGRESSION,
-                score=None,
-                reason_codes=(RC_NO_PROGRESSION,),
-                evidence_ids=evidence_ids,
+            return _emit(
+                inp,
+                DECISION_REJECT_NO_PROGRESSION,
+                (RC_NO_PROGRESSION,),
+                evidence_ids,
             )
 
-    return StudyPrediction(
-        study_id=STUDY_ID,
-        case_id=inp.case_id,
-        decision=DECISION_ACCEPT,
-        score=None,
-        reason_codes=(RC_NOMINAL,),
-        evidence_ids=evidence_ids,
+    return _emit(
+        inp,
+        DECISION_ACCEPT,
+        (RC_NOMINAL,),
+        evidence_ids,
     )

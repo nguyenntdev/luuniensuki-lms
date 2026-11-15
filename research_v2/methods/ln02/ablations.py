@@ -44,11 +44,13 @@ from .core import (
     _prerequisites,
     _validate_config_number,
     build_prediction,
+    coerce_finite_float,
     competency_coverage,
     has_cycle,
     is_valid_score,
     observed_mastery_values,
     task_evidence_ids,
+    unmet_required_dimensions,
     validate_scores,
 )
 
@@ -117,11 +119,7 @@ def predict_one_a1(inp: StudyInput, config: Mapping[str, Any] | None = None) -> 
     score_value = float(score_observed) if is_valid_score(score_observed) else 0.0
     eligible = score_value >= threshold
     # Diagnostic only: would the removed gate have blocked this learner?
-    unmet = [
-        dim
-        for dim, t in prerequisites.items()
-        if is_valid_score(mastery.get(dim)) and float(mastery[dim]) < float(t)
-    ]
+    unmet = unmet_required_dimensions(mastery, prerequisites)
     return build_prediction(
         inp,
         decision="recommend_eligible" if eligible else "remediate_first",
@@ -148,7 +146,7 @@ def predict_one_a2(inp: StudyInput, config: Mapping[str, Any] | None = None) -> 
     if unobserved:
         # Mechanism removed: missing is silently treated as zero mastery.
         imputed = _imputed_mastery(mastery, prerequisites)
-        unmet = [dim for dim, t in prerequisites.items() if imputed[dim] < float(t)]
+        unmet = unmet_required_dimensions(imputed, prerequisites)
         return build_prediction(
             inp,
             decision="remediate_first" if unmet else "recommend_eligible",
@@ -158,7 +156,7 @@ def predict_one_a2(inp: StudyInput, config: Mapping[str, Any] | None = None) -> 
             evidence_ids=task_evidence_ids(features),
             method_version=METHOD_VERSION_A2,
         )
-    unmet = [dim for dim, t in prerequisites.items() if float(mastery[dim]) < float(t)]
+    unmet = unmet_required_dimensions(mastery, prerequisites)
     return build_prediction(
         inp,
         decision="remediate_first" if unmet else "recommend_eligible",
@@ -208,7 +206,14 @@ def predict_one_a3(inp: StudyInput, config: Mapping[str, Any] | None = None) -> 
             evidence_ids=task_evidence_ids(features),
             method_version=METHOD_VERSION_A3,
         )
-    required = [float(t) for t in prerequisites.values() if is_valid_score(t)]
+    required = [
+        number
+        for number in (
+            coerce_finite_float(t, field="target_task.prerequisites")
+            for t in prerequisites.values()
+        )
+        if number is not None and is_valid_score(number)
+    ]
     latent_skill = sum(observed) / len(observed)
     mean_threshold = sum(required) / len(required) if required else 0.5
     eligible = latent_skill >= mean_threshold

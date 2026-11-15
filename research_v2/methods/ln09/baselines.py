@@ -13,8 +13,9 @@ Comparability cards
   logs) the proposed method exists to prevent.
 
 - ``predict_batch_c1`` (C1, MATCHED_CLASSICAL): EMA moving-average trend
-  alerts — exponential moving average over verified evidence scores with a
-  fixed intervention threshold. Classical, interpretable, deterministic. It
+  alerts — exponential moving average over all evidence scores, unfiltered
+  by verification status (by design: no source audit), with a fixed
+  intervention threshold. Classical, interpretable, deterministic. It
   deliberately omits k-anonymity suppression and source auditing (freshness
   is honored on observed evidence ages only insofar as the input exposes a
   single aggregate age), per spec 12_C1_STRONG_CLASSICAL. Independent
@@ -71,13 +72,11 @@ def predict_batch_b0(
         risk_flag = _parse_risk_flag(features, inp.case_id)
         has_any_signal = bool(evidence) or risk_flag
         if not has_any_signal:
-            # Even B0 cannot manufacture a recommendation from literally zero
-            # signals; it emits the generic ungrounded candidate anyway in the
-            # legacy dashboard spirit — but only when a risk flag or evidence
-            # exists. With nothing at all it stays descriptive (never silenty
-            # guessed): this keeps B0 honest about empty inputs while
-            # remaining wrong on every abstention-owed case that has *some*
-            # partial signal.
+            # B0's always-propose sanity semantics apply unconditionally: on
+            # literally zero signals it still emits a generic ungrounded
+            # candidate (``no_signal_generic_proposal``) in the legacy
+            # dashboard spirit, never a descriptive decision. It is wrong on
+            # every abstention-owed case, including fully empty inputs.
             predictions.append(
                 StudyPrediction(
                     study_id=STUDY_ID,

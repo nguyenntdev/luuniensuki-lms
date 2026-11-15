@@ -5,6 +5,7 @@ oracles, fault identifiers, cohort labels, or future learner activity.
 """
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass, field
 from typing import Any, Mapping
 
@@ -34,18 +35,86 @@ class ContractError(ValueError):
 
 
 def _check_feature_keys(features: Mapping[str, Any], case_id: str) -> None:
-    leaked = sorted(set(features) & FORBIDDEN_INPUT_KEYS)
-    if leaked:
-        raise ContractError(
-            f"case {case_id!r}: forbidden inference-time feature keys leaked into input: {leaked}"
-        )
-    nested = features.get("input")
-    if isinstance(nested, Mapping):
-        inner = sorted(set(nested) & FORBIDDEN_INPUT_KEYS)
-        if inner:
-            raise ContractError(
-                f"case {case_id!r}: forbidden keys nested under input: {inner}"
-            )
+    """Recursively scan ``features`` (any dict/list nesting depth) for keys in
+    ``FORBIDDEN_INPUT_KEYS``. Raises ``ContractError`` with the dotted path of
+    the offending key, e.g. ``input.meta.oracle`` or ``stops[2].fault_id``."""
+
+    def walk(node: Any, path: str) -> None:
+        if isinstance(node, Mapping):
+            for key, value in node.items():
+                child_path = f"{path}.{key}" if path else str(key)
+                if key in FORBIDDEN_INPUT_KEYS:
+                    raise ContractError(
+                        f"case {case_id!r}: forbidden inference-time feature key "
+                        f"leaked into input at {child_path!r}"
+                    )
+                walk(value, child_path)
+        elif isinstance(node, (list, tuple)):
+            for index, item in enumerate(node):
+                walk(item, f"{path}[{index}]")
+
+    walk(features, "")
+
+
+class _FrozenDict(dict):
+    """Plain ``dict`` subclass whose mutation verbs are disabled.
+
+    Keeps ``isinstance(x, dict)`` / ``Mapping`` checks, equality, JSON
+    serialization and ``dict(...)`` copies working while blocking accidental
+    (or post-validation) in-place mutation of contract-validated structures.
+    """
+
+    __slots__ = ()
+
+    def _immutable(self, *args: Any, **kwargs: Any) -> None:
+        raise TypeError("StudyInput.features is frozen; copy via dict(features) first")
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    update = _immutable
+    setdefault = _immutable
+    pop = _immutable
+    popitem = _immutable
+    clear = _immutable
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> dict:
+        return {
+            copy.deepcopy(k, memo): copy.deepcopy(v, memo)
+            for k, v in self.items()
+        }
+
+
+class _FrozenList(list):
+    """Plain ``list`` subclass whose mutation verbs are disabled."""
+
+    __slots__ = ()
+
+    def _immutable(self, *args: Any, **kwargs: Any) -> None:
+        raise TypeError("StudyInput.features is frozen; copy via list(features) first")
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    append = _immutable
+    extend = _immutable
+    insert = _immutable
+    remove = _immutable
+    pop = _immutable
+    clear = _immutable
+    reverse = _immutable
+    sort = _immutable
+    __iadd__ = _immutable
+    __imul__ = _immutable
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> list:
+        return [copy.deepcopy(v, memo) for v in self]
+
+
+def _freeze(value: Any) -> Any:
+    if isinstance(value, dict):
+        return _FrozenDict({k: _freeze(v) for k, v in value.items()})
+    if isinstance(value, list):
+        return _FrozenList(_freeze(v) for v in value)
+    return value
 
 
 @dataclass(frozen=True)
@@ -67,7 +136,23 @@ class StudyInput:
             raise ContractError(f"case {self.case_id!r}: split_id must be non-empty")
         if not self.group_id:
             raise ContractError(f"case {self.case_id!r}: group_id must be non-empty")
+        if not isinstance(self.features, Mapping):
+            raise ContractError(
+                f"case {self.case_id!r}: features must be a mapping, "
+                f"got {type(self.features).__name__}"
+            )
+        object.__setattr__(
+            self, "features", _freeze(copy.deepcopy(self.features))
+        )
         _check_feature_keys(self.features, self.case_id)
+
+    def canonical_features(self) -> dict[str, Any]:
+        """Return the validated features as a plain, JSON-serializable dict.
+
+        ``canonical_json`` of this value is identical to ``canonical_json`` of
+        ``self.features`` because the frozen wrappers serialize identically.
+        """
+        return copy.deepcopy(self.features)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -75,7 +160,7 @@ class StudyInput:
             "case_id": self.case_id,
             "split_id": self.split_id,
             "group_id": self.group_id,
-            "features": dict(self.features),
+            "features": self.canonical_features(),
         }
 
 

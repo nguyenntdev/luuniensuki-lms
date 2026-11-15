@@ -76,6 +76,7 @@ def _evaluate_a1(
         badge=badge,
         skill_evidence=skill_evidence,
         reward_events=reward_events,
+        features=features,
     )
     if not ledger.consume(dedup, case_id=str(features.get("case_id", "")), decision="grant_if_eligible", evidence_sha256="a1"):
         return "deduplicate_events", ("cross_batch_replay_detected",), {"badge_awarded": False, "replay_prevented": True}

@@ -36,6 +36,7 @@ from typing import Any, Mapping
 from research_v2.contracts.types import StudyInput, StudyPrediction
 
 from .core import (
+    FIELD_SCORE_OBSERVED,
     METHOD_VERSION_CORE,
     RC_BASELINE_GREEDY,
     RC_INSUFFICIENT_DATA,
@@ -49,6 +50,7 @@ from .core import (
     _prerequisites,
     _validate_config_number,
     build_prediction,
+    coerce_finite_float,
     is_valid_score,
     logit,
     task_evidence_ids,
@@ -163,7 +165,11 @@ def predict_one_c1(inp: StudyInput, config: Mapping[str, Any] | None = None) -> 
                 evidence_ids=task_evidence_ids(features),
                 method_version=METHOD_VERSION_C1,
             )
-        if float(gate_value) < float(threshold):
+        required_gate = coerce_finite_float(
+            threshold, field=f"target_task.prerequisites[{target_dim}]"
+        )
+        observed_gate = coerce_finite_float(gate_value, field=f"mastery[{target_dim}]")
+        if required_gate is not None and observed_gate is not None and observed_gate < required_gate:
             return build_prediction(
                 inp,
                 decision="remediate_first",
@@ -174,13 +180,28 @@ def predict_one_c1(inp: StudyInput, config: Mapping[str, Any] | None = None) -> 
 
     # Stage 2: scalar ability from the observed proportion score (1-PL
     # sufficient statistic) against the task's mean logit difficulty.
-    score_observed = features.get("score_observed")
-    theta = logit(float(score_observed), clip=clip)
+    score_observed = features.get(FIELD_SCORE_OBSERVED)
+    # None means "unobserved" per the shared validity contract; the Rasch
+    # sufficient statistic is undefined without an observation, so the only
+    # honest classical outcome is calibrated abstention (missing != zero).
+    score_value = coerce_finite_float(score_observed, field=FIELD_SCORE_OBSERVED)
+    if score_value is None:
+        return build_prediction(
+            inp,
+            decision="abstain_insufficient_data",
+            reason_codes=(RC_INSUFFICIENT_DATA, "UNOBSERVED_SCORE:score_observed"),
+            evidence_ids=task_evidence_ids(features),
+            method_version=METHOD_VERSION_C1,
+        )
+    theta = logit(score_value, clip=clip)
 
     required = [
-        float(t)
+        required_t
         for t in prerequisites.values()
-        if is_valid_score(t) and 0.0 < float(t) < 1.0
+        if (required_t := coerce_finite_float(t, field="target_task.prerequisites"))
+        is not None
+        and is_valid_score(t)
+        and 0.0 < required_t < 1.0
     ]
     difficulty = _mean([logit(t, clip=clip) for t in required])
 

@@ -37,8 +37,15 @@ mandatory_counterexamples:
     description: credential/evidence revoked between evidence and award
     expectation: no grant without fresh verified evidence
   - id: LN05-CE-3
-    description: clock-skewed duplicate with a new timestamp
-    expectation: content-derived dedup key still rejects the redelivery
+    description: >-
+      clock-skewed or re-tagged duplicate: the same valid submission
+      redelivered with only delivery-variant fields mutated (timestamp,
+      event_id, delivery/request/trace ids, nonce)
+    expectation: >-
+      the normalized-submission-identity dedup key (SHA-256 over learner,
+      credential, task, evidence content and event content, with all
+      delivery-variant fields excluded before hashing) still rejects the
+      redelivery; mutating evidence/task content instead derives a fresh key
   - id: LN05-CE-4
     description: legitimate learner offline retry
     expectation: retry with the same dedup key is rejected as replay, not re-awarded
