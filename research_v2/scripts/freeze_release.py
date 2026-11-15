@@ -19,11 +19,39 @@ def _git(*args: str, cwd: Path) -> str:
     return subprocess.check_output(["git", *args], cwd=str(cwd), text=True).strip()
 
 
+def _dirty_source_paths(repo_root: Path) -> list[str]:
+    """Modified/untracked paths that are SOURCE (not generated artifacts).
+
+    Generated experiment outputs under ``research_artifacts_v2/`` and V2 dataset
+    materializations under ``research_v2/data/`` are expected to be produced by
+    the run itself and must not block a release freeze.
+    """
+    out = subprocess.check_output(
+        ["git", "status", "--porcelain"], cwd=str(repo_root), text=True
+    )
+    generated_prefixes = ("research_artifacts_v2/", "research_v2/data/", "research_v2/reports/")
+    dirty: list[str] = []
+    for line in out.splitlines():
+        if not line.strip():
+            continue
+        path = line[3:].strip()
+        if " -> " in path:
+            path = path.split(" -> ", 1)[1]
+        if path.startswith(generated_prefixes):
+            continue
+        dirty.append(path)
+    return dirty
+
+
 def freeze(repo_root: Path, out_dir: Path, *, assert_clean: bool = True) -> dict:
     head = _git("rev-parse", "HEAD", cwd=repo_root)
+    dirty_paths = _dirty_source_paths(repo_root)
     dirty = bool(_git("status", "--porcelain", cwd=repo_root))
-    if assert_clean and dirty:
-        raise RuntimeError("working tree is dirty; commit before freezing a release")
+    if assert_clean and dirty_paths:
+        raise RuntimeError(
+            f"working tree has uncommitted SOURCE changes ({len(dirty_paths)}): "
+            f"{dirty_paths[:8]}"
+        )
 
     files = []
     for base in ("research_v2", "tests/research_v2"):
@@ -39,6 +67,7 @@ def freeze(repo_root: Path, out_dir: Path, *, assert_clean: bool = True) -> dict
         "source_commit": head,
         "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "working_tree_dirty": dirty,
+        "source_dirty_paths": dirty_paths,
         "n_files": len(files),
         "files": files,
     }
