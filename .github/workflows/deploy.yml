@@ -104,9 +104,30 @@ jobs:
             docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml up -d --no-deps api
 
             echo "=== Applying Safe Database Migrations (alembic upgrade head) ==="
-            docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml exec -T api alembic upgrade head
+            if docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml exec -T api alembic upgrade head; then
+              echo "Migrations applied inside the api container."
+            else
+              echo "api container cannot reach the database; retrying on the live db container network."
+              DB_CONTAINER=$(docker ps --format '{{.Names}}' | grep -E '(^|-)db(-[0-9]+)?$' | head -n 1)
+              if [ -z "$DB_CONTAINER" ]; then
+                echo "FATAL: no running database container found for migrations." >&2
+                exit 1
+              fi
+              DB_NETWORK=$(docker inspect "$DB_CONTAINER" --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}' | head -n 1)
+              if [ -z "$DB_NETWORK" ]; then
+                echo "FATAL: database container $DB_CONTAINER has no network." >&2
+                exit 1
+              fi
+              echo "Using database container network: $DB_NETWORK"
+              docker run --rm --network "$DB_NETWORK" --env-file .env.prod \
+                -e DATABASE_URL="$(grep -E '^DATABASE_URL=' .env.prod | cut -d= -f2-)" \
+                dainoisuky-api:latest alembic upgrade head
+            fi
             echo "=== Verifying Applied Migration Revision (alembic current) ==="
-            docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml exec -T api alembic current
+            docker compose --env-file .env.prod -f docker-compose.prod.yml -f docker-compose.override.yml exec -T api alembic current || \
+              docker run --rm --network "${DB_NETWORK:-bridge}" --env-file .env.prod \
+                -e DATABASE_URL="$(grep -E '^DATABASE_URL=' .env.prod | cut -d= -f2-)" \
+                dainoisuky-api:latest alembic current
 
             echo "=== Building Frontend Standalone Bundle ==="
             cd frontend
