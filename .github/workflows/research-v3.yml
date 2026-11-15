@@ -212,12 +212,19 @@ jobs:
       # run fails here in `run:` itself (no tee-masking).
       # ------------------------------------------------------------------
       - name: G09 — ethics audit (expected BLOCKED until human approval; records verdict)
+        shell: bash
         run: |
-          set -o pipefail
-          python -m research_v3.scripts.ethics --json | tee ethics_audit.json
-          code=$(python -m research_v3.scripts.ethics >/dev/null 2>&1; echo $?)
+          # Exit 20 (BLOCKED) is the honest pre-approval verdict. Capture it
+          # explicitly instead of letting `set -e`/pipefail kill the step, then
+          # fail only on any OTHER nonzero code (notably 21 = TAMPERED).
+          set +e
+          python -m research_v3.scripts.ethics --json > ethics_audit.json 2> ethics_audit.err
+          code=$?
+          set -e
+          echo "ethics exit code: $code (0=APPROVED, 20=BLOCKED expected pre-approval, 21=TAMPERED)"
           if [ "$code" != "0" ] && [ "$code" != "20" ]; then
-            echo "ethics audit failed with unexpected exit code $code (0=APPROVED, 20=BLOCKED expected pre-approval, 21=TAMPERED)"
+            echo "ethics audit failed with unexpected exit code $code"
+            cat ethics_audit.err || true
             exit "$code"
           fi
           python - <<'PY'
