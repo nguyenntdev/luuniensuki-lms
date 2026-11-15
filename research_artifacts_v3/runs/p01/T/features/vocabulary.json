@@ -1,0 +1,105 @@
+{
+  "categorical": {
+    "age_band": [
+      "0-35",
+      "35-55",
+      "55<="
+    ],
+    "code_module": [
+      "AAA",
+      "BBB",
+      "CCC",
+      "DDD",
+      "EEE",
+      "FFF",
+      "GGG"
+    ],
+    "code_presentation": [
+      "2013B",
+      "2013J",
+      "2014B",
+      "2014J"
+    ],
+    "disability": [
+      "N",
+      "Y"
+    ],
+    "gender": [
+      "F",
+      "M"
+    ],
+    "highest_education": [
+      "A Level or Equivalent",
+      "HE Qualification",
+      "Lower Than A Level",
+      "No Formal quals",
+      "Post Graduate Qualification"
+    ],
+    "imd_band": [
+      "0-10%",
+      "10-20",
+      "20-30%",
+      "30-40%",
+      "40-50%",
+      "50-60%",
+      "60-70%",
+      "70-80%",
+      "80-90%",
+      "90-100%",
+      "?"
+    ],
+    "region": [
+      "East Anglian Region",
+      "East Midlands Region",
+      "Ireland",
+      "London Region",
+      "North Region",
+      "North Western Region",
+      "Scotland",
+      "South East Region",
+      "South Region",
+      "South West Region",
+      "Wales",
+      "West Midlands Region",
+      "Yorkshire Region"
+    ]
+  },
+  "categorical_fields": [
+    "code_module",
+    "code_presentation",
+    "gender",
+    "region",
+    "highest_education",
+    "imd_band",
+    "age_band",
+    "disability"
+  ],
+  "dropped_constant_fields": [
+    "observation_window_days"
+  ],
+  "numeric": {
+    "early_active_sites": {
+      "mean": 115.55413892430467,
+      "std": 122.3003694770469
+    },
+    "early_click_total": {
+      "mean": 416.30301742456436,
+      "std": 577.0524701580144
+    },
+    "num_of_prev_attempts": {
+      "mean": 0.17972328469566037,
+      "std": 0.5041253622616899
+    },
+    "studied_credits": {
+      "mean": 79.89280823534968,
+      "std": 41.10023352314822
+    }
+  },
+  "numeric_fields": [
+    "num_of_prev_attempts",
+    "studied_credits",
+    "early_click_total",
+    "early_active_sites"
+  ],
+  "unknown_category_policy": "all_zeros_for_field"
+}

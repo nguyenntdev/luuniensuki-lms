@@ -1,0 +1,27 @@
+{
+  "baseline_version": "C1: sklearn LogisticRegression+sigmoid calibration",
+  "dependency_lock_sha256": "f9a37a9e5a4f4b1e684fbabca475ecebe1e23ff416146e2beff50ce73d16b45b",
+  "feature_cutoff": "day-60 observation window (oulad adapter)",
+  "hardware": "single-core CPU",
+  "holdout_dataset_ids": [
+    "oulad-2013-2014"
+  ],
+  "hyperparameter_budget": "fixed C=1.0, max_iter=2000; no search",
+  "method_commit_sha": "",
+  "method_hash": "bbc99dbbada887dd245490c4e41258aef77a3ed8ad3a167295a7c2cdffd2b866",
+  "output_path": "/home/clue/Documents/luuniensuki-lms/research_artifacts_v3/runs/p06",
+  "paper_id": "P06",
+  "prereg_sha256": "af10dee58eeb301a55611dc888b3136a82514ad0ab92028267a1512751e0be35",
+  "protocol_deviations": [
+    "2014B serves both calibration and dev roles in the time split",
+    "single external dataset; external generalization unverified"
+  ],
+  "rq_id": "P06-RQ1",
+  "seed": 2026,
+  "split_hash": "524a34161b85660960f4024461f5bff0b5267d85f8774b591e9440c2639ef0b3",
+  "status": "PASS",
+  "train_dataset_ids": [
+    "oulad-2013-2014"
+  ],
+  "wall_time_seconds": 135.74213075637817
+}

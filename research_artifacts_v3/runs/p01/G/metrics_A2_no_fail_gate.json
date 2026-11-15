@@ -1,0 +1,88 @@
+{
+  "accuracy": 0.11746031746031746,
+  "clopper_pearson_ci_95": [
+    0.10641703853676795,
+    0.12921930988730498
+  ],
+  "confusion": {
+    "Distinction->ABSTAIN": 227,
+    "Distinction->Distinction": 4,
+    "Distinction->Pass": 47,
+    "Distinction->Withdrawn": 1,
+    "Fail->ABSTAIN": 655,
+    "Fail->Fail": 3,
+    "Fail->Pass": 28,
+    "Fail->Withdrawn": 23,
+    "Pass->ABSTAIN": 1003,
+    "Pass->Pass": 165,
+    "Pass->Withdrawn": 5,
+    "Withdrawn->ABSTAIN": 762,
+    "Withdrawn->Pass": 29,
+    "Withdrawn->Withdrawn": 198
+  },
+  "coverage": 0.15968253968253968,
+  "macro_f1": 0.1478005583368892,
+  "model_id": "A2_no_fail_gate",
+  "n": 3150,
+  "n_abstained": 2647,
+  "n_correct": 370,
+  "per_class_recall": {
+    "Distinction": {
+      "clopper_pearson_ci_95": [
+        0.003919779143867834,
+        0.03629933759298416
+      ],
+      "correct": 4,
+      "n": 279,
+      "recall": 0.014336917562724014,
+      "wilson_ci_95": [
+        0.005589098297642101,
+        0.03627696642309234
+      ]
+    },
+    "Fail": {
+      "clopper_pearson_ci_95": [
+        0.0008734496735827695,
+        0.012315483986704174
+      ],
+      "correct": 3,
+      "n": 709,
+      "recall": 0.004231311706629055,
+      "wilson_ci_95": [
+        0.0014400491070198779,
+        0.012365908303167198
+      ]
+    },
+    "Pass": {
+      "clopper_pearson_ci_95": [
+        0.12126260369676732,
+        0.1618881350175947
+      ],
+      "correct": 165,
+      "n": 1173,
+      "recall": 0.14066496163682865,
+      "wilson_ci_95": [
+        0.12193946048255432,
+        0.16173635355210303
+      ]
+    },
+    "Withdrawn": {
+      "clopper_pearson_ci_95": [
+        0.17568010635637904,
+        0.22652308154183765
+      ],
+      "correct": 198,
+      "n": 989,
+      "recall": 0.20020222446916078,
+      "wilson_ci_95": [
+        0.17644472846962916,
+        0.22627964939391143
+      ]
+    }
+  },
+  "predictions_sha256": "4c63acc5457b9e764ec0323a27af67adf70dc4884e02020904606cface9b483d",
+  "wilson_ci_95": [
+    0.10667985037182784,
+    0.129172670603921
+  ]
+}

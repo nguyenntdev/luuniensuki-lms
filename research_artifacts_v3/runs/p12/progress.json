@@ -1,0 +1,109 @@
+{
+  "paper_id": "P12",
+  "generated_at_utc": "2026-11-15T11:51:42Z",
+  "tasks": {
+    "P12-T01": "DONE_ENGINEERING",
+    "P12-T02": "DONE_ENGINEERING",
+    "P12-T03": "DONE_ENGINEERING",
+    "P12-T04": "DONE_ENGINEERING",
+    "P12-T06": "DONE_ENGINEERING",
+    "P12-T07": "DONE_ENGINEERING",
+    "P12-T08": "DONE_ENGINEERING",
+    "P12-T09": "DONE_ENGINEERING",
+    "P12-T12": "DONE_ENGINEERING",
+    "P12-T15": "DONE_ENGINEERING",
+    "P12-T17": "DONE_ENGINEERING",
+    "P12-T05": "NOT_APPLICABLE_NO_LEARNED_PARAMETERS (fixed-rule validator; split policy frozen in prereg)",
+    "P12-T10": "PARTIAL (contradiction + tamper mutation tests done; corpus-level ablation matrix awaits human phase)",
+    "P12-T11": "NOT_APPLICABLE (no model to calibrate; no tuning budget exists)",
+    "P12-T13": "PARTIAL (chain tamper + adversarial mutation tests done; external stress slices require external data, BLOCKED)",
+    "P12-T14": "BLOCKED (no powered human sample; confirmatory family frozen empty in prereg)",
+    "P12-T16": "PARTIAL (collision rules documented in prereg §novelty_boundary; lead signoff is P12-T20)",
+    "P12-T18": "PARTIAL (clean-rerun via pytest + CLI recorded; external reviewer pending)",
+    "P12-T19": "BLOCKED (human-only: ethics/annotation/license approval)",
+    "P12-T20": "BLOCKED (human-only: novelty/nearest-work signoff by research lead)",
+    "P12-T21": "BLOCKED (human-only: coauthor/venue/submission signoff)"
+  },
+  "engineering_status": "ENGINEERING_PASS",
+  "scientific_status": "BLOCKED_PENDING_HUMAN_REVIEW",
+  "release_status": "NOT_SUBMISSION_READY",
+  "tests": {
+    "command": "python3 -m pytest tests/research_v3/method/test_p12_validator.py tests/research_v3/method/test_p12_chain_contradictions.py tests/research_v3/method/test_p12_corpus_audit.py -q",
+    "passed": 35,
+    "failed": 0
+  },
+  "cli_rerun": "python3 -m research_v3.methods.p12.audit_cli --with-wikidata",
+  "metrics_snapshot": {
+    "C0": {
+      "unsourced_claim_rate": 0.0,
+      "locator_completeness_rate": 0.0,
+      "contradiction_count": 0
+    },
+    "C1": {
+      "unsourced_claim_rate": 0.0,
+      "locator_completeness_rate": null,
+      "contradiction_count": 0
+    },
+    "PROPOSED": {
+      "unsourced_claim_rate": 0.0,
+      "locator_completeness_rate": 1.0,
+      "contradiction_count": 0,
+      "abstain_count": 62,
+      "chain": {
+        "events": 63,
+        "chain_head": "88c219d64e83bccedf6388e5a8a9dd2069995d8b2f04885ed47860448ea91005",
+        "status": "PASS"
+      },
+      "chain_digest": "f2f10b07019b185d2487e56dcbfdcb7f251981cae67e94bd9c10a73b79651080"
+    }
+  },
+  "corpus": {
+    "n_claims": 63,
+    "n_sources": 16,
+    "ingest_skipped": 0,
+    "provenance": {
+      "mode": "READ_ONLY_DOCUMENTED_CLAIMS",
+      "network_access": "none",
+      "inputs": [
+        {
+          "path": "data/imperial/historical_sources_extended.json",
+          "sha256": "833fed9c9cc345c90f9064083996ef4f08ada8566ef099238f75a2b3060c5063",
+          "size_bytes": 23825
+        },
+        {
+          "path": "data/imperial/monument_claims_matrix.json",
+          "sha256": "b582f913228b3dba3715e342b01986d09c647903a3e76c566bc22c4591cf4846",
+          "size_bytes": 76781
+        },
+        {
+          "path": "data/imperial/heritage_provenance_audit_report.json",
+          "sha256": "015d7762df590c28ee113b96e9023b0f5852c72df854be374bd0ccea0004d7b1",
+          "size_bytes": 155499
+        }
+      ],
+      "sources_registry_version": "5.1.0",
+      "claims_matrix_version": "5.1.0",
+      "audit_report_version": "1.0.0",
+      "ingest_hash": "8e0952deaaa465689319ade0292fa330aa8c79f31c494d18a0964630f0dc3600"
+    }
+  },
+  "artifacts": [
+    "research_artifacts_v3/runs/p12/conflict_log.md",
+    "research_artifacts_v3/runs/p12/dataset_cards_snapshot.yaml",
+    "research_artifacts_v3/runs/p12/ingest_manifest.json",
+    "research_artifacts_v3/runs/p12/prereg_snapshot.yaml",
+    "research_artifacts_v3/runs/p12/run_c0/manifest.json",
+    "research_artifacts_v3/runs/p12/run_c1/manifest.json",
+    "research_artifacts_v3/runs/p12/run_proposed/ledger.jsonl",
+    "research_artifacts_v3/runs/p12/run_proposed/manifest.json",
+    "research_artifacts_v3/runs/p12/summary.json",
+    "research_artifacts_v3/runs/p12/wikidata_probe.json"
+  ],
+  "never_claimed": [
+    "no historical truth claim",
+    "no archival verification claim",
+    "no fabricated citation or page number",
+    "no simulated human review",
+    "no SOTA / efficacy claim"
+  ]
+}

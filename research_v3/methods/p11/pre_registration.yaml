@@ -1,0 +1,84 @@
+# Preregistration — P11 (frozen 2026-11-15, BEFORE any human data collection)
+paper_id: P11
+title: "Xây dựng và kiểm định rubric đánh giá năng lực suy luận lịch sử trong môi trường học tập số"
+status: RATER_AND_SAMPLE_REQUIRED
+frozen_at: "2026-11-15T00:00:00Z"
+note: >
+  This file is the analysis preregistration for the instrument-validation study.
+  It contains NO results and may not be edited after data collection begins; amendments
+  require a dated addendum section, never in-place edits.
+
+research_question: >
+  Does the four-criterion rubric S1-S4 (sourcing, corroboration, contextualization,
+  argumentation) achieve content validity (CVI), inter-rater reliability (weighted
+  Cohen's kappa, Krippendorff's alpha, ICC) and level discrimination appropriate for
+  assessing historical reasoning, compared with current single-holistic marking?
+
+estimand:
+  definition: population inter-rater reliability of S1-S4 over the defined rater population
+    and consented response population
+  primary_statistic: quadratic_weighted_cohen_kappa_per_criterion
+  secondary_statistics: [krippendorff_alpha_ordinal, icc_a1_absolute_agreement, cvi_i_cvi, ordinal_cronbach_alpha_internal_consistency]
+  unit_of_resampling: response (cluster bootstrap for CIs)
+  ci_level: 0.95
+
+hypotheses:
+  H0: >
+    The multi-criterion rubric does not increase inter-rater reliability or validity over
+    the current single-holistic scale. H0 is PUBLISHED if not rejected.
+  H1_direction: rubric kappa_w > holistic kappa_w on the same units and raters
+  smallest_meaningful_effect:
+    metric: kappa_w difference
+    value: 0.10
+    rationale: "kappa differences below 0.10 are conventionally negligible (Fleiss benchmark bands)"
+
+comparison_family:
+  contrasts:
+    - id: F1
+      contrast: proposed rubric vs C0 keyword-presence baseline (algorithmic floor)
+      test: paired comparison of per-criterion kappa against rater consensus proxy
+    - id: F2
+      contrast: proposed rubric vs C1 uncalibrated rubric-applied-to-declared-evidence
+      test: same
+    - id: F3
+      contrast: proposed vs single-holistic marking (B02) on identical units
+      test: kappa_w difference with cluster bootstrap CI
+  multiplicity_correction: holm
+  alpha: 0.05
+
+design:
+  raters: ">= 2 independent, pseudonymized (rater_A, rater_B, ...); identity mapping outside Git"
+  blinding: full (no rater sees another's ratings; randomized unit order per rater)
+  calibration: first round on 6 constructed cases; codebook bumps versioned; re-rate after change
+  sample_size_assumption:
+    units_target: 60
+    raters_target: 3
+    note: n=60 gives CI half-width ~0.09 on kappa near 0.6 under cluster bootstrap; if recruitment
+      falls short, report achieved n and widened CI honestly; no substitution with synthetic units.
+  exclusions_preregistered:
+    - incomplete declared structure (unparseable extraction)
+    - duplicate submissions (idempotency key)
+    - ABSTAIN units routed to adjudication (analyzed both pre/post, pre is primary)
+
+data_requirements:
+  - "ethics approval document (not a protocol assertion)"
+  - "guardian consent for minors per ETHICS_AND_INTEGRITY.md"
+  - "response provenance: consented real student work only; T3 synthetic may serve as regression canary ONLY, never pooled into the external validity estimate"
+
+power_and_compute:
+  human_sampling: true
+  power_basis: "CI width on kappa at n=60 units x 3 raters; no algorithmic power simulation substituted"
+
+thresholds:
+  acceptable_reliability: "kappa_w >= 0.61 (substantial) per criterion for the instrument to be considered adequate"
+  disagreement_audit: all >=2-level divergences adjudicated with preserved first-round records
+
+pre_registered_blocked_until:
+  - P11-T19 human ethics/annotation approval
+  - real consented response sample
+  - at least 2 independent human raters
+
+falsification_registered:
+  - if kappa_w(overall) < 0.41, the instrument FAILS and H0 is published
+  - if CVI < 0.80 at round 1, descriptors are revised and the round rerun; CVI from a
+    single round is never reported as content validity

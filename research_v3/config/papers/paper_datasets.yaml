@@ -1,0 +1,46 @@
+# V3-G02: datasets each paper REQUIRES for its primary external claim.
+#
+# Derived from LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/Pxx_*.md
+# section 2 ("Nguồn dữ liệu ngoài"). A paper may only execute a primary
+# external claim when EVERY required dataset card is APPROVED.
+#
+# dataset_id values MUST match research_v3/datasets/registry.yaml.
+
+P01:
+  - assistments
+  - junyi
+  - ednet
+P02:
+  - junyi
+P03:
+  - mathtutorbench
+P04:
+  - assistments
+  - junyi
+  - ednet
+P05:
+  - assistments
+  - ednet
+P06:
+  - oulad-2013-2014
+P07:
+  - europeana
+  - smithsonian-open-access
+P08:
+  - assistments
+  - oulad-2013-2014
+P09:
+  - wikidata-hue-heritage-mini
+P10:
+  - hue-heritage-corpus
+P11:
+  - hue-heritage-corpus
+P12:
+  - europeana
+  - hue-heritage-corpus
+P13:
+  - oulad-2013-2014
+P14:
+  - europeana
+  - smithsonian-open-access
+  - hue-heritage-corpus

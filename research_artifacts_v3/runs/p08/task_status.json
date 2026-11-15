@@ -1,0 +1,142 @@
+{
+  "paper_id": "P08",
+  "updated_at": "2026-11-15",
+  "updated_by": "P08 code agent",
+  "independence_gate": {
+    "decision": "PROCEED",
+    "artifact": "research_artifacts_v3/runs/p08/independence_decision.json",
+    "evaluation_class": "SOFTWARE_SECURITY_EVALUATION"
+  },
+  "tasks": {
+    "P08-T01": {
+      "status": "DONE",
+      "evidence": [
+        "research_artifacts_v3/runs/p08/independence_decision.json",
+        "research_v3/experiments/p08/pre_registration.yaml",
+        "research_v3/experiments/p08/PROBES.md"
+      ],
+      "note": "Hypothesis frozen pre-campaign; collision checks vs LN-05/P04/P09/P11/P12 recorded with empirical probes."
+    },
+    "P08-T02": {
+      "status": "BLOCKED",
+      "evidence": ["research_artifacts_v3/runs/p08/independence_decision.json#external_data_gate"],
+      "note": "No external gamification/reward-attack dataset: assistments BLOCKED, ednet BLOCKED in registry; OULAD APPROVED but lacks reward/attack semantics. P08 is a software-security evaluation using deterministic synthetic fixtures; no unlicensed files ingested."
+    },
+    "P08-T03": {
+      "status": "DONE",
+      "evidence": ["research_v3/methods/p08/types.py", "research_v3/methods/p08/METHOD.md#2"],
+      "note": "Typed schema (Submission/RewardEvent/Delivery/Verdict) with closed decision vocabulary incl. ABSTAIN; NOT_APPLICABLE recorded for SS3 stratum."
+    },
+    "P08-T04": {
+      "status": "DONE",
+      "evidence": ["research_artifacts_v3/runs/p08/evaluation_manifest.json"],
+      "note": "SHA256 for every artifact (spec, engine, results, tests); deterministic fixtures replace raw external data (none exists)."
+    },
+    "P08-T05": {
+      "status": "DONE",
+      "evidence": ["research_v3/methods/p08/types.py", "tests/research_v3/method/p08/test_p08_campaign.py::test_defender_never_reads_evaluator_meta"],
+      "note": "Oracle-hygiene split: attack metadata in evaluator_meta, structurally stripped before defense (no gold in defender inputs)."
+    },
+    "P08-T06": {
+      "status": "DONE",
+      "evidence": ["research_artifacts_v3/runs/p08/evaluation_results.json#metrics.decisions_histogram"],
+      "note": "Distribution checks: 3000 adversarial + 1000 honest + 2 stress strata; per-vector histograms published."
+    },
+    "P08-T07": {
+      "status": "DONE",
+      "evidence": ["research_artifacts_v3/runs/p08/independence_decision.json#empirical_collision_probes"],
+      "note": "Baseline = LN-05 single-batch behavior, measured by probes (not re-implemented); disclosed as such."
+    },
+    "P08-T08": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p08/MANUSCRIPT.md#2-related-work"],
+      "note": "Closest published implementation requires literature screening by the research lead (human). Honest BLOCKED card; agent must not certify novelty."
+    },
+    "P08-T09": {
+      "status": "DONE",
+      "evidence": [
+        "research_v3/methods/p08/defender.py",
+        "research_v3/methods/p08/METHOD.md",
+        "tests/research_v3/method/p08/test_p08_integrity.py"
+      ],
+      "note": "Defender with 6-gate composition, typed failures (PolicyInputError), invariant proofs (I1-I4 in METHOD.md)."
+    },
+    "P08-T10": {
+      "status": "DONE",
+      "evidence": [
+        "research_v3/methods/p08/attacks.py",
+        "tests/research_v3/method/p08/test_p08_integrity.py::test_any_single_byte_evidence_mutation_breaks_attestation"
+      ],
+      "note": "6 attack vectors + mutation counterexamples; ablation-by-design: LN-05 lacks each defense (probes show divergence)."
+    },
+    "P08-T11": {
+      "status": "DONE",
+      "evidence": ["research_v3/methods/p08/METHOD.md#4-fixed-constraints-vs-learned-parameters"],
+      "note": "No learned parameters; all constants frozen in pre_registration.yaml; nothing tuned on evaluation."
+    },
+    "P08-T12": {
+      "status": "DONE",
+      "evidence": [
+        "research_v3/methods/p08/runner.py",
+        "research_artifacts_v3/runs/p08/evaluation_results.json",
+        "tests/research_v3/method/p08/test_p08_campaign.py::test_published_results_match_frozen_rerun"
+      ],
+      "note": "Full frozen matrix: every cell from one campaign with manifest + strict pytest exit code; committed results must equal rerun."
+    },
+    "P08-T13": {
+      "status": "DONE",
+      "evidence": ["research_artifacts_v3/runs/p08/evaluation_results.json#stress"],
+      "note": "Stress: 100x duplicate (SS1), 30-burst farming (SS2), SS3 NOT_APPLICABLE (human stratum) — all strata reported, none omitted."
+    },
+    "P08-T14": {
+      "status": "DONE",
+      "evidence": ["research_v3/experiments/p08/pre_registration.yaml#statistical_note"],
+      "note": "Exact acceptance bounds on counts (deterministic evaluation); single primary family; no multiplicity issue; zero-tolerance metrics explicit."
+    },
+    "P08-T15": {
+      "status": "DONE",
+      "evidence": ["research_artifacts_v3/runs/p08/evaluation_manifest.json"],
+      "note": "Source-to-table: campaign code -> results JSON -> checksum manifest; published-vs-rerun equality test enforces no hand-entered metrics."
+    },
+    "P08-T16": {
+      "status": "DONE",
+      "evidence": [
+        "research_artifacts_v3/runs/p08/independence_decision.json#merge_trigger",
+        "research_artifacts_v3/runs/p08/independence_decision.json#decision_justification"
+      ],
+      "note": "Collision audit vs LN-05 (primary), P04, P09, P11, P12; merge trigger defined and falsifiable; salami-slicing risk addressed head-on."
+    },
+    "P08-T17": {
+      "status": "DONE",
+      "evidence": ["research_v3/manuscripts/p08/MANUSCRIPT.md"],
+      "note": "Manuscript skeleton: security/integrity framing, LN-05 cited as predecessor, zero human-outcome claims, limitations mandatory."
+    },
+    "P08-T18": {
+      "status": "PENDING",
+      "evidence": ["research_artifacts_v3/runs/p08/evaluation_manifest.json#rerun_command"],
+      "note": "Rerun commands + checksums provided; independent external review requires a human reviewer (blocked on review assignment)."
+    },
+    "P08-T19": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/experiments/p08/pre_registration.yaml#human_outcomes"],
+      "note": "Human-only: ethics/IRB/consent. No human subjects exist in P08's software-security scope; approval cannot be simulated."
+    },
+    "P08-T20": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p08/MANUSCRIPT.md#8-status"],
+      "note": "Human-only: novelty/nearest-work signoff by research lead. Agent surfaced evidence (PROBES.md) but must not certify novelty."
+    },
+    "P08-T21": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p08/MANUSCRIPT.md#8-status"],
+      "note": "Human-only: coauthor/venue/rights signoff. No venue submission claims made."
+    }
+  },
+  "summary": {
+    "done": 14,
+    "blocked_human_only": 4,
+    "blocked_data": 1,
+    "pending_external_review": 2,
+    "note": "P08 executed as SOFTWARE SECURITY EVALUATION per independence gate. All human-outcome claims permanently disclaimed; DiGRA design-science/user-study tracks remain BLOCKED. Merge trigger documented if research lead deems the active-adversary delta insufficient."
+  }
+}

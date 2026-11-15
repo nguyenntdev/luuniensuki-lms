@@ -1,0 +1,88 @@
+{
+  "accuracy": 0.4318463444857497,
+  "clopper_pearson_ci_95": [
+    0.4146722285914554,
+    0.4491440849024579
+  ],
+  "confusion": {
+    "Distinction->Distinction": 3,
+    "Distinction->Fail": 95,
+    "Distinction->Pass": 301,
+    "Distinction->Withdrawn": 2,
+    "Fail->Fail": 436,
+    "Fail->Pass": 132,
+    "Fail->Withdrawn": 28,
+    "Pass->Distinction": 3,
+    "Pass->Fail": 494,
+    "Pass->Pass": 700,
+    "Pass->Withdrawn": 27,
+    "Withdrawn->Fail": 612,
+    "Withdrawn->Pass": 140,
+    "Withdrawn->Withdrawn": 255
+  },
+  "coverage": 1.0,
+  "macro_f1": 0.3381443564469501,
+  "model_id": "A3_no_abstention",
+  "n": 3228,
+  "n_abstained": 0,
+  "n_correct": 1394,
+  "per_class_recall": {
+    "Distinction": {
+      "clopper_pearson_ci_95": [
+        0.0015454885285771636,
+        0.02170679310455036
+      ],
+      "correct": 3,
+      "n": 401,
+      "recall": 0.007481296758104738,
+      "wilson_ci_95": [
+        0.002547512381910172,
+        0.021761902096938804
+      ]
+    },
+    "Fail": {
+      "clopper_pearson_ci_95": [
+        0.6940360365548208,
+        0.7667385755292957
+      ],
+      "correct": 436,
+      "n": 596,
+      "recall": 0.7315436241610739,
+      "wilson_ci_95": [
+        0.6945658759851534,
+        0.7655557043781382
+      ]
+    },
+    "Pass": {
+      "clopper_pearson_ci_95": [
+        0.5436220430431795,
+        0.5998226076184765
+      ],
+      "correct": 700,
+      "n": 1224,
+      "recall": 0.5718954248366013,
+      "wilson_ci_95": [
+        0.5439931391050647,
+        0.5993478425303354
+      ]
+    },
+    "Withdrawn": {
+      "clopper_pearson_ci_95": [
+        0.22662588236281314,
+        0.28127982736923074
+      ],
+      "correct": 255,
+      "n": 1007,
+      "recall": 0.253227408142999,
+      "wilson_ci_95": [
+        0.2273413221396565,
+        0.2809890934135115
+      ]
+    }
+  },
+  "predictions_sha256": "f97869054d2682fbc23303b37142e1d93384a2cd2d033405967c5e75d45498e1",
+  "wilson_ci_95": [
+    0.41484980723133885,
+    0.44900490049292036
+  ]
+}

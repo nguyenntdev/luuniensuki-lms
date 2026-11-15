@@ -1,0 +1,47 @@
+{
+  "candidate_claims": [
+    {
+      "allowed": true,
+      "claim": "The audit produced conformance rate R on manifest M",
+      "claims_guard_version": "p14-claims-guard-1.0.0",
+      "human_evidence_dataset_ids": [],
+      "is_benefit_claim": false,
+      "rejection_reason": null
+    },
+    {
+      "allowed": false,
+      "claim": "UDL workflow improves learning outcomes for students",
+      "claims_guard_version": "p14-claims-guard-1.0.0",
+      "human_evidence_dataset_ids": [],
+      "is_benefit_claim": true,
+      "rejection_reason": "benefit/effect claim requires a human user study; P14-T19 (ethics/human annotation) is BLOCKED, so no human-evidence dataset exists"
+    },
+    {
+      "allowed": false,
+      "claim": "The full audit is more effective for comprehension",
+      "claims_guard_version": "p14-claims-guard-1.0.0",
+      "human_evidence_dataset_ids": [],
+      "is_benefit_claim": true,
+      "rejection_reason": "benefit/effect claim requires a human user study; P14-T19 (ethics/human annotation) is BLOCKED, so no human-evidence dataset exists"
+    },
+    {
+      "allowed": true,
+      "claim": "C1 checklist baseline missed UDL-principle failures that the full audit caught",
+      "claims_guard_version": "p14-claims-guard-1.0.0",
+      "human_evidence_dataset_ids": [],
+      "is_benefit_claim": false,
+      "rejection_reason": null
+    },
+    {
+      "allowed": false,
+      "claim": "UDL design causally increases retention",
+      "claims_guard_version": "p14-claims-guard-1.0.0",
+      "human_evidence_dataset_ids": [],
+      "is_benefit_claim": true,
+      "rejection_reason": "benefit/effect claim requires a human user study; P14-T19 (ethics/human annotation) is BLOCKED, so no human-evidence dataset exists"
+    }
+  ],
+  "human_evidence_dataset_ids": [],
+  "human_study_status": "BLOCKED (P14-T19)",
+  "rejected_count": 3
+}

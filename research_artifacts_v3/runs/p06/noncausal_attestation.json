@@ -1,0 +1,7 @@
+{
+  "intervention_effect_claimed": false,
+  "ledger": "research_v3/methods/p06/noncausal_claims.md",
+  "paper_id": "P06",
+  "reason": "OULAD is observational; selection-quality metrics only",
+  "status": "NONCAUSAL_UNTIL_PROVED"
+}

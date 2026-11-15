@@ -1,0 +1,35 @@
+{
+  "run_id": "db46f28edbb754bf179b58e789cb995b426e17b7fcf36b0c8b9decee51cfc954",
+  "paper_id": "P12",
+  "arm": "PROPOSED",
+  "executed_at_utc": "2026-11-15T11:51:12Z",
+  "git": {
+    "head_sha": "4e5a792e16250106b9d0a577849e864ab7007c92",
+    "dirty": true
+  },
+  "ingest_manifest": "ingest_manifest.json",
+  "result": {
+    "n_claims": 63,
+    "n_sources_in_registry": 16,
+    "unsourced_claim_count": 0,
+    "unsourced_claim_rate": 0.0,
+    "sourced_claim_count": 63,
+    "locator_complete_count": 63,
+    "locator_completeness_rate": 1.0,
+    "contradiction_count": 0,
+    "contradictions": [],
+    "rejected_claims": [],
+    "abstain_count": 62,
+    "verdict_counts": {
+      "PASS": 1,
+      "REJECT": 0,
+      "ABSTAIN": 62
+    },
+    "chain": {
+      "events": 63,
+      "chain_head": "88c219d64e83bccedf6388e5a8a9dd2069995d8b2f04885ed47860448ea91005",
+      "status": "PASS"
+    },
+    "chain_digest": "f2f10b07019b185d2487e56dcbfdcb7f251981cae67e94bd9c10a73b79651080"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "expected_nondeterminism": [
+    "run_meta.json.wall_time_seconds",
+    "experiment_card.json.wall_time_seconds"
+  ],
+  "files": {
+    "ablations.json": {
+      "identical_across_runs": true
+    },
+    "dataset_card.json": {
+      "identical_across_runs": true
+    },
+    "evidence_cards.json": {
+      "identical_across_runs": true
+    },
+    "experiment_card.json": {
+      "identical_across_runs": false
+    },
+    "noncausal_attestation.json": {
+      "identical_across_runs": true
+    },
+    "null_results.json": {
+      "identical_across_runs": true
+    },
+    "paired_tests.json": {
+      "identical_across_runs": true
+    },
+    "results.json": {
+      "identical_across_runs": true
+    },
+    "run_meta.json": {
+      "identical_across_runs": false
+    },
+    "split_manifest.json": {
+      "identical_across_runs": true
+    },
+    "summary.json": {
+      "identical_across_runs": true
+    }
+  },
+  "method": "two consecutive full runs; artifacts compared byte-for-byte",
+  "note": "Scientific payloads (results, summary, paired_tests, ablations, null_results, split_manifest, dataset_card, evidence_cards, noncausal_attestation) are byte-identical; only wall-clock timing fields differ.",
+  "paper_id": "P06",
+  "result": "PASS"
+}

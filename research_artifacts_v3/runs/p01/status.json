@@ -1,0 +1,109 @@
+{
+  "blocked_tasks_detail": {
+    "P01-T19": {
+      "reason": "Requires documented human signoff; code agent must not simulate approvals.",
+      "task": "Ethics/human annotation/license approval (human-only)"
+    },
+    "P01-T20": {
+      "reason": "Research-lead-only responsibility per 04_METHODOLOGY/NOVELTY_AND_LITERATURE.md.",
+      "task": "Novelty and nearest-work signoff (research lead)"
+    },
+    "P01-T21": {
+      "reason": "Requires human authorship and venue decisions.",
+      "task": "Coauthor/venue/submission signoff (human-only)"
+    }
+  },
+  "external_validity": "single dataset (OULAD 2013-2014), observational, not causal, no SOTA claim",
+  "null_results_disclosed": true,
+  "paper_id": "P01",
+  "status": "EXECUTED_WITH_NULL_RESULT",
+  "summary": {
+    "dataset": "oulad-2013-2014",
+    "leakage_audit": {
+      "duplicates": 0,
+      "findings": [],
+      "rows": 32593,
+      "status": "PASS",
+      "unique_case_ids": 32593
+    },
+    "prereg_sha256": "a2a9efa82779a481dfad5be83ba2b7499016af46cddf3b34b947699bbf3e4ecf",
+    "protocols": {
+      "G_seed0": {
+        "majority_label": "Pass",
+        "null_result": {
+          "baseline": 0.5517460317460318,
+          "h0_rejected_at_0.05": false,
+          "holm_adjusted_p_value_vs_C1": 0.0,
+          "is_null_or_negative": true,
+          "note": "Reported as a null/negative result; not tuned toward a positive claim.",
+          "observed": 0.11682539682539683,
+          "p_value": 0.0,
+          "preregistered_expectation": "The gate trades accuracy for risk control; a null was the expected honest outcome and is disclosed, not tuned away."
+        },
+        "sizes": {
+          "calibration": 3332,
+          "dev": 3255,
+          "test": 3150,
+          "train": 22856
+        },
+        "thresholds": {
+          "alpha_conf": 0.2,
+          "alpha_fail": 0.3,
+          "calibration_n": 3332,
+          "tau_conf": 0.6470169135973003,
+          "tau_fail": 0.2539623333975175
+        }
+      },
+      "T_seed0": {
+        "majority_label": "Pass",
+        "null_result": {
+          "baseline": 0.5535935563816605,
+          "h0_rejected_at_0.05": false,
+          "holm_adjusted_p_value_vs_C1": 0.0,
+          "is_null_or_negative": true,
+          "note": "Reported as a null/negative result; not tuned toward a positive claim.",
+          "observed": 0.20910780669144982,
+          "p_value": 0.0,
+          "preregistered_expectation": "The gate trades accuracy for risk control; a null was the expected honest outcome and is disclosed, not tuned away."
+        },
+        "sizes": {
+          "calibration": 2813,
+          "dev": 3185,
+          "test": 3228,
+          "train": 21177
+        },
+        "thresholds": {
+          "alpha_conf": 0.2,
+          "alpha_fail": 0.3,
+          "calibration_n": 2813,
+          "tau_conf": 0.6293902741610474,
+          "tau_fail": 0.19697460236577094
+        }
+      }
+    },
+    "rows_used": 32593
+  },
+  "tasks": {
+    "P01-T01": "DONE",
+    "P01-T02": "DONE",
+    "P01-T03": "DONE",
+    "P01-T04": "DONE",
+    "P01-T05": "DONE",
+    "P01-T06": "DONE",
+    "P01-T07": "DONE",
+    "P01-T08": "DONE",
+    "P01-T09": "DONE",
+    "P01-T10": "DONE",
+    "P01-T11": "DONE",
+    "P01-T12": "DONE",
+    "P01-T13": "DONE",
+    "P01-T14": "DONE",
+    "P01-T15": "DONE",
+    "P01-T16": "DONE",
+    "P01-T17": "DONE",
+    "P01-T18": "DONE",
+    "P01-T19": "BLOCKED",
+    "P01-T20": "BLOCKED",
+    "P01-T21": "BLOCKED"
+  }
+}

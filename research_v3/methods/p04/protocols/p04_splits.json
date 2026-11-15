@@ -1,0 +1,35 @@
+{
+  "frozen_at": "2026-11-15",
+  "policy": "Benchmark authors may not tune on test partitions; hyperparameters selected on train only; strata cells never edited after freeze.",
+  "prereg_version": "1.0",
+  "protocol_version": "p04-protocol-1.0",
+  "splits": {
+    "oulad_group": {
+      "hash": "56fe250659c7286964cdcb28b8c232e546e455926b97fd520c8432f961bf015b",
+      "sizes": {
+        "calibration": 3286,
+        "dev": 3202,
+        "test": 3327,
+        "train": 22778
+      }
+    },
+    "oulad_time": {
+      "hash": "76216c5054fa42396f91750496c8c2022a961d4a87fb40af65301f8ea3176988",
+      "sizes": {
+        "calibration": 3324,
+        "dev": 3226,
+        "test": 3228,
+        "train": 22815
+      }
+    },
+    "uci_group": {
+      "hash": "3bf80a2348c6c1b4ab06d46e2894f55b0d440a2db1a82b1c1f03feb72152195f",
+      "sizes": {
+        "calibration": 102,
+        "dev": 105,
+        "test": 110,
+        "train": 727
+      }
+    }
+  }
+}

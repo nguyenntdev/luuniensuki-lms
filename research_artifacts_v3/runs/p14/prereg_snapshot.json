@@ -1,0 +1,9 @@
+{
+  "engine": "p14-audit-1.0.0",
+  "manifest": "p14-synthetic-manifest-1.0.0",
+  "manifest_sha256": "7adeca616dbf0290c23079cae2e160818bb914296b8ecc4ce3c1a704bc6a3e75",
+  "method_sha256": "342781cada3e1c40decd14e52679fa84d5650f58ae630c71c5775196248fc058",
+  "prereg_path": "research_v3/experiments/p14/pre_registration.yaml",
+  "prereg_sha256": "e65093adf72a5cf8ed4ba27f514f23708c37483fd3bfb7820bff1b834cfed7e8",
+  "rubric": "p14-udl-rubric-1.0.0"
+}

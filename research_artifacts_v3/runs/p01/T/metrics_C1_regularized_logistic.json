@@ -1,0 +1,88 @@
+{
+  "accuracy": 0.5535935563816605,
+  "clopper_pearson_ci_95": [
+    0.536247455220339,
+    0.5708424478225878
+  ],
+  "confusion": {
+    "Distinction->Distinction": 3,
+    "Distinction->Fail": 2,
+    "Distinction->Pass": 394,
+    "Distinction->Withdrawn": 2,
+    "Fail->Fail": 37,
+    "Fail->Pass": 370,
+    "Fail->Withdrawn": 189,
+    "Pass->Distinction": 3,
+    "Pass->Fail": 29,
+    "Pass->Pass": 1093,
+    "Pass->Withdrawn": 99,
+    "Withdrawn->Fail": 26,
+    "Withdrawn->Pass": 327,
+    "Withdrawn->Withdrawn": 654
+  },
+  "coverage": 1.0,
+  "macro_f1": 0.35846143482407744,
+  "model_id": "C1_regularized_logistic",
+  "n": 3228,
+  "n_abstained": 0,
+  "n_correct": 1787,
+  "per_class_recall": {
+    "Distinction": {
+      "clopper_pearson_ci_95": [
+        0.0015454885285771636,
+        0.02170679310455036
+      ],
+      "correct": 3,
+      "n": 401,
+      "recall": 0.007481296758104738,
+      "wilson_ci_95": [
+        0.002547512381910172,
+        0.021761902096938804
+      ]
+    },
+    "Fail": {
+      "clopper_pearson_ci_95": [
+        0.04408341160233316,
+        0.08455757646002561
+      ],
+      "correct": 37,
+      "n": 596,
+      "recall": 0.06208053691275168,
+      "wilson_ci_95": [
+        0.04537207906110757,
+        0.08439797546918901
+      ]
+    },
+    "Pass": {
+      "clopper_pearson_ci_95": [
+        0.8742928977015479,
+        0.90974124126121
+      ],
+      "correct": 1093,
+      "n": 1224,
+      "recall": 0.8929738562091504,
+      "wilson_ci_95": [
+        0.8744088922526558,
+        0.9090798823681108
+      ]
+    },
+    "Withdrawn": {
+      "clopper_pearson_ci_95": [
+        0.6190838176423001,
+        0.6789469429446715
+      ],
+      "correct": 654,
+      "n": 1007,
+      "recall": 0.6494538232373386,
+      "wilson_ci_95": [
+        0.6194664288233239,
+        0.6783052913346165
+      ]
+    }
+  },
+  "predictions_sha256": "e264e189627464c89a50857a674fd7581858a177ed8175b8be136bd6c130132a",
+  "wilson_ci_95": [
+    0.5363908011151728,
+    0.5706689059925689
+  ]
+}

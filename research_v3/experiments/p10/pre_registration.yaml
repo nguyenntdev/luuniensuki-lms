@@ -1,0 +1,84 @@
+# P10 pre-registration (frozen before the confirmatory run)
+# Spec: LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P10_*.md §6
+paper_id: P10
+frozen_at: "2026-11-15"
+research_question_verbatim: >-
+  Tính liên tục, tăng độ sâu nhận thức và phù hợp CTGDPT của chuỗi học liệu
+  di sản số theo 3 lớp được chuyên gia đánh giá như thế nào?
+hypothesis_h0: >-
+  Chuỗi xoắn ốc không có ưu thế nhất quán theo rubric so với chuỗi chuẩn do
+  giáo viên xây dựng. (Requires real teacher raters — human phase BLOCKED,
+  P10-T19. This prereg registers the machine-checkable design-gate metrics
+  that precede and feed that human study; it does NOT substitute for it.)
+estimand:
+  machine_proxy: >-
+    Sequence validity rate over the confirmatory design set {C0, C1, proposed}
+    under four preregistered invariants (acyclic; grade monotone; Bloom ascent
+    with leap flagging; anchor resolution against a provenance-carrying
+    GDPT-2018 registry).
+  human_estimand_blocked: >-
+    Expert CVI / rubric agreement / teacher feasibility — BLOCKED pending real
+    raters; no simulated experts permitted (04_METHODOLOGY/ETHICS_AND_INTEGRITY.md §4).
+primary_metric:
+  id: M1_sequence_validity_rate
+  direction: higher_is_better
+  unit: design (3 confirmatory designs)
+  denominator: 3 confirmatory designs (C0, C1, proposed)
+  ci: [wilson_95, clopper_pearson_95]
+secondary_metrics:
+  - id: M2_anchor_coverage_rate
+    unit: learning object
+    denominator: 162 documented Cửu Đỉnh motifs
+  - id: M3_needs_expert_review_rate
+    unit: learning object
+    denominator: 162 documented Cửu Đỉnh motifs
+    interpretation: >-
+      Honesty metric, NOT a performance metric — the share of objects whose
+      anchor mapping still requires teacher confirmation.
+  - id: M4_bloom_leap_rate
+    unit: progression edge
+    denominator: 71 progression edges
+    interpretation: >-
+      Flagging metric for expert review, not auto-rejection.
+confirmatory_family: [M1_sequence_validity_rate]
+multiplicity: >-
+  One primary metric, no multiplicity correction needed for the machine gate;
+  any future human-rater family must preregister Holm or BH before testing
+  (research_v3/eval/statistics.py family_control).
+designs:
+  C0_linear_playlist: "chronological-category playlist; no DAG, no depth gating (sanity floor)"
+  C1_topological_no_bloom: Kahn topological order; anchor gate on; Bloom gate off
+  proposed_spiral_dag: layer-clustered spiral order with bridge edges; all four gates on
+ablations:
+  A1_no_layer_bridge: "removes cross-urn bridge edges (sensitivity: weakly-connected components)"
+  A2_no_bloom_ascent: "removes Bloom gate (sensitivity: strict-ascent edge rate)"
+  A3_no_provenance_gate: "removes anchor gate (sensitivity: fabricated anchor accepted?)"
+  A4_random_order: "seeded random playlist, seed=42 (expected failure family)"
+falsification_counters:
+  - cycle_injected_graph_must_reject
+  - grade_inverted_edge_must_reject
+  - bloom_flat_edge_must_reject
+  - unknown_anchor_must_raise_not_silently_pass
+  - invented_competency_code_must_flag_needs_expert_review_never_documented
+data:
+  corpus: repo-documented 9 urns x 18 motifs = 162 motifs (READ-ONLY; sha256 in run manifest)
+  curriculum: GDPT 2018 (Thông tư 32/2018/TT-BGDĐT) via repo catalog + backend competency catalog
+  external_datasets: none (hue-heritage-corpus stays BLOCKED; no archival permission held)
+  split_note: >-
+    No learner data and no train/test split applies to sequence design; the
+    design/evaluation-set separation (packet §2) is realized as:
+    this repo's machine gates (design set) vs the future blinded teacher panel
+    (evaluation set). Teacher panel does not see method names until scoring ends.
+compute:
+  hardware: CPU only
+  wall_time_budget_seconds: 60
+  learning_parameters: none (fixed constraints only; nothing fitted)
+seeds: [42]   # only the A4 random-order ablation is stochastic; see ablations.A4_random_order
+blocked_tasks:
+  - P10-T19 ethics/human annotation/license approval (human-only)
+  - P10-T20 novelty & nearest-work signoff (research lead)
+  - P10-T21 coauthor/venue/submission signoff (human-only)
+honesty_guarantees:
+  - no fabricated competency codes; unknown anchors raise at build time
+  - needs_expert_review items are counted and published, never silently merged
+  - negative/invalid designs are reported, never dropped

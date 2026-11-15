@@ -14,8 +14,10 @@
 
 ## Execution matrix
 
-- 10 studies x (proposed + 6 comparators) x 3 seeds, plus one extra LN-10
-  stress cell (T3S) exercising same-version divergent offline edits.
+- 10 studies x (1 proposed + 5 comparators [B0, C1, A1, A2, A3]) x 3 seeds
+  = 180 cells, plus the extra LN-10 stress tier (T3S: 6 methods x 3 seeds
+  = 18 cells) exercising same-version divergent offline edits — 198 run
+  manifests on disk in total, derived from the frozen matrices, not prose.
 - Every cell writes `predictions.jsonl` (oracle-free), `run_manifest.json`
   (commit, dataset SHA, seed, wall time, status) and `metrics.json`.
 

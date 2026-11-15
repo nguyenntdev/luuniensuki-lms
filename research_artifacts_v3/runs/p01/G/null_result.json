@@ -1,0 +1,10 @@
+{
+  "baseline": 0.5517460317460318,
+  "h0_rejected_at_0.05": false,
+  "holm_adjusted_p_value_vs_C1": 0.0,
+  "is_null_or_negative": true,
+  "note": "Reported as a null/negative result; not tuned toward a positive claim.",
+  "observed": 0.11682539682539683,
+  "p_value": 0.0,
+  "preregistered_expectation": "The gate trades accuracy for risk control; a null was the expected honest outcome and is disclosed, not tuned away."
+}

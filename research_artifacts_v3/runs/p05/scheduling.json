@@ -1,0 +1,41 @@
+{
+  "C0_baserate_rank": {
+    "recall_failures@10%": 0.09721115537848606,
+    "recall_failures@20%": 0.2047808764940239,
+    "recall_failures@40%": 0.4593625498007968,
+    "recall_failures@5%": 0.04780876494023904,
+    "recall_failures@80%": 0.8231075697211155
+  },
+  "C1_frequency_rank": {
+    "recall_failures@10%": 0.004780876494023904,
+    "recall_failures@20%": 0.013147410358565738,
+    "recall_failures@40%": 0.09402390438247012,
+    "recall_failures@5%": 0.00039840637450199205,
+    "recall_failures@80%": 0.5601593625498008
+  },
+  "P05_forgetting_aware": {
+    "recall_failures@10%": 0.004780876494023904,
+    "recall_failures@20%": 0.013147410358565738,
+    "recall_failures@40%": 0.09402390438247012,
+    "recall_failures@5%": 0.00039840637450199205,
+    "recall_failures@80%": 0.5601593625498008
+  },
+  "contrast_recall20_P05_vs_C1rank": {
+    "ci_95": [
+      0.0,
+      0.0
+    ],
+    "diff_point": 0.0,
+    "p_one_sided": 1.0
+  },
+  "n_failures": 2510,
+  "n_pairs": 48370,
+  "note": "logged-policy replay: outcomes observed under real study behavior, not our policy (off-policy bias declared)",
+  "random_seed11": {
+    "recall_failures@10%": 0.10079681274900398,
+    "recall_failures@20%": 0.19203187250996015,
+    "recall_failures@40%": 0.3948207171314741,
+    "recall_failures@5%": 0.04940239043824701,
+    "recall_failures@80%": 0.799203187250996
+  }
+}

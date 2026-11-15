@@ -1,0 +1,17 @@
+# P02 frozen run matrix
+paper_id: P02
+seed: 20261115
+dataset: synthetic (generator: research_v3/methods/p02/generator.py)
+gold: certified oracle verdicts (research_v3/methods/p02/oracle.py, evaluator-side only)
+cells:
+  - study: P02
+    tier: synthetic_benchmark
+    families: [chain, alternative_pair, dense_cover, unreachable_bridge, mixed_lattice, blocked_access]
+    regimes: [tight, mid, loose]
+    alt_densities: [0.0, 0.5, 1.0]
+    instances_per_cell: 30
+    methods: [c0_greedy, c1_branch_and_bound, c2_dijkstra_state, p02_proposed, a3_alternative_blind]
+    split_id: test
+    group_key: family_id
+split_source: research_v3/experiments/p02/splits.yaml
+runner: python -m research_v3.methods.p02.benchmark --instances-per-cell 30 --seed 20261115 --out research_artifacts_v3/runs/p02

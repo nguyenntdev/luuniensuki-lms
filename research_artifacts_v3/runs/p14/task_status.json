@@ -1,0 +1,185 @@
+{
+  "paper_id": "P14",
+  "updated_at": "2026-11-15",
+  "updated_by": "P14 code agent",
+  "tasks": {
+    "P14-T01": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p14/pre_registration.yaml",
+        "research_artifacts_v3/runs/p14/overlap_decision.json"
+      ],
+      "note": "RQ frozen (UDL rubric with user evaluation applied to multimodal heritage learning objects); H0 (no human-outcome benefit) explicitly registered as NOT TESTABLE in this run and must be published as untested if the human arm never runs. Overlap decision vs P07: KEEP_SEPARATE - P14 is a per-object design/audit study, P07 is retrieval/ranking selection; disjoint estimands and primary tables."
+    },
+    "P14-T02": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_artifacts_v3/runs/p14/audit_report.json#manifest.rights.cards",
+        "research_v3/methods/p14/METHOD.md#8-rights-and-external-data-p14-t02"
+      ],
+      "note": "Rights assessment executed and honestly resolved: Smithsonian BLOCKED (HTTP 403 without API key, verified 2026-11-15), Europeana BLOCKED (HTTP 401 without wskey, verified 2026-11-15), Hue imagery excluded (unlicensed). External media unavailable -> synthetic manifest used with explicit 'Synthetic - no third-party rights' labels; study marked PARTIAL for external media. Rights cards preserved verbatim in the audit report."
+    },
+    "P14-T03": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p14/schema.py",
+        "research_artifacts_v3/runs/p14/audit_report.json#criterion_results",
+        "tests/research_v3/method/test_p14_rubric_schema.py"
+      ],
+      "note": "Typed object/verdict schema: NOT_APPLICABLE and ABSTAIN distinct from FAIL (1 criterion abstained, reported separately, excluded from denominators); manifest is inputs-only with leakage audit rows recorded; schema contract tests pass."
+    },
+    "P14-T04": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p14/run_manifest.sha256",
+        "research_artifacts_v3/runs/p14/audit_report.sha256",
+        "research_artifacts_v3/runs/p14/experiment_card.json"
+      ],
+      "note": "Immutable provenance: SHA-256 for every run artifact (audit report, baselines, ablations, metrics, claims ledger, prereg snapshot, experiment card) recorded in run_manifest.sha256; deterministic synthetic manifest versioned p14-synthetic-manifest-1.0.0 with manifest hash pinned in the experiment card."
+    },
+    "P14-T05": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p14/pre_registration.yaml#data",
+        "research_v3/methods/p14/METHOD.md#8-rights-and-external-data-p14-t02"
+      ],
+      "note": "N/A for splits (audit has no train/test split, documented in prereg); media-family separation respected (13 synthetic objects across distinct modality families: image, audio, video, 3D, interactive); rights and accessibility annotated per object; no human participants recruited (recruitment/accommodations only in the BLOCKED human-arm protocol)."
+    },
+    "P14-T06": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p14/metrics_summary.json",
+        "research_artifacts_v3/runs/p14/audit_report.json#manifest"
+      ],
+      "note": "Descriptive distribution reported before any comparison: 13 objects, 118 criterion results, per-framework pass/fail (udl-representation 32/7, udl-engagement 29/2, udl-action 14/4, wcag22 22/2), 1 abstention, 15 missing affordances."
+    },
+    "P14-T07": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p14/baselines.py",
+        "research_artifacts_v3/runs/p14/baseline_results.json"
+      ],
+      "note": "Matched-input baselines on the identical manifest: C0 has-image (11/13 pass) and C1 WCAG-checklist-only (9/13 pass), both fixed rules, not tuned. Full audit yields 4/13 object passes - strictly lower, characterising the audit system descriptively (not a benefit claim)."
+    },
+    "P14-T08": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p14/MANUSCRIPT.md#4-related-work"
+      ],
+      "note": "Closest-published-comparator scan is an open item in the manuscript (nearest-work scan pending); final certification is human-only (P14-T20 BLOCKED). No fabricated comparator was run; C0/C1 are internal fixed-rule baselines only."
+    },
+    "P14-T09": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p14/rubric.py",
+        "research_v3/methods/p14/audit.py",
+        "research_v3/methods/p14/udl/task_affordance_rubric.yaml",
+        "tests/research_v3/method/test_p14_audit_engine.py"
+      ],
+      "note": "Method implemented with invariant proofs: versioned UDL + WCAG 2.2 AA rubric (p14-udl-rubric-1.0.0), typed failures, deterministic per-object audit engine with remediation list; no learned parameters (learned_parameters: {} recorded in the report); affordance mapping task x criterion enforced by engine tests."
+    },
+    "P14-T10": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p14/METHOD.md#7-ablations-mutation-counterexamples-p14-t10",
+        "research_artifacts_v3/runs/p14/ablation_results.json"
+      ],
+      "note": "Named-mechanism mutation counterexamples: remove_alt_text (8 criterion flips), remove_transcript (3), remove_keyboard (1), remove_lbw (12) across 13 objects; each mutation flips exactly the criterion named by its mechanism (mutation-reveals-mechanism invariant). Expected failure families asserted post-run, never pre-declared as outcomes."
+    },
+    "P14-T11": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p14/pre_registration.yaml#comparison_family",
+        "research_artifacts_v3/runs/p14/experiment_card.json"
+      ],
+      "note": "N/A by design, documented: fixed rules, no tuning, no training; hyperparameter_budget 'none (fixed rules, no tuning)' in the experiment card; multiplicity handled by descriptive_run_no_confirmatory_tests."
+    },
+    "P14-T12": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_artifacts_v3/runs/p14/audit_report.json",
+        "research_artifacts_v3/runs/p14/baseline_results.json",
+        "research_artifacts_v3/runs/p14/experiment_card.json"
+      ],
+      "note": "Preregistered audit matrix executed with every cell hashed (experiment card + run manifest) but on the SYNTHETIC manifest because external media was BLOCKED (Smithsonian 403 / Europeana 401): 97/112 criteria pass = 0.8661 conformance (Wilson 95% CI [0.791, 0.917]), exact McNemar vs C0 (p=0.0156) and C1 (p=0.0625) as verdict-only comparisons. Experiment card status: PARTIAL - external-validity requirement (>=2 external domains) NOT met and NOT claimed."
+    },
+    "P14-T13": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_v3/methods/p14/METHOD.md#9-limitations-threats-to-validity-manuscript-facing",
+        "research_artifacts_v3/runs/p14/metrics_summary.json"
+      ],
+      "note": "All failure strata reported: per-object FAIL verdicts with severity-graded remediation list, per-framework failures, 15 missing affordances, 1 abstention. Hostile-manifest limitation documented (audit verifies internal consistency, not deployed ground truth); rendering-level contrast/AT testing strata require a real browser/human pass and are BLOCKED with the human arm."
+    },
+    "P14-T14": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p14/metrics.py",
+        "research_v3/methods/p14/claims_guard.py",
+        "research_artifacts_v3/runs/p14/claims_ledger.json"
+      ],
+      "note": "Descriptive statistics with Wilson/Clopper-Pearson CIs; no confirmatory benefit test permitted. Claims guard rejects all benefit/effect wording (3 of 5 candidate claims rejected: no human-evidence dataset exists while P14-T19 is BLOCKED); human_study_status recorded as BLOCKED."
+    },
+    "P14-T15": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p14/run_experiment.py",
+        "research_v3/methods/p14/cli_audit.py",
+        "research_artifacts_v3/runs/p14/run_manifest.sha256"
+      ],
+      "note": "Source-to-table: deterministic regeneration via python -m research_v3.experiments.p14.run_experiment and cli_audit; all artifact hashes frozen in run_manifest.sha256; metrics computed in-code, never hand-entered."
+    },
+    "P14-T16": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p14/overlap_decision.json",
+        "research_v3/manuscripts/p14/MANUSCRIPT.md#9-threats-to-validity"
+      ],
+      "note": "Scientific failure review and collision audit: overlap decision KEEP_SEPARATE vs P07 recorded with justification (P07 = selection/ranking per query; P14 = object design audit; no shared sample, RQ, or primary table; shared schema is infrastructure reuse only; salami-slicing risk low). H0 published as untested; external-generalisation gap documented as unmet."
+    },
+    "P14-T17": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p14/MANUSCRIPT.md",
+        "research_artifacts_v3/runs/p14/metrics_summary.json"
+      ],
+      "note": "Manuscript skeleton with evidence ledger ([P14-AUDIT-001], [P14-RIGHTS-001]); every numeric claim bound to frozen artifacts; mandatory threats-to-validity section includes the no-human-study and synthetic-manifest limitations. Results tables remain to be rendered from frozen JSON (numbers auto-inserted; no hand-entered values)."
+    },
+    "P14-T18": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_v3/manuscripts/p14/MANUSCRIPT.md#12-reproduction"
+      ],
+      "note": "Reproduction staged: deterministic regeneration commands (run_experiment, cli_audit, pytest) plus run_manifest.sha256 for clean-clone validation. Independent external reviewer reproduction has NOT been executed (requires an external human reviewer)."
+    },
+    "P14-T19": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/methods/p14/claims_guard.py",
+        "research_artifacts_v3/runs/p14/claims_ledger.json#human_study_status"
+      ],
+      "note": "Human-only: ethics/human annotation/license approval. No human participants; human_evaluation arm BLOCKED pending ethics; all benefit claims structurally rejected until a real human-evidence dataset exists. Accessibility test plan (research_v3/experiments/p14/P14_accessibility_test_plan.md) prepared but not executed with participants."
+    },
+    "P14-T20": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p14/MANUSCRIPT.md#4-related-work"
+      ],
+      "note": "Human-only: novelty and nearest-work signoff by the research lead; manuscript marks the nearest-work scan as pending. Agent must not certify novelty."
+    },
+    "P14-T21": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p14/MANUSCRIPT.md#1-title-claims-frame"
+      ],
+      "note": "Human-only: coauthor/venue/submission signoff (Tạp chí Khoa học Trường ĐH Sư phạm TP.HCM orientation; CFP/rank verification outstanding). No submission claims made."
+    }
+  },
+  "summary": {
+    "done_engineering": 13,
+    "partial": 4,
+    "blocked_human_only": 3,
+    "blocked_data": 1,
+    "note": "Audit-only run is PARTIAL by design: external media BLOCKED (Smithsonian HTTP 403, Europeana HTTP 401, verified 2026-11-15) -> versioned synthetic manifest with explicit 'Synthetic - no third-party rights' labels; 86.61% criterion conformance (97/112) on synthetic objects, 13 objects, 15 remediations. Overlap decision KEEP_SEPARATE vs P07. Human-evaluation arm BLOCKED (P14-T19); H0 published as untested; release status ENGINEERING_PASS + PARTIAL."
+  }
+}

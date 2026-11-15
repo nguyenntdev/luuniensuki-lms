@@ -1,0 +1,180 @@
+{
+  "paper_id": "P05",
+  "updated_at": "2026-11-15",
+  "updated_by": "P05 code agent",
+  "tasks": {
+    "P05-T01": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p05/pre_registration.yaml",
+        "research_v3/methods/p05/METHOD.md"
+      ],
+      "note": "RQ, estimand and H0/H1 frozen in pre_registration.yaml before final test evaluation (preregistered_at 2026-11-15, frozen_before_final_test: true). Primary estimand: AUC difference P vs C1 on strictly-future 2014J test window."
+    },
+    "P05-T02": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p05/dataset_cards.yaml",
+        "research_v3/datasets/registry.yaml"
+      ],
+      "note": "OULAD 2013-2014 APPROVED (UCI 349; CC BY-NC 4.0 captured, stricter term honored over registry CC BY 4.0 claim; archive SHA-256 f2ed1902... recorded). ASSISTments BLOCKED in registry (terms unreviewed); EdNet CC BY-NC with redistribution limits."
+    },
+    "P05-T03": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p05/temporal_data.py",
+        "research_v3/methods/p05/METHOD.md"
+      ],
+      "note": "Attempt-level schema: target score>=40 observable only at submission; feature groups (decay/recency/frequency/ability/context) with per-attempt causal cutoff rule enforced by construction and by test."
+    },
+    "P05-T04": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p05/attempts_manifest.json"
+      ],
+      "note": "Raw OULAD archive SHA-256 f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4 verified (raw_archive_verified: true); 168,164 attempts; per-split split_hashes recorded for train/calibration/test."
+    },
+    "P05-T05": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p05/attempts_manifest.json",
+        "tests/research_v3/method/test_p05_leakage.py"
+      ],
+      "note": "Chronological presentation split (2013B+2013J train / 2014B calibration / 2014J sealed test); leak audit PASS on all splits (0 duplicates, 0 findings); learner overlap disclosed (train-test 7.896%); 31 leakage/ordering contract tests including real-OULAD split-integrity tests."
+    },
+    "P05-T06": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p05/attempts_manifest.json",
+        "research_artifacts_v3/runs/p05/run_manifest.json"
+      ],
+      "note": "Descriptive baseline: C0 global base rate (prevalence 0.9539 calibration / 0.9481 test, AUC 0.5 by construction, n=38401 calibration / 48370 test attempts); pass_rate_by_split and coverage recorded in attempts_manifest."
+    },
+    "P05-T07": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p05/models.py",
+        "research_artifacts_v3/runs/p05/run_manifest.json"
+      ],
+      "note": "C1 logistic recency/frequency baseline with matched inputs, identical splits and tuning budget (half-life grid(6) x C grid(4) on 2014B calibration only, seed 11). C1 test AUC 0.7132."
+    },
+    "P05-T08": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/experiments/p05/blocked_cards.yaml",
+        "research_artifacts_v3/runs/p05/experiment_card.json"
+      ],
+      "note": "C2 published-KT comparator BLOCKED with dated rationale (2026-11-15): pyKT not installed in this environment (import pykt fails; verified) and none of DKT/SAKT/AKT ships an OULAD adapter (no item-level correctness stream); FSRS would require fabricating card ratings; half-life regression re-implemented from published equations and labelled ADAPTATION. Recorded as protocol deviation in experiment_card.json."
+    },
+    "P05-T09": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p05/models.py",
+        "research_v3/methods/p05/METHOD.md",
+        "tests/research_v3/method/test_p05_models.py"
+      ],
+      "note": "Forgetting-aware retrieval strength theta = alpha*m*2^(-Delta/h) with monotone decay constraint (unit-tested), fixed half-life grid selected on calibration only, typed failures (single-class/unfitted/empty-features refused). Attribution table: decay kernel is an adaptation of half-life regression/FSRS concepts, no upstream code."
+    },
+    "P05-T10": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p05/ablations.json",
+        "tests/research_v3/method/test_p05_models.py::test_ablation_true_removal"
+      ],
+      "note": "A1-A5 ablations (no elapsed time / no hazard calibration / no score history / no engagement / no recency) run on the same splits with cluster-bootstrap CIs; true-removal verified by test. Separate from stress counterexamples."
+    },
+    "P05-T11": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p05/experiment_card.json",
+        "research_v3/methods/p05/METHOD.md"
+      ],
+      "note": "Frozen hyperparameter budget: half-life grid(6) x C grid(4) tuned on 2014B calibration window only, seed 11, CPU-only, wall time 1545.5s; no test tuning (enforced by split design + tests). Deterministic solver; byte-identical rerun contract tested."
+    },
+    "P05-T12": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p05/run_p05_matrix.py",
+        "research_artifacts_v3/runs/p05/run_manifest.json",
+        "research_artifacts_v3/runs/p05/statistics.json",
+        "research_artifacts_v3/runs/p05/predictions/P05_forgetting_aware.json"
+      ],
+      "note": "Full preregistered matrix on real OULAD with every cell manifest + predictions: 38,401 calibration / 48,370 test attempts. REAL RESULT: forgetting-aware AUC 0.7220 vs C1 0.7132 (diff 0.0088, 95% CI [0.0075, 0.0101], one-sided bootstrap p<0.05, 2000 resamples, learner-clustered) — small but CI-separated; C0 AUC 0.5. experiment_card status PASS."
+    },
+    "P05-T13": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p05/strata.json",
+        "research_artifacts_v3/runs/p05/scheduling.json"
+      ],
+      "note": "All five preregistered stress strata reported (none omitted): irregular_timestamps n=28118 (P05 0.8359 vs C1 0.8329), long_gaps n=2820, short_bursts n=4459 (P05 0.7690 vs C1 0.8107 — C1 wins this stratum, reported), never_reviewed n=248 (both weak), seasonality_final30 n=341. Off-policy replay bias declared in scheduling.json."
+    },
+    "P05-T14": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p05/statistics.json",
+        "research_artifacts_v3/runs/p05/run_manifest.json"
+      ],
+      "note": "Paired learner-clustered bootstrap (2000 resamples, seed 42), Holm family (size 4), one-sided alpha 0.05, effect size with 95% CI on the AUC difference [0.0075, 0.0101]. Scheduling contrast P05-vs-C1rank at recall@20% is a NULL (diff 0.0, p=1.0) and is reported as such; direction result recorded honestly in run_manifest.summary."
+    },
+    "P05-T15": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p05/run_p05_matrix.py",
+        "research_artifacts_v3/runs/p05/run_manifest.json",
+        "research_artifacts_v3/runs/p05/predictions/C1_logistic_recency_freq.json"
+      ],
+      "note": "Source-to-table: all metrics generated by run_p05_matrix.py from frozen inputs (docstring: no hand-entered numbers); attempts_manifest integrity sha256 recorded inside run_manifest; prediction vectors dumped per arm for checksum round trip; determinism contract unit-tested (test_determinism_same_inputs_same_predictions)."
+    },
+    "P05-T16": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_v3/methods/p05/METHOD.md",
+        "research_v3/experiments/p05/blocked_cards.yaml"
+      ],
+      "note": "Falsification rules pre-registered (null must be published, no stratum omitted, no retuning on test) and honored — the scheduling NULL and the short_bursts stratum loss are retained. Collision/salami-slicing review (P01 KT-transfer overlap decision) is NOT yet written as a standalone dated artifact; positioning exists only in METHOD.md. Human novelty signoff (T20) not substituted."
+    },
+    "P05-T17": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/methods/p05/METHOD.md"
+      ],
+      "note": "No manuscript directory exists yet (research_v3/manuscripts/p05/ absent). METHOD.md sections 1-7 are manuscript-ready source material (formalization, mechanism, complexity, pre-declared limitations incl. off-policy threat), but the manuscript build (methods/limitations/figures/appendix with evidence IDs) has not been produced."
+    },
+    "P05-T18": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/methods/p05/run_p05_matrix.py"
+      ],
+      "note": "Reproduction commands exist (python -m research_v3.methods.p05.run_p05_matrix; deterministic seeds; frozen split hashes in attempts_manifest.json), but no independent external rerun-from-clean-clone has been executed and no reviewer issue list exists."
+    },
+    "P05-T19": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/experiments/p05/dataset_cards.yaml"
+      ],
+      "note": "Human-only: ethics/license approval requires documented actual signatures. OULAD license reconciliation (CC BY vs CC BY-NC) is recorded in dataset_cards.yaml but no human approval signature exists; none simulated."
+    },
+    "P05-T20": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/methods/p05/METHOD.md"
+      ],
+      "note": "Human-only: novelty/nearest-work signoff by research lead. Agent cannot certify novelty against 2026 temporal-KT literature; closest-work matrix not signed."
+    },
+    "P05-T21": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/methods/p05/METHOD.md"
+      ],
+      "note": "Human-only: coauthor/venue/submission signoff. No manuscript, venue, or authorship claims made."
+    }
+  },
+  "summary": {
+    "done_engineering": 14,
+    "partial": 1,
+    "blocked_human_only": 3,
+    "blocked_engineering": 3,
+    "note": "P05 executed on real OULAD (168,164 attempts, sealed 2014J test). Real result: forgetting-aware AUC 0.7220 vs C1 0.7132 (small, CI-separated, Holm-corrected family); scheduling recall@20% contrast is a null and is reported. C2 published-KT comparator BLOCKED (pyKT not installed; no OULAD adapter) with dated rationale. Engineering blockers: no standalone collision-audit artifact (T16 PARTIAL), no manuscript build (T17), no independent rerun (T18)."
+  }
+}

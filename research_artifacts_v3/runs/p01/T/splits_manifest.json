@@ -1,0 +1,83 @@
+{
+  "label_distribution_by_part": {
+    "calibration": {
+      "Distinction": 316,
+      "Fail": 492,
+      "Pass": 966,
+      "Withdrawn": 1039
+    },
+    "dev": {
+      "Distinction": 297,
+      "Fail": 574,
+      "Pass": 1253,
+      "Withdrawn": 1061
+    },
+    "test": {
+      "Distinction": 401,
+      "Fail": 596,
+      "Pass": 1224,
+      "Withdrawn": 1007
+    },
+    "train": {
+      "Distinction": 1797,
+      "Fail": 5193,
+      "Pass": 8199,
+      "Withdrawn": 5988
+    }
+  },
+  "leakage_audit": {
+    "duplicates": 0,
+    "findings": [],
+    "rows": 32593,
+    "status": "PASS",
+    "unique_case_ids": 32593
+  },
+  "paper_id": "P01",
+  "presentations_by_part": {
+    "calibration": {
+      "2013B": 0,
+      "2013J": 0,
+      "2014B": 0,
+      "2014J": 2813
+    },
+    "dev": {
+      "2013B": 0,
+      "2013J": 0,
+      "2014B": 0,
+      "2014J": 3185
+    },
+    "test": {
+      "2013B": 0,
+      "2013J": 0,
+      "2014B": 0,
+      "2014J": 3228
+    },
+    "train": {
+      "2013B": 4576,
+      "2013J": 8095,
+      "2014B": 7028,
+      "2014J": 1478
+    }
+  },
+  "protocol": "T",
+  "rows_removed_for_learner_disjointness": 2190,
+  "sizes_after_learner_disjointness": {
+    "calibration": 2813,
+    "dev": 3185,
+    "test": 3228,
+    "train": 21177
+  },
+  "sizes_raw": {
+    "calibration": 3324,
+    "dev": 3226,
+    "test": 3228,
+    "train": 22815
+  },
+  "split_hash": "80de2a8229c00539733939dd8dae8a160d1767d1c026040eb91fd97fb3a73e59",
+  "unique_learners": {
+    "calibration": 2812,
+    "dev": 3153,
+    "test": 3227,
+    "train": 19593
+  }
+}

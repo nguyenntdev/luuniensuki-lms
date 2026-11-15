@@ -1,0 +1,34 @@
+# P06 preregistered run matrix (S2 time split = primary; S1 group split = sensitivity)
+# Every cell: {split} x {arm} x {k}; evaluation on the TEST partition only.
+matrix:
+  - split: time
+    role: primary
+    arms: [C0, C1, PROPOSED, A1, A2, A3, A4]
+    ks: [25, 50, 100]
+  - split: group
+    role: sensitivity
+    arms: [C0, C1, PROPOSED, A1, A2, A3, A4]
+    ks: [25, 50, 100]
+
+runner: research_v3/experiments/p06/run_experiment.py
+seed: 2026
+bootstrap_seed: 42
+n_bootstrap: 2000
+
+artifacts_dir: research_artifacts_v3/runs/p06
+outputs:
+  - results.json          # every matrix cell: manifest + per-round metrics + CIs
+  - summary.json          # aggregate per arm x k with pooled CIs + paired tests
+  - ablations.json        # A1-A4 records incl. failure strata
+  - split_manifest.json   # FrozenSplit hashes (time + group)
+  - dataset_card.json     # provenance echo (registry card for oulad-2013-2014)
+  - experiment_card.json  # ExperimentCard with method/split/prereg hashes
+  - evidence_cards.json   # EvidenceCards binding claims to cells
+  - noncausal_attestation.json
+  - rerun_check.json      # byte-for-byte determinism verification
+
+acceptance:
+  - every cell has a manifest and strict exit code
+  - capacity_violations == 0 in every cell
+  - k-anonymity suppression active for all n<5 reported cells
+  - negative/null results recorded, never dropped

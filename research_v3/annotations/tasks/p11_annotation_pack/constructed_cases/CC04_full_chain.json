@@ -1,0 +1,76 @@
+{
+  "response_id": "CC04_full_chain",
+  "label": "CONSTRUCTED_NOT_HUMAN",
+  "evidence": [
+    {
+      "evidence_id": "e1",
+      "source_type": "primary",
+      "provenance": "cited",
+      "is_authentic": true,
+      "locator": "VNM_stela_1484_faceA_line12",
+      "text": "Bia Tiến sĩ 1484: 'Khoa thi này chọn được 33 tiến sĩ'."
+    },
+    {
+      "evidence_id": "e2",
+      "source_type": "primary",
+      "provenance": "cited",
+      "is_authentic": true,
+      "locator": "QTNL_q7_folia_31",
+      "text": "Khâm định Việt sử thông giám cương mục, quyển 7: quy chế thi Hội."
+    },
+    {
+      "evidence_id": "e3",
+      "source_type": "secondary",
+      "provenance": "cited",
+      "is_authentic": true,
+      "locator": "phantich_2019_p42",
+      "text": "Nghiên cứu thống kê số lượng đỗ đạt theo khoa."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "c1",
+      "text": "Khoa cử thời Nguyễn chuẩn hóa cao hơn thời Lê sơ (giới hạn trong phạm vi Bắc Việt thời kỳ 1802-1884).",
+      "is_causal": true,
+      "inference_type": "causal"
+    },
+    {
+      "claim_id": "c2",
+      "text": "Nếu không có quy chế mới, số đỗ đạt sẽ phân tán hơn (phản chứng).",
+      "is_causal": false,
+      "inference_type": "counterfactual"
+    }
+  ],
+  "links": [
+    {
+      "claim_id": "c1",
+      "evidence_id": "e1",
+      "relation": "supports"
+    },
+    {
+      "claim_id": "c1",
+      "evidence_id": "e2",
+      "relation": "supports"
+    },
+    {
+      "claim_id": "c1",
+      "evidence_id": "e3",
+      "relation": "refutes"
+    },
+    {
+      "claim_id": "c1",
+      "evidence_id": "e2",
+      "relation": "contextualizes"
+    }
+  ],
+  "scorer_output": {
+    "scores": {
+      "S1_sourcing": 3,
+      "S2_corroboration": 3,
+      "S3_contextualization": 3,
+      "S4_argumentation": 3
+    },
+    "overall": 3.0,
+    "caps_applied": []
+  }
+}

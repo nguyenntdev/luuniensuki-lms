@@ -1,0 +1,7 @@
+case_id,expected_S1,expected_S2,expected_S3,expected_S4,note
+CC01_zero_evidence,0,0,0,1,constructed_not_human
+CC02_asserted_only,1,1,1,1,constructed_not_human
+CC03_described_cited,2,2,2,2,constructed_not_human
+CC04_full_chain,3,3,3,3,constructed_not_human
+CC05_fabricated_citation,1,2,2,2,constructed_not_human
+CC06_refutation_handled,3,3,3,3,constructed_not_human

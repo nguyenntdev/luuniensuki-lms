@@ -1,0 +1,34 @@
+# P13 dataset card addendum — OULAD raw provenance (P13-T02/T04)
+dataset_id: oulad-2013-2014
+paper_id: P13
+provider: The Open University (via UCI ML Repository id 349)
+source_url: https://archive.ics.uci.edu/dataset/349/open+university+learning+analytics+dataset
+citation: "Kuzilek, J., Hlosta, M., & Zdrahal, Z. (2017). Open University Learning Analytics Dataset. Scientific Data, 4, 170171. doi:10.1038/sdata.2017.171"
+doi: 10.1038/sdata.2017.171
+version: 2013J/2013B/2014J/2014B (UCI distribution)
+retrieved_at: "2026-11-15T10:33:03Z"
+archive_sha256: f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4
+license: CC BY 4.0  # UCI hosting; original OULAD release also CC BY 4.0 (attribution)
+license_text_sha256: 41003d4a74749c0220e33dd415042164b5a1093ed401f36277234f772d22d3d0
+license_path: private_data/raw/oulad/2013-2014/LICENSE.txt
+redistribution: "Attribution required; derived artifacts permitted; raw files NOT committed (private_data/ is git-ignored)"
+schema:
+  studentVle.csv: {rows: 10655280, cols: [code_module, code_presentation, id_student, id_site, date, sum_click], date_range: [-25, 269]}
+  vle.csv: {rows: 6364, cols: [id_site, code_module, code_presentation, activity_type, week_from, week_to]}
+  studentInfo.csv: {rows: 32593, label: final_result in {Pass, Fail, Withdrawn, Distinction}}
+  assessments.csv: {rows: 206}
+  studentAssessment.csv: {rows: 173912}
+  studentRegistration.csv: {rows: 32593}
+  courses.csv: {rows: 22}
+integrity_checks:
+  - archive sha256 verified by runner E00 stage
+  - license text sha256 verified by runner E00 stage
+  - studentVle has 0 null dates / 0 null clicks (verified at load; fail-closed)
+  - all id_site values join to vle.csv (verified at load; fail-closed)
+  - all studentVle (module, presentation, student) keys join to studentInfo (verified)
+construct_capability_note:
+  "OULAD records VLE page-level clicks per day. It contains NO psychological
+  SRL instrument (no MSLQ/OSLQ, no diaries, no reflection logs) and forum
+  clicks are page loads, not posts. Therefore P13-T03's target schema treats
+  final_result as the only supervised target, and every SRL feature is a
+  behavioural proxy with construct_validity: proxy_only."

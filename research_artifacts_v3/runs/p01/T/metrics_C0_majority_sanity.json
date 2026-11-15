@@ -1,0 +1,78 @@
+{
+  "accuracy": 0.379182156133829,
+  "clopper_pearson_ci_95": [
+    0.3624056934218117,
+    0.3961778253283128
+  ],
+  "confusion": {
+    "Distinction->Pass": 401,
+    "Fail->Pass": 596,
+    "Pass->Pass": 1224,
+    "Withdrawn->Pass": 1007
+  },
+  "coverage": 1.0,
+  "macro_f1": 0.13746630727762804,
+  "model_id": "C0_majority_sanity",
+  "n": 3228,
+  "n_abstained": 0,
+  "n_correct": 1224,
+  "per_class_recall": {
+    "Distinction": {
+      "clopper_pearson_ci_95": [
+        0.0,
+        0.009157017437212957
+      ],
+      "correct": 0,
+      "n": 401,
+      "recall": 0.0,
+      "wilson_ci_95": [
+        0.0,
+        0.009488797989920104
+      ]
+    },
+    "Fail": {
+      "clopper_pearson_ci_95": [
+        0.0,
+        0.006170280208433352
+      ],
+      "correct": 0,
+      "n": 596,
+      "recall": 0.0,
+      "wilson_ci_95": [
+        4.336808689942018e-19,
+        0.006404123563327127
+      ]
+    },
+    "Pass": {
+      "clopper_pearson_ci_95": [
+        0.9969907465037037,
+        1.0
+      ],
+      "correct": 1224,
+      "n": 1224,
+      "recall": 1.0,
+      "wilson_ci_95": [
+        0.9968713722825554,
+        1.0
+      ]
+    },
+    "Withdrawn": {
+      "clopper_pearson_ci_95": [
+        0.0,
+        0.0036565353301412622
+      ],
+      "correct": 0,
+      "n": 1007,
+      "recall": 0.0,
+      "wilson_ci_95": [
+        0.0,
+        0.0038002584749301763
+      ]
+    }
+  },
+  "predictions_sha256": "3ee85ceb7dc6a458063003cea3f2a9818f27b6738a8c8acac85d43f34afd3db5",
+  "wilson_ci_95": [
+    0.3625977215670259,
+    0.39605380576234267
+  ]
+}

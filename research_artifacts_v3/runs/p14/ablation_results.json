@@ -1,0 +1,205 @@
+{
+  "mutations": {
+    "remove_alt_text": {
+      "named_mechanism_triggered": 8,
+      "objects_mutated": 13
+    },
+    "remove_keyboard": {
+      "named_mechanism_triggered": 1,
+      "objects_mutated": 13
+    },
+    "remove_lbw": {
+      "named_mechanism_triggered": 12,
+      "objects_mutated": 13
+    },
+    "remove_transcript": {
+      "named_mechanism_triggered": 3,
+      "objects_mutated": 13
+    }
+  },
+  "note": "Ablations remove exactly the named mechanism; counterexamples listed per object.",
+  "rows": [
+    {
+      "mutation": "remove_alt_text",
+      "newly_missing": [
+        "udl-rep-alt-text",
+        "wcag-text-alternative"
+      ],
+      "object_id": "syn-obj-01-compliant"
+    },
+    {
+      "mutation": "remove_alt_text",
+      "newly_missing": [
+        "udl-rep-alt-text",
+        "udl-rep-inscription-source",
+        "wcag-text-alternative"
+      ],
+      "object_id": "syn-obj-04-keyboard-trap"
+    },
+    {
+      "mutation": "remove_alt_text",
+      "newly_missing": [
+        "udl-rep-alt-text",
+        "udl-rep-inscription-source",
+        "wcag-text-alternative"
+      ],
+      "object_id": "syn-obj-08-no-lbw"
+    },
+    {
+      "mutation": "remove_alt_text",
+      "newly_missing": [
+        "udl-rep-alt-text",
+        "udl-rep-inscription-source",
+        "wcag-text-alternative"
+      ],
+      "object_id": "syn-obj-09-image-only"
+    },
+    {
+      "mutation": "remove_alt_text",
+      "newly_missing": [
+        "udl-rep-alt-text",
+        "udl-rep-inscription-source",
+        "wcag-text-alternative"
+      ],
+      "object_id": "syn-obj-10-3d-no-keyboard"
+    },
+    {
+      "mutation": "remove_alt_text",
+      "newly_missing": [
+        "udl-rep-alt-text",
+        "udl-rep-inscription-source",
+        "wcag-text-alternative"
+      ],
+      "object_id": "syn-obj-11-contrast-unknown"
+    },
+    {
+      "mutation": "remove_alt_text",
+      "newly_missing": [
+        "udl-rep-alt-text",
+        "udl-rep-inscription-source",
+        "wcag-text-alternative"
+      ],
+      "object_id": "syn-obj-12-no-goal"
+    },
+    {
+      "mutation": "remove_alt_text",
+      "newly_missing": [
+        "udl-rep-alt-text",
+        "wcag-text-alternative"
+      ],
+      "object_id": "syn-obj-13-compliant-interactive"
+    },
+    {
+      "mutation": "remove_transcript",
+      "newly_missing": [
+        "udl-rep-transcript"
+      ],
+      "object_id": "syn-obj-01-compliant"
+    },
+    {
+      "mutation": "remove_transcript",
+      "newly_missing": [
+        "udl-rep-transcript"
+      ],
+      "object_id": "syn-obj-05-lbw-with-transcript"
+    },
+    {
+      "mutation": "remove_transcript",
+      "newly_missing": [
+        "udl-rep-transcript"
+      ],
+      "object_id": "syn-obj-06-video-no-captions"
+    },
+    {
+      "mutation": "remove_keyboard",
+      "newly_missing": [
+        "udl-action-keyboard"
+      ],
+      "object_id": "syn-obj-13-compliant-interactive"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-01-compliant"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-02-no-alt"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-03-no-transcript"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-04-keyboard-trap"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-05-lbw-with-transcript"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-06-video-no-captions"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-07-low-contrast"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-09-image-only"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-10-3d-no-keyboard"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-11-contrast-unknown"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-12-no-goal"
+    },
+    {
+      "mutation": "remove_lbw",
+      "newly_missing": [
+        "udl-eng-low-bandwidth"
+      ],
+      "object_id": "syn-obj-13-compliant-interactive"
+    }
+  ]
+}

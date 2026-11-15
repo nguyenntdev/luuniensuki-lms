@@ -1,0 +1,42 @@
+# P07 frozen experiment matrix (2026-11-15). Cells are evaluated by
+# research_v3/experiments/p07/run_matrix.py; outputs land in
+# research_artifacts_v3/runs/p07/<run_id>/.
+repo_root: ..
+run_id: p07-wave1
+seeds: [20261115]   # generator seed; methods are deterministic (no RNG consumption)
+cells:
+  - cell_id: stress_synthetic
+    dataset: synthetic
+    generator: research_v3.methods.p07.synthetic_generator:generate_stress_cases
+    gold_rule: derivational-fact oracle (runner.gold_from_cases)
+    methods: [proposed, c0_url_present, c1_static_image_fallback, b05_random_eligible]
+    group_key: group_id
+  - cell_id: external_smithsonian_fsg
+    dataset: research_v3/methods/p07/data/smithsonian_fsg_external.jsonl
+    gold_rule: derivational-fact oracle (runner.gold_from_cases)
+    methods: [proposed, c0_url_present, c1_static_image_fallback, b05_random_eligible]
+    group_key: group_id
+ablations:
+  - cell_ref: stress_synthetic
+    ablation_id: A1_no_affordance_coverage
+    remove: affordance-coverage check in selector
+  - cell_ref: stress_synthetic
+    ablation_id: A2_no_device_constraints
+    remove: bandwidth/webgl/keyboard/screen-reader checks in selector
+  - cell_ref: stress_synthetic
+    ablation_id: A5_no_rights_filtering
+    remove: license screen in selector
+  - cell_ref: external_smithsonian_fsg
+    ablation_id: A1_no_affordance_coverage
+    remove: affordance-coverage check in selector
+  - cell_ref: external_smithsonian_fsg
+    ablation_id: A5_no_rights_filtering
+    remove: license screen in selector
+blocked_ablations:
+  - ablation_id: A3_no_provenance
+    reason: single external provider in this wave; needs >= 2 providers to be meaningful
+  - ablation_id: A4_no_hard_rejection
+    reason: >
+      hard rejection IS the affordance-coverage mechanism's failure path in
+      this selector version; A1 (coverage removed) subsumes its observable
+      surface. Distinct A4 implementation deferred with a dated rationale.

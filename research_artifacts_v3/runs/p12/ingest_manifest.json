@@ -1,0 +1,32 @@
+{
+  "provenance": {
+    "mode": "READ_ONLY_DOCUMENTED_CLAIMS",
+    "network_access": "none",
+    "inputs": [
+      {
+        "path": "data/imperial/historical_sources_extended.json",
+        "sha256": "833fed9c9cc345c90f9064083996ef4f08ada8566ef099238f75a2b3060c5063",
+        "size_bytes": 23825
+      },
+      {
+        "path": "data/imperial/monument_claims_matrix.json",
+        "sha256": "b582f913228b3dba3715e342b01986d09c647903a3e76c566bc22c4591cf4846",
+        "size_bytes": 76781
+      },
+      {
+        "path": "data/imperial/heritage_provenance_audit_report.json",
+        "sha256": "015d7762df590c28ee113b96e9023b0f5852c72df854be374bd0ccea0004d7b1",
+        "size_bytes": 155499
+      }
+    ],
+    "sources_registry_version": "5.1.0",
+    "claims_matrix_version": "5.1.0",
+    "audit_report_version": "1.0.0",
+    "ingest_hash": "8e0952deaaa465689319ade0292fa330aa8c79f31c494d18a0964630f0dc3600"
+  },
+  "n_sources": 16,
+  "n_claims_ingested": 63,
+  "skipped": [],
+  "policy": "read-only documented claims; no archive access; no fabricated locators",
+  "blocked_data": "Vietnamese primary archives (ĐNTL, HĐSL, ĐNNTC): BLOCKED for automated ingestion (page-level rights not cleared; no scraping). Locators in the documented corpus are inherited verbatim and NOT machine-verified."
+}

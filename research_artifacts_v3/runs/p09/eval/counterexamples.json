@@ -1,0 +1,42 @@
+[
+  {
+    "expected": "reject_invalid_source",
+    "name": "false_citation",
+    "observed": "reject_invalid_source",
+    "pass": true,
+    "reason_codes": [
+      "fail_closed_gate",
+      "unresolvable_statement_guid"
+    ]
+  },
+  {
+    "expected": "reject_invalid_source",
+    "name": "nonexistent_source_id",
+    "observed": "reject_invalid_source",
+    "pass": true,
+    "reason_codes": [
+      "fail_closed_gate",
+      "nonexistent_source_id"
+    ]
+  },
+  {
+    "expected": "reject_invalid_source",
+    "name": "forged_statement_guid",
+    "observed": "reject_invalid_source",
+    "pass": true,
+    "reason_codes": [
+      "fail_closed_gate",
+      "unresolvable_statement_guid"
+    ]
+  },
+  {
+    "expected": "reject_invalid_source",
+    "name": "missing_rights_statement",
+    "observed": "reject_invalid_source",
+    "pass": true,
+    "reason_codes": [
+      "fail_closed_gate",
+      "source_registry_mismatch"
+    ]
+  }
+]

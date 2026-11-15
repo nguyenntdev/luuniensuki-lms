@@ -1,0 +1,122 @@
+# P08 pre-registration — frozen BEFORE the evaluation campaign (2026-11-15)
+# Type: SOFTWARE SECURITY EVALUATION (label is binding; see independence gate).
+# There is NO human-outcome evidence in this registration. Gamification effects
+# on motivation/engagement/learning are NOT measured and MUST NOT be claimed.
+paper_id: P08
+registration_version: "1.0.0"
+frozen_at: "2026-11-15T00:00:00Z"
+evaluation_class: SOFTWARE_SECURITY_EVALUATION
+human_outcomes:
+  measured: false
+  claim_allowed: false
+  blocked_tasks: [P08-T19, P08-T20, P08-T21]
+
+# ---------------------------------------------------------------- hypothesis
+primary_hypothesis: >-
+  A reward-integrity defender combining (D1) HMAC-SHA256 server attestation,
+  (D2) persistent cross-session idempotency, (D3) velocity/burst control, and
+  (D4) server-side evidence re-verification rejects >= 99.9% of 3000
+  adversarial deliveries (6 attack vectors x 500 deliveries) with zero false
+  awards and at most one false rejection of honest traffic, under the frozen
+  attack suite with seed 20261115.
+null_hypothesis_h0: >-
+  The defender shows no reliable rejection capability beyond LN-05's
+  single-batch behavior on the active-adversary strata {cross-session replay,
+  forged server attestation, velocity farming}; i.e. per-vector detection
+  recall on those strata is statistically indistinguishable from LN-05's
+  baseline behavior and the merge trigger in independence_decision.json fires.
+estimand: >-
+  Per-attack-vector defense rate = 1 - (successful attacks / adversarial
+  deliveries) for vector v, plus absolute counts of false awards, duplicate
+  awards, and false rejections of honest traffic.
+direction: >-
+  Higher detection recall is better; false-award count and duplicate-award
+  count are fail-closed zero-tolerance metrics (any positive value fails the
+  primary gate regardless of other metrics).
+
+# ------------------------------------------------------------------- metrics
+primary_metrics:
+  - name: false_award_rate
+    definition: forged/subsistence awards granted / adversarial deliveries
+    tolerance: 0            # zero-tolerance: any false award fails the gate
+  - name: duplicate_award_count
+    definition: awards granted beyond the first for one submission identity
+    tolerance: 0            # zero-tolerance; includes 100x idempotency proof
+  - name: attack_detection_recall
+    definition: correctly rejected adversarial deliveries / adversarial deliveries, per vector and pooled
+    target: ">= 0.999"
+secondary_metrics:
+  - name: honest_false_rejection_count
+    definition: honest traffic denied (any reason) / honest deliveries
+    tolerance: "<= 1 of 1000"
+  - name: idempotency_proof
+    definition: same valid submission delivered 100x -> exactly 1 award
+    tolerance: exact
+
+# ------------------------------------------------------------- attack strata
+attack_vectors:
+  - id: AV1_replay_identical
+    description: exact re-delivery of a captured valid submission
+    deliveries: 500
+  - id: AV2_replay_mutated_timestamp
+    description: re-delivery with shifted/rotated timestamps
+    deliveries: 500
+  - id: AV3_replay_rotated_event_id
+    description: re-delivery with rotated event_id/delivery_id/request_id
+    deliveries: 500
+  - id: AV4_forged_server_actor
+    description: attacker-controlled channel stamps actor='server' with forged maximal evidence
+    deliveries: 500
+  - id: AV5_stale_policy
+    description: deliveries stamped under a superseded policy version
+    deliveries: 500
+  - id: AV6_cross_device_replay
+    description: re-delivery from a new device/session (new session_id, device fingerprint, fresh ledger claims)
+    deliveries: 500
+honest_control:
+  - id: HC0_honest_learners
+    description: 1000 honest single deliveries (100 learners x 10 distinct valid submissions, incl. cross-session honest resubmission of DIFFERENT evidence)
+    deliveries: 1000
+stress_strata:
+  - id: SS1_100x_duplicate
+    description: one valid submission delivered 100x (idempotency proof)
+  - id: SS2_fast_click_farming
+    description: 30 distinct-evidence submissions in one burst under velocity window
+  - id: SS3_deceptive_badge_copy
+    description: NOT_APPLICABLE to software-security evaluation; human-perception stratum recorded as NOT_APPLICABLE, human claims BLOCKED
+    status: NOT_APPLICABLE
+
+# --------------------------------------------------------- frozen parameters
+seed: 20261115
+seeds: [20261115]
+defender_frozen_config:
+  policy_version: 8
+  hmac_key_id: p08-campaign-key-1   # key material generated inside the run, never committed
+  velocity:
+    window_seconds: 60
+    max_submissions_per_learner: 5
+  evidence_threshold: 0.75
+  award_amounts: {discovery: 25, lesson: 50, mastered: 75}
+  max_xp_per_learner: 150
+baseline: LN-05 single-batch behavior (measured in probes; no re-implementation)
+# Structural alias for the dedup gate: the frozen comparison family is the
+# per-vector defender-vs-LN-05-baseline contrast over the six attack vectors
+# above plus the honest control (MANUSCRIPT.md §3; content unchanged).
+comparison_family:
+  - AV1_replay_identical_vs_LN05_baseline
+  - AV2_replay_mutated_timestamp_vs_LN05_baseline
+  - AV3_replay_rotated_event_id_vs_LN05_baseline
+  - AV4_forged_server_actor_vs_LN05_baseline
+  - AV5_stale_policy_vs_LN05_baseline
+  - AV6_cross_device_replay_vs_LN05_baseline
+  - HC0_honest_learners_control
+statistical_note: >-
+  Deterministic evaluation with fixed seed; counts are exact, no resampling.
+  'Recall >= 0.999' is evaluated as an exact acceptance bound on observed
+  counts (3000 deliveries => at most 3 misses), not an interval estimate.
+  No multiple-testing correction is needed: ONE primary family, ONE campaign.
+disclosed_limitations:
+  - synthetic attacker and defender; no production deployment telemetry
+  - single-node ledger; distributed race behavior out of scope
+  - no external reward-attack dataset exists; results do not estimate human behavior
+  - LN-05 comparison uses its published single-batch behavior, not a re-run under P08's harness

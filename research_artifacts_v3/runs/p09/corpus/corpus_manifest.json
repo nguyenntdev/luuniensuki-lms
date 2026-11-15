@@ -1,0 +1,144 @@
+{
+  "blocked_alternatives": {
+    "europeana": "BLOCKED: no API key; item-level media rights unresolved (registry card unchanged).",
+    "hue-heritage-corpus": "BLOCKED: no written archival permission (registry card unchanged)."
+  },
+  "claim_properties": [
+    "P131",
+    "P17",
+    "P31",
+    "P361",
+    "P571",
+    "P625"
+  ],
+  "dataset_id": "wikidata-hue-heritage-mini",
+  "discovery_bindings": 23,
+  "discovery_query_sha256": "dc811b887a6341702b0af715cd6ee12d93c4e06ceea36cd6b5fcaad0ed2a2bf8",
+  "discovery_response_sha256": "b149d182897f7b782e53fb2b441a0ac00de715eefa37bcc529293462d152cca2",
+  "entities": [
+    {
+      "label": "Imperial City of Hue",
+      "qid": "Q10769129"
+    },
+    {
+      "label": "Tomb of Dục Đức",
+      "qid": "Q10788178"
+    },
+    {
+      "label": "Tomb of Đồng Khánh",
+      "qid": "Q10788196"
+    },
+    {
+      "label": "Trấn Hải Fortress",
+      "qid": "Q10829227"
+    },
+    {
+      "label": "Temple of Literature, Huế",
+      "qid": "Q10833485"
+    },
+    {
+      "label": "Esplanade of Sacrifice to the Heaven and Earth",
+      "qid": "Q10840433"
+    },
+    {
+      "label": "Purple Forbidden City",
+      "qid": "Q13017650"
+    },
+    {
+      "label": "Hiển Đức Gate, Tomb of Emperor Minh Mạng",
+      "qid": "Q132521590"
+    },
+    {
+      "label": "Sùng Ân Temple, Tomb of Emperor Minh Mạng",
+      "qid": "Q132521821"
+    },
+    {
+      "label": "Minh Lâu Pavilion, Tomb of Emperor Minh Mạng",
+      "qid": "Q132522658"
+    },
+    {
+      "label": "Bửu Thành, Tomb of Emperor Minh Mạng",
+      "qid": "Q132524026"
+    },
+    {
+      "label": "Cửa Thể Nhân (Ngan Gate)",
+      "qid": "Q140877128"
+    },
+    {
+      "label": "Tomb of Emperor Thiệu Trị",
+      "qid": "Q16511573"
+    },
+    {
+      "label": "Q61127244",
+      "qid": "Q61127244"
+    },
+    {
+      "label": "Royal Arena and Voi Re Temple",
+      "qid": "Q66213344"
+    },
+    {
+      "label": "Hòn Chén Temple",
+      "qid": "Q66213453"
+    },
+    {
+      "label": "Ngọ Môn",
+      "qid": "Q7023311"
+    },
+    {
+      "label": "Tomb of Emperor Minh Mang",
+      "qid": "Q7481070"
+    },
+    {
+      "label": "Tomb of Tự Đức",
+      "qid": "Q7481171"
+    },
+    {
+      "label": "Tomb of Gia Long",
+      "qid": "Q7818615"
+    },
+    {
+      "label": "Tomb of Khai Dinh",
+      "qid": "Q7818621"
+    },
+    {
+      "label": "Huế citadel",
+      "qid": "Q877185"
+    },
+    {
+      "label": "Thiên Mụ Temple",
+      "qid": "Q975568"
+    }
+  ],
+  "entity_snapshot_sha256": {
+    "Q10769129": "60076a4a6ee752b3d1777e77ab9f3b3cc805ce0d9c620f08f9e2f156251319b0",
+    "Q10788178": "e7e7dcd45edf8b3b268e30218cf3fb4962ade34511f5809056f1a667eaeb0548",
+    "Q10788196": "8afd28baa2013e86606b63a6ea5e2965759daab8ec55705d5d99526a1f458615",
+    "Q10829227": "1bc6be6c4304e026b22e01ddcac607b96b0e2c607b2924c30e27d5af0ef80765",
+    "Q10833485": "d7956c58f311ed61d7abc744da259fe8b26eb1f83c06a5ec671837df3712c719",
+    "Q10840433": "4ab57e314f1500d11effb4e4a110d802d9a40e9d3ccad28d1b84b1e3a6429270",
+    "Q13017650": "936bf23e277d89b972742b5f2ca668441dd693a297d88e1dfcc9815330a73aeb",
+    "Q132521590": "5744814b34e65334ec9bfdd86b1c5890db481148d71879cdb785642abe76d444",
+    "Q132521821": "ba4ebb65729e40ea62b3a34d12bd3b311af423a36fa4d838f87f3ccd287f6c26",
+    "Q132522658": "90c9e2e25eddd89aacb5139c4baa4206d3773c939e0936e83c0f1b48a0ad71f5",
+    "Q132524026": "18c6d3cb6008beab559850caf65215b4d9cc847688812770f185c180547c4982",
+    "Q140877128": "42da6614f183c4505191843dba11b5880c3fd64b6d68061e51f2d7f40c945f6a",
+    "Q16511573": "4530e374c6c7bd203efce32a6c74cfb81095c8b1f3b07060db1cb4af191f9a3b",
+    "Q61127244": "56fcd7021fa156d0f4595707d96f9fba0b5307ecc104ce40019122053d46ea6a",
+    "Q66213344": "6605d0582e8d10fdc1b6581a6260cd1ed99623bd1f5dbcc7e0dbd0c05fb902ef",
+    "Q66213453": "61900869152994382267e4829527231c00268517da52d94f6c922967a2a9c72a",
+    "Q7023311": "ba6b224be6f541e22c9ccb4b1aa5d1ae28e22bc712efb545b72ef2f480bab861",
+    "Q7481070": "58512cc4d8e4f75eeede8c73d157c72224aa5c6c1a2e5eef0a3b801977bcbfed",
+    "Q7481171": "c782fee4fc9424fd89a15377549f018b59d58e81232ae91f222a9e5f47c0b2b4",
+    "Q7818615": "1bbcb9643e5da8669479768a9843a3d8b6b90d81d00bd045efb0646569b24a5a",
+    "Q7818621": "90ce5d73cc5ef13554a0ea071c1556fd6e17c62f3080714b44332b0e81cb2d85",
+    "Q877185": "88c1aa6f8aea7c973f263f7ca809b8d8419a87cf4029d444f468c44216d75558",
+    "Q975568": "8d227d5a5b190205e08b54d75fdeffc5c45ca7dee35e88b1ada01ca4a5de825a"
+  },
+  "license": "CC0-1.0",
+  "license_note": "Wikidata declares CC0 for structured data; snapshots stored verbatim with per-byte SHA-256. Source statements are secondary evidence, NOT primary archival sources; no historical truth inferred from Wikidata alone.",
+  "n_claims": 51,
+  "provider": "Wikidata (Wikimedia Foundation)",
+  "source_url": "https://query.wikidata.org/sparql + https://www.wikidata.org/wiki/Special:EntityData/",
+  "verification_rule": "claim is verified iff its statement GUID resolves in the frozen snapshot AND the statement carries >= 1 reference block (snaks). This is a structural rule against the snapshot, NOT expert adjudication of historical truth.",
+  "verification_rule_version": "p09-verification-rule-v1.0.0"
+}

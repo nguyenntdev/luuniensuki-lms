@@ -1,0 +1,145 @@
+{
+  "campaign": "P08_reward_integrity",
+  "deliveries": {
+    "adversarial_per_vector": 500,
+    "adversarial_total": 3000,
+    "duplicate_stress": 100,
+    "farming_burst": 30,
+    "honest_control": 1000
+  },
+  "evaluation_class": "SOFTWARE_SECURITY_EVALUATION",
+  "generated_at": "2026-11-15T11:23:11.532892+00:00",
+  "human_outcomes_measured": false,
+  "metrics": {
+    "decisions_histogram": {
+      "award": 1000,
+      "reject_forged_attestation": 500,
+      "reject_replay": 176,
+      "reject_stale_policy": 500,
+      "reject_velocity": 1824
+    },
+    "duplicate_award_count": 0,
+    "false_award_count": 0,
+    "false_award_rate": 0.0,
+    "farming_burst_grants": 5,
+    "honest_deliveries": 1000,
+    "honest_false_rejection_count": 0,
+    "idempotency_award_count": 1,
+    "per_vector": [
+      {
+        "deliveries": 500,
+        "detection_recall": 1.0,
+        "rejected": 500,
+        "successful_attacks": 0,
+        "vector_id": "AV1_replay_identical"
+      },
+      {
+        "deliveries": 500,
+        "detection_recall": 1.0,
+        "rejected": 500,
+        "successful_attacks": 0,
+        "vector_id": "AV2_replay_mutated_timestamp"
+      },
+      {
+        "deliveries": 500,
+        "detection_recall": 1.0,
+        "rejected": 500,
+        "successful_attacks": 0,
+        "vector_id": "AV3_replay_rotated_event_id"
+      },
+      {
+        "deliveries": 500,
+        "detection_recall": 1.0,
+        "rejected": 500,
+        "successful_attacks": 0,
+        "vector_id": "AV4_forged_server_actor"
+      },
+      {
+        "deliveries": 500,
+        "detection_recall": 1.0,
+        "rejected": 500,
+        "successful_attacks": 0,
+        "vector_id": "AV5_stale_policy"
+      },
+      {
+        "deliveries": 500,
+        "detection_recall": 1.0,
+        "rejected": 500,
+        "successful_attacks": 0,
+        "vector_id": "AV6_cross_device_replay"
+      }
+    ],
+    "pooled_detection_recall": 1.0
+  },
+  "per_vector_verdict_histogram": {
+    "AV1_replay_identical": {
+      "reject_replay": 44,
+      "reject_velocity": 456
+    },
+    "AV2_replay_mutated_timestamp": {
+      "reject_replay": 44,
+      "reject_velocity": 456
+    },
+    "AV3_replay_rotated_event_id": {
+      "reject_replay": 44,
+      "reject_velocity": 456
+    },
+    "AV4_forged_server_actor": {
+      "reject_forged_attestation": 500
+    },
+    "AV5_stale_policy": {
+      "reject_stale_policy": 500
+    },
+    "AV6_cross_device_replay": {
+      "reject_replay": 44,
+      "reject_velocity": 456
+    }
+  },
+  "policy_version": 8,
+  "primary_gate": {
+    "adversarial_total": 3000,
+    "checks": {
+      "duplicate_award_count_zero": true,
+      "every_vector_recall_ge_0999": true,
+      "false_award_count_zero": true,
+      "farming_burst_within_velocity_cap": true,
+      "honest_false_rejections_le_1": true,
+      "idempotency_100x_exactly_1_award": true,
+      "pooled_recall_ge_0999": true
+    },
+    "passed": true,
+    "recall_misses_allowed": 3,
+    "weakest_vector": {
+      "deliveries": 500,
+      "detection_recall": 1.0,
+      "rejected": 500,
+      "successful_attacks": 0,
+      "vector_id": "AV1_replay_identical"
+    }
+  },
+  "seed": "20261115",
+  "stale_policy_version": 7,
+  "stress": {
+    "SS1_100x_duplicate": {
+      "awards": 1,
+      "deliveries": 100,
+      "verdict_histogram": {
+        "award": 1,
+        "reject_replay": 9,
+        "reject_velocity": 90
+      }
+    },
+    "SS2_fast_click_farming": {
+      "deliveries": 30,
+      "grants": 5,
+      "verdict_histogram": {
+        "award": 5,
+        "reject_velocity": 25
+      }
+    },
+    "SS3_deceptive_badge_copy": {
+      "reason": "human-perception stratum; software-security evaluation; human claims BLOCKED",
+      "status": "NOT_APPLICABLE"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "artifacts": {
+    "engine": {
+      "__init__.py": "b089b953f338a53b6bd71e9e5fe607a03dc3c0fb8059e039629c7b588d949166",
+      "attacks.py": "d967480a4a4e4f6fd0e198971a6ed9a7f49e19983481f5a145b53db3d62e60e0",
+      "attestation.py": "c32764a172fe0019f3993bb6034a0f4871bcdda26f20a8fa7a49a37406c0f117",
+      "defender.py": "618b74b150a6728d6d0bb471429c5c81d2c797fd719370570a3d884a0ca8a3e2",
+      "fixtures.py": "076b5ef8e8aa60b42f3d4b5aaa788bc69950f7bdaba4d905fef31d347950964a",
+      "metrics.py": "74b38a68e928a9c5260ceeb6362e8b6912aef273ed324fe708631b72e9c79b95",
+      "runner.py": "779a25570f0e45274bf263358f1963d9efe9c13a936e66fc1f3388635acde283",
+      "types.py": "7a912dec135b3a7d3cdfce514aa25660f85292f1137fe53ed938fd35d0c3cc84"
+    },
+    "independence_decision": {
+      "path": "research_artifacts_v3/runs/p08/independence_decision.json",
+      "sha256": "d463d64c9d3b90f203b1b56d726d4e0822728a9e1107ec36792154c76f8bc899"
+    },
+    "method_spec": {
+      "path": "research_v3/methods/p08/METHOD.md",
+      "sha256": "6c047cb03494d4b875c8e1597acf6e125181aa4653d8a42a43904a0076a33372"
+    },
+    "pre_registration": {
+      "path": "research_v3/experiments/p08/pre_registration.yaml",
+      "sha256": "78617d70fb8fbd24db00de1a6e10f2629a9a44c68028ec0cd421094526924705"
+    },
+    "probes_evidence": {
+      "path": "research_v3/experiments/p08/PROBES.md",
+      "sha256": "e715b9593a8f63fde8a203ef997d61040613437d61b8536296ed43965f060501"
+    },
+    "results": {
+      "path": "research_artifacts_v3/runs/p08/evaluation_results.json",
+      "sha256": "14ffa9a3f81d8d851def753a4db19f5f62581f8fda8a68eca01d3e5e03b607c2"
+    },
+    "tests": {
+      "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "conftest.py": "2958379fc4fb647cd6d22b0bdddf4674e2304e283b9efaebc55ca26ee413b83c",
+      "test_p08_campaign.py": "1e20593de7d99c24b71cd8793911e61e3569f8603fdf230b2a6b9f08a82b3b72",
+      "test_p08_integrity.py": "013b7cec61656e1b5348ad2a8e976b133005f2c67597ee25bf3ac094c6a95869",
+      "test_p08_velocity_determinism.py": "599a03f87fb593669dbc55769ac36aeffebc8cd648257bf36eaf9a3a55009094"
+    }
+  },
+  "evaluation_class": "SOFTWARE_SECURITY_EVALUATION",
+  "generated_at": "2026-11-15T11:11:37.178813+00:00",
+  "human_outcomes_measured": false,
+  "ln05_regression_command": "python3 -m pytest tests/research_v2/ln05 -q",
+  "paper_id": "P08",
+  "rerun_command": "python3 -m research_v3.methods.p08.runner --out research_artifacts_v3/runs/p08",
+  "run": "p08_reward_integrity_campaign",
+  "test_command": "python3 -m pytest tests/research_v3/method/p08 -q"
+}

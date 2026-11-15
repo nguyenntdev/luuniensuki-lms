@@ -1,0 +1,155 @@
+# P13 preregistration — frozen BEFORE the confirmatory analysis ran.
+# Paper: Phân tích hành vi tự điều chỉnh học tập trong môi trường học trực tuyến
+#        và hàm ý cho học tập dự án (P13).
+# Status: CONSTRUCT_VALIDATION_REQUIRED (spec 05_PAPERS/P13).
+#
+# CENTRAL LIMITATION, declared up front: OULAD contains NO psychological SRL
+# measurement (no MSLQ, no OSLQ, no reflection logs). Every "SRL proxy" below is
+# a BEHAVIOURAL PROXY derived from VLE clickstream. Nothing in this study
+# measures the SRL construct itself; all proxies carry
+# construct_validity: proxy_only and no causal claim is permitted anywhere.
+paper_id: P13
+rq_id: RQ1
+prereg_version: 1.0.0
+frozen_at: "2026-11-15"
+freeze_note: >
+  Written before running the confirmatory matrix on the OULAD snapshot
+  (sha256 f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4).
+  No confirmatory result existed at freeze time; only schema sanity checks and
+  the deterministic split materialization were run earlier.
+
+research_question: >
+  Which observable clickstream behaviour patterns (operationalised as Zimmerman
+  phase-structured SRL proxies) differ across outcome groups (Pass vs Fail vs
+  Withdrawn), and how far can outcome be predicted from those proxies alone
+  within a leakage-safe early observation window — while treating all proxies
+  as construct_invalid for SRL itself?
+
+estimand: >
+  Descriptive: standardized mean differences (Cliff's delta with bootstrap CIs)
+  in SRL-proxy feature distributions between outcome groups, and
+  between presentations. Predictive (secondary): ROC-AUC / PR-AUC / Brier / ECE
+  of outcome classification from SRL proxies computed strictly inside the
+  early observation window (day 0..60), against C0/C1 baselines.
+
+null_hypotheses:
+  H0_primary: >
+    SRL-proxy features (C2 phase-structured) provide no classification
+    improvement over the raw click-count baseline C0 (AUC difference <= 0),
+    i.e. SRL structure adds no value beyond generic activity volume.
+    This H0 MUST be published if not rejected.
+  H0_secondary: >
+    SRL-proxy feature distributions do not differ across outcome groups
+    (Cliff's delta = 0 for every proxy, Pass-vs-Fail and Pass-vs-Withdrawn).
+
+primary_endpoint:
+  metric: roc_auc
+  contrast: C2 (phase-structured SRL proxy profile, calibrated) vs C0 (raw click count)
+  direction: higher_is_better
+  smallest_meaningful_effect:
+    delta_auc: 0.02
+    rationale: >
+      Common learning-analytics convention; below this the phase structure is
+      declared practically equivalent to raw volume and H0_primary is published.
+  denominator: >
+    One unit = one student-module-presentation row (case_id). Cluster unit for
+    bootstrap CIs = id_student (a student may appear in several presentations).
+
+comparison_family:
+  - id: C0
+    name: raw click-count (B00-style frequency baseline)
+    features: [early_click_total]
+    model: logistic_regression
+    role: sanity
+  - id: C1
+    name: session/time descriptive baseline
+    features: [active_days, mean_daily_clicks, click_std, session_regularity_cv, days_since_last_activity]
+    model: logistic_regression
+    role: matched_classical
+  - id: C2
+    name: phase-structured SRL proxy profile (proposed)
+    features: all SRL proxies from methods/p13/srl_operationalisation.yaml
+    model: logistic_regression
+    role: proposed
+
+ablations:
+  - id: A1
+    name: "no phase features"
+    remove: [forethought_*]
+  - id: A2
+    name: "no temporal ordering (shuffle day assignment within student)"
+    remove: [temporal_order_integrity]
+  - id: A3
+    name: "no help-seeking features"
+    remove: [help_seeking_*]
+  - id: A4
+    name: "no effort-distribution features"
+    remove: [effort_*]
+
+splits:
+  group_split:
+    key: id_student
+    fractions: [0.70, 0.10, 0.10, 0.10]
+    salt: p13-oulad-group-v1
+    purpose: learner-disjoint train/calibration/dev/test
+  time_split:
+    key: code_presentation
+    purpose: temporal holdout by course presentation (train 2013B/2013J/2014B, test 2014J)
+    rule: presentations ordered chronologically; last presentation(s) held out
+  leakage_rules:
+    - "features computed ONLY from clicks with date in [cutoff_start, cutoff_end] (day 0..60)"
+    - final_result and any post-cutoff information never enters feature computation
+    - id_student never crosses split boundaries (assert_no_leakage + explicit test)
+    - >-
+      withdrawal date (date_unregistration) is NOT used to censor or reweight
+      features; sensitivity analysis only, preregistered as exploratory
+
+feature_cutoff:
+  start_day: 0
+  end_day: 60
+  note: >
+    Negative dates (pre-course-start browsing) are excluded from the primary
+    window to keep all rows comparable; a sensitivity check includes them.
+
+metrics:
+  - roc_auc            # primary
+  - pr_auc
+  - brier
+  - ece                # 10 equal-width bins, calibration.py
+  - cliffs_delta       # group differences, with cluster bootstrap CI on id_student
+  - cohens_d           # supplementary parametric effect size
+
+multiple_testing:
+  method: holm
+  family: >
+    The 3 confirmatory pairwise group contrasts (Pass-vs-Fail,
+    Pass-vs-Withdrawn, Fail-vs-Withdrawn) per proxy family, plus the C2-vs-C0
+    and C2-vs-C1 AUC paired comparisons (DeLong bootstrap).
+ci_method: "cluster_bootstrap_on_id_student (2000 resamples, seed 20261115)"
+paired_tests: "mcnemar exact for paired correctness; cluster bootstrap for AUC diffs"
+
+subgroups:
+  - "code_presentation (temporal robustness)"
+  - gender
+  - age_band
+  - imd_band
+  - highest_education
+  - disability
+min_subgroup_n: 20   # below this, report but never headline
+
+claim_rules:
+  - never state or imply that SRL itself was measured; proxies only
+  - no causal language anywhere (this is an observational descriptive study)
+  - if C2 fails to beat C0 by >= 0.02 AUC, publish H0_primary as not rejected
+  - >-
+    external generalization: single external dataset (OULAD) => marked
+    "external generalization unverified"; no second domain is claimed
+  - >-
+    OULAD log overlap with P06 (risk ranking) is disclosed; P13's outcome is
+    SRL-proxy structure description, not intervention prioritization
+
+status: PREREGISTERED
+
+# Deterministic single-seed run fixed by the frozen implementation
+# (methods/p13/analysis.py SEED = 20261115); no seed search is performed.
+seeds: [20261115]

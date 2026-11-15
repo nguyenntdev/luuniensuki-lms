@@ -1,0 +1,59 @@
+{
+  "response_id": "CC05_fabricated_citation",
+  "label": "CONSTRUCTED_NOT_HUMAN",
+  "evidence": [
+    {
+      "evidence_id": "e1",
+      "source_type": "primary",
+      "provenance": "cited",
+      "is_authentic": false,
+      "locator": null,
+      "text": "Tư liệu 'Đại Nam thực lục bí sử' (không tồn tại)."
+    },
+    {
+      "evidence_id": "e2",
+      "source_type": "primary",
+      "provenance": "cited",
+      "is_authentic": false,
+      "locator": null,
+      "text": "Tư liệu 'Sắc lệnh triều Nguyễn 1832' (không kiểm chứng được)."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "c1",
+      "text": "Triều Nguyễn cấm người dân tự đúc chuông (thời Minh Mạng).",
+      "is_causal": false,
+      "inference_type": "explanatory"
+    }
+  ],
+  "links": [
+    {
+      "claim_id": "c1",
+      "evidence_id": "e1",
+      "relation": "supports"
+    },
+    {
+      "claim_id": "c1",
+      "evidence_id": "e2",
+      "relation": "supports"
+    },
+    {
+      "claim_id": "c1",
+      "evidence_id": "e2",
+      "relation": "contextualizes"
+    }
+  ],
+  "scorer_output": {
+    "scores": {
+      "S1_sourcing": 1,
+      "S2_corroboration": 2,
+      "S3_contextualization": 2,
+      "S4_argumentation": 2
+    },
+    "overall": 1.75,
+    "caps_applied": [
+      "S1_sourcing: best provenance rank 1; fabricated_source_cap_S1"
+    ]
+  }
+}

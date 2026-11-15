@@ -85,3 +85,17 @@ LUU_NIEN_RESEARCH_MASTER_EXECUTION_2026_11_07/
 mobile/android/app/.cxx/
 LUU_NIEN_RESEARCH_V2_456_FILES_52K_LINES/
 LUU_NIEN_RESEARCH_V2_456_FILES_52K_LINES.zip
+
+# Research V3 private data (OULAD raw) - never commit
+private_data/
+
+# Research V3: never commit raw external dataset payloads or restricted data.
+research_artifacts_v3/runs/*/raw/
+research_artifacts_v3/runs/*/corpus/entity_json/
+research_v3/datasets/sanitized/*/raw/
+
+# Research V3: large per-case prediction/split dumps are reproducible from the
+# committed run manifests + scripts; keep the repo lightweight.
+research_artifacts_v3/runs/*/predictions/
+research_artifacts_v3/runs/*/splits_manifest.json
+research_v3/config/split_protocols/*.json

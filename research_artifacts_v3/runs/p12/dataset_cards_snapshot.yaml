@@ -1,0 +1,139 @@
+# P12 dataset rights cards (P12-T02) — statuses follow research_v3/contracts/cards.py
+# Gate rule: nothing is APPROVED without license text + checksum + reviewer confirmation.
+# Vietnamese primary archives: BLOCKED for automated ingestion (page-level rights
+# not cleared for machine use; no scraping; no fabricated locators).
+
+- dataset_id: p12-vn-primary-archives
+  provider: Quốc Sử Quán triều Nguyễn (via modern editions / HMCC)
+  sources:
+    - "Đại Nam Thực Lục (Tiền Biên + Chính Biên K1–K7)"
+    - "Khâm Định Đại Nam Hội Điển Sự Lệ"
+    - "Đại Nam Nhất Thống Chí"
+  source_url: https://www.hueworldheritage.org.vn/
+  doi: null
+  version: "documented-registry-v5.1.0 (repo data/imperial/historical_sources_extended.json)"
+  retrieved_at: "2026-11-15"
+  license_text_sha256: null
+  allowed_uses: []
+  redistribution_policy: "none — no machine ingestion, no scraping, no media copying"
+  original_sha256: null
+  transformed_sha256: null
+  sample_count: 0
+  schema_version: "p12-source-registry-1"
+  consent_basis: NOT_APPLICABLE
+  units: archival_pages
+  group_keys: [source_id, volume]
+  time_key: null
+  leakage_audit: NOT_APPLICABLE
+  source_attribution: "catalog metadata only, cited read-only from repo registry"
+  status: BLOCKED
+  blocked_reason: >-
+    Page-level citation and digitization rights for automated ingestion are not
+    cleared. Only the repo's already-documented claim rows referencing these
+    archives may be read (read-only), and every locator is inherited verbatim —
+    never invented. Human archival verification (P12-T19) is BLOCKED.
+
+- dataset_id: p12-repo-documented-claims
+  provider: luuniensuki-lms repo (STTT_IMPERIAL_CITY scope)
+  sources:
+    - data/imperial/historical_sources_extended.json
+    - data/imperial/monument_claims_matrix.json
+    - data/imperial/heritage_provenance_audit_report.json
+  source_url: "file://data/imperial (repo-internal, read-only)"
+  doi: null
+  version: "5.1.0"
+  retrieved_at: "2026-11-15"
+  license_text_sha256: null
+  allowed_uses: [academic_analysis]
+  redistribution_policy: "repo-internal only; claims remain pending human verification"
+  original_sha256: "RECORDED_AT_RUN_TIME_IN_INGEST_MANIFEST (sha256 of each file)"
+  transformed_sha256: "ingest manifest hashes; no transformation of content"
+  sample_count: 63
+  schema_version: "p12-claim-ledger-1"
+  consent_basis: NOT_APPLICABLE
+  units: historical_claims
+  group_keys: [monument_slug, source_id]
+  time_key: null
+  leakage_audit: "fixed-rule validator consumes no gold labels; see METHOD.md §5"
+  source_attribution: "each claim row keeps its documented source_id + locator verbatim"
+  status: RESTRICTED
+  blocked_reason: >-
+    Usable read-only for apparatus smoke metrics. NOT approved as an evaluated
+    external corpus: labels are inherited documented assertions, not
+    independently re-verified citations (P12-T19 BLOCKED).
+
+- dataset_id: p12-wikidata-entity-links
+  provider: Wikimedia Foundation (Wikidata SPARQL)
+  sources: [https://query.wikidata.org/sparql]
+  source_url: https://www.wikidata.org/wiki/Wikidata:Data_access
+  doi: null
+  version: "live query at run time; query text + response SHA-256 recorded per call"
+  retrieved_at: "2026-11-15"
+  license_text_sha256: null
+  allowed_uses: [academic_analysis, derived_artifacts]
+  redistribution_policy: "CC0-1.0 as declared upstream; per-response snapshot retained in run manifest"
+  original_sha256: "RECORDED_PER_RESPONSE"
+  transformed_sha256: null
+  sample_count: 3
+  schema_version: "p12-wikidata-probe-1"
+  consent_basis: NOT_APPLICABLE
+  units: entity_links
+  group_keys: [qid]
+  time_key: null
+  leakage_audit: NOT_APPLICABLE
+  source_attribution: "Wikidata CC0; query text and response SHA recorded per call"
+  status: APPROVED
+  blocked_reason: null
+  warning: >-
+    Entity links aid navigation ONLY. Per the repo data gate, historical truth
+    can never be inferred from Wikidata alone (ETHICS_AND_INTEGRITY §7).
+
+- dataset_id: p12-hue-sources-web
+  provider: Hue Monuments Conservation Centre web portal
+  sources: [https://www.hueworldheritage.org.vn/]
+  source_url: https://www.hueworldheritage.org.vn/
+  doi: null
+  version: null
+  retrieved_at: null
+  license_text_sha256: null
+  allowed_uses: []
+  redistribution_policy: "none"
+  original_sha256: null
+  transformed_sha256: null
+  sample_count: 0
+  schema_version: "p12-external-web-1"
+  consent_basis: NOT_APPLICABLE
+  units: null
+  group_keys: []
+  time_key: null
+  leakage_audit: NOT_APPLICABLE
+  source_attribution: null
+  status: BLOCKED
+  blocked_reason: >-
+    HueSources (P12 spec §2) requires per-item rights review before any
+    ingestion; no terms snapshot or checksum exists yet. No scraping performed.
+
+- dataset_id: p12-europeana
+  provider: Europeana Foundation
+  sources: [https://pro.europeana.eu/page/apis]
+  source_url: https://pro.europeana.eu/page/apis
+  doi: null
+  version: null
+  retrieved_at: null
+  license_text_sha256: null
+  allowed_uses: []
+  redistribution_policy: "metadata generally CC0 per policy, but item-level rights vary per provider record"
+  original_sha256: null
+  transformed_sha256: null
+  sample_count: 0
+  schema_version: "p12-external-web-1"
+  consent_basis: NOT_APPLICABLE
+  units: null
+  group_keys: []
+  time_key: null
+  leakage_audit: NOT_APPLICABLE
+  source_attribution: null
+  status: BLOCKED
+  blocked_reason: >-
+    No API terms snapshot, version or checksum captured yet (P12-T02 gate);
+    item-level media rights vary, so nothing ingested.

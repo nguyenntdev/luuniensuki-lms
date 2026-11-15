@@ -1,0 +1,57 @@
+{
+  "response_id": "CC03_described_cited",
+  "label": "CONSTRUCTED_NOT_HUMAN",
+  "evidence": [
+    {
+      "evidence_id": "e1",
+      "source_type": "primary",
+      "provenance": "described",
+      "is_authentic": false,
+      "locator": null,
+      "text": "Bia Tiến sĩ năm 1484 ghi danh các trạng nguyên."
+    },
+    {
+      "evidence_id": "e2",
+      "source_type": "secondary",
+      "provenance": "described",
+      "is_authentic": false,
+      "locator": null,
+      "text": "Sách sử triều Nguyễn mô tả quy chế thi Hội."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "c1",
+      "text": "Hệ thống khoa cử được chuẩn hóa dưới triều Nguyễn.",
+      "is_causal": false,
+      "inference_type": "explanatory"
+    }
+  ],
+  "links": [
+    {
+      "claim_id": "c1",
+      "evidence_id": "e1",
+      "relation": "supports"
+    },
+    {
+      "claim_id": "c1",
+      "evidence_id": "e2",
+      "relation": "supports"
+    },
+    {
+      "claim_id": "c1",
+      "evidence_id": "e2",
+      "relation": "contextualizes"
+    }
+  ],
+  "scorer_output": {
+    "scores": {
+      "S1_sourcing": 2,
+      "S2_corroboration": 2,
+      "S3_contextualization": 2,
+      "S4_argumentation": 2
+    },
+    "overall": 2.0,
+    "caps_applied": []
+  }
+}

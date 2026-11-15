@@ -1,0 +1,104 @@
+# P07 — Resource-Aware Multimodal Learning Object Selection
+# Pre-registration: frozen before any scored evaluation run (2026-11-15).
+study_id: P07
+paper_id: P07
+title: "Resource-Aware Multimodal Learning Object Selection under Device, Bandwidth and Accessibility Constraints"
+status: PARTIAL
+claim_boundary: >
+  Task-affordance coverage and rights-compliant selection verdicts ONLY.
+  No WCAG compliance certification (manual audit required), no human
+  learning-gain claim (belongs to P14 with real human evaluation), no
+  SOTA claim (only sanity/classical baselines were runnable in this wave).
+  Synthetic stress results are regression canaries, never external evidence.
+
+research_question: >
+  Does task-affordance coverage under bandwidth/device/accessibility
+  constraints prevent false modality equivalence better than conventional
+  multi-object retrieval sanity/classical baselines?
+
+estimand: >
+  Paired difference in exact-match decision verdicts (select vs typed reject
+  vs abstain) between the affordance-complete selector and each baseline,
+  over identical case rows.
+
+null_hypothesis_h0: >
+  Constraint-aware affordance-complete choice does not outperform basic hard
+  filtering after controlling annotation quality and retrieval depth.
+  H0 MUST be disclosed if not rejected.
+
+primary_endpoint:
+  name: task_feasibility_rate
+  metric: exact-match decision accuracy (predicted decision == oracle verdict)
+  unit: paired_case_decision
+  direction: higher_is_better
+  denominator: all scored cases in the suite
+
+primary_contrast:
+  intervention: proposed
+  comparator: c1_static_image_fallback
+  test: mcnemar_exact
+  alpha: 0.05
+  correction: holm
+  effect_size: cliffs_delta
+  uncertainty: cluster_bootstrap_paired (group_id clusters, seed 42, 2000 resamples)
+
+secondary_metrics:
+  - false_completion_rate      # sensitive error axis
+  - missing_affordance_recall
+  - false_rejection_rate
+  - rights_compliance_violations   # must be exactly 0
+  - per_stratum_confusion
+
+identifiability_requirement_g16:
+  stress_suite: S6 transcript/inscription identifiability pairs
+  requirement: >
+    Cases within a pair are byte-identical EXCEPT one affordance axis
+    (inscription_text or audio_transcript). Removing the affordance-coverage
+    mechanism (ablation A4-style) must flip exactly the paired negative
+    cases to false completion while leaving positives unchanged, so the
+    mechanism is identifiable from the scored matrix.
+
+ablations:
+  A1_no_affordance_coverage:
+    description: proposed selector with the affordance-coverage check removed
+    expected_failure_family: >
+      false completion on S1/S2/S6 negatives (accepting image-without-
+      inscription or audio-without-transcript) — hypothesis, verified by run
+  A2_no_device_constraints:
+    description: bandwidth/webgl/keyboard/screen-reader checks removed
+    expected_failure_family: selecting heavy/inaccessible modalities on
+      low-bandwidth or assistive-tech devices
+  A5_no_rights_filtering:
+    description: license screen removed
+    expected_failure_family: selecting license_forbidden objects (rights
+      compliance violations > 0)
+  note: >
+    A3 (no provenance) is not runnable in this wave: the external pool has a
+    single provider; a provenance ablation needs >= 2 providers. Recorded as
+    PARTIAL, not skipped silently.
+
+multiple_testing_family: [primary_contrast, A1_vs_proposed, A2_vs_proposed, A5_vs_proposed]
+correction: holm
+
+splits:
+  protocol: stratified-stress (no training; all methods evaluated on identical frozen suites)
+  group_key: group_id
+  note: >
+    P07 is a selection-policy evaluation without learned parameters; the
+    train/calibration/dev/test machinery applies to any future learned
+    variant. Suites are frozen by checksum before scoring.
+
+external_generalization: UNVERIFIED_SINGLE_PROVIDER
+external_note: >
+  Europeana API returned HTTP 401 without an API key (registration at
+  https://pro.europeana.eu/page/apis required) — BLOCKED card recorded.
+  Smithsonian Open Access S3 metadata repository worked without a key;
+  only the FSG unit was snapshotted, so a single external provider is
+  represented. Cross-provider claims are NOT made.
+
+data_status: PARTIAL
+data_note: >
+  External Smithsonian CC0 slice (8 scored cases, 102 adapted objects) is
+  small and provider-narrow; it validates the derivational-fact pipeline on
+  real records but carries NO population-level claim. Synthetic stress
+  suites (n=19) are the identifiability evidence.

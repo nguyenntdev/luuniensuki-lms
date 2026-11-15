@@ -1,0 +1,107 @@
+# P12 pre-registration — frozen 2026-11-15 before any evaluation run.
+# Paper: P12 — Thẩm định nguồn tư liệu và hệ thống hóa bằng chứng lịch sử
+#        phục vụ dạy học di sản Cửu Đỉnh–Đại Nội Huế
+# Spec: LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P12_*.md
+# Status: HUMAN_HISTORICAL_REVIEW_REQUIRED (double human review still BLOCKED).
+
+paper_id: P12
+prereg_version: "1.0.0"
+frozen_at: "2026-11-15T00:00:00Z"
+status: ENGINEERING_PASS_ONLY   # never auto-promoted; human tasks T19/T20/T21 BLOCKED
+
+research_question:
+  rq_id: P12-RQ1
+  text_vi: >-
+    Quy trình thẩm định nguồn—mệnh đề—trích dẫn theo phiên bản có nâng chất lượng
+    học liệu giáo dục di sản so với thư mục thông thường không?
+  text_en: >-
+    Does a source–claim–locator validation ledger improve the quality of heritage
+    teaching materials compared with an ordinary bibliography (citation-presence)
+    workflow?
+  unit_of_analysis: historical_claim
+  comparator_family: C0 no-citation pass-through; C1 citation-presence check only
+  proposed_arm: full locator + stance + provenance-chain validation (this repo)
+
+estimand:
+  primary_endpoint: unsourced_or_unlocatable_claim_rate
+  direction: lower_is_better
+  denominator: all claims admitted to the ledger under the audited corpus
+  unit: claim (per-claim Bernoulli; clustering on source family reserved for
+        human-phase data where more than one reviewer rating exists)
+  smallest_meaningful_effect: >-
+    NOT ESTIMABLE YET. The documented read-only corpus (63 claims) is an
+    engineering smoke corpus, not a powered human sample. No effect claim is
+    preregistered as confirmatory until the human double-review phase (P12-T19)
+    is unblocked with real raters.
+  null_hypothesis_h0: >-
+    The provenance ledger does not reduce citation defects or review cost
+    compared with the minimal checklist (mandatory public H0 if not rejected).
+  confirmatory_tests: []   # frozen empty: human phase not run; nothing to test yet
+  multiplicity_family: []  # declared together with confirmatory tests
+
+metrics_registered:
+  - id: unsourced_claim_rate
+    definition: claims with no resolvable source binding / all audited claims
+    goal: minimize
+  - id: locator_completeness_rate
+    definition: claims with a non-empty, schema-valid locator / all sourced claims
+    goal: maximize
+  - id: contradiction_detection_count
+    definition: validator-detected stance contradictions (support/refute conflicts
+                against the same claim_text) surfaced for human adjudication
+    goal: detect (count only; adjudication is human and BLOCKED)
+
+baselines:
+  C0:
+    name: no-citation pass-through
+    definition: every claim is accepted as-is; zero citation scrutiny
+    implements: sanity floor required by 04_METHODOLOGY/SCIENTIFIC_EVALUATION.md §3
+    expected: unsourced_claim_rate == observed corpus base rate; 0 contradictions
+  C1:
+    name: citation-presence check
+    definition: claim passes iff any non-empty citation string exists; no source
+                resolution, no locator schema, no stance, no chain
+    implements: "thư mục thông thường" (ordinary bibliography) arm of the RQ
+  PROPOSED:
+    name: full provenance ledger validation
+    definition: source registry resolution + locator completeness + stance
+                consistency + append-only hash-chain integrity (this module)
+
+data_rights:
+  wikidata:
+    license: CC0-1.0 (declared by upstream; snapshot recorded at fetch time)
+    use: entity linking / provenance graph linking only; source statements on
+         Wikidata require independent factual review (per 03_DATA gate)
+    machine_use: ALLOWED with recorded query + response SHA256
+  vietnamese_primary_archives:
+    - Đại Nam Thực Lục (ĐNTL)
+    - Khâm Định Đại Nam Hội Điển Sự Lệ (HĐSL)
+    - Đại Nam Nhất Thống Chí (ĐNNTC)
+    status: BLOCKED_FOR_AUTOMATED_INGESTION
+    reason: page-level citation rights and digitization terms not cleared for
+            machine ingestion; no scraping; no invented page numbers
+  repo_documented_claims:
+    path: data/imperial/{historical_sources_extended,monument_claims_matrix,heritage_provenance_audit_report}.json
+    use: READ_ONLY reference of already-documented claims (repo v5.1.0); no
+         fabrication, no new page numbers; hashes recorded as ingestion provenance
+    fabricated_corpus_prohibited: true
+
+split_policy:
+  corpus: engineering smoke corpus only (63 documented claims); no train/test
+          split is claimed because no learned parameters exist (fixed rules only)
+  leakage_controls: no gold labels are consumed by the validator; the validator is
+        deterministic fixed-rule code, not a fitted model (see METHOD.md §5)
+
+human_review_dependency:
+  double_review_protocol: research_v3/methods/p12/P12_double_review.md (TEMPLATE,
+    BLOCKED until real experts sign P12-T19)
+  blocked_tasks: [P12-T19, P12-T20, P12-T21]
+  blocked_reason: requires real human archival verification, novelty signoff and
+        coauthor/venue approval; no simulated success permitted.
+
+novelty_boundary:
+  not_claimed: SOTA, learning gains, causal effects, historical truth of any claim
+  claimed_now: an auditable apparatus (ledger + validator + baselines + metrics)
+    whose scientific comparison awaits the human phase
+  collision_note: P09 = interface effectiveness; P12 = source verification process
+    (per NOVELTY_AND_LITERATURE.md collision rules)

@@ -1,0 +1,35 @@
+{
+  "response_id": "CC01_zero_evidence",
+  "label": "CONSTRUCTED_NOT_HUMAN",
+  "evidence": [],
+  "claims": [
+    {
+      "claim_id": "c1",
+      "text": "Nhà Nguyễn xây dựng hệ thống văn miếu để giáo dục Nho học.",
+      "is_causal": true,
+      "inference_type": "causal"
+    },
+    {
+      "claim_id": "c2",
+      "text": "Điều này cho thấy triều đình coi trọng giáo dục.",
+      "is_causal": false,
+      "inference_type": "explanatory"
+    }
+  ],
+  "links": [],
+  "scorer_output": {
+    "scores": {
+      "S1_sourcing": 0,
+      "S2_corroboration": 0,
+      "S3_contextualization": 0,
+      "S4_argumentation": 1
+    },
+    "overall": 0.25,
+    "caps_applied": [
+      "S1_sourcing: best provenance rank 0; zero_evidence_cap_S1",
+      "S2_corroboration: zero_evidence_cap_S2",
+      "S3_contextualization: zero_evidence_cap_S3",
+      "S4_argumentation: zero_evidence_cap_S4"
+    ]
+  }
+}

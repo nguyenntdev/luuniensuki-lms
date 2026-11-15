@@ -1,0 +1,143 @@
+schema_version: v3
+paper_id: P05
+title: >-
+  Temporal Forgetting-Aware Knowledge Tracing and Review Scheduling on
+  Irregular-Interval Assessment Logs
+preregistered_at: '2026-11-15T00:00:00Z'
+frozen_before_final_test: true
+
+research_question: >-
+  On real OULAD temporal assessment sequences with irregular elapsed-time gaps,
+  does a forgetting-aware (half-life decay) correctness model improve
+  calibrated prediction of next-assessment outcomes beyond (a) a global
+  base-rate predictor (C0) and (b) a serious classical logistic-regression
+  baseline on recency/frequency features WITHOUT any decay modelling (C1),
+  and does its decay-ranked review scheduler retrieve at-risk
+  learner-assessment pairs better than recency/frequency ranking at the same
+  review budget?
+
+estimand:
+  primary: >-
+    Difference in ROC-AUC for next-assessment pass (score >= 40) between the
+    forgetting-aware model (P) and the classical recency/frequency baseline
+    (C1), evaluated on a strictly future chronological test window
+    (presentations 2014J + 2014B), with predictions made only from features
+    computable at each attempt's feature cutoff.
+  unit_of_analysis: one assessment attempt (learner x module x presentation x assessment)
+  direction: proposed_auc > c1_auc (one-sided)
+  smallest_meaningful_effect: 0.005 AUC points
+  denominator: all test-window attempts passing the leakage filter (no exclusions after freeze)
+
+hypotheses:
+  H0_primary: >-
+    The forgetting-aware model does NOT improve next-assessment AUC over the
+    tuned classical recency/frequency baseline under identical inputs, splits,
+    and tuning budget (H0 not rejected => must be published as a null result).
+  H1_primary: proposed AUC > C1 AUC by at least the smallest meaningful effect.
+  H0_scheduling: >-
+    The decay-ranked review scheduler does not improve recall of eventually
+    failed assessments over the classical recency/frequency ranking at
+    identical review budgets.
+
+comparison_family:
+  primary_contrasts:
+    - {a: P05_forgetting_aware, b: C1_logistic_recency_freq, metric: auc, test: paired_cluster_bootstrap}
+    - {a: P05_forgetting_aware, b: C0_global_base_rate, metric: auc, test: paired_cluster_bootstrap}
+  secondary:
+    - brier, nll, ece_10bin
+    - scheduling: recall_of_failures_at_budget_k for k in {5, 10, 20, 40, 80} percent of at-risk pairs
+  multiplicity_correction: holm
+  family_size: 4   # 2 primary contrasts (AUC) + 2 scheduling contrasts (proposed vs C1 ranking, vs random ranking)
+  alpha: 0.05
+  one_sided: true
+
+confidence_intervals:
+  method: cluster_bootstrap_paired
+  cluster_unit: learner (id_student)
+  resamples: 2000
+  seed: 42
+  note: >-
+    Learner-level clustering respects correlated outcomes within a student.
+    Deterministic models: bootstrap over the FIXED prediction vectors, never
+    over re-fitted models (no fake stochastic seeds).
+
+data:
+  dataset_id: oulad-2013-2014
+  status: APPROVED
+  license_note: >-
+    UCI redistribution of OULAD carries CC BY-NC 4.0 per the captured LICENSE.txt;
+    the registry card records CC BY 4.0 per the original Scientific Data
+    publication. Both permit the present non-commercial academic use with
+    attribution; the stricter (NC) term is honoured.
+  train_window: {presentations: ['2013B', '2013J'], feature_day_max: 240}
+  calibration_window: {presentations: ['2014B'], feature_day_max: 240}
+  test_window: {presentations: ['2014J'], feature_day_max: 240}
+  target: score >= 40 on the attempt's assessment (observable only AFTER submission date)
+  feature_cutoff_rule: >-
+    For a target attempt at day d, features may only use attempts with
+    submission day < d, vle activity on days < d, and static registration
+    attributes. Features using any information dated >= d are rejected by
+    construction and by test.
+
+splits:
+  protocol: chronological by presentation, train -> calibration -> test
+  sealed_test: 2014J held out until final evaluation; no tuning on test
+  tuning_budget: calibration/dev window only (2014B), fixed grid, seed 11
+  forbidden: hyperparameter selection on 2014J; post-freeze label edits
+
+metrics:
+  - {name: auc, primary: true}
+  - {name: brier}
+  - {name: nll}
+  - {name: ece_10bin}
+  - {name: reliability_bins_10}
+  - {name: recall_of_failures_at_budget}
+
+scheduling_evaluation:
+  definition: >-
+    Rank learner-assessment pairs (whose outcome is still unknown at ranking
+    time) by predicted failure risk among pairs with an upcoming assessment
+    in the test window; a ranked pair counts as retrieved if its outcome
+    turns out to be a failure (score < 40). Recall = retrieved failures /
+    total failures, at budget k% of ranked pairs. Random ranking is a
+    chance-line control; C1-frequency ranking is the classical control.
+  budget_grid: [5, 10, 20, 40, 80]
+
+ablations:
+  A1_no_elapsed_time: "remove gap-day features and the decay kernel (expected failure family: loses temporal spacing signal)"
+  A2_no_hazard_calibration: "skip temperature calibration on 2014B (expected failure family: mis-calibrated probabilities, higher ECE)"
+  A3_no_score_history: "remove past-score mean/std features (expected failure family: loses ability signal)"
+  A4_no_engagement_history: "remove click/engagement features (expected failure family: loses effort signal)"
+  A5_no_recency_features: "remove recency features, keep decay kernel only via gap-weighted history (expected failure family: recency is a strong classical signal)"
+
+stress_strata:
+  - long_gaps:        attempts whose gap since previous activity >= 60 days
+  - short_bursts:     attempts whose gap since previous activity <= 3 days
+  - seasonality:      test-window attempts in the final 30 days of the course vs earlier
+  - never_reviewed:   attempts of learners with zero VLE clicks before the attempt
+  - irregular_timestamps: "attempts with non-integer effective gap structure (weekend/weekday mix), proxy: gap not divisible by 7"
+
+falsification_rules:
+  - If proposed AUC <= C1 AUC, record an explicit NULL result and publish it; do not retune on test.
+  - If scheduling recall of the decay ranker <= C1 ranker at every budget, record NULL.
+  - No stratum may be omitted because results are unfavourable; report all strata.
+  - "No fabricated numbers: every metric is generated by run_p05_matrix.py from frozen inputs."
+
+blocked_upstream:
+  C2_published_KT: >-
+    pyKT / DKT / SAKT / AKT upstream implementations are not installed in this
+    environment and none ships an OULAD-compatible adapter; classic KT
+    benchmarks (ASSISTments, EdNet) are BLOCKED in the dataset registry
+    (ASSISTments terms unreviewed; EdNet CC BY-NC with redistribution limits).
+    C2 is therefore BLOCKED with a dated rationale, not silently skipped.
+
+compute:
+  hardware: CPU only
+  wall_time_budget_minutes: 30
+  deterministic: true
+  seeds: [11]
+
+# Mirrors compute.seeds above (METHOD.md: single scored seed 11, no stochastic training).
+seeds: [11]
+
+external_generalization: unverified_single_domain

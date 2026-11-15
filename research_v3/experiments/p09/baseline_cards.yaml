@@ -1,0 +1,25 @@
+# P09 baseline provenance cards (nearest published comparator, honest status)
+
+## B-closest: interactive provenance / citation interfaces in digital heritage
+
+- **Status: BLOCKED (no compatible implementation available at freeze time).**
+- Closest published families:
+  1. KG+RAG citation-style QA systems — surface retrieved passages with
+     citations but do not fail-closed *withhold individual claims* whose source
+     fails a verification gate; typically evaluated on QA accuracy, not on
+     unsupported-claim surfacing.
+  2. Digital-heritage provenance models (Europeana Data Model, CIDOC-CRM) —
+     model record-level provenance for interoperability; no surfacing policy,
+     no abstention semantics, no interactive gate evaluation.
+  3. Epistemic-uncertainty UI work (badge/flag interfaces) — studies user trust
+     effects; no fail-closed gate over a real heritage corpus.
+- **Why BLOCKED:** none of the above ships code under a license compatible with
+  exact reimplementation + rerun in this repo within this wave, and none
+  targets the primary metric (unsupported-claim surfacing rate = 0) on a
+  heritage corpus. Per the paper spec §4, a dated, reproducible BLOCKED
+  rationale is recorded here instead of a fabricated comparison.
+- **Consequence:** comparisons in this wave are limited to C0 (naive) and C1
+  (matched classical heuristic). No SOTA claim is made or may be made from
+  C0/C1-only wins.
+- **Revisit trigger:** if a compatible licensed implementation appears, rerun
+  the frozen matrix with it added as a fourth method before any submission.

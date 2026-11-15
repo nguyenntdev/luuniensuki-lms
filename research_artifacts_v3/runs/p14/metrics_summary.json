@@ -1,0 +1,42 @@
+{
+  "abstained_criteria": 1,
+  "conformance": {
+    "clopper_pearson_ci_95": [
+      0.7887417305541133,
+      0.9230614050167475
+    ],
+    "n": 112,
+    "passed": 97,
+    "rate": 0.8661,
+    "wilson_ci_95": [
+      0.7907354335192549,
+      0.9171285802353042
+    ]
+  },
+  "missing_affordance_count": 15,
+  "note": "Descriptive audit statistics only; no confirmatory or benefit claim.",
+  "per_framework": {
+    "udl-action": {
+      "fail": 4,
+      "pass": 14
+    },
+    "udl-engagement": {
+      "fail": 2,
+      "pass": 29
+    },
+    "udl-representation": {
+      "fail": 7,
+      "pass": 32
+    },
+    "wcag22": {
+      "fail": 2,
+      "pass": 22
+    }
+  },
+  "udl_principle_coverage": {
+    "udl-action": 0.7778,
+    "udl-engagement": 0.9355,
+    "udl-representation": 0.8205,
+    "wcag22": 0.9167
+  }
+}

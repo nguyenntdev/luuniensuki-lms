@@ -1,0 +1,2308 @@
+{
+ "A1_no_provenance_confidence": {
+  "abstention": {
+   "precision": {
+    "clopper_pearson_ci_95": [
+     0.964480673342116,
+     1.0
+    ],
+    "k": 102,
+    "n": 102,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.9637055378535367,
+     0.9999999999999999
+    ]
+   },
+   "recall": {
+    "clopper_pearson_ci_95": [
+     0.5222008985036015,
+     0.6742485438864723
+    ],
+    "k": 102,
+    "n": 170,
+    "rate": 0.6,
+    "wilson_ci_95": [
+     0.5249323138174852,
+     0.6706481894217836
+    ]
+   }
+  },
+  "answer_leakage_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.03551932665788406
+   ],
+   "k": 0,
+   "n": 102,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.03629446214646319
+   ]
+  },
+  "calibration": {
+   "bins": [
+    {
+     "bin": [
+      0.0,
+      0.1
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.1,
+      0.2
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.2,
+      0.3
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.3,
+      0.4
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.4,
+      0.5
+     ],
+     "mean_prob": 0.466667,
+     "n": 34,
+     "observed": 0.0,
+     "observed_ci_95": [
+      0.0,
+      0.10151455415332376
+     ]
+    },
+    {
+     "bin": [
+      0.5,
+      0.6
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.6,
+      0.7
+     ],
+     "mean_prob": 0.616667,
+     "n": 68,
+     "observed": 0.5,
+     "observed_ci_95": [
+      0.38438064984606757,
+      0.6156193501539324
+     ]
+    },
+    {
+     "bin": [
+      0.7,
+      0.8
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.8,
+      0.9
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.9,
+      1.0
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    }
+   ],
+   "ece": 0.2333336666666666,
+   "interpretation": "release-worthiness vs warranted-release; risk-coverage style, not outcome prediction",
+   "n_scored": 102,
+   "release_scope_n": 68,
+   "release_scope_selective_auroc": 0.5,
+   "release_scope_selective_ece": 0.11666699999999997
+  },
+  "citation_grounding_rate": {
+   "clopper_pearson_ci_95": [
+    0.9732404416208568,
+    1.0
+   ],
+   "k": 136,
+   "n": 136,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.9725299002664176,
+    1.0
+   ]
+  },
+  "false_citation_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.026759558379143282
+   ],
+   "k": 0,
+   "n": 136,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.027470099733582408
+   ]
+  },
+  "injection_refusal_rate": {
+   "clopper_pearson_ci_95": [
+    0.8971820757409874,
+    1.0
+   ],
+   "k": 34,
+   "n": 34,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.8984854458466761,
+    0.9999999999999999
+   ]
+  },
+  "n_decisions": 272,
+  "pedagogy_win_rate": {
+   "clopper_pearson_ci_95": [
+    0.8297257710255692,
+    0.9118585335695155
+   ],
+   "k": 238,
+   "n": 272,
+   "rate": 0.875,
+   "wilson_ci_95": [
+    0.8304016774534468,
+    0.9091535760322396
+   ]
+  },
+  "per_stratum": {
+   "answer_appropriate": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "clean_grounded": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "contradictory_sources": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "injection": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "lowconf_calibration": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "malicious_note": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "no_evidence": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "premature_answer_request": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   }
+  },
+  "system_id": "A1_no_provenance_confidence"
+ },
+ "A2_no_uncertainty_calibration": {
+  "abstention": {
+   "precision": {
+    "clopper_pearson_ci_95": [
+     0.964480673342116,
+     1.0
+    ],
+    "k": 102,
+    "n": 102,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.9637055378535367,
+     0.9999999999999999
+    ]
+   },
+   "recall": {
+    "clopper_pearson_ci_95": [
+     0.5222008985036015,
+     0.6742485438864723
+    ],
+    "k": 102,
+    "n": 170,
+    "rate": 0.6,
+    "wilson_ci_95": [
+     0.5249323138174852,
+     0.6706481894217836
+    ]
+   }
+  },
+  "answer_leakage_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.03551932665788406
+   ],
+   "k": 0,
+   "n": 102,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.03629446214646319
+   ]
+  },
+  "calibration": {
+   "bins": [
+    {
+     "bin": [
+      0.0,
+      0.1
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.1,
+      0.2
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.2,
+      0.3
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.3,
+      0.4
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.4,
+      0.5
+     ],
+     "mean_prob": 0.416667,
+     "n": 34,
+     "observed": 0.0,
+     "observed_ci_95": [
+      0.0,
+      0.10151455415332376
+     ]
+    },
+    {
+     "bin": [
+      0.5,
+      0.6
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.6,
+      0.7
+     ],
+     "mean_prob": 0.666667,
+     "n": 34,
+     "observed": 0.0,
+     "observed_ci_95": [
+      0.0,
+      0.10151455415332376
+     ]
+    },
+    {
+     "bin": [
+      0.7,
+      0.8
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.8,
+      0.9
+     ],
+     "mean_prob": 0.841667,
+     "n": 34,
+     "observed": 1.0,
+     "observed_ci_95": [
+      0.8984854458466761,
+      0.9999999999999999
+     ]
+    },
+    {
+     "bin": [
+      0.9,
+      1.0
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    }
+   ],
+   "ece": 0.413889,
+   "interpretation": "release-worthiness vs warranted-release; risk-coverage style, not outcome prediction",
+   "n_scored": 102,
+   "release_scope_n": 68,
+   "release_scope_selective_auroc": 1.0,
+   "release_scope_selective_ece": 0.2875
+  },
+  "citation_grounding_rate": {
+   "clopper_pearson_ci_95": [
+    0.9732404416208568,
+    1.0
+   ],
+   "k": 136,
+   "n": 136,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.9725299002664176,
+    1.0
+   ]
+  },
+  "false_citation_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.026759558379143282
+   ],
+   "k": 0,
+   "n": 136,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.027470099733582408
+   ]
+  },
+  "injection_refusal_rate": {
+   "clopper_pearson_ci_95": [
+    0.8971820757409874,
+    1.0
+   ],
+   "k": 34,
+   "n": 34,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.8984854458466761,
+    0.9999999999999999
+   ]
+  },
+  "n_decisions": 272,
+  "pedagogy_win_rate": {
+   "clopper_pearson_ci_95": [
+    0.8297257710255692,
+    0.9118585335695155
+   ],
+   "k": 238,
+   "n": 272,
+   "rate": 0.875,
+   "wilson_ci_95": [
+    0.8304016774534468,
+    0.9091535760322396
+   ]
+  },
+  "per_stratum": {
+   "answer_appropriate": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "clean_grounded": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "contradictory_sources": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "injection": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "lowconf_calibration": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "malicious_note": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "no_evidence": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "premature_answer_request": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   }
+  },
+  "system_id": "A2_no_uncertainty_calibration"
+ },
+ "A3_no_learner_stage": {
+  "abstention": {
+   "precision": {
+    "clopper_pearson_ci_95": [
+     0.964480673342116,
+     1.0
+    ],
+    "k": 102,
+    "n": 102,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.9637055378535367,
+     0.9999999999999999
+    ]
+   },
+   "recall": {
+    "clopper_pearson_ci_95": [
+     0.5222008985036015,
+     0.6742485438864723
+    ],
+    "k": 102,
+    "n": 170,
+    "rate": 0.6,
+    "wilson_ci_95": [
+     0.5249323138174852,
+     0.6706481894217836
+    ]
+   }
+  },
+  "answer_leakage_rate": {
+   "clopper_pearson_ci_95": [
+    0.24307314166899952,
+    0.4335573184627943
+   ],
+   "k": 34,
+   "n": 102,
+   "rate": 0.3333333333333333,
+   "wilson_ci_95": [
+    0.24937114792134296,
+    0.42939367279414464
+   ]
+  },
+  "calibration": {
+   "bins": [
+    {
+     "bin": [
+      0.0,
+      0.1
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.1,
+      0.2
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.2,
+      0.3
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.3,
+      0.4
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.4,
+      0.5
+     ],
+     "mean_prob": 0.416667,
+     "n": 34,
+     "observed": 0.0,
+     "observed_ci_95": [
+      0.0,
+      0.10151455415332376
+     ]
+    },
+    {
+     "bin": [
+      0.5,
+      0.6
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.6,
+      0.7
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.7,
+      0.8
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.8,
+      0.9
+     ],
+     "mean_prob": 0.8291670000000001,
+     "n": 68,
+     "observed": 0.5,
+     "observed_ci_95": [
+      0.38438064984606757,
+      0.6156193501539324
+     ]
+    },
+    {
+     "bin": [
+      0.9,
+      1.0
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    }
+   ],
+   "ece": 0.3583336666666667,
+   "interpretation": "release-worthiness vs warranted-release; risk-coverage style, not outcome prediction",
+   "n_scored": 102,
+   "release_scope_n": 68,
+   "release_scope_selective_auroc": 1.0,
+   "release_scope_selective_ece": 0.2875
+  },
+  "citation_grounding_rate": {
+   "clopper_pearson_ci_95": [
+    0.9732404416208568,
+    1.0
+   ],
+   "k": 136,
+   "n": 136,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.9725299002664176,
+    1.0
+   ]
+  },
+  "false_citation_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.026759558379143282
+   ],
+   "k": 0,
+   "n": 136,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.027470099733582408
+   ]
+  },
+  "injection_refusal_rate": {
+   "clopper_pearson_ci_95": [
+    0.8971820757409874,
+    1.0
+   ],
+   "k": 34,
+   "n": 34,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.8984854458466761,
+    0.9999999999999999
+   ]
+  },
+  "n_decisions": 272,
+  "pedagogy_win_rate": {
+   "clopper_pearson_ci_95": [
+    0.8297257710255692,
+    0.9118585335695155
+   ],
+   "k": 238,
+   "n": 272,
+   "rate": 0.875,
+   "wilson_ci_95": [
+    0.8304016774534468,
+    0.9091535760322396
+   ]
+  },
+  "per_stratum": {
+   "answer_appropriate": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "clean_grounded": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "contradictory_sources": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "injection": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "lowconf_calibration": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "malicious_note": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "no_evidence": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "premature_answer_request": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   }
+  },
+  "system_id": "A3_no_learner_stage"
+ },
+ "A4_no_abstention": {
+  "abstention": {
+   "precision": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "recall": {
+    "clopper_pearson_ci_95": [
+     0.1426607006948038,
+     0.2681037347214086
+    ],
+    "k": 34,
+    "n": 170,
+    "rate": 0.2,
+    "wilson_ci_95": [
+     0.1467999521507426,
+     0.26645853813145065
+    ]
+   }
+  },
+  "answer_leakage_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.03551932665788406
+   ],
+   "k": 0,
+   "n": 102,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.03629446214646319
+   ]
+  },
+  "calibration": {
+   "bins": [
+    {
+     "bin": [
+      0.0,
+      0.1
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.1,
+      0.2
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.2,
+      0.3
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.3,
+      0.4
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.4,
+      0.5
+     ],
+     "mean_prob": 0.416667,
+     "n": 34,
+     "observed": 0.0,
+     "observed_ci_95": [
+      0.0,
+      0.10151455415332376
+     ]
+    },
+    {
+     "bin": [
+      0.5,
+      0.6
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.6,
+      0.7
+     ],
+     "mean_prob": 0.666667,
+     "n": 34,
+     "observed": 0.0,
+     "observed_ci_95": [
+      0.0,
+      0.10151455415332376
+     ]
+    },
+    {
+     "bin": [
+      0.7,
+      0.8
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.8,
+      0.9
+     ],
+     "mean_prob": 0.841667,
+     "n": 34,
+     "observed": 1.0,
+     "observed_ci_95": [
+      0.8984854458466761,
+      0.9999999999999999
+     ]
+    },
+    {
+     "bin": [
+      0.9,
+      1.0
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    }
+   ],
+   "ece": 0.413889,
+   "interpretation": "release-worthiness vs warranted-release; risk-coverage style, not outcome prediction",
+   "n_scored": 102,
+   "release_scope_n": 68,
+   "release_scope_selective_auroc": 1.0,
+   "release_scope_selective_ece": 0.2875
+  },
+  "citation_grounding_rate": {
+   "clopper_pearson_ci_95": [
+    0.774965080441972,
+    0.8817317586994027
+   ],
+   "k": 170,
+   "n": 204,
+   "rate": 0.8333333333333334,
+   "wilson_ci_95": [
+    0.7761333532056823,
+    0.878211553588529
+   ]
+  },
+  "false_citation_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.021465554980944556
+   ],
+   "k": 0,
+   "n": 170,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.022097483803655452
+   ]
+  },
+  "injection_refusal_rate": {
+   "clopper_pearson_ci_95": [
+    0.8971820757409874,
+    1.0
+   ],
+   "k": 34,
+   "n": 34,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.8984854458466761,
+    0.9999999999999999
+   ]
+  },
+  "n_decisions": 272,
+  "pedagogy_win_rate": {
+   "clopper_pearson_ci_95": [
+    0.6941409312747491,
+    0.8003216293920117
+   ],
+   "k": 204,
+   "n": 272,
+   "rate": 0.75,
+   "wilson_ci_95": [
+    0.6953001784699622,
+    0.7977366571871622
+   ]
+  },
+  "per_stratum": {
+   "answer_appropriate": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "clean_grounded": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "contradictory_sources": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "injection": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "lowconf_calibration": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "malicious_note": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "no_evidence": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "premature_answer_request": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   }
+  },
+  "system_id": "A4_no_abstention"
+ },
+ "A5_no_action_cost": {
+  "abstention": {
+   "precision": {
+    "clopper_pearson_ci_95": [
+     0.964480673342116,
+     1.0
+    ],
+    "k": 102,
+    "n": 102,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.9637055378535367,
+     0.9999999999999999
+    ]
+   },
+   "recall": {
+    "clopper_pearson_ci_95": [
+     0.5222008985036015,
+     0.6742485438864723
+    ],
+    "k": 102,
+    "n": 170,
+    "rate": 0.6,
+    "wilson_ci_95": [
+     0.5249323138174852,
+     0.6706481894217836
+    ]
+   }
+  },
+  "answer_leakage_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.03551932665788406
+   ],
+   "k": 0,
+   "n": 102,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.03629446214646319
+   ]
+  },
+  "calibration": {
+   "bins": [
+    {
+     "bin": [
+      0.0,
+      0.1
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.1,
+      0.2
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.2,
+      0.3
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.3,
+      0.4
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.4,
+      0.5
+     ],
+     "mean_prob": 0.416667,
+     "n": 34,
+     "observed": 0.0,
+     "observed_ci_95": [
+      0.0,
+      0.10151455415332376
+     ]
+    },
+    {
+     "bin": [
+      0.5,
+      0.6
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.6,
+      0.7
+     ],
+     "mean_prob": 0.666667,
+     "n": 34,
+     "observed": 0.0,
+     "observed_ci_95": [
+      0.0,
+      0.10151455415332376
+     ]
+    },
+    {
+     "bin": [
+      0.7,
+      0.8
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.8,
+      0.9
+     ],
+     "mean_prob": 0.841667,
+     "n": 34,
+     "observed": 1.0,
+     "observed_ci_95": [
+      0.8984854458466761,
+      0.9999999999999999
+     ]
+    },
+    {
+     "bin": [
+      0.9,
+      1.0
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    }
+   ],
+   "ece": 0.413889,
+   "interpretation": "release-worthiness vs warranted-release; risk-coverage style, not outcome prediction",
+   "n_scored": 102,
+   "release_scope_n": 68,
+   "release_scope_selective_auroc": 1.0,
+   "release_scope_selective_ece": 0.2875
+  },
+  "citation_grounding_rate": {
+   "clopper_pearson_ci_95": [
+    0.9785344450190554,
+    1.0
+   ],
+   "k": 170,
+   "n": 170,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.9779025161963444,
+    0.9999999999999998
+   ]
+  },
+  "false_citation_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.021465554980944556
+   ],
+   "k": 0,
+   "n": 170,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.022097483803655452
+   ]
+  },
+  "injection_refusal_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.10281792425901262
+   ],
+   "k": 0,
+   "n": 34,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.10151455415332376
+   ]
+  },
+  "n_decisions": 272,
+  "pedagogy_win_rate": {
+   "clopper_pearson_ci_95": [
+    0.8297257710255692,
+    0.9118585335695155
+   ],
+   "k": 238,
+   "n": 272,
+   "rate": 0.875,
+   "wilson_ci_95": [
+    0.8304016774534468,
+    0.9091535760322396
+   ]
+  },
+  "per_stratum": {
+   "answer_appropriate": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "clean_grounded": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "contradictory_sources": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "injection": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "lowconf_calibration": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "malicious_note": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "no_evidence": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "premature_answer_request": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   }
+  },
+  "system_id": "A5_no_action_cost"
+ },
+ "C0_direct_answer": {
+  "abstention": {
+   "precision": {
+    "clopper_pearson_ci_95": [
+     null,
+     null
+    ],
+    "k": 0,
+    "n": 0,
+    "rate": null,
+    "wilson_ci_95": [
+     null,
+     null
+    ]
+   },
+   "recall": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.021465554980944556
+    ],
+    "k": 0,
+    "n": 170,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.022097483803655452
+    ]
+   }
+  },
+  "answer_leakage_rate": {
+   "clopper_pearson_ci_95": [
+    0.964480673342116,
+    1.0
+   ],
+   "k": 102,
+   "n": 102,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.9637055378535367,
+    0.9999999999999999
+   ]
+  },
+  "calibration": {
+   "bins": [],
+   "ece": null,
+   "interpretation": "release-worthiness vs warranted-release; risk-coverage style, not outcome prediction",
+   "n_scored": 0,
+   "release_scope_n": 0,
+   "release_scope_selective_auroc": null,
+   "release_scope_selective_ece": null
+  },
+  "citation_grounding_rate": {
+   "clopper_pearson_ci_95": [
+    0.6941409312747491,
+    0.8003216293920117
+   ],
+   "k": 204,
+   "n": 272,
+   "rate": 0.75,
+   "wilson_ci_95": [
+    0.6953001784699622,
+    0.7977366571871622
+   ]
+  },
+  "false_citation_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.01792023066243955
+   ],
+   "k": 0,
+   "n": 204,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.018482639808683074
+   ]
+  },
+  "injection_refusal_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.10281792425901262
+   ],
+   "k": 0,
+   "n": 34,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.10151455415332376
+   ]
+  },
+  "n_decisions": 272,
+  "pedagogy_win_rate": {
+   "clopper_pearson_ci_95": [
+    0.1996783706079883,
+    0.30585906872525087
+   ],
+   "k": 68,
+   "n": 272,
+   "rate": 0.25,
+   "wilson_ci_95": [
+    0.2022633428128378,
+    0.3046998215300379
+   ]
+  },
+  "per_stratum": {
+   "answer_appropriate": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "clean_grounded": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "contradictory_sources": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "injection": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "lowconf_calibration": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "malicious_note": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "no_evidence": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "premature_answer_request": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   }
+  },
+  "system_id": "C0_direct_answer"
+ },
+ "C1_simulated_proxy_rulebased": {
+  "abstention": {
+   "precision": {
+    "clopper_pearson_ci_95": [
+     null,
+     null
+    ],
+    "k": 0,
+    "n": 0,
+    "rate": null,
+    "wilson_ci_95": [
+     null,
+     null
+    ]
+   },
+   "recall": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.021465554980944556
+    ],
+    "k": 0,
+    "n": 170,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.022097483803655452
+    ]
+   }
+  },
+  "answer_leakage_rate": {
+   "clopper_pearson_ci_95": [
+    0.11603665660660102,
+    0.2755060414622239
+   ],
+   "k": 19,
+   "n": 102,
+   "rate": 0.18627450980392157,
+   "wilson_ci_95": [
+    0.12262079699482112,
+    0.27270121846962636
+   ]
+  },
+  "calibration": {
+   "bins": [],
+   "ece": null,
+   "interpretation": "release-worthiness vs warranted-release; risk-coverage style, not outcome prediction",
+   "n_scored": 0,
+   "release_scope_n": 0,
+   "release_scope_selective_auroc": null,
+   "release_scope_selective_ece": null
+  },
+  "citation_grounding_rate": {
+   "clopper_pearson_ci_95": [
+    0.6941409312747491,
+    0.8003216293920117
+   ],
+   "k": 204,
+   "n": 272,
+   "rate": 0.75,
+   "wilson_ci_95": [
+    0.6953001784699622,
+    0.7977366571871622
+   ]
+  },
+  "false_citation_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.01792023066243955
+   ],
+   "k": 0,
+   "n": 204,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.018482639808683074
+   ]
+  },
+  "injection_refusal_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.10281792425901262
+   ],
+   "k": 0,
+   "n": 34,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.10151455415332376
+   ]
+  },
+  "n_decisions": 272,
+  "pedagogy_win_rate": {
+   "clopper_pearson_ci_95": [
+    0.3633754291855529,
+    0.4839137747510503
+   ],
+   "k": 115,
+   "n": 272,
+   "rate": 0.4227941176470588,
+   "wilson_ci_95": [
+    0.3655621352671579,
+    0.48217648901520077
+   ]
+  },
+  "per_stratum": {
+   "answer_appropriate": {
+    "clopper_pearson_ci_95": [
+     0.2977866664181964,
+     0.6487071629485879
+    ],
+    "k": 16,
+    "n": 34,
+    "rate": 0.47058823529411764,
+    "wilson_ci_95": [
+     0.3145150447508847,
+     0.6326328701993107
+    ]
+   },
+   "clean_grounded": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "contradictory_sources": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "injection": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "lowconf_calibration": {
+    "clopper_pearson_ci_95": [
+     0.2977866664181964,
+     0.6487071629485879
+    ],
+    "k": 16,
+    "n": 34,
+    "rate": 0.47058823529411764,
+    "wilson_ci_95": [
+     0.3145150447508847,
+     0.6326328701993107
+    ]
+   },
+   "malicious_note": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "no_evidence": {
+    "clopper_pearson_ci_95": [
+     0.0,
+     0.10281792425901262
+    ],
+    "k": 0,
+    "n": 34,
+    "rate": 0.0,
+    "wilson_ci_95": [
+     0.0,
+     0.10151455415332376
+    ]
+   },
+   "premature_answer_request": {
+    "clopper_pearson_ci_95": [
+     0.2718501964148669,
+     0.6211423560429286
+    ],
+    "k": 15,
+    "n": 34,
+    "rate": 0.4411764705882353,
+    "wilson_ci_95": [
+     0.2888348224624216,
+     0.6054610074379694
+    ]
+   }
+  },
+  "system_id": "C1_simulated_proxy_rulebased"
+ },
+ "proposed_multi_gate": {
+  "abstention": {
+   "precision": {
+    "clopper_pearson_ci_95": [
+     0.964480673342116,
+     1.0
+    ],
+    "k": 102,
+    "n": 102,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.9637055378535367,
+     0.9999999999999999
+    ]
+   },
+   "recall": {
+    "clopper_pearson_ci_95": [
+     0.5222008985036015,
+     0.6742485438864723
+    ],
+    "k": 102,
+    "n": 170,
+    "rate": 0.6,
+    "wilson_ci_95": [
+     0.5249323138174852,
+     0.6706481894217836
+    ]
+   }
+  },
+  "answer_leakage_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.03551932665788406
+   ],
+   "k": 0,
+   "n": 102,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.03629446214646319
+   ]
+  },
+  "calibration": {
+   "bins": [
+    {
+     "bin": [
+      0.0,
+      0.1
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.1,
+      0.2
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.2,
+      0.3
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.3,
+      0.4
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.4,
+      0.5
+     ],
+     "mean_prob": 0.416667,
+     "n": 34,
+     "observed": 0.0,
+     "observed_ci_95": [
+      0.0,
+      0.10151455415332376
+     ]
+    },
+    {
+     "bin": [
+      0.5,
+      0.6
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.6,
+      0.7
+     ],
+     "mean_prob": 0.666667,
+     "n": 34,
+     "observed": 0.0,
+     "observed_ci_95": [
+      0.0,
+      0.10151455415332376
+     ]
+    },
+    {
+     "bin": [
+      0.7,
+      0.8
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    },
+    {
+     "bin": [
+      0.8,
+      0.9
+     ],
+     "mean_prob": 0.841667,
+     "n": 34,
+     "observed": 1.0,
+     "observed_ci_95": [
+      0.8984854458466761,
+      0.9999999999999999
+     ]
+    },
+    {
+     "bin": [
+      0.9,
+      1.0
+     ],
+     "mean_prob": null,
+     "n": 0,
+     "observed": null
+    }
+   ],
+   "ece": 0.413889,
+   "interpretation": "release-worthiness vs warranted-release; risk-coverage style, not outcome prediction",
+   "n_scored": 102,
+   "release_scope_n": 68,
+   "release_scope_selective_auroc": 1.0,
+   "release_scope_selective_ece": 0.2875
+  },
+  "citation_grounding_rate": {
+   "clopper_pearson_ci_95": [
+    0.9732404416208568,
+    1.0
+   ],
+   "k": 136,
+   "n": 136,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.9725299002664176,
+    1.0
+   ]
+  },
+  "false_citation_rate": {
+   "clopper_pearson_ci_95": [
+    0.0,
+    0.026759558379143282
+   ],
+   "k": 0,
+   "n": 136,
+   "rate": 0.0,
+   "wilson_ci_95": [
+    0.0,
+    0.027470099733582408
+   ]
+  },
+  "injection_refusal_rate": {
+   "clopper_pearson_ci_95": [
+    0.8971820757409874,
+    1.0
+   ],
+   "k": 34,
+   "n": 34,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.8984854458466761,
+    0.9999999999999999
+   ]
+  },
+  "n_decisions": 272,
+  "pedagogy_win_rate": {
+   "clopper_pearson_ci_95": [
+    0.9865294935382605,
+    1.0
+   ],
+   "k": 272,
+   "n": 272,
+   "rate": 1.0,
+   "wilson_ci_95": [
+    0.9860736713142486,
+    1.0
+   ]
+  },
+  "per_stratum": {
+   "answer_appropriate": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "clean_grounded": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "contradictory_sources": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "injection": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "lowconf_calibration": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "malicious_note": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "no_evidence": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   },
+   "premature_answer_request": {
+    "clopper_pearson_ci_95": [
+     0.8971820757409874,
+     1.0
+    ],
+    "k": 34,
+    "n": 34,
+    "rate": 1.0,
+    "wilson_ci_95": [
+     0.8984854458466761,
+     0.9999999999999999
+    ]
+   }
+  },
+  "system_id": "proposed_multi_gate"
+ }
+}

@@ -1,0 +1,60 @@
+schema_version: v3
+paper_id: P05
+card_id: P05-C2-published-KT-comparator
+status: BLOCKED
+blocked_at: '2026-11-15'
+task: P05-T08 (closest published implementation)
+
+checked_implementations:
+  - name: pyKT
+    url: https://github.com/pykt-team/pykt-toolkit
+    license: MIT (code)
+    checked_at: '2026-11-15'
+    finding: >-
+      Not installed in this environment (`import pykt` fails; not in
+      requirements). pyKT implements DKT/SAKT/AKT/etc. for item-level
+      interaction streams from ASSISTments/EdNet/Junyi/XES3G5M style data.
+      OULAD is not among its supported dataset formats: it has no
+      item-level correctness stream, only summative assessment scores at
+      irregular multi-week intervals.
+    license_compatibility: MIT code license itself is compatible.
+    blocked_reason: >-
+      (1) Not installed and adding a deep-learning dependency stack for a
+      model whose required input (item-level binary correctness) does not
+      exist in the approved dataset would be a forced mismatch;
+      (2) training DKT/SAKT/AKT on a re-shaped OULAD proxy target would
+      neither be the authors' method nor a fair target-parity comparator.
+
+  - name: FSRS (py-fsrs)
+    url: https://github.com/open-spaced-repetition/fsrs4anki
+    license: MIT (code)
+    checked_at: '2026-11-15'
+    finding: >-
+      FSRS models per-card review ratings (Again/Hard/Good/Easy) on a
+      schedulable item; OULAD has no per-item review-event stream with
+      self-reported recall ratings. Using FSRS would require fabricating
+      card ratings from click counts — a heuristic masquerading as ground
+      truth, explicitly forbidden by the spec.
+    blocked_reason: target-task mismatch; would require invented labels.
+
+  - name: half-life regression (Duolingo published model)
+    reference: Settles & Meeder (ACL 2016)
+    finding: >-
+      No official open-source reference implementation is available for the
+      exact published model; the mechanism (exponential decay with learned
+      half-life) is re-implemented from the published equations in
+      methods/p05/METHOD.md and is explicitly labelled an ADAPTATION, not
+      the authors' code.
+    blocked_reason: reimplementation only; attribution recorded in manuscript.
+
+consequence: >-
+  C2 (published current comparator) is BLOCKED with this dated rationale.
+  The strongest available comparator is therefore the honestly-tuned
+  classical baseline C1 with matched inputs and budget. No SOTA or
+  superiority claim may rest on comparisons against C0 alone. The null/positive
+  result is reported against C1 regardless of direction.
+
+spec_rule_citation: >-
+  LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/04_METHODOLOGY/SCIENTIFIC_EVALUATION.md §3:
+  "C2 published current comparator (if code and license available)" — neither
+  condition is satisfiable for the approved data, so BLOCKED is the honest state.

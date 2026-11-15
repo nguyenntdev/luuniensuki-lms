@@ -1,0 +1,27 @@
+{
+  "run_id": "617ba04dff57812f97a2c159d878d173f05914fa6d9ab6025f52c893f2dea89d",
+  "paper_id": "P12",
+  "arm": "C1",
+  "executed_at_utc": "2026-11-15T11:51:12Z",
+  "git": {
+    "head_sha": "4e5a792e16250106b9d0a577849e864ab7007c92",
+    "dirty": true
+  },
+  "ingest_manifest": "ingest_manifest.json",
+  "result": {
+    "baseline": "C1",
+    "name": "citation-presence check",
+    "n_claims": 63,
+    "accepted": 63,
+    "rejected": [],
+    "unsourced_claim_rate": 0.0,
+    "locator_completeness_rate": null,
+    "contradiction_count": 0,
+    "verdict_counts": {
+      "PASS": 63,
+      "REJECT": 0,
+      "ABSTAIN": 0
+    },
+    "note": "Presence-only: an unresolvable source_id with a locator still passes."
+  }
+}

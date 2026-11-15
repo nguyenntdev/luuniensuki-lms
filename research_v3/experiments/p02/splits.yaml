@@ -1,0 +1,20 @@
+# P02 split plan (leakage-safe, family-level holdout)
+paper_id: P02
+split_strategy: group_holdout
+group_key: family_id
+grouping_unit: topology family + alternative-provider density
+splits:
+  - split_id: all
+    description: >
+      All 1620 synthetic instances (6 families x 3 regimes x 3 densities x 30
+      replications), partitioned into train/calibration/dev/test by topology
+      family so that test families are unseen during any tuning. Every
+      instance is certified by the independent brute-force oracle; gold is
+      evaluator-side only.
+    n_instances: 1620
+    sealed: true
+leakage_controls:
+  - group_split(group_key="family_id") guarantees a family never spans partitions
+  - assert_no_leakage runs on the frozen split
+  - oracle modules are never imported by solvers (unit-test enforced)
+  - instance inputs contain no oracle fields (problem payload only)

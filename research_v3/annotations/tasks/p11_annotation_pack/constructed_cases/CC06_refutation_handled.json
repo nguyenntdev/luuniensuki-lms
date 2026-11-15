@@ -1,0 +1,57 @@
+{
+  "response_id": "CC06_refutation_handled",
+  "label": "CONSTRUCTED_NOT_HUMAN",
+  "evidence": [
+    {
+      "evidence_id": "e1",
+      "source_type": "primary",
+      "provenance": "cited",
+      "is_authentic": true,
+      "locator": "HCMC_archive_box3_doc17",
+      "text": "Bản dịch truyền giáo báo cáo năm 1866."
+    },
+    {
+      "evidence_id": "e2",
+      "source_type": "primary",
+      "provenance": "cited",
+      "is_authentic": true,
+      "locator": "TTTGCM_q44_folia_8",
+      "text": "Cương mục ghi chép chính sách đối với truyền đạo."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "c1",
+      "text": "Chính sách cấm đạo những năm 1860 thi hành không đồng đều giữa các tỉnh (giới hạn tỉnh Bắc Kỳ, 1862-1870).",
+      "is_causal": true,
+      "inference_type": "causal"
+    }
+  ],
+  "links": [
+    {
+      "claim_id": "c1",
+      "evidence_id": "e1",
+      "relation": "supports"
+    },
+    {
+      "claim_id": "c1",
+      "evidence_id": "e2",
+      "relation": "refutes"
+    },
+    {
+      "claim_id": "c1",
+      "evidence_id": "e1",
+      "relation": "contextualizes"
+    }
+  ],
+  "scorer_output": {
+    "scores": {
+      "S1_sourcing": 3,
+      "S2_corroboration": 3,
+      "S3_contextualization": 3,
+      "S4_argumentation": 3
+    },
+    "overall": 3.0,
+    "caps_applied": []
+  }
+}

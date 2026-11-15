@@ -1,0 +1,64 @@
+# V3-G05: Research V3 baseline registry.
+#
+# Tiers follow the V2 charter convention:
+#   C0 = sanity baseline (never supports a SOTA claim)
+#   C1 = serious classical comparator (reimplementation, matched inputs)
+#   C2 = original published model; only usable with source + license + task fit
+#
+# A baseline is only claim-eligible when attribution is recorded AND
+# comparable_task is true AND (for C2) provenance_sha256 is a real 64-hex
+# digest of an actual upstream snapshot. C2 entries with no verifiable
+# source/license stay BLOCKED — never silently upgraded.
+
+schema_version: v3
+note: >
+  No published number may be copied into a V3 table. C2 requires an actual
+  upstream code/weights snapshot hash; without one it stays BLOCKED.
+
+baselines:
+  - baseline_id: v3_c0_sanity
+    tier: C0
+    attribution: reimplementation (sanity check; not a comparator for any superiority claim)
+    comparable_task: true
+    license: internal
+    status: APPROVED
+    claims_allowed: sanity check only
+  - baseline_id: v3_c1_classical
+    tier: C1
+    attribution: reimplementation of a classical algorithm (NOT the authors' code)
+    comparable_task: true
+    license: internal-reimplementation
+    status: APPROVED
+    claims_allowed: serious classical comparator on matched inputs
+  - baseline_id: v3_ablation_a1
+    tier: C1-ablation
+    attribution: proposed policy minus mechanism 1
+    comparable_task: true
+    license: internal
+    status: APPROVED
+    claims_allowed: mechanism isolation
+  - baseline_id: v3_ablation_a2
+    tier: C1-ablation
+    attribution: proposed policy minus mechanism 2
+    comparable_task: true
+    license: internal
+    status: APPROVED
+    claims_allowed: mechanism isolation
+  - baseline_id: v3_ablation_a3
+    tier: C1-ablation
+    attribution: proposed policy minus mechanism 3
+    comparable_task: true
+    license: internal
+    status: APPROVED
+    claims_allowed: mechanism isolation
+  - baseline_id: v3_c2_published_generic
+    tier: C2
+    attribution: NOT RUN — no upstream snapshot captured
+    comparable_task: false
+    license: unknown
+    status: BLOCKED
+    blocked_reason: >
+      No original published implementation with compatible source, weights and
+      license has been captured for any V3 primary task. Importing published
+      metric numbers into a V3 table is forbidden. Verification requires a real
+      provenance_sha256 of an upstream snapshot plus a license review.

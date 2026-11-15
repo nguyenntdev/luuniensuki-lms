@@ -1,0 +1,43 @@
+{
+  "probe": "wikidata_cc0_entity_linking",
+  "note": "Entity links only; never evidence of historical truth; archives untouched.",
+  "calls": [
+    {
+      "endpoint": "https://query.wikidata.org/sparql",
+      "license": "CC0-1.0 (as declared upstream at data gate time; snapshot recorded per response)",
+      "label": "Ngọ Môn",
+      "language": "vi",
+      "query": "SELECT ?item ?itemLabel WHERE {\n  ?item rdfs:label \"Ngọ Môn\"@vi .\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"vi,en\" . }\n}\nLIMIT 1",
+      "query_sha256": "d542cd6a25be6612c93d2d67c262a621d844411eb7af33f50d19ef4152a76bf5",
+      "status": "ok",
+      "qid": "Q1140102",
+      "resolved_label": "Ngọ Môn",
+      "response_sha256": "0de0adb396489cc70b8cdf3de74ca14583294bb695f1f1ada5cc63a6c481bc62"
+    },
+    {
+      "endpoint": "https://query.wikidata.org/sparql",
+      "license": "CC0-1.0 (as declared upstream at data gate time; snapshot recorded per response)",
+      "label": "Điện Thái Hòa",
+      "language": "vi",
+      "query": "SELECT ?item ?itemLabel WHERE {\n  ?item rdfs:label \"Điện Thái Hòa\"@vi .\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"vi,en\" . }\n}\nLIMIT 1",
+      "query_sha256": "709dae6e1f50e2ee100ed548830f6b190c42a4eb4de23055590040a5cec9c184",
+      "status": "ok",
+      "qid": "Q3393365",
+      "resolved_label": "Điện Thái Hòa",
+      "response_sha256": "a10b7bf8a31a748efef23c99fe420d6eb405bbf9fd0530ff637d9d8188ca8a3e"
+    },
+    {
+      "endpoint": "https://query.wikidata.org/sparql",
+      "license": "CC0-1.0 (as declared upstream at data gate time; snapshot recorded per response)",
+      "label": "Minh Mạng",
+      "language": "vi",
+      "query": "SELECT ?item ?itemLabel WHERE {\n  ?item rdfs:label \"Minh Mạng\"@vi .\n  SERVICE wikibase:label { bd:serviceParam wikibase:language \"vi,en\" . }\n}\nLIMIT 1",
+      "query_sha256": "06a1e5fda0852e471df02a43010d361b0dc2875f12f7f9f3a33707f9bab0cb07",
+      "status": "ok",
+      "qid": "Q434419",
+      "resolved_label": "Minh Mạng",
+      "response_sha256": "eddc53102ec602981f936d33991aae67ca560038a1db26fc52cdf282354aa93e"
+    }
+  ],
+  "executed_at_utc": "2026-11-15T11:51:12Z"
+}

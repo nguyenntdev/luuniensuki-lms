@@ -1,0 +1,159 @@
+{
+  "paper_id": "P03",
+  "updated_at": "2026-11-15",
+  "updated_by": "P03 code agent",
+  "tasks": {
+    "P03-T01": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p03/METHOD.md",
+        "research_v3/manuscripts/p03/main.md"
+      ],
+      "note": "RQ/estimand/H0 frozen in METHOD.md (v1.0.0 written before policy.py) and manuscript section 1; collision statement: no shared sample/RQ/principal table with P09/P11/P12 (audit in runs/p03/manifests/manifest_v1.json evidence card)."
+    },
+    "P03-T02": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p03/literature_matrix.csv",
+        "research_v3/manuscripts/p03/main.md",
+        "research_artifacts_v3/runs/p03/raw/LICENSE_capture_kaushal0494_UnifyingAITutorEvaluation.txt"
+      ],
+      "note": "Rights assessment executed with URLs checked 2026-11-15: MRBench devset CC BY-SA 4.0 APPROVED-WITH-CAVEAT (no LICENSE file; caveat captured verbatim); MathTutorBench BLOCKED for direct scoring (all tasks require an LLM; C2 unavailable); C2 real-LLM BLOCKED; B05 human reference BLOCKED. License capture artifact on disk."
+    },
+    "P03-T03": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p03/types.py",
+        "tests/research_v3/method/test_p03_policy.py"
+      ],
+      "note": "Typed TutorDecisionInput/TutorDecision with provenance statuses; malformed source records raise typed MalformedSourceError (fail-closed); ABSTAIN and NOT_APPLICABLE distinct outputs; tests pass."
+    },
+    "P03-T04": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p03/raw/mrbench_v3_devset.json.sha256",
+        "research_artifacts_v3/runs/p03/manifests/manifest_v1.json"
+      ],
+      "note": "Raw MRBench devset ingested with sha256 sidecar (a395feab...), pinned in manifest raw_dataset.sha256; manifest re-verifies checksums on every run (round-trip test-enforced)."
+    },
+    "P03-T05": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p03/run_matrix.py",
+        "research_artifacts_v3/runs/p03/manifests/manifest_v1.json"
+      ],
+      "note": "Group split by conversation_id (197/29/40/34) with assert_no_leakage; split hash 9b3fbfd5... frozen in manifest; strata injected AFTER splitting; leakage audit PASS (0 findings) on the frozen run."
+    },
+    "P03-T06": {
+      "status": "DONE_ENGINEERING",
+      "evidence": ["research_artifacts_v3/runs/p03/manifests/manifest_v1.json"],
+      "note": "Descriptive cells recorded pre-scoring in the manifest: raw dataset (300 conversations, sha256, URL), split sizes/hash, n_test_cases=272, 8 preregistered strata, leakage audit results."
+    },
+    "P03-T07": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p03/baselines.py",
+        "research_artifacts_v3/runs/p03/reports/summaries_v1.json"
+      ],
+      "note": "C0 direct-answer and C1 rule-based proxy measured on identical frozen cases; C1 is labelled simulated_proxy NOT-a-real-LLM in every artifact, table and the evidence card (harness test, not an LLM comparison)."
+    },
+    "P03-T08": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p03/literature_matrix.csv",
+        "research_v3/methods/p03/METHOD.md"
+      ],
+      "note": "Task is 'closest published implementation OR honest BLOCKED card': literature matrix with DOI/venue/license/overlap scores delivered (MathTutorBench EMNLP 2025 closest, novelty_conflict 0.3); C2 real-LLM comparison shipped as an explicit BLOCKED card in prereg blocked_cards and manifest c2_status."
+    },
+    "P03-T09": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p03/policy.py",
+        "research_v3/methods/p03/METHOD.md",
+        "tests/research_v3/method/test_p03_policy.py"
+      ],
+      "note": "Five-gate deterministic policy (G1 injection, G2 malicious-note quarantine, G3 fail-closed provenance/contradiction, G4 stage+tau=0.60 calibrated answer budget, G5 Socratic default) with reason codes and cite-only provenance; no learned weights; 59 tests pass."
+    },
+    "P03-T10": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p03/policy.py",
+        "research_v3/experiments/p03/run_matrix.py",
+        "research_v3/manuscripts/p03/failure_review.md"
+      ],
+      "note": "Five true ablations A1-A5 each break their named mechanism (A1 selective AUROC 0.50, A3 leak 0.333, A5 refusal 0.0) measured in summaries_v1.json; mandatory counterexample (malicious-note answer exfiltration) withheld and test-enforced; mechanism check in manuscript Table-1 note and failure_review.md."
+    },
+    "P03-T11": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p03/METHOD.md",
+        "research_artifacts_v3/runs/p03/manifests/manifest_v1.json"
+      ],
+      "note": "Hyperparameters (tau=0.60, factor weights 0.5/0.3/0.2) frozen in METHOD.md v1.0.0 BEFORE evaluation and restated in the experiment card hyperparameter_budget; deterministic policy, single CPU, no tuning on any split."
+    },
+    "P03-T12": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p03/run_matrix.py",
+        "research_artifacts_v3/runs/p03/reports/decisions_v1.json",
+        "research_artifacts_v3/runs/p03/reports/summaries_v1.json"
+      ],
+      "note": "Full preregistered matrix executed on the frozen MRBench-derived test split (8 systems x 272 cases): decisions, paired stats, summaries, sealed labels (n=272) all frozen with SHA256; strict exit code on failure. Prereg-declared deviations stand: C2 real-LLM BLOCKED, MathTutorBench main tasks BLOCKED for generation scoring; external validity is decision-layer only."
+    },
+    "P03-T13": {
+      "status": "DONE_ENGINEERING",
+      "evidence": ["research_artifacts_v3/runs/p03/reports/summaries_v1.json"],
+      "note": "All 8 preregistered strata (injection, malicious_note, no_evidence, contradictory_sources, premature_answer_request, lowconf_calibration, clean_grounded, answer_appropriate) reported fail-closed for every system; required-strata reporting test-enforced."
+    },
+    "P03-T14": {
+      "status": "DONE_ENGINEERING",
+      "evidence": ["research_artifacts_v3/runs/p03/reports/paired_stats_v1.json"],
+      "note": "Paired McNemar exact + conversation-cluster bootstrap (2000 draws) per contrast, Holm-corrected within the preregistered family, Wilson/CP CIs on every rate; null_result flags embedded per contrast; paired_stats_v1.json on disk."
+    },
+    "P03-T15": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p03/run_matrix.py",
+        "research_artifacts_v3/runs/p03/manifests/manifest_v1.json",
+        "tests/research_v3/method/test_p03_eval.py"
+      ],
+      "note": "Source-to-table: run_matrix CLI generates decisions/stats/summaries from pinned inputs; manifest re-verifies every artifact checksum (frozen-artifact-checksums round-trip test); evidence card wording machine-enforced (discloses no real LLM); determinism test: frozen decisions match fresh execution."
+    },
+    "P03-T16": {
+      "status": "DONE_ENGINEERING",
+      "evidence": ["research_v3/manuscripts/p03/failure_review.md"],
+      "note": "Scientific failure review on disk: falsification attempts executed, honest negatives (A1 ECE paradox, abstention-recall ceiling, C1 proxy weakness, single-seed determinism), salami-slicing/collision decisions (vs P09/P11/P12, MRBench track non-overlap, MTB/MTB reward-model reservation)."
+    },
+    "P03-T17": {
+      "status": "ENGINEERING_PASS",
+      "evidence": ["research_v3/manuscripts/p03/main.md"],
+      "note": "Manuscript drafted with preregistered endpoints, verified-publications related work, artifact-derived tables, evidence IDs, and a full threats-to-validity section; explicitly SKELETON / NOT submission-ready (no venue-ready figures/typesetting; release gated on T19-T21 and C2)."
+    },
+    "P03-T18": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p03/main.md"],
+      "note": "Reproduction commands published in manuscript section 9; independent external reviewer reproduction from a clean clone and frozen release require a human reviewer."
+    },
+    "P03-T19": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p03/main.md"],
+      "note": "Human-only: ethics/human-annotation approvals (incl. B05 human teacher reference) require documented actual signatures; none may be simulated."
+    },
+    "P03-T20": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p03/main.md"],
+      "note": "Human-only: novelty/nearest-work signoff by the research lead; literature matrix surfaced as evidence but novelty must not be certified by the agent."
+    },
+    "P03-T21": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p03/main.md"],
+      "note": "Human-only: coauthor/venue/rights signoff; ITS (CORE B) CFP/rank re-verification pending; no submission claims made."
+    }
+  },
+  "summary": {
+    "done_engineering": 15,
+    "engineering_pass": 1,
+    "blocked": 5,
+    "note": "P03 executed end-to-end at decision-layer on licensed MRBench devset (272 frozen test cases): policy + metrics + preregistered matrix + stats + failure review all on disk with SHA256 manifests; 59/59 tests pass. C2 real-LLM and MathTutorBench generation scoring remain BLOCKED (no executable LLM); external validity is decision-layer only; T18 and human-only T19-T21 remain blocked."
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "paper_id": "P04",
+  "updated_at": "2026-11-15",
+  "updated_by": "P04 code agent",
+  "independence_gate": {
+    "decision": "PROCEED",
+    "artifact": "research_artifacts_v3/runs/p04/independence_decision.json",
+    "evaluation_class": "BENCHMARK_PROTOCOL_EVALUATION",
+    "note": "Distinct estimand + primary table vs P01 (benchmark protocol, not a transfer method); P04-T20 human signoff on independence still required. Detailed task-level statuses mirror research_artifacts_v3/runs/p04/status/p04_status.json (release_status ENGINEERING_PASS)."
+  },
+  "tasks": {
+    "P04-T01": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p04/independence_decision.json",
+        "research_v3/methods/p04/METHOD.md"
+      ],
+      "note": "RQ/estimand/H0/H1 frozen in METHOD.md; independence gate PROCEED with full collision comparison basis vs P01 (different estimand/primary table/null) and cross-paper checks vs P02/P03/P05/P08."
+    },
+    "P04-T02": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p04/datasheets/P04_datasheet.md",
+        "research_v3/methods/p04/rights.py",
+        "research_artifacts_v3/runs/p04/rights/raw_manifest.json"
+      ],
+      "note": "Rights assessment with datasheet: OULAD 2013-2014 (CC BY-NC 4.0 captured) + UCI student-performance (CC BY 4.0) APPROVED with hash verification; ASSISTments/Junyi/EdNet BLOCKED with exact reasons (test-enforced); NC license disclosed in datasheet."
+    },
+    "P04-T03": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p04/bridge.py",
+        "research_v3/methods/p04/scenarios.py",
+        "research_v3/methods/p04/strata.py"
+      ],
+      "note": "Typed protocol schema: ontology bridge (NOT_APPLICABLE first-class), scenario/strata definitions S0-S4 + A1-A4, ABSTAIN distinct from negative predictions (test-enforced scoring contract)."
+    },
+    "P04-T04": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p04/rights/raw_manifest.json"
+      ],
+      "note": "Immutable provenance: SHA256 of raw OULAD/UCI archives + license texts + per-file hashes; hash-frozen snapshots verified against the frozen manifest at eval time (test-enforced)."
+    },
+    "P04-T05": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p04/protocols/p04_splits.json",
+        "tests/research_v3/method/test_p04_protocol.py"
+      ],
+      "note": "Learner-level group split (salt p04-v1) + 2013-to-2014 time split, frozen and hashed in p04_splits.json; group-disjointness, reproducible hashes, gold-never-in-input and frozen-label immutability test-enforced."
+    },
+    "P04-T06": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p04/reference_eval/leaderboard.json"
+      ],
+      "note": "Descriptive cells recorded for every stratum before scoring claims: coverage, mapping_coverage, n_scored/n_total, n_not_applicable, n_no_activity, annotation_gap_rows, worst-group cells; S1@80% reported as coverage-0 empty denominator, never imputed."
+    },
+    "P04-T07": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p04/baselines.py",
+        "research_artifacts_v3/runs/p04/reference_eval/leaderboard.json"
+      ],
+      "note": "C0 majority (AUC 0.5 sanity on every scored cell) and C1 logistic regression (frozen config, seed 42) measured on identical splits/budgets; all 20 leaderboard cells status=MEASURED, none fabricated (test-enforced)."
+    },
+    "P04-T08": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/methods/p04/METHOD.md"
+      ],
+      "note": "KT-system baselines (DKT/SAKT/AKT/GKT) not implemented: no pinned implementations available in environment; the protocol's honest alternative — the BLOCKED card — is recorded in METHOD.md section 5, the experiment card notes and p04_status.json; benchmark stays honest with C0/C1 reference population only."
+    },
+    "P04-T09": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p04/bench.py",
+        "research_v3/methods/p04/METHOD.md",
+        "tests/research_v3/method/test_p04_protocol.py"
+      ],
+      "note": "Protocol engine: frozen strata with salts, deterministic mapping-noise injectors (touch mapping only, never labels), NOT_APPLICABLE/ABSTAIN scoring contract with explicit denominators, empty-denominator yields None; 27/27 contract tests pass."
+    },
+    "P04-T10": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/methods/p04/METHOD.md"
+      ],
+      "note": "Ablations A1-A4 (no overlap; wrong one-to-many mapping; mapping-label disagreement; exposed global IDs) are defined in the frozen protocol with reserved rows but not yet executed (METHOD.md section 5 last bullet; p04_status.json PARTIAL/TODO)."
+    },
+    "P04-T11": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_v3/methods/p04/protocols/pre_registration.yaml",
+        "research_artifacts_v3/runs/p04/reference_eval/experiment_card.json"
+      ],
+      "note": "Reference baselines C0/C1 calibrated with frozen config and seed 42 (recorded in experiment card); KT-model calibration pending with T08; no tuning on frozen test (test-enforced)."
+    },
+    "P04-T12": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_artifacts_v3/runs/p04/reference_eval/leaderboard.json"
+      ],
+      "note": "Reference matrix complete for C0/C1 across all executed strata on OULAD+UCI (20 MEASURED cells, deterministic rerun); full population matrix requires T08 KT models and T10 ablation execution."
+    },
+    "P04-T13": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_artifacts_v3/runs/p04/reference_eval/leaderboard.json"
+      ],
+      "note": "Shift strata S1-S4 measured with worst-group deterioration and ECE per cell; stress suites (duplicate student aliases, exposed global IDs = A1-A4 rows) pending with T10."
+    },
+    "P04-T14": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_artifacts_v3/runs/p04/reference_eval/leaderboard.json"
+      ],
+      "note": "Learner-cluster bootstrap 95% CIs (1000 resamples, seed 42) per cell + frozen null assessment recorded (H0 does not stand: 4 CI-separated strata for C1); Holm correction over the full confirmatory family deferred until KT models join (T08)."
+    },
+    "P04-T15": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p04/run_reference_eval.py",
+        "research_artifacts_v3/runs/p04/reference_eval/leaderboard.json",
+        "research_artifacts_v3/runs/p04/reference_eval/experiment_card.json"
+      ],
+      "note": "Source-to-table: run_reference_eval generates the leaderboard with embedded prereg sha256; no hand-entered numbers (test-enforced no-fabricated-cells); determinism verified (two full runs produce identical canonical JSON); leaderboard sha256 pinned in experiment card and p04_status.json."
+    },
+    "P04-T16": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/methods/p04/METHOD.md"
+      ],
+      "note": "Scientific failure review scheduled after T08/T10 complete (p04_status.json: TODO); current honest null assessment and interpretation guards are recorded in leaderboard null_assessment and MANUSCRIPT section 3, but the formal review artifact does not exist yet."
+    },
+    "P04-T17": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_v3/manuscripts/p04/MANUSCRIPT.md"
+      ],
+      "note": "Manuscript with evidence IDs for every numeric claim, protocol description, measured reference table, interpretation guard against KT/SOTA claims, and limitations; figures not yet rendered (p04_status.json: PARTIAL, figures pending)."
+    },
+    "P04-T18": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p04/MANUSCRIPT.md"
+      ],
+      "note": "Reproduction commands published (module + pytest; requires private_data/raw snapshots with matching sha256); external reproduction from a clean clone requires a human reviewer."
+    },
+    "P04-T19": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_artifacts_v3/runs/p04/independence_decision.json"
+      ],
+      "note": "Human-only: ethics/human-annotation/license approval signatures required; independence gate itself records human_signoff_required=true and no approval may be simulated."
+    },
+    "P04-T20": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_artifacts_v3/runs/p04/independence_decision.json"
+      ],
+      "note": "Human-only: research-lead novelty signoff; independence gate prepared with decision PROCEED but explicitly not signed (decided_by notes P04-T20 human signoff still required)."
+    },
+    "P04-T21": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p04/MANUSCRIPT.md"
+      ],
+      "note": "Human-only: coauthor/venue/rights signoff; EDM (CORE B) CFP/rank-2027 verification pending; no submission claims made."
+    }
+  },
+  "summary": {
+    "done_engineering": 10,
+    "engineering_pass": 0,
+    "partial": 5,
+    "blocked": 6,
+    "note": "P04 executed per independence gate PROCEED (benchmark-protocol evaluation, distinct from P01). Frozen protocol + rights + splits + reference evaluation (C0/C1, 20 MEASURED cells, deterministic) are on disk with 27/27 contract tests passing. KT baselines (T08), ablation execution (T10) and derived T11-T14/T16 extensions remain partial/blocked; T18 and human-only T19-T21 remain blocked. Task-level statuses mirror research_artifacts_v3/runs/p04/status/p04_status.json."
+  }
+}

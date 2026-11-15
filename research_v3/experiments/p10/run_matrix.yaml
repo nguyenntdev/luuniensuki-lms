@@ -1,0 +1,48 @@
+# P10 experiment run matrix (E-cell ids follow 04_METHODOLOGY/SCIENTIFIC_EVALUATION.md §5)
+paper_id: P10
+cells:
+  E00_data_license_gate:
+    status: PASS_WITH_SCOPE_LIMIT
+    note: >-
+      Inputs are repo-local documented files (hashes in run manifest provenance).
+      The only external candidate (hue-heritage-corpus) remains BLOCKED — no
+      archival permission; the design reads object identities only.
+  E01_schema_integrity:
+    runner: research_v3.methods.p10.experiment.run_matrix
+    gates: [P10ContractError on malformed records; anchor grade mismatch; bloom/layer band]
+  E02_sanity_baseline:
+    design: C0_linear_playlist
+    expectation: invalid certificate (playlist crosses grade boundary) — nontrivial negative control
+  E03_matched_classical:
+    design: C1_topological_no_bloom
+    note: matched inputs/compute; mechanism difference = Bloom gate only
+  E04_closest_published:
+    status: BLOCKED
+    note: >-
+      No runnable published implementation of a Bruner-spiral heritage
+      sequence builder with GDPT-2018 anchoring was located with usable code
+      and license; P02 owns the optimization framing. Honest BLOCKED card at
+      research_v3/experiments/p10/closest_published_blocker.yaml; literature
+      signoff pending (P10-T20 human-only).
+  E05_proposed:
+    design: proposed_spiral_dag
+    config: min_ascent=0 (within DAG edges), max_leap=2, seed-independent
+  E06_mechanism_ablations: [A1_no_layer_bridge, A2_no_bloom_ascent, A3_no_provenance_gate, A4_random_order]
+  E07_robustness_shift:
+    note: >-
+      Stress suite = mutation counterexamples (cycle injection, grade
+      inversion, flat Bloom, unknown anchor, invented competency code);
+      realized in tests/research_v3/method/test_p10_*.py
+  E08_calibration_cost:
+    note: CPU-only constraint checking; wall time recorded unhashed beside payload hash
+  E09_statistical_comparison:
+    note: >-
+      Machine gate: exact proportion CIs (Wilson + Clopper-Pearson). No paired
+      human comparison exists yet — that is the BLOCKED human phase.
+  E10_error_analysis:
+    note: certificate reason_codes per design retained in the frozen run JSON
+  E11_secondary_replication:
+    status: NOT_APPLICABLE_SINGLE_COLLECTION
+    note: one heritage collection (Cửu Đỉnh); external generalization unverified and disclosed
+  E12_manuscript_verification:
+    runner: research_v3.methods.p10.cli run (source-to-table; no hand-entered numbers)

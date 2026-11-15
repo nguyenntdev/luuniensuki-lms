@@ -1,0 +1,105 @@
+# P09 — Provenance-Aware Interactive Cultural Heritage Exploration
+# Pre-registration: hypotheses, endpoints, analysis plan (offline gate evaluation tier).
+#
+# SCIENTIFIC LABELING: this prereg covers the OFFLINE provenance-gate evaluation
+# only. No human-subject study, no expert labels, no usability measures. The
+# interactive user study that the paper's full RQ requires is FUTURE WORK and
+# its human-task tasks (P09-T19/T20/T21) remain BLOCKED.
+
+study_id: P09
+paper_id: P09
+title: "Provenance-Aware Interactive Cultural Heritage Exploration"
+tier: offline_gate_evaluation
+provenance: DETERMINISTIC_RULES_NO_HUMAN_ADJUDICATION
+corpus:
+  dataset_id: wikidata-hue-heritage-mini
+  license: CC0-1.0
+  discovery_query_file: research_artifacts_v3/runs/p09/corpus/query.sparql
+  discovery_response_sha256: RECORDED_AT_BUILD  # filled by corpus_manifest.json
+  entity_snapshot_sha256: RECORDED_AT_BUILD     # per-entity, corpus_manifest.json
+  limitation: >
+    Wikidata statements are secondary evidence. Nothing here infers historical
+    truth from Wikidata alone (ETHICS_AND_INTEGRITY.md rule 7).
+
+research_question: >
+  Does interactive visibility of claim-level provenance (source, locator,
+  epistemic badge) with fail-closed withholding of unverified claims eliminate
+  unsupported-claim surfacing while retaining grounded surfacing, relative to
+  surface-everything and keyword-text baselines?
+
+hypotheses:
+  H1_zero_unsupported: >
+    The proposed provenance-gated policy surfaces ZERO claims whose verification
+    outcome is unverified or invalid (unsupported-claim surfacing rate == 0.0
+    exactly) on the frozen corpus.
+  H2_grounded_majority: >
+    The proposed policy surfaces every gate-verified claim (citation-grounding
+    rate equals the verified fraction of the corpus; no verified claim is
+    withheld except by explicit rejection for invalid structure).
+  H3_baselines_leak: >
+    C0 surfaces every unverified/invalid claim by construction; C1 surfaces a
+    nonzero number of unsupported claims on the same corpus.
+  H4_reject_negative_case: >
+    Any claim citing a non-existent source id, malformed statement GUID, or
+    mismatched locator is rejected (never surfaced) by the proposed policy.
+
+primary_endpoint:
+  metric: unsupported_claim_surfacing_rate
+  definition: >
+    surfaced decisions on claims with verification outcome in
+    {unverified, invalid} divided by all claims in the frozen corpus
+  estimation_unit: claim_id
+  required_value_for_proposed: 0.0
+  abstain_handling: >
+    abstain_unverified and reject_invalid_source are distinct decision classes;
+    neither is merged into surface nor into each other
+
+secondary_metrics:
+  - citation_grounding_rate
+  - abstention_rate
+  - counterexample_detection_rate   # adversarial mutation cases, reported separately
+
+decision_labels:
+  - surface
+  - abstain_unverified
+  - reject_invalid_source
+
+methods:
+  - id: proposed            # provenance-gated surfacing (policy.propose_surface)
+    kind: intervention
+    comparator_status: REIMPLEMENTATION
+  - id: c0_surface_everything
+    kind: naive_baseline
+    comparator_status: REIMPLEMENTATION
+  - id: c1_keyword_match
+    kind: matched_classical_heuristic   # deterministic keyword proxy; NOT a real UI system
+    comparator_status: REIMPLEMENTATION
+
+seeds: [42]   # policies are deterministic; the seed fixes the audit sample only
+split_id: full_corpus   # single frozen corpus; no train/test split is needed for a rule system with zero learned parameters
+
+analysis_plan:
+  paired: false          # no stochastic comparison; exact arithmetic on the full corpus
+  ci: wilson_and_clopper_pearson_95   # zero-error cells must not report [0,0]
+  negative_controls: [c0_surface_everything]
+  guardrails:
+    - "If any unsupported claim is surfaced by the proposed method, H1 FAILS and is reported as a negative result."
+    - "Abstention must stay visible: abstain decisions are reported, never dropped from denominators."
+    - "No metric may be recomputed after seeing results except to ADD failure detail."
+  human_audit:
+    sample_size: max(8, 20% of corpus claims)
+    sampling: deterministic, seed 42, sorted claim ids
+    label_producer: INDEPENDENT_HUMAN_AUDITOR   # this pipeline produces the list, never the labels
+    expert_labels_available: false
+
+blocked_tasks:
+  - P09-T19: "Ethics/human annotation/license approval — BLOCKED: requires real human signoffs; none available in this wave."
+  - P09-T20: "Novelty and nearest-work signoff (research lead) — BLOCKED: requires human research-lead review."
+  - P09-T21: "Coauthor/venue/submission signoff — BLOCKED: requires human coauthors."
+  - interactive_user_study: "Usability / time-to-correct-source / comprehension outcomes are BLOCKED pending a real, consented human study."
+
+publication_gate: >
+  Status remains ENGINEERING_PASS. It cannot reach SCIENTIFIC_REVIEW_READY or
+  SUBMISSION_READY while T19/T20/T21 are BLOCKED. H0 (citation-only interface
+  equivalence) is carried forward untested; it can only be addressed by the
+  human study.

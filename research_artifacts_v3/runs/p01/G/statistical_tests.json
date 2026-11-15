@@ -1,0 +1,69 @@
+{
+  "cluster_bootstrap": {
+    "a": "proposed_rc_stg",
+    "b": "C1_regularized_logistic",
+    "cliffs_delta": -0.43492063492063493,
+    "cluster_bootstrap": {
+      "ci_95": [
+        -0.4524288848792658,
+        -0.417803424526836
+      ],
+      "mean": -0.43492063492063493,
+      "method": "cluster_bootstrap_paired",
+      "n_groups": 2780,
+      "n_units": 3150,
+      "resamples": 2000
+    },
+    "mcnemar": {
+      "b_intervention_only": 1,
+      "c_comparator_only": 1371,
+      "method": "mcnemar_exact_binomial",
+      "n_discordant": 1372,
+      "p_value": 0.0,
+      "statistic": 1.0
+    },
+    "mean_diff": -0.43492063492063493,
+    "n": 3150
+  },
+  "family": [
+    "proposed_vs_C1",
+    "proposed_vs_C0"
+  ],
+  "holm_adjusted_p_values": {
+    "proposed_vs_C0": 1.304860450149292e-128,
+    "proposed_vs_C1": 0.0
+  },
+  "method": "holm",
+  "raw_p_values": {
+    "proposed_vs_C0": 1.304860450149292e-128,
+    "proposed_vs_C1": 0.0
+  },
+  "tests": {
+    "proposed_vs_C0": {
+      "a": "proposed_rc_stg",
+      "a_accuracy": 0.11682539682539683,
+      "b": "C0_majority_sanity",
+      "b_accuracy": 0.37238095238095237,
+      "b_intervention_only": 203,
+      "c_comparator_only": 1008,
+      "method": "mcnemar_exact_binomial",
+      "n": 3150,
+      "n_discordant": 1211,
+      "p_value": 1.304860450149292e-128,
+      "statistic": 203.0
+    },
+    "proposed_vs_C1": {
+      "a": "proposed_rc_stg",
+      "a_accuracy": 0.11682539682539683,
+      "b": "C1_regularized_logistic",
+      "b_accuracy": 0.5517460317460318,
+      "b_intervention_only": 1,
+      "c_comparator_only": 1371,
+      "method": "mcnemar_exact_binomial",
+      "n": 3150,
+      "n_discordant": 1372,
+      "p_value": 0.0,
+      "statistic": 1.0
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "accuracy": 0.3181536555142503,
+  "clopper_pearson_ci_95": [
+    0.30210217492173475,
+    0.33453523508131267
+  ],
+  "confusion": {
+    "Distinction->ABSTAIN": 122,
+    "Distinction->Distinction": 1,
+    "Distinction->Fail": 20,
+    "Distinction->Pass": 258,
+    "Fail->ABSTAIN": 326,
+    "Fail->Fail": 61,
+    "Fail->Pass": 151,
+    "Fail->Withdrawn": 58,
+    "Pass->ABSTAIN": 479,
+    "Pass->Distinction": 1,
+    "Pass->Fail": 90,
+    "Pass->Pass": 623,
+    "Pass->Withdrawn": 31,
+    "Withdrawn->ABSTAIN": 421,
+    "Withdrawn->Fail": 108,
+    "Withdrawn->Pass": 136,
+    "Withdrawn->Withdrawn": 342
+  },
+  "coverage": 0.5824039653035935,
+  "macro_f1": 0.2852387500989531,
+  "model_id": "A5_shuffled_thresholds",
+  "n": 3228,
+  "n_abstained": 1348,
+  "n_correct": 1027,
+  "per_class_recall": {
+    "Distinction": {
+      "clopper_pearson_ci_95": [
+        6.313468518693652e-05,
+        0.0138154285966349
+      ],
+      "correct": 1,
+      "n": 401,
+      "recall": 0.0024937655860349127,
+      "wilson_ci_95": [
+        0.000440346579990189,
+        0.01398865690623954
+      ]
+    },
+    "Fail": {
+      "clopper_pearson_ci_95": [
+        0.07919636323755792,
+        0.12952688558779504
+      ],
+      "correct": 61,
+      "n": 596,
+      "recall": 0.10234899328859061,
+      "wilson_ci_95": [
+        0.08050593809776435,
+        0.12928526084353947
+      ]
+    },
+    "Pass": {
+      "clopper_pearson_ci_95": [
+        0.48057903892489273,
+        0.5373515507513384
+      ],
+      "correct": 623,
+      "n": 1224,
+      "recall": 0.5089869281045751,
+      "wilson_ci_95": [
+        0.4809962464362232,
+        0.5369213762682017
+      ]
+    },
+    "Withdrawn": {
+      "clopper_pearson_ci_95": [
+        0.31038095246650255,
+        0.3698054592672165
+      ],
+      "correct": 342,
+      "n": 1007,
+      "recall": 0.33962264150943394,
+      "wilson_ci_95": [
+        0.3110312604007056,
+        0.3694329734497437
+      ]
+    }
+  },
+  "predictions_sha256": "f632545c87d339d3976bf2aac0ec3dcf3c1dc53cc87e8070f5c5c213debfcf23",
+  "wilson_ci_95": [
+    0.30231059518239917,
+    0.3344290113364196
+  ]
+}

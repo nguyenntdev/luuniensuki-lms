@@ -1,0 +1,81 @@
+{
+  "attempts_total": 168164,
+  "feature_columns": [
+    "active_days",
+    "click_rate",
+    "course_len",
+    "days_since_click",
+    "days_since_last_attempt",
+    "decay_score_mean_h45",
+    "due_day",
+    "gap_days",
+    "is_cma",
+    "is_exam",
+    "log_gap",
+    "module_AAA",
+    "module_BBB",
+    "module_CCC",
+    "module_DDD",
+    "module_EEE",
+    "module_FFF",
+    "module_GGG",
+    "n_past_attempts",
+    "never_clicked",
+    "past_fail_count",
+    "past_fail_rate",
+    "past_score_max",
+    "past_score_mean",
+    "past_score_min",
+    "past_score_std",
+    "recent14_active_days",
+    "recent_attempts_14d",
+    "total_clicks",
+    "weight"
+  ],
+  "leak_audit": {
+    "calibration": {
+      "duplicates": 0,
+      "findings": [],
+      "rows": 38401,
+      "status": "PASS",
+      "unique_case_ids": 38401
+    },
+    "test": {
+      "duplicates": 0,
+      "findings": [],
+      "rows": 48370,
+      "status": "PASS",
+      "unique_case_ids": 48370
+    },
+    "train": {
+      "duplicates": 0,
+      "findings": [],
+      "rows": 81393,
+      "status": "PASS",
+      "unique_case_ids": 81393
+    }
+  },
+  "learner_overlap": {
+    "cal_test_overlap_pct": 5.551,
+    "test_learners": 8485,
+    "train_cal_overlap_pct": 9.257,
+    "train_test_overlap_pct": 7.896
+  },
+  "pass_rate_by_split": {
+    "calibration": 0.9539074503268145,
+    "test": 0.9481083316105023,
+    "train": 0.964370400402983
+  },
+  "raw_archive_sha256": "f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4",
+  "raw_archive_verified": true,
+  "split_hashes": {
+    "calibration": "b43235496e2b4cd3c9e2dd73bbc9511a8a1fb9a973099179b015a2fd168f4fd3",
+    "test": "2ec788d2ccd5a8af1c62982a1fd75d7189066807e35a4b94991e0b537abf5759",
+    "train": "97ee598f5705520b88eb1c1a7b06858617a8ddfbefd236e41355828a9c904359"
+  },
+  "splits": {
+    "calibration": 38401,
+    "test": 48370,
+    "train": 81393
+  }
+}

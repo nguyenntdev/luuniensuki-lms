@@ -1,0 +1,11 @@
+claim_id,paper_id,source_file,claim_kind,claim_text,overlap_paper_ids,overlap_note,evidence_status
+LN-01-PAPER,LN-01,manuscripts_v5/LN-01.tex,PAPER_LEVEL,paper registered in ledger; no explicit \claim anchors found,P02;P10,"shares reused LN asset(s): LN-01 with P02,P10",UNVERIFIED
+LN-02-PAPER,LN-02,manuscripts_v5/LN-02.tex,PAPER_LEVEL,paper registered in ledger; no explicit \claim anchors found,P01;P02;P04,"shares reused LN asset(s): LN-02 with P01,P02,P04",UNVERIFIED
+LN-03-PAPER,LN-03,manuscripts_v5/LN-03.tex,PAPER_LEVEL,paper registered in ledger; no explicit \claim anchors found,P05,shares reused LN asset(s): LN-03 with P05,UNVERIFIED
+LN-04-PAPER,LN-04,manuscripts_v5/LN-04.tex,PAPER_LEVEL,paper registered in ledger; no explicit \claim anchors found,P03;P09;P12,"shares reused LN asset(s): LN-04 with P03,P09,P12",UNVERIFIED
+LN-05-PAPER,LN-05,manuscripts_v5/LN-05.tex,PAPER_LEVEL,paper registered in ledger; no explicit \claim anchors found,P08,shares reused LN asset(s): LN-05 with P08,UNVERIFIED
+LN-06-PAPER,LN-06,manuscripts_v5/LN-06.tex,PAPER_LEVEL,paper registered in ledger; no explicit \claim anchors found,P02,shares reused LN asset(s): LN-06 with P02,UNVERIFIED
+LN-07-PAPER,LN-07,manuscripts_v5/LN-07.tex,PAPER_LEVEL,paper registered in ledger; no explicit \claim anchors found,P07;P14,"shares reused LN asset(s): LN-07 with P07,P14",UNVERIFIED
+LN-08-PAPER,LN-08,manuscripts_v5/LN-08.tex,PAPER_LEVEL,paper registered in ledger; no explicit \claim anchors found,P03;P09;P11;P12,"shares reused LN asset(s): LN-08 with P03,P09,P11,P12",UNVERIFIED
+LN-09-PAPER,LN-09,manuscripts_v5/LN-09.tex,PAPER_LEVEL,paper registered in ledger; no explicit \claim anchors found,P06,shares reused LN asset(s): LN-09 with P06,UNVERIFIED
+LN-10-PAPER,LN-10,manuscripts_v5/LN-10.tex,PAPER_LEVEL,paper registered in ledger; no explicit \claim anchors found,P13,shares reused LN asset(s): LN-10 with P13,UNVERIFIED

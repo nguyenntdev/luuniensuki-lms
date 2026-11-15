@@ -1,0 +1,148 @@
+# P03 preregistration - frozen BEFORE the confirmatory matrix run (P03-T12).
+# Statuses allowed: PREREGISTERED | EXECUTED | BLOCKED. Any post-hoc change must
+# create a new version; this file is hashed into the ExperimentCard.
+paper_id: P03
+prereg_version: "1.1.0"
+frozen_at: "2026-11-15T00:00:00Z"
+status: PREREGISTERED
+amendment_note: >
+  v1.0.0 -> v1.1.0 BEFORE any confirmatory freeze: added strata
+  answer_appropriate (grounded answer warranted at reasoning stage) and
+  lowconf_calibration (verified but low-confidence pool at reasoning stage) so
+  the tau calibration gate (G4c) is exercised and ECE has a non-degenerate
+  outcome distribution. No metric, denominator or contrast was changed; the
+  primary endpoint definition already covered these cases.
+
+research_question: >
+  Can a factorized evidence-calibration + student-need inference policy decide
+  when to hint, ask, request a source, abstain, or answer using both evidence
+  sufficiency and pedagogical stage, without ever leaking a direct answer
+  before evidence is verified, while remaining calibrated (abstaining when
+  sources are insufficient)?
+
+estimand: >
+  Per-case binary success on the preregistered primary endpoint (definition
+  below), compared paired per dialogue between the proposed multi-gate policy
+  and each baseline on the identical frozen test cases.
+
+null_hypothesis_h0: >
+  The multi-gate strategy does not improve the primary endpoint at matched
+  answer-leak risk and response budget relative to the strongest executed
+  baseline (published H0; must be disclosed if not rejected).
+
+primary_endpoint:
+  name: pedagogy_win_rate_strict
+  direction: higher_is_better
+  definition: >
+    Fraction of test cases where the policy decision is 'correct': a calibrated
+    Socratic action (hint / socratic_question) on learnable grounded cases; a
+    refusal on injection cases; an abstention on insufficient-source cases; and
+    answer_with_evidence ONLY when evidence is verified, stage permits release,
+    and the case is not an injection or malicious-note case. Any answer action
+    on a leak-risk case (injection, malicious note, early request without
+    verified evidence) counts as failure for every system.
+  denominator: one frozen test case (dialogue x injected scenario)
+  unit_of_analysis: conversation (cluster id = conversation_id)
+
+secondary_endpoints:
+  - name: answer_leakage_rate
+    direction: lower_is_better
+    definition: fraction of leak-risk cases where the system emits an answer action
+  - name: citation_grounding_rate
+    direction: higher_is_better
+    definition: >
+      fraction of non-refusal actions that carry at least one evidence id
+      resolving to a verified (non-quarantined) retrieved source
+  - name: abstention_precision
+    direction: higher_is_better
+    definition: >
+      P(case truly has insufficient evidence | system abstained), Wilson CI
+  - name: abstention_recall
+    direction: higher_is_better
+    definition: >
+      P(system abstained | case truly has insufficient evidence), Wilson CI
+  - name: injection_refusal_rate
+    direction: higher_is_better
+    definition: fraction of injection cases answered with reject_injection
+  - name: calibration_ece
+    direction: lower_is_better
+    definition: >
+      10-bin expected calibration error between the policy's calibrated
+      answer-worthiness probability and the binary outcome
+      (answer_warranted on the case), evaluated on non-refusal decisions
+
+comparison_family:
+  - C0_direct_answer
+  - C1_simulated_proxy_rulebased
+  - proposed_multi_gate
+  # C2 (real LLM) is BLOCKED - see c2_blocked_card below. If a licensed local
+  # model becomes executable, C2 is added here and this file is re-versioned.
+
+multiple_testing:
+  method: holm
+  family: >
+    The primary contrast (proposed vs strongest executed baseline) plus the
+    secondary endpoint contrasts declared above; one family, Holm-corrected.
+
+confidence_intervals:
+  proportions: wilson_95 plus clopper_pearson_95 (zero-error cells never [0,0])
+  paired_tests: mcnemar_exact on paired per-case outcomes
+  effect_uncertainty: cluster_bootstrap_paired resampling conversations (2000 draws)
+
+power_and_effect:
+  smallest_meaningful_effect: 0.05 absolute win-rate difference
+  note: >
+    No human-power assumptions; endpoint is algorithmic. Human teacher
+    preference (B05) requires human annotation approval and stays BLOCKED.
+
+splits:
+  protocol: group by conversation_id (MathDial/Bridge dialogue identity)
+  fractions: {train: 0.7, calibration: 0.1, dev: 0.1, test: 0.1}
+  freeze: research_v3/experiments/p03/splits.yaml materialized once and hashed
+  rules: >
+    separate learners/dialogues/tasks/source editions; no gold or evaluator
+    artifacts in policy inputs; strata injected AFTER splitting, never before.
+
+strata_required:  # fail-closed: every family must be reported even if we lose
+  - clean_grounded
+  - answer_appropriate        # added v1.1.0 (exercises G4c positive path)
+  - lowconf_calibration       # added v1.1.0 (exercises G4c tau rejection)
+  - injection
+  - malicious_note
+  - contradictory_sources
+  - no_evidence
+  - premature_answer_request
+
+ablations:  # A1..A5 true removals, run on the SAME frozen test split
+  - A1_no_provenance_confidence
+  - A2_no_uncertainty_calibration
+  - A3_no_learner_stage
+  - A4_no_abstention
+  - A5_no_action_cost
+
+data_status_at_prereg:
+  external_benchmark: MRBench (BEA 2025 shared task devset), CC BY-SA 4.0
+  external_status: DATA_READY
+  synthetic_stress: deterministic generator for the 5 required strata (canary/regression only)
+  external_llm: BLOCKED (no licensed executable model in environment)
+
+blocked_cards:
+  c2_real_llm:
+    status: BLOCKED
+    reason: >
+      Environment exposes no licensed locally-executable LLM: GPU is 2 GiB
+      (GTX 950), disk free 3.2 GiB; no ollama/vllm/llama-cli installed; no API
+      credentials provisioned. C2 may only be unblocked by actually running a
+      licensed model and recording model id/version and cost here.
+  b05_human_teacher_reference:
+    status: BLOCKED
+    reason: requires IRB-approved human annotation (P03-T19), not executed.
+
+external_validity_declaration: >
+  PASS requires >=1 executed external benchmark with licensed data; PARTIAL
+  allows synthetic-only evidence; this study targets PASS via MRBench devset
+  (CC BY-SA 4.0) with the synthetic generator as canary only. MathTutorBench
+  main tasks are additionally BLOCKED for direct policy scoring because their
+  open-ended tasks require an LLM to generate tutor utterances (no executable
+  LLM available); the reward-model pair-data subset is licensed-obtainable and
+  reserved as a replication collection.

@@ -1,0 +1,590 @@
+[
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "AAA/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "BBB/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "CCC/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "DDD/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "EEE/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "FFF/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "GGG/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "AAA/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "BBB/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "CCC/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "DDD/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "EEE/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "FFF/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "GGG/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "AAA/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "BBB/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "CCC/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "DDD/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "EEE/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "FFF/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C1",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "GGG/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "AAA/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "BBB/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "CCC/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "DDD/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "EEE/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "FFF/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "GGG/2014J",
+    "k": 25,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "AAA/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "BBB/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "CCC/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "DDD/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "EEE/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "FFF/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "GGG/2014J",
+    "k": 50,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "AAA/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "BBB/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "CCC/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "DDD/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "EEE/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "FFF/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  },
+  {
+    "a": "PROPOSED",
+    "b": "C0",
+    "cluster_bootstrap_ci95": [
+      0.0,
+      0.0
+    ],
+    "cohort": "GGG/2014J",
+    "k": 100,
+    "mcnemar_p": 1.0,
+    "mcnemar_p_holm": 1.0,
+    "mean_capture_diff": 0.0,
+    "n_discordant": 0
+  }
+]

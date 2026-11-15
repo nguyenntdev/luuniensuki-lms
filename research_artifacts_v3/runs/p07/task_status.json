@@ -1,0 +1,189 @@
+{
+  "paper_id": "P07",
+  "updated_at": "2026-11-15",
+  "updated_by": "P07 code agent",
+  "tasks": {
+    "P07-T01": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p07/prereg.yaml",
+        "research_v3/manuscripts/p07/METHOD.md"
+      ],
+      "note": "RQ/estimand/H0 frozen before any scored run (prereg header: frozen 2026-11-15); claim boundary explicit: task-affordance coverage + rights-compliant verdicts ONLY — no WCAG certification, no learning-gain claim (P14), no SOTA claim."
+    },
+    "P07-T02": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_v3/manuscripts/p07/DATA_STATUS.md",
+        "research_v3/datasets/registry.yaml",
+        "research_v3/methods/p07/data/smithsonian_fsg_external.jsonl"
+      ],
+      "note": "Smithsonian Open Access USABLE: CC0 FSG subset (102 records adapted, 99 objects pass record+media CC0 checks; license text SHA-256 a2010f34... pinned; per-media usage.access=='CC0' enforced in external.py). Europeana BLOCKED: HTTP 401 without API key (dated BLOCKED card europeana-api-key-blocked in registry.yaml; no metadata invented). Single external provider => cross-provider generalization unverified."
+    },
+    "P07-T03": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p07/affordances.py",
+        "research_v3/manuscripts/p07/METHOD.md"
+      ],
+      "note": "Closed 11-axis affordance vocabulary with tri-state semantics (True verified-present with derivational fact / False verified-absent / None NOT_APPLICABLE-unverifiable, never satisfying a requirement); typed decision outputs select/reject_missing_affordance/reject_rights_violation/reject_infeasible/abstain."
+    },
+    "P07-T04": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p07/DATA_STATUS.md",
+        "research_v3/methods/p07/data/smithsonian_fsg_external.jsonl"
+      ],
+      "note": "Immutable provenance: S3 Open Access metadata snapshot 2021-12-21 with pinned per-shard SHA-256; CC0 license text hash captured (a2010f34...); 2 provenance-verification JPEGs in gitignored private_data (no third-party media redistributed in Git); external suite records license 'CC0 1.0 (Smithsonian Open Access); snapshot 2021-12-21' per case."
+    },
+    "P07-T05": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p07/matrix.yaml",
+        "research_artifacts_v3/runs/p07/p07-wave1/results.json",
+        "tests/research_v3/method/test_p07_evaluation.py"
+      ],
+      "note": "Frozen matrix with group_key group_id; leakage audit PASS over generated case rows (no gold keys in model inputs, no duplicate case_ids); gold derived independently from object affordance/license facts (runner.gold_from_cases), independence unit-tested; synthetic and external suites never pooled."
+    },
+    "P07-T06": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p07/data/smithsonian_fsg_external.jsonl",
+        "research_v3/manuscripts/p07/DATA_STATUS.md"
+      ],
+      "note": "Descriptive baseline of real records: 99 CC0 objects characterized — 1 transcription-bearing record (F1911.145a-c, inscription_text=True) vs 98 verified-absence records; ambiguous-inscription records (e.g. F1909.172 'Spurious inscription.') curator-abstained, never guessed; external affordance axes beyond image/inscription NOT_APPLICABLE in this snapshot."
+    },
+    "P07-T07": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_v3/methods/p07/baselines.py",
+        "research_artifacts_v3/runs/p07/p07-wave1/results.json",
+        "research_v3/manuscripts/p07/MANUSCRIPT_SKELETON.md"
+      ],
+      "note": "C0 (URL-present sanity), C1 (static-image-fallback classical) and B05 (random eligible) run on both suites with matched inputs. B00/B01/B02/B03/B04 NOT run (B01 needs pinned model weights, B03 needs instance-space spec) — dated BLOCKED rationale in BLOCKED_TASKS.md and manuscript §7; strongest-compatible-upstream baseline comparison INCOMPLETE (preregistered as PARTIAL)."
+    },
+    "P07-T08": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p07/MANUSCRIPT_SKELETON.md",
+        "research_v3/manuscripts/p07/FAILURE_AND_COLLISION_REVIEW.md"
+      ],
+      "note": "Closest-work positioning recorded (WCAG 2.1 affordance axes as design, multimodal retrieval availability-vs-sufficiency gap, resource-aware delivery); novelty condition honored: sanity/classical baselines only, win NOT framed as novelty evidence; nearest-work full-text screening remains with research lead (T20 human-only)."
+    },
+    "P07-T09": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p07/selector.py",
+        "research_v3/methods/p07/affordances.py",
+        "tests/research_v3/method/test_p07_selector.py"
+      ],
+      "note": "Selector v1.0 (p07-proposed-v1.0) with affordance-coverage check, device/bandwidth/keyboard/screen-reader constraints, rights screen, and typed failures — never a silent substitution; selector consumes no oracle/gold fields at inference (unit-tested); zero learned parameters."
+    },
+    "P07-T10": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p07/p07-wave1/results.json",
+        "tests/research_v3/method/test_p07_stress_strata.py",
+        "research_v3/experiments/p07/matrix.yaml"
+      ],
+      "note": "A1/A2/A5 run on both suites with named failure families verified (A1 flips paired transcript/inscription negatives to false completion; A2 accepts bandwidth-heavy audio on constrained devices; A5 causes 1 rights violation on all-unknown-license S5). A3/A4 BLOCKED with dated rationale in matrix.yaml (A3 needs >=2 providers; A4 subsumed by A1 in selector v1.0)."
+    },
+    "P07-T11": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p07/p07-wave1/results.json",
+        "research_v3/experiments/p07/prereg.yaml"
+      ],
+      "note": "No calibration/training applicable: selection rules have zero learned parameters (experiment_card hyperparameter_budget 'none'); no frozen-test tuning possible; CPU-only; seed 20261115 (generator only; methods deterministic)."
+    },
+    "P07-T12": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p07/run_matrix.py",
+        "research_artifacts_v3/runs/p07/p07-wave1/results.json",
+        "research_artifacts_v3/runs/p07/p07-wave1/SHA256SUMS.txt"
+      ],
+      "note": "Frozen matrix executed (run p07-wave1): 17 stress-synthetic + 8 external-Smithsonian cases x 4 methods + 6 ablation cells; every cell has predictions JSONL with per-file SHA-256 (SHA256SUMS.txt, 16 entries) and strict exit code; experiment_card status PARTIAL with protocol deviations disclosed (A3/A4 deferred, single external provider)."
+    },
+    "P07-T13": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p07/p07-wave1/results.json",
+        "research_v3/manuscripts/p07/DATA_STATUS.md"
+      ],
+      "note": "All strata reported, favorable or not: per-stratum confusion S1-S7 (synthetic) and EXT (external); false_completion_rate 0.0 for proposed vs >=0.353 for all baselines on stress; G16 transcript/inscription identifiability pairs SEPARATED on both suites (results.json identifiability_g16 separated=true) — the transcript stratum (G16) is now identifiable on real-provider-derived pairs, cited here as the artifact. External S1-S7 slices limited to inscription axis (PARTIAL, dated in BLOCKED_TASKS.md)."
+    },
+    "P07-T14": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p07/p07-wave1/results.json",
+        "research_v3/manuscripts/p07/FAILURE_AND_COLLISION_REVIEW.md"
+      ],
+      "note": "HONEST NULL on the primary contrast: proposed vs C1 raw McNemar p=0.0078/0.03125/0.015625 across cells, but Holm-adjusted p=0.125-0.75 across the 9-test family => H0 NOT REJECTED at family-corrected alpha 0.05 (superiority NOT established); effect sizes (Cliff's delta) and cluster-bootstrap CIs reported; multiple_testing block published in results.json; null retained, not hidden."
+    },
+    "P07-T15": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p07/run_matrix.py",
+        "research_artifacts_v3/runs/p07/p07-wave1/SHA256SUMS.txt",
+        "research_artifacts_v3/runs/p07/p07-wave1/results.json"
+      ],
+      "note": "Source-to-table from run_matrix.py (no hand-entered metrics); determinism check embedded in run: rerun produces identical prediction hash (determinism_check.identical=true, hash 778e0449...); SHA256SUMS.txt checksum round trip over all 16 prediction/result files."
+    },
+    "P07-T16": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p07/FAILURE_AND_COLLISION_REVIEW.md",
+        "research_artifacts_v3/runs/p07/p07-wave1/results.json"
+      ],
+      "note": "Failure review + collision audit as dated standalone artifact: 7 falsifiable claims with outcomes (primary Holm-corrected contrast NOT ESTABLISHED; mechanism identifiability CONFIRMED; external transfer PARTIAL ONLY); leakage audit PASS; collision matrix vs P14 (no shared primary outcome), V2 LN-07 (prior internal work, not republished), P06/P13 (no causal claims). Human signoff NOT substituted."
+    },
+    "P07-T17": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p07/MANUSCRIPT_SKELETON.md",
+        "research_v3/manuscripts/p07/METHOD.md"
+      ],
+      "note": "Manuscript skeleton with methods, honest H0-disclosure framing, baseline disclosure §7 (B00-B04 dated BLOCKED), artifacts/reproducibility §8, ethics §9 (CC0-only media, ambiguous records excluded not guessed, zero learning-gain claims); venue target ICALT flagged for re-verification at submission time."
+    },
+    "P07-T18": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_artifacts_v3/runs/p07/p07-wave1/SHA256SUMS.txt",
+        "research_artifacts_v3/runs/p07/p07-wave1/results.json"
+      ],
+      "note": "Reproduction package exists (SHA256SUMS.txt, pinned snapshot hashes, determinism check with identical prediction hash), but an independent external rerun from a clean clone with reviewer validation and issue list has not been performed."
+    },
+    "P07-T19": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_artifacts_v3/runs/p07/BLOCKED_TASKS.md",
+        "research_v3/manuscripts/p07/DATA_STATUS.md"
+      ],
+      "note": "Human-only: ethics/human-annotation/license approval. Gold verdicts are derivational-fact oracles, NOT human annotations; no human raters exist for affordance-annotation agreement (Krippendorff alpha requires >=2 raters with a codebook); simulated annotators prohibited; no approvals exist and none simulated."
+    },
+    "P07-T20": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p07/FAILURE_AND_COLLISION_REVIEW.md",
+        "research_artifacts_v3/runs/p07/BLOCKED_TASKS.md"
+      ],
+      "note": "Human-only: novelty/nearest-work signoff by research lead (2026 full texts + closest-overlap matrix); agent surfaced positioning evidence but explicitly records 'Human signoff NOT SUBSTITUTED (P07-T20 remains BLOCKED)'."
+    },
+    "P07-T21": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p07/MANUSCRIPT_SKELETON.md",
+        "research_artifacts_v3/runs/p07/BLOCKED_TASKS.md"
+      ],
+      "note": "Human-only: coauthor/venue/submission signoff (authorship, rights, formatting); venue (ICALT) fit explicitly deferred to submission-time human verification; no submission claims made."
+    }
+  },
+  "summary": {
+    "done_engineering": 15,
+    "partial": 2,
+    "blocked_human_only": 3,
+    "blocked_engineering": 1,
+    "note": "P07 executed on synthetic stress suite (17 cases) + external Smithsonian CC0 suite (8 cases / 99 CC0 objects scanned, snapshot 2021-12-21). HONEST NULL: primary contrast proposed-vs-C1 Holm-adjusted p=0.125 => superiority NOT established; mechanism identifiability (A1/A2/A5) confirmed; G16 transcript stratum now identifiable on real-provider-derived pairs (results.json identifiability_g16). Europeana BLOCKED (HTTP 401, no API key). A3/A4 ablations and B00-B04 baselines BLOCKED with dated rationales. T02 PARTIAL (single external provider), T07 PARTIAL (upstream baselines incomplete); T19/T20/T21 human-only; T18 awaits external clean-clone rerun."
+  }
+}

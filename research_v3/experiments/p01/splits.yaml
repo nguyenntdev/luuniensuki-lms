@@ -1,0 +1,36 @@
+# P01 frozen split manifest (P01-T05).
+# Materialized deterministically by research_v3.eval.splitters with the
+# parameters below; the canonical hash of each FrozenSplit is recorded in
+# research_artifacts_v3/runs/p01/<protocol>/splits_manifest.json (split_hash).
+paper_id: P01
+dataset_id: oulad-2013-2014
+frozen_at: "2026-11-15T00:00:00Z"
+
+protocols:
+  T:
+    primary: true
+    description: >
+      Temporal transfer. time_split(time_key="time_key", train_fraction=0.70):
+      rows are ordered chronologically (2013B < 2013J < 2014B < 2014J); the
+      empirical composition is train = 2013B/2013J/2014B plus a small 2014J
+      tail, test = 2014J only. Learners appearing in a later partition are
+      removed from all earlier partitions (earlier-in-time yields), so no
+      learner spans two partitions.
+    splitter: research_v3.eval.splitters.time_split
+    params: {time_key: time_key, train_fraction: 0.70}
+    learner_disjoint_enforcement: yield_earlier_rows
+  G:
+    primary: false
+    description: >
+      Learner-group split. group_split(group_key="group_id", fractions
+      0.70/0.10/0.10/0.10, salt "p01-v3"): stable sha256 bucketing of
+      id_student; all presentations appear in every partition but no learner
+      does.
+    splitter: research_v3.eval.splitters.group_split
+    params: {group_key: group_id, fractions: [0.70, 0.10, 0.10, 0.10], salt: p01-v3}
+
+integrity_rules:
+  - train/calibration/dev/test disjoint on group_id (learner) - enforced and audited
+  - leakage audit (research_v3.eval.leakage.audit_rows, strict) must PASS before fitting
+  - final_result is sealed outside inputs; predictions never contain gold material
+  - a rerun with identical inputs must reproduce identical split hashes (deterministic)

@@ -37,6 +37,11 @@ jobs:
         run: python -m compileall -q research_v2
       - name: Research V2 contract + auditing tests
         run: python -m pytest -q tests/research_v2
+      - name: Result integrity audit of committed run artifacts (hard gate)
+        # Recomputes every reported metric from raw predictions + sealed gold;
+        # a failing audit fails the job. --min-cells 190 (repo has 396 cells)
+        # guards against silently deleted run cells; --allow-empty is not used.
+        run: python -m research_v3.scripts.result_integrity --runs-root research_artifacts_v2/runs --min-cells 190
       - name: Inspect repository (strict)
         run: python -m research_v2.scripts.inspect_repo --strict
       - name: Verify integrity (legacy + v2, strict)
@@ -46,7 +51,9 @@ jobs:
       - name: Run matrix dry-run (LN-06)
         run: python -m research_v2.scripts.run_matrix --study LN-06 --tier T3 --seed 11 --dry-run
       - name: Run full matrix (strict)
-        run: python -m research_v2.scripts.run_matrix --all --tier T1,T2,T3 --strict
+        # Only synthetic T3 (and LN-10 T3S) datasets exist; T1/T2 are BLOCKED, so the
+        # tier claim must match what is actually executed.
+        run: python -m research_v2.scripts.run_matrix --all --tier T3,T3S --strict
       - name: Aggregate (preregistered only)
         run: python -m research_v2.scripts.aggregate --all --preregistered-only
       - name: Freeze release (clean-tree assertion)

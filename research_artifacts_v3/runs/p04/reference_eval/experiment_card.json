@@ -1,0 +1,30 @@
+{
+  "experiment_id": "P04-E01",
+  "paper_id": "P04",
+  "rq_id": "RQ-P04-1",
+  "run": "reference evaluation of the frozen CurriculumShiftBench protocol",
+  "train_dataset_ids": ["oulad-2013-2014", "uci-student-performance-2014"],
+  "holdout_dataset_ids": ["oulad-2013-2014", "uci-student-performance-2014"],
+  "splits": {
+    "oulad_group": "56fe250659c7286964cdcb28b8c232e546e455926b97fd520c8432f961bf015b",
+    "oulad_time": "76216c5054fa42396f91750496c8c2022a961d4a87fb40af65301f8ea3176988",
+    "uci_group": "3bf80a2348c6c1b4ab06d46e2894f55b0d440a2db1a82b1c1f03feb72152195f"
+  },
+  "prereg": "research_v3/methods/p04/protocols/pre_registration.yaml",
+  "prereg_sha256_note": "hash embedded inside runs/p04/reference_eval/leaderboard.json at run time",
+  "runner": "research_v3/methods/p04/run_reference_eval.py",
+  "leaderboard_sha256": "3fc06e0d0be3271b711e5dcb427da537b88d2e18a027867cba0db13dad116c36",
+  "baseline_version": "C0_majority + C1_logistic_regression (scikit-learn 1.8.0, python 3.12)",
+  "seed": 42,
+  "hardware": "single core CPU, no GPU",
+  "wall_time_seconds_note": "< 120s; deterministic",
+  "feature_cutoff": "OULAD 60-day early window (adapter constant EARLY_WINDOW_DAYS=60); UCI intake features only (G1/G2 excluded)",
+  "status": "PASS",
+  "notes": [
+    "H0 does not stand for the reference population: 4 strata show CI-separated AUC degradation for C1.",
+    "External generalization UNVERIFIED beyond OULAD + UCI (ASSISTments/Junyi/EdNet BLOCKED).",
+    "KT-system baselines (DKT/SAKT/AKT/GKT) not yet run: P04-T08/T11 TODO.",
+    "Ablations A1-A4 defined but not yet executed.",
+    "P04-T19/T20/T21 remain BLOCKED (human-only)."
+  ]
+}

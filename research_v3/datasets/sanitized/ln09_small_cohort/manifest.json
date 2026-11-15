@@ -1,0 +1,40 @@
+{
+  "family": "ln09_small_cohort",
+  "files": [
+    {
+      "path": "/home/clue/Documents/luuniensuki-lms/research_v3/datasets/sanitized/ln09_small_cohort/seed11.jsonl",
+      "seed": 11,
+      "sha256": "287bc43e001f2514a10398bc032c4b945dc4836fb20f03e52ae7bdb04401cbcd"
+    },
+    {
+      "path": "/home/clue/Documents/luuniensuki-lms/research_v3/datasets/sanitized/ln09_small_cohort/seed23.jsonl",
+      "seed": 23,
+      "sha256": "ba46823075c2f4c1e25eb9dd2b204032099729db60ebc784db1461c93535444e"
+    },
+    {
+      "path": "/home/clue/Documents/luuniensuki-lms/research_v3/datasets/sanitized/ln09_small_cohort/seed37.jsonl",
+      "seed": 37,
+      "sha256": "5212e45310f6258367ccffa8e2a322cc5d9120e7812fa55292bd3cbee7f7c30f"
+    }
+  ],
+  "label_counts": {
+    "descriptive_only": 36,
+    "propose_explained_action": 36
+  },
+  "n_cases_per_seed": 24,
+  "n_cases_total": 72,
+  "oracle_labels": [
+    "abstain_missing_evidence",
+    "descriptive_only",
+    "propose_explained_action",
+    "request_refresh"
+  ],
+  "provenance": "V3-authored sanitized synthetic stress suite; frozen V2 T3 untouched",
+  "schema": "research_v3.sanitized_dataset/v1",
+  "suite_sha256": "777c214feec70782cd7664d384ced980ceeb5956f6ea358179b6f6dd92ba17fa",
+  "task_ids": [
+    "V3-G15",
+    "V3-G16",
+    "V3-G17"
+  ]
+}

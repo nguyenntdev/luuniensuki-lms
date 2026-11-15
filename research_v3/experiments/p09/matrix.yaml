@@ -1,0 +1,24 @@
+# P09 frozen experiment matrix (offline gate evaluation).
+repo_root: .
+cells:
+  - study: P09
+    tier: offline_gate_evaluation
+    corpus: research_artifacts_v3/runs/p09/corpus/claims.jsonl
+    verification_sidecar: research_artifacts_v3/runs/p09/eval/verification_outcomes.json
+    methods: [proposed, c0_surface_everything, c1_keyword_match]
+    seeds: [42]           # audit sample only; all policies deterministic
+    split_id: full_corpus
+    group_key: entity_qid
+    metrics:
+      - unsupported_claim_surfacing_rate   # primary; proposed must be exactly 0.0
+      - citation_grounding_rate
+      - abstention_rate
+    counterexamples:
+      # spec §5 stress strata, deterministic mutation generators
+      - false_citation            # claim cites a source that exists but never said it
+      - nonexistent_source_id     # claim cites a source id absent from the registry
+      - forged_statement_guid     # well-formed GUID that does not resolve in the snapshot
+      - missing_rights_statement  # source with empty license must fail the gate
+    evaluator_notes: >
+      The verification sidecar is scoring reference only; no policy reads it.
+      Abstain/reject are distinct classes; denominators include all claims.

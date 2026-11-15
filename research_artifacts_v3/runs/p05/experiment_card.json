@@ -1,0 +1,30 @@
+{
+  "card_sha256": "3fd5c33eb1e7f88cd64d1475eaec3188c74730cbc01560d112c0c330760806ee",
+  "experiment_card": {
+    "baseline_version": "C1-logrecencyfreq-v1;C0-baserate-v1",
+    "dependency_lock_sha256": "1cb43412a3298dbd8730b24e9690b2bb8e80f20aba9b9d4b05a7cdfc0a58eb13",
+    "feature_cutoff": "attempt submission day (per-attempt causal cutoff)",
+    "hardware": "cpu x86_64",
+    "holdout_dataset_ids": [
+      "oulad-2013-2014"
+    ],
+    "hyperparameter_budget": "half-life grid(6) x C grid(4) on 2014B calibration only; seed 11",
+    "method_commit_sha": "uncommitted-workspace",
+    "method_hash": "a8e83f14dec36e8f4999cc7db57411c0452f30d3c2baec714867fd23d1a8b27c",
+    "output_path": "/home/clue/Documents/luuniensuki-lms/research_artifacts_v3/runs/p05",
+    "paper_id": "P05",
+    "prereg_sha256": "97ed20f45f8dd41ac963f6803c9fe38ea4514f3a9a8a443f0fc26be2b4462aeb",
+    "protocol_deviations": [
+      "C2 published KT comparator BLOCKED (see experiments/p05/blocked_cards.yaml)",
+      "single external domain: external generalization unverified"
+    ],
+    "rq_id": "RQ1-temporal-forgetting",
+    "seed": 11,
+    "split_hash": "844c6a23911b04f5966e5a7be8cec2943da84c668d5b08d23493b1d920a6520e",
+    "status": "PASS",
+    "train_dataset_ids": [
+      "oulad-2013-2014"
+    ],
+    "wall_time_seconds": 1545.5
+  }
+}

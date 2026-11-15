@@ -1,0 +1,42 @@
+{
+  "family": "ln06_external_solver_parity",
+  "files": [
+    {
+      "path": "/home/clue/Documents/luuniensuki-lms/research_v3/datasets/sanitized/ln06_external_solver_parity/seed11.jsonl",
+      "seed": 11,
+      "sha256": "527c36de80557309a35ddc1d5e8e008cea637a784e673e7253fe7ad51631252f"
+    },
+    {
+      "path": "/home/clue/Documents/luuniensuki-lms/research_v3/datasets/sanitized/ln06_external_solver_parity/seed23.jsonl",
+      "seed": 23,
+      "sha256": "eaaaf4f612cbfd32408eabbb83ef9f040af689aeca01c035f24d6daddd56c04c"
+    },
+    {
+      "path": "/home/clue/Documents/luuniensuki-lms/research_v3/datasets/sanitized/ln06_external_solver_parity/seed37.jsonl",
+      "seed": 37,
+      "sha256": "a65d7c0494c79558fe0496e37ce941830656acf00cdf3f27e126eaee3244c021"
+    }
+  ],
+  "label_counts": {
+    "cost_exceeded": 30,
+    "find_valid_route": 32,
+    "reject_checkpoint_source": 10
+  },
+  "n_cases_per_seed": 24,
+  "n_cases_total": 72,
+  "oracle_labels": [
+    "cost_exceeded",
+    "find_valid_route",
+    "no_feasible_route",
+    "reject_checkpoint_source",
+    "reject_cycle"
+  ],
+  "provenance": "V3-authored sanitized synthetic stress suite; frozen V2 T3 untouched",
+  "schema": "research_v3.sanitized_dataset/v1",
+  "suite_sha256": "207ca742c5aa00ce02a5d2a2ff91e2d1a1f0caa60e24afa6e22d25b8d0c23ad0",
+  "task_ids": [
+    "V3-G15",
+    "V3-G16",
+    "V3-G17"
+  ]
+}

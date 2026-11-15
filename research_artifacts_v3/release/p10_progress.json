@@ -1,0 +1,54 @@
+{
+  "paper_id": "P10",
+  "generated_utc": "20261115T112619Z",
+  "repo_head": "4e5a792e16250106b9d0a577849e864ab7007c92",
+  "engine_paths": {
+    "method": "research_v3/methods/p10/",
+    "experiments": "research_v3/experiments/p10/",
+    "manuscripts": "research_v3/manuscripts/p10/",
+    "tests": "tests/research_v3/method/test_p10_*.py",
+    "run_artifacts": "research_artifacts_v3/runs/p10/"
+  },
+  "frozen_run": {
+    "path": "research_artifacts_v3/runs/p10/p10_run_20261115T112619Z.json",
+    "sha256": "e0593860a19666b99aa8d0dc9e939e901d9264995f0ea1343ea11eebed217052",
+    "payload_sha256": "0e3096af4a906d77545af0b70bd08f8bc86a17011aa67045b53d1ac0ca779d41"
+  },
+  "anchor_registry": {
+    "documented": 3,
+    "needs_expert_review": 27,
+    "total_anchors": 30
+  },
+  "metrics": {
+    "M1_sequence_validity_rate": {
+      "successes": 1,
+      "n": 3
+    },
+    "M2_anchor_coverage_rate": {
+      "successes": 91,
+      "n": 162
+    },
+    "M3_needs_expert_review_rate": {
+      "successes": 71,
+      "n": 162
+    },
+    "M4_bloom_leap_rate": {
+      "successes": 0,
+      "n": 71
+    }
+  },
+  "test_command": "python3 -m pytest tests/research_v3/method/test_p10_invariants.py tests/research_v3/method/test_p10_builders.py tests/research_v3/method/test_p10_ablations.py tests/research_v3/method/test_p10_provenance.py tests/research_v3/method/test_p10_experiment.py",
+  "verify_command": "python3 -m research_v3.methods.p10.cli verify",
+  "blocked_tasks": [
+    "P10-T19",
+    "P10-T20",
+    "P10-T21"
+  ],
+  "release_status": "ENGINEERING_PASS",
+  "not_claimed": [
+    "SCIENTIFIC_REVIEW_READY (needs real expert validation)",
+    "SUBMISSION_READY (needs human signoffs)",
+    "any pedagogical superiority over baselines",
+    "any expert CVI/rubric/inter-rater number"
+  ]
+}

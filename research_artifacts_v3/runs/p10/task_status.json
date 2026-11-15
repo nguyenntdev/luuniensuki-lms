@@ -1,0 +1,176 @@
+{
+  "paper_id": "P10",
+  "updated_at": "2026-11-15",
+  "updated_by": "P10 code agent",
+  "tasks": {
+    "P10-T01": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p10/pre_registration.yaml",
+        "research_v3/manuscripts/p10/MANUSCRIPT.md#1-introduction"
+      ],
+      "note": "RQ and H0 frozen verbatim in prereg (Vietnamese, GDPT-2018 framing). Collision boundaries stated: P10 is pedagogical design, not algorithm optimization (P02), not rubric invention (P11), not historical truth claims (P12). Machine-proxy estimand registered; the human estimand (expert CVI/rubric agreement) is BLOCKED, not simulated."
+    },
+    "P10-T02": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p10/provenance.py",
+        "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json#provenance"
+      ],
+      "note": "Rights assessment complete for the corpus actually used: 11 hashed sources (162 motif JSONs flagged is_ai_generated, GDPT-2018 catalog, backend competency catalog), object identities referenced READ-ONLY, no bytes redistributed, hue-heritage-corpus card remains BLOCKED in the dataset registry (no archival permission)."
+    },
+    "P10-T03": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p10/anchors.py",
+        "research_v3/methods/p10/METHOD.md#2-domain-model"
+      ],
+      "note": "Typed anchor registry schema: every anchor is either 'documented' (citable GDPT-2018/5512 evidence) or 'needs_expert_review' (P10-LOCAL flags); unknown competency codes raise at build time; band constraints type-checked."
+    },
+    "P10-T04": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json#provenance.sources"
+      ],
+      "note": "Immutable provenance: per-source SHA-256 for all 11 input files, manifest_sha256 3143ba8f..., payload_sha256 0e3096af... recorded in the run JSON; no raw corpus bytes copied into artifacts (hashes only)."
+    },
+    "P10-T05": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p10/pre_registration.yaml#split_note"
+      ],
+      "note": "N/A for learner data (no learner data used); documented: design/evaluation set separation realized as machine gates in this repo (design set) vs the future blinded teacher panel (evaluation set); teacher panel does not see method names until scoring ends. No test-student use without ethics approval."
+    },
+    "P10-T06": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json#corpus"
+      ],
+      "note": "Corpus descriptive block reported before any design comparison: 9 urns, 162 objects, 95 edges, is_ai_generated fraction 1.0 (all motif descriptions are AI-generated repo content, disclosed)."
+    },
+    "P10-T07": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json#designs",
+        "research_v3/methods/p10/spiral_builder.py"
+      ],
+      "note": "Matched-input baselines on the identical corpus with identical compute: C0 linear playlist (sanity floor, fails grade monotonicity) and C1 topological-no-bloom (Kahn order, Bloom gate off). All designs evaluated with the same four-invariant certificate."
+    },
+    "P10-T08": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/experiments/p10/closest_published_blocker.yaml"
+      ],
+      "note": "Dated BLOCKED card (2026-11-15): no runnable closest published comparator with code + license + task fit (Bruner is theory-only; LN-01 divergence documented rather than forced; real teacher sequences require permissions). Paper claim framing bounded to design-gate evidence; no superiority claim over any published method."
+    },
+    "P10-T09": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p10/spiral_builder.py",
+        "research_v3/methods/p10/anchors.py",
+        "research_v3/methods/p10/METHOD.md#3-formal-contract-p10-t09",
+        "tests/research_v3/method/test_p10_invariants.py"
+      ],
+      "note": "Method implemented with typed failures and a fixed four-invariant fail-closed contract (acyclic; grade monotone; Bloom ascent with leap flagging; anchor resolution against provenance-carrying GDPT-2018 registry). No learned parameters. Invariant tests in the contract suite."
+    },
+    "P10-T10": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p10/ablations.py",
+        "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json#ablation_notes",
+        "tests/research_v3/method/test_p10_ablations.py"
+      ],
+      "note": "A1-A4 mechanism-removal ablations: A1 (bridge removal: 9 components, 82 isolated objects), A2 (Bloom gate off: strict-ascent rate 0.747), A3 (provenance gate off: invented anchor ACCEPTED - counterexample), A4 (seed-42 random order: 51 grade inversions). Failure families reported, not dropped."
+    },
+    "P10-T11": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json#hardware"
+      ],
+      "note": "N/A by design, documented: nothing fitted, zero learning parameters, CPU only (wall time ~0.016 s); nothing tuned on evaluation data; A4 is the only stochastic cell and is seeded (42)."
+    },
+    "P10-T12": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p10/run_matrix.yaml",
+        "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json"
+      ],
+      "note": "Full preregistered matrix executed: 3 confirmatory designs + 4 ablations, every cell with validity certificate, reason codes and hashes. Real outcome: M1 sequence validity 1/3, M2 anchor coverage 91/162 documented-anchor objects (0.562, Wilson 95% CI [0.485, 0.636]), M3 needs_expert_review 71/162 (0.438), M4 bloom-leap 0/71. Anchor registry: 3 documented vs 27 needs_expert_review. Two independent runs (112619Z, 112719Z) produce identical payloads."
+    },
+    "P10-T13": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json#designs"
+      ],
+      "note": "All failure strata reported: C0 grade-order reversal reason codes, C1 missing Bloom ascent, A2 strict-ascent shortfall, A4's 51 grade inversions, A3's invented-anchor acceptance. Invalid designs published with reason codes, never dropped."
+    },
+    "P10-T14": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json#metrics",
+        "research_v3/eval/statistics.py"
+      ],
+      "note": "Wilson and Clopper-Pearson 95% CIs for all four metrics (M1 CI reflects n=3 width honestly; e.g. M2 [0.482, 0.639] CP). Human comparison endpoints (expert CVI, interrater agreement, teacher feasibility) are BLOCKED and disclosed as absent, not imputed."
+    },
+    "P10-T15": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p10/experiment.py",
+        "research_v3/methods/p10/cli.py"
+      ],
+      "note": "Source-to-table: payload generated by the deterministic engine; 'p10 verify' re-runs and compares payload_sha256 for byte-identical round trip (two timestamped run JSONs are payload-identical). No hand-entered metrics; manuscript numbers auto-inserted from run manifest."
+    },
+    "P10-T16": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p10/MANUSCRIPT.md#6-failure-review-p10-t16",
+        "research_v3/manuscripts/p10/MANUSCRIPT.md#1-introduction"
+      ],
+      "note": "Failure review preserves negative results (C0/C1/A4 certificates) and collision audit: P10 is design + pedagogical validation, distinct from P02/P11/P12; salami-slicing vs LN-01 documented via the divergence note in METHOD.md §5."
+    },
+    "P10-T17": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p10/MANUSCRIPT.md"
+      ],
+      "note": "Manuscript skeleton with evidence IDs ([EVID-P10-M1..M4], [EVID-P10-ANCHOR-REG]); every numeric claim bound to the frozen run payload; results table marked auto from run manifest. Human-validation results section pending the BLOCKED expert phase."
+    },
+    "P10-T18": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p10/MANUSCRIPT.md#8-reproduction-p10-t18",
+        "research_v3/methods/p10/cli.py"
+      ],
+      "note": "Clean-clone rerun commands staged (python -m research_v3.methods.p10.cli run/verify; pytest -k p10 contract suite); verify command enforces deterministic payload hash round trip. Independent external reviewer reproduction NOT yet executed (requires an external human reviewer)."
+    },
+    "P10-T19": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p10/EXPERT_FORM.md",
+        "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json#honesty_notes"
+      ],
+      "note": "Human-only: ethics/human annotation/license approval. Expert form fully prepared (blinded sequences, 1-4 rubric, CVI per Lynn 1986, per-anchor confirmation for all 27 needs_expert_review rows) but UNSIGNED - no real signature exists; no simulated expert permitted."
+    },
+    "P10-T20": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/experiments/p10/closest_published_blocker.yaml"
+      ],
+      "note": "Human-only: novelty and nearest-work signoff by the research lead; nearest-work matrix explicitly unsigned in the manuscript. 27 of 30 anchors pending expert review; agent must not certify documented status beyond the 3 evidenced anchors."
+    },
+    "P10-T21": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p10/MANUSCRIPT.md#8-reproduction-p10-t18"
+      ],
+      "note": "Human-only: coauthor/venue/submission signoff (Tạp chí Giáo dục orientation; CFP/rank verification outstanding). No submission claims made."
+    }
+  },
+  "summary": {
+    "done_engineering": 17,
+    "blocked_human_only": 3,
+    "blocked_data": 1,
+    "partial": 0,
+    "note": "Design-gate wave complete on the real 162-object corpus: 3 documented vs 27 needs_expert_review anchors; 91/162 objects on documented anchors, 71 pending; 4 mechanism-removal ablations with failure families preserved; deterministic verify round trip. Expert-validation tasks BLOCKED: form prepared but unsigned; hue-heritage-corpus remains BLOCKED. Release status ENGINEERING_PASS, not SCIENTIFIC_REVIEW_READY."
+  }
+}

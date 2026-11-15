@@ -1,0 +1,215 @@
+{
+  "paper_id": "P11",
+  "generated_at": "2026-11-15T11:18:43.304376+00:00",
+  "release_status": "BLOCKED_RATER_AND_SAMPLE_REQUIRED",
+  "h0_publication_rule": "If reliability/validity is never shown to beat the single-holistic scale, H0 is published as a null result.",
+  "artifact_hashes": {
+    "research_v3/methods/p11/rubric.py": "3a073da581dafbecd634e2ee2d161442dfa41b39cd43752d3ce4b223927c79cc",
+    "research_v3/methods/p11/reliability.py": "f438c8a202b0a4eb7fdffc36c03f8dfc1408a52a8cea02c675e25bdfdf5c8457",
+    "research_v3/methods/p11/pre_registration.yaml": "27b7800efb2a55739f42e902f752f3b83a48df7df3af69da248f9ad3eca816ed",
+    "research_v3/methods/p11/METHOD.md": "2febf2f76d09bb7bdaa967b412b971660a3b21df51565d878b249947037df356",
+    "research_v3/annotations/tasks/p11_annotation_pack/CODEBOOK.md": "1b4bfbd06b7ff15471eeb4179829362d77b9c1f9c0ce564b9459afff74d6c041",
+    "research_v3/annotations/tasks/p11_annotation_pack/ANNOTATION_CARD.md": "6b9556f86ee0053af2cc392a5a7de7527a53152315307fa938bb6b29be339fb8",
+    "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/expected_levels.csv": "84db855d82b93b4dabd249a246932d24be8d4b487bd042b0110892652f6e4f85",
+    "research_v3/experiments/p11/p11_status.py": "c4b3f452e88b3f36b15fa2296285c90a902e2ecabd7fadabe84a602fb1c28dee",
+    "research_v3/manuscripts/p11/MANUSCRIPT.md": "63ef9278ba46fdb16254bf7e576804af042034e059a3acbafd37eb57609bc033"
+  },
+  "annotation_pack": {
+    "path": "research_v3/annotations/tasks/p11_annotation_pack",
+    "status": "BLOCKED_AWAITING_HUMAN_RATERS",
+    "fabricated_content_check": "templates contain headers only; no annotator IDs, ratings, timestamps or agreement numbers",
+    "constructed_cases": "6 cases, labeled CONSTRUCTED_NOT_HUMAN, sha256 in artifact_hashes"
+  },
+  "reliability_harness_smoke": {
+    "note": "SYNTHETIC TOY verification only; never a result",
+    "command": "python3 research_v3/methods/p11/reliability.py"
+  },
+  "tasks": [
+    {
+      "id": "P11-T01",
+      "title": "RQ, estimand, null, nearest prior, collision checks",
+      "status": "ENGINEERING_PASS",
+      "artifacts": [
+        "research_v3/methods/p11/METHOD.md",
+        "research_v3/methods/p11/pre_registration.yaml",
+        "research_v3/manuscripts/p11/MANUSCRIPT.md"
+      ],
+      "evidence": "RQ+H0 frozen in prereg (2026-11-15) and METHOD.md s1; collision audit vs P10/P14 recorded (no MERGE_REQUIRED)."
+    },
+    {
+      "id": "P11-T03",
+      "title": "Data and target schema definition",
+      "status": "ENGINEERING_PASS",
+      "artifacts": [
+        "research_v3/methods/p11/rubric.py",
+        "research_v3/annotations/tasks/p11_annotation_pack/CODEBOOK.md"
+      ],
+      "evidence": "Typed HistoricalReasoningResponse/EvidenceItem/Claim/EvidenceLink schema with validation, NA/ABSTAIN distinct from 0; long-format rating record defined."
+    },
+    {
+      "id": "P11-T07",
+      "title": "Strong classical baseline (C0 keyword) with matched inputs",
+      "status": "ENGINEERING_PASS",
+      "artifacts": [
+        "research_v3/methods/p11/rubric.py"
+      ],
+      "evidence": "C0 keyword-presence baseline implemented over identical declared structures; documented failure family (fabricated/relation-inverted keyword hits). B00/B02 holistic = human-only, BLOCKED."
+    },
+    {
+      "id": "P11-T08",
+      "title": "Closest published implementation or honest BLOCKED card",
+      "status": "PARTIAL",
+      "artifacts": [
+        "research_v3/manuscripts/p11/MANUSCRIPT.md"
+      ],
+      "evidence": "Construct lineage documented (Wineburg/Monte-Sano/Breakstone-Smith); no external implementation adapted, so no pinning required yet; comparator pinning deferred to data-ready state, else BLOCKED card."
+    },
+    {
+      "id": "P11-T09",
+      "title": "Method implementation and invariant proofs",
+      "status": "ENGINEERING_PASS",
+      "artifacts": [
+        "research_v3/methods/p11/rubric.py",
+        "research_v3/methods/p11/reliability.py",
+        "tests/research_v3/method/test_p11_rubric.py",
+        "tests/research_v3/method/test_p11_reliability.py"
+      ],
+      "evidence": "Deterministic scorer (property: same input -> same output); fail-closed reliability math validated against reference krippendorff package (36 comparisons, 12 matrices x 3 levels); NA/ABSTAIN never imputed."
+    },
+    {
+      "id": "P11-T10",
+      "title": "Independent ablations and mutation counterexamples",
+      "status": "ENGINEERING_PASS",
+      "artifacts": [
+        "research_v3/methods/p11/rubric.py",
+        "tests/research_v3/method/test_p11_rubric.py"
+      ],
+      "evidence": "Mutation tests realize spec s5 stress families on constructed cases: fabricated citations (S1 cap), zero evidence (full cap), relation-inverted links, allow_handling_bonus mechanism removal; all fail-closed assertions tested."
+    },
+    {
+      "id": "P11-T16",
+      "title": "Scientific failure review and collision audit",
+      "status": "ENGINEERING_PASS",
+      "artifacts": [
+        "research_v3/experiments/p11/p11_status.py",
+        "research_v3/manuscripts/p11/MANUSCRIPT.md"
+      ],
+      "evidence": "H0 non-rejection path pre-registered (prereg falsification section); collision audit vs all 13 sibling papers on file; statuses never auto-promote."
+    },
+    {
+      "id": "P11-T17",
+      "title": "Manuscript methods/limitations/appendix build",
+      "status": "ENGINEERING_PASS",
+      "artifacts": [
+        "research_v3/manuscripts/p11/MANUSCRIPT.md"
+      ],
+      "evidence": "Skeleton with RQ, related work, method, ALL results cells BLOCKED, Threats to Validity led by no-human-raters; no numeric or causal claim lacks an evidence pointer; zero validity wording."
+    },
+    {
+      "id": "P11-T02",
+      "title": "Dataset rights assessment and source selection",
+      "status": "BLOCKED",
+      "artifacts": [
+        "research_v3/annotations/tasks/p11_annotation_pack/ANNOTATION_CARD.md"
+      ],
+      "evidence": "BLOCKED: no real consented student responses available; synthetic data is restricted to regression/canary use and may not feed this task. Rights/license snapshot to be taken when the response collection source is chosen."
+    },
+    {
+      "id": "P11-T04",
+      "title": "Raw ingestion and immutable provenance",
+      "status": "BLOCKED",
+      "artifacts": [],
+      "evidence": "BLOCKED: no real consented student responses available; synthetic data is restricted to regression/canary use and may not feed this task. SHA-256 raw+processed pipeline defined in ANNOTATION_CARD but cannot run without data."
+    },
+    {
+      "id": "P11-T05",
+      "title": "Leakage-proof preprocessing and split",
+      "status": "BLOCKED",
+      "artifacts": [],
+      "evidence": "BLOCKED: no real consented student responses available; synthetic data is restricted to regression/canary use and may not feed this task. Rater-blind split protocol defined; nothing to split yet."
+    },
+    {
+      "id": "P11-T06",
+      "title": "External descriptive baseline and distribution checks",
+      "status": "BLOCKED",
+      "artifacts": [],
+      "evidence": "BLOCKED: no real consented student responses available; synthetic data is restricted to regression/canary use and may not feed this task."
+    },
+    {
+      "id": "P11-T11",
+      "title": "Training/calibration with frozen hyperparameter budget",
+      "status": "BLOCKED",
+      "artifacts": [],
+      "evidence": "BLOCKED: calibrated (link-aware, weight-fitted) scoring variant requires rater training data; hypothesis only, not implemented. No learning happened; nothing to report."
+    },
+    {
+      "id": "P11-T12",
+      "title": "Full preregistered matrix on external data",
+      "status": "BLOCKED",
+      "artifacts": [],
+      "evidence": "BLOCKED: no real consented student responses available; synthetic data is restricted to regression/canary use and may not feed this task. Prereg matrix frozen in pre_registration.yaml; cells stay BLOCKED."
+    },
+    {
+      "id": "P11-T13",
+      "title": "Robustness, shift, subgroup, resource and stress",
+      "status": "BLOCKED",
+      "artifacts": [],
+      "evidence": "BLOCKED: no real consented student responses available; synthetic data is restricted to regression/canary use and may not feed this task. Constructed-case stress mutations exist for the scorer but external robustness needs real data."
+    },
+    {
+      "id": "P11-T14",
+      "title": "Statistical tests and uncertainty",
+      "status": "BLOCKED",
+      "artifacts": [],
+      "evidence": "BLOCKED: no real annotation matrix exists; computing kappa/alpha/ICC now would fabricate a result. Harness verified on toy data inside tests ONLY."
+    },
+    {
+      "id": "P11-T15",
+      "title": "Source-to-table generator and independent replication",
+      "status": "BLOCKED",
+      "artifacts": [],
+      "evidence": "BLOCKED: no results table exists to generate; ledger runner (this script) is the only table and contains statuses only. Source-to-table generation unblocks with real data."
+    },
+    {
+      "id": "P11-T18",
+      "title": "External reviewer reproduction and frozen release",
+      "status": "BLOCKED",
+      "artifacts": [],
+      "evidence": "BLOCKED: reviewers cannot reproduce a study that has not run; engineering artifacts are reproducible from tests, but the release gate stays BLOCKED until the study runs."
+    },
+    {
+      "id": "P11-T19",
+      "title": "Ethics/human annotation/license approval (human-only)",
+      "status": "BLOCKED",
+      "artifacts": [
+        "research_v3/annotations/tasks/p11_annotation_pack/ANNOTATION_CARD.md",
+        "research_v3/annotations/tasks/p11_annotation_pack/adjudication_protocol.md"
+      ],
+      "evidence": "BLOCKED: human-only signoff. No signature/approval exists; none may be simulated. ANNOTATION_CARD fields left unfilled by design; no simulated approvals."
+    },
+    {
+      "id": "P11-T20",
+      "title": "Novelty and nearest-work signoff (research lead)",
+      "status": "BLOCKED",
+      "artifacts": [
+        "research_v3/manuscripts/p11/MANUSCRIPT.md"
+      ],
+      "evidence": "BLOCKED: human-only signoff. No signature/approval exists; none may be simulated. Collision audit (automated part) done; human lead signoff with full-text overlap matrix pending."
+    },
+    {
+      "id": "P11-T21",
+      "title": "Coauthor/venue/submission signoff (human-only)",
+      "status": "BLOCKED",
+      "artifacts": [
+        "research_v3/manuscripts/p11/MANUSCRIPT.md"
+      ],
+      "evidence": "BLOCKED: human-only signoff. No signature/approval exists; none may be simulated."
+    }
+  ],
+  "summary": {
+    "total": 21,
+    "engineering_pass": 7,
+    "partial": 1,
+    "blocked": 13
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "created_date": "2026-11-15",
+  "baseline_sha": "6debec211f240375f5b967fe2eac7f6450c3e53c",
+  "files": [
+    {
+      "path": "00_START_HERE/README.md",
+      "bytes": 2668,
+      "sha256": "0a8c91c73ef8ef68c5deeef8f93b569fc71497d043cb78b375e60a008b3a9e7e"
+    },
+    {
+      "path": "01_AUDIT/GITHUB_BASELINE_AND_GAPS.md",
+      "bytes": 4829,
+      "sha256": "2ac7062c18e50423199585726c282539f73f07dfa6cded6d89970bac63c52fda"
+    },
+    {
+      "path": "01_AUDIT/HIGH_PRIORITY_AUDIT_FINDINGS.md",
+      "bytes": 3708,
+      "sha256": "027adc17ca788fd2d1dfe2bd22e441119c654d8633cdfe045840604bbfb59caa"
+    },
+    {
+      "path": "01_AUDIT/LN_TO_P_MAPPING.md",
+      "bytes": 2243,
+      "sha256": "7fa2d1860d20fc43e766f59aa7dc1cbe18008c6df565b2f4ba3a172239c748f4"
+    },
+    {
+      "path": "02_ARCHITECTURE/RESEARCH_V3_ARCHITECTURE.md",
+      "bytes": 4283,
+      "sha256": "5640affc91bcbd1658002c35b1c0b5e3a495a8b893a62b408ae8a3c12f7f4a54"
+    },
+    {
+      "path": "03_DATA/DATA_ACQUISITION_AND_LICENSES.md",
+      "bytes": 4741,
+      "sha256": "bdaf35c4ebf5be6ff90394cf0b082564dab5ddd72bac9030798ada08b053b300"
+    },
+    {
+      "path": "04_METHODOLOGY/ETHICS_AND_INTEGRITY.md",
+      "bytes": 1949,
+      "sha256": "9c94ac445e554141919f19879cf0d0bd1c990f935d432cedf4016c0db81aa50d"
+    },
+    {
+      "path": "04_METHODOLOGY/NOVELTY_AND_LITERATURE.md",
+      "bytes": 3956,
+      "sha256": "b5ba9226d8e31c71ca90fdd21b3a62c624696e621cd380e03cb396c444a05568"
+    },
+    {
+      "path": "04_METHODOLOGY/SCIENTIFIC_EVALUATION.md",
+      "bytes": 3787,
+      "sha256": "c7fec2686cd01f52163dfd7c5e5f7997851fd2c5f97045b7a99a7f1d669ec880"
+    },
+    {
+      "path": "05_PAPERS/P01_Risk_Controlled_Knowledge_Transfer_under_Partial_Skill_Align.md",
+      "bytes": 12987,
+      "sha256": "2b176b2937efb14699d8662056c32ef4fa1e7d15390730d8fb7c84d45ab03c2f"
+    },
+    {
+      "path": "05_PAPERS/P02_Constraint_Aware_Learning_Path_Planning_with_Alternative_Act.md",
+      "bytes": 12852,
+      "sha256": "4d8788a7c8359002df5b616f996eb425f3c6e7cef0162a0a50d811464700e789"
+    },
+    {
+      "path": "05_PAPERS/P03_Evidence_Calibrated_Pedagogical_Scaffolding_for_AI_Tutors.md",
+      "bytes": 12572,
+      "sha256": "5e3387f342caa5f74874deadd7e625896a2505e010e0936f28503b42df11ade6"
+    },
+    {
+      "path": "05_PAPERS/P04_CurriculumShiftBench_Evaluation_under_Incomplete_Skill_Mappi.md",
+      "bytes": 12728,
+      "sha256": "621ab00e50d2da3f8f65f50dd0f1e1a71004e6909c846bed3fc0cc567e6ea647"
+    },
+    {
+      "path": "05_PAPERS/P05_Temporal_Forgetting_Aware_Knowledge_Tracing_and_Review_Sched.md",
+      "bytes": 12891,
+      "sha256": "0402b1f70ad635959e9616758fc0598e89f51c14fd4bfd7246586449a082981f"
+    },
+    {
+      "path": "05_PAPERS/P06_Budget_Constrained_Teacher_Intervention_Prioritization.md",
+      "bytes": 12196,
+      "sha256": "4faa2d5782bf617d9a68a87ee62f3d6697bf3a5045ae0792a7bce292e3b3a897"
+    },
+    {
+      "path": "05_PAPERS/P07_Resource_Aware_Multimodal_Learning_Object_Selection.md",
+      "bytes": 12530,
+      "sha256": "9b1f9564d6e709a65ede19fa069c7acaeee3fb99f295fa0b91919abdbef4889b"
+    },
+    {
+      "path": "05_PAPERS/P08_Evidence_Grounded_Mastery_Gamification.md",
+      "bytes": 12178,
+      "sha256": "7d4f5472f043582723b37e47b59cba8e1cc5927f1dd26d84f4254fbc4a15c3a6"
+    },
+    {
+      "path": "05_PAPERS/P09_Provenance_Aware_Interactive_Cultural_Heritage_Exploration.md",
+      "bytes": 12357,
+      "sha256": "45041aacdab9e733856d2eaa93a480fa8f5bec3966bcc70563ff783f3dbb1923"
+    },
+    {
+      "path": "05_PAPERS/P10_Thi_t_k_ti_n_tr_nh_h_c_li_u_s_xo_n_c_li_n_th_ng_l_p_10_12_tr.md",
+      "bytes": 12214,
+      "sha256": "dca04fbfa831f8d9ab678b88b97f7a69d8106b7ffc528863b3483cc5674b079e"
+    },
+    {
+      "path": "05_PAPERS/P11_X_y_d_ng_v_ki_m_nh_rubric_nh_gi_n_ng_l_c_suy_lu_n_l_ch_s_tro.md",
+      "bytes": 12095,
+      "sha256": "c3b4f32b798bc25d91a49a9347d57d19bb5244d53341c93ba2156bf51e7f4572"
+    },
+    {
+      "path": "05_PAPERS/P12_Th_m_nh_ngu_n_t_li_u_v_h_th_ng_h_a_b_ng_ch_ng_l_ch_s_ph_c_v_.md",
+      "bytes": 12444,
+      "sha256": "c2b80ed90984d2f96f80ccd7fe53371437cde4b5efc2847f3948de3cecec1f9d"
+    },
+    {
+      "path": "05_PAPERS/P13_Ph_n_t_ch_h_nh_vi_t_i_u_ch_nh_h_c_t_p_trong_m_i_tr_ng_h_c_tr.md",
+      "bytes": 12346,
+      "sha256": "9b06b678a20c0e8972faa274ea708a0db006b94bc8630527d6bde2969453d3f7"
+    },
+    {
+      "path": "05_PAPERS/P14_Thi_t_k_v_nh_gi_h_c_li_u_di_s_n_a_ph_ng_th_c_theo_Universal_.md",
+      "bytes": 12551,
+      "sha256": "69a27605de9950fc8f4248221d4ec475dc84ae28a6371bb631c0af7fc265b0c8"
+    },
+    {
+      "path": "06_TASK_TRACKER/PORTFOLIO.json",
+      "bytes": 26544,
+      "sha256": "72c81a660742968e765ce2a7d06ef0b8bd6e8713237d24583a339ec14d6291d0"
+    },
+    {
+      "path": "06_TASK_TRACKER/STATUS_AND_DEPENDENCY_POLICY.md",
+      "bytes": 1139,
+      "sha256": "581d22b74b43f04654f8da08bcfc81b3ade8c96b59e25a8cf7c4fe05f5b805ca"
+    },
+    {
+      "path": "06_TASK_TRACKER/V3_TASK_REGISTER.csv",
+      "bytes": 127173,
+      "sha256": "ca6d86b57f832e76533663ed02229804ffc553dea4eb102b914f12888f710202"
+    },
+    {
+      "path": "06_TASK_TRACKER/V3_TASK_REGISTER.json",
+      "bytes": 214528,
+      "sha256": "d1442148d5e109e401f183cadd0681ab646c619cd6e51008c6cb5bb5d8ce05b2"
+    },
+    {
+      "path": "07_AGENTS/10_AGENT_EXECUTION_PLAN.md",
+      "bytes": 3573,
+      "sha256": "26e86348fd779597061c87ec30936fccaeb5582360629b63f5c196cb467a7d36"
+    },
+    {
+      "path": "07_AGENTS/GOAL_FOR_CODEAGENT.md",
+      "bytes": 3628,
+      "sha256": "355a56b9c1440326d59a55fcab8cce81864b7dd7bc7a33975f2d40323737d12e"
+    },
+    {
+      "path": "08_RELEASE/COMMANDS_AND_CI_SPEC.md",
+      "bytes": 1870,
+      "sha256": "88e49cfcc7b70243228157f5029abb2fca9b88be22e81a1211a44a5eceec0c19"
+    },
+    {
+      "path": "08_RELEASE/RELEASE_GATES.md",
+      "bytes": 2025,
+      "sha256": "3b11408a330cf015c0e1070dd630d9ab1924778e3b9a5aa35753872c6430b407"
+    },
+    {
+      "path": "09_REFERENCE/ANNOTATION_CARD_TEMPLATE.md",
+      "bytes": 591,
+      "sha256": "aab800ab47036adc66562e8079ce46cf18d3c42b625ed40d9a58a573c7c289d1"
+    },
+    {
+      "path": "09_REFERENCE/CLAIMS_LEDGER_TEMPLATE.csv",
+      "bytes": 127,
+      "sha256": "be234408d794dd004c6eeefb099833fb389eb9d4bd97366781ef500a5367a193"
+    },
+    {
+      "path": "09_REFERENCE/DATASET_REGISTRY_TEMPLATE.yaml",
+      "bytes": 828,
+      "sha256": "2ec15c94d74911b9410b6b0107d490f8aaca1e6dc75631b7fbc5353481e95700"
+    },
+    {
+      "path": "09_REFERENCE/LITERATURE_MATRIX_TEMPLATE.csv",
+      "bytes": 137,
+      "sha256": "4b0dc40454fd351303e7cabb9e046a4e5423052c6464fb63989d3b64fa1b7288"
+    }
+  ]
+}

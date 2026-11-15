@@ -1,0 +1,24 @@
+{
+  "baseline_version": "C1_numpy_logreg_l2_1.0",
+  "dependency_lock_sha256": "a44ae9143c9aa2a596d7f9a75b14622d6c4890f28184cd22c95aed8e930f2ba7",
+  "feature_cutoff": "60_day_early_click_window",
+  "hardware": "cpu_numpy",
+  "holdout_dataset_ids": [
+    "oulad-2013-2014"
+  ],
+  "hyperparameter_budget": "{\"alpha_conf\": 0.2, \"alpha_fail\": 0.3, \"l2_lambda\": 1.0, \"learning_rate\": 0.5, \"max_iters\": 250, \"seed\": 0}",
+  "method_commit_sha": "4e5a792",
+  "method_hash": "15a3948c418557c9422235aca00030ec5f9cc94f185c1d38ec09e1f3288f0a06",
+  "output_path": "research_artifacts_v3/runs/p01/T",
+  "paper_id": "P01",
+  "prereg_sha256": "a2a9efa82779a481dfad5be83ba2b7499016af46cddf3b34b947699bbf3e4ecf",
+  "protocol_deviations": "time_split empirical composition: train contains a small 2014J tail; learner overlap across partitions removed by yielding earlier rows",
+  "rq_id": "RQ1_selective_risk_calibrated_transfer",
+  "seed": 0,
+  "split_hash": "80de2a8229c00539733939dd8dae8a160d1767d1c026040eb91fd97fb3a73e59",
+  "status": "PARTIAL",
+  "train_dataset_ids": [
+    "oulad-2013-2014"
+  ],
+  "wall_time_seconds": 7.436
+}

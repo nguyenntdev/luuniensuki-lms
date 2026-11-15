@@ -1,0 +1,44 @@
+{
+  "paper_id": "P14",
+  "compared_with": "P07",
+  "decision": "KEEP_SEPARATE",
+  "decided_at": "2026-11-15",
+  "decided_by": "research code agent (P14 scope)",
+  "p07_primary": {
+    "research_question": "Does task-affordance coverage under bandwidth/device/accessibility constraints prevent false modality equivalence better than conventional multi-object retrieval?",
+    "unit_of_analysis": "retrieval/ranking decision per query (which object to serve)",
+    "primary_metrics": [
+      "task affordance recall",
+      "false-completion rate",
+      "NDCG@K",
+      "annotation agreement"
+    ],
+    "source": "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P07_Resource_Aware_Multimodal_Learning_Object_Selection.md"
+  },
+  "p14_primary": {
+    "research_question": "Mức độ tương đương nhiệm vụ và khả năng tiếp cận của học liệu đa phương thức thay đổi như thế nào khi áp dụng rubric UDL có đánh giá người dùng?",
+    "unit_of_analysis": "the learning object itself (design + audit of a manifest of objects under UDL + WCAG 2.2 AA)",
+    "primary_metrics": [
+      "accessibility conformance rate",
+      "UDL-principle coverage",
+      "missing-affordance count"
+    ],
+    "source": "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P14_Thi_t_k_v_nh_gi_h_c_li_u_di_s_n_a_ph_ng_th_c_theo_Universal_.md"
+  },
+  "justification": [
+    "P07 studies OBJECT SELECTION: a ranking/retrieval system decides which object to serve to a learner under bandwidth/device constraints; its primary table is retrieval quality (affordance recall / NDCG@K / false-completion).",
+    "P14 studies the DESIGN AND EVALUATION of multimodal learning objects themselves: a UDL rubric (representation, engagement, action/expression) plus WCAG 2.2 AA affordance audit with per-object verdicts and a remediation list; its primary table is per-object audit conformance, not retrieval quality.",
+    "The spec (P14 §1) explicitly separates the papers: 'P14 nhấn mạnh giá trị sư phạm và người dùng; P07 thử nghiệm retrieval/ranking. Không dùng chung một bảng làm outcome chính.' No table or outcome is shared.",
+    "Shared infrastructure (an object-manifest schema and affordance vocabulary) is reused as a neutral substrate only; the measured estimands, unit of analysis and primary outcome tables are disjoint, so this is infrastructure reuse, not a duplicated primary hypothesis.",
+    "P14 measures whether objects, as designed, satisfy UDL/WCAG criteria (audit study). P07 measures whether a selector picks objects that cover task affordances (retrieval study). One could not be obtained by 'switching parameters' of the other (reviewer checklist item §7).",
+    "P14 additionally carries a rights-cleared media design task and a human-evaluation protocol (currently BLOCKED), neither of which exists in P07."
+  ],
+  "collision_check": {
+    "same_sample": false,
+    "same_rq": false,
+    "same_primary_table": false,
+    "shared_infrastructure_only": true,
+    "salami_slicing_risk": "low — different estimand (design audit vs retrieval selection)"
+  },
+  "status": "DISTINCT"
+}

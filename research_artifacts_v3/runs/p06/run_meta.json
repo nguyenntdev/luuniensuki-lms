@@ -1,0 +1,17 @@
+{
+  "ks": [
+    25,
+    50,
+    100
+  ],
+  "n_rows": 32593,
+  "n_withdrawn": 10156,
+  "n_zero_evidence": 4247,
+  "pre_registration_sha256": "af10dee58eeb301a55611dc888b3136a82514ad0ab92028267a1512751e0be35",
+  "seed": 2026,
+  "split_hashes": {
+    "group": "fd86564d1b69d37296070e494d4fc528009468b53cbac152ffc3d08b6cd28d57",
+    "time": "524a34161b85660960f4024461f5bff0b5267d85f8774b591e9440c2639ef0b3"
+  },
+  "wall_time_seconds": 135.74213075637817
+}

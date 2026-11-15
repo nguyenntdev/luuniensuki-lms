@@ -1,0 +1,184 @@
+{
+  "paper_id": "P06",
+  "updated_at": "2026-11-15",
+  "updated_by": "P06 code agent",
+  "tasks": {
+    "P06-T01": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p06/pre_registration.yaml",
+        "research_v3/methods/p06/METHOD.md"
+      ],
+      "note": "RQ/estimand frozen 2026-11-15: selection quality (Recall@k failure capture) under fixed teacher capacity, NOT an intervention effect; H0 (constrained ranking adds no material benefit over calibrated top-k C1) preregistered with disclosure rule requiring verbatim H0 publication if not rejected."
+    },
+    "P06-T02": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/dataset_card.json",
+        "research_v3/datasets/registry.yaml"
+      ],
+      "note": "OULAD 2013-2014 APPROVED: original_sha256 f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4, license_text_sha256 41003d4a...; registry NC-variant provenance caveat recorded; redistribution permitted (CC BY 4.0 canonical release)."
+    },
+    "P06-T03": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/dataset_card.json",
+        "research_v3/methods/p06/risk_model.py"
+      ],
+      "note": "Schema oulad-1.0, units student-module-presentation, group key id_student, time key code_presentation; label semantics preregistered (is_fail = final_result=='Fail'; Withdrawn excluded from scoring preregistered, not post hoc; pass/distinction are negatives)."
+    },
+    "P06-T04": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/run_meta.json",
+        "research_artifacts_v3/runs/p06/split_manifest.json"
+      ],
+      "note": "Immutable provenance: 32,593 rows ingested; split_hashes pinned for both protocols (group fd86564d... / time 524a3416...); pre_registration_sha256 af10dee5... recorded in run_meta."
+    },
+    "P06-T05": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/split_manifest.json",
+        "tests/research_v3/method/test_p06_pipeline_oulad.py"
+      ],
+      "note": "Primary temporal split (train 2013B+2013J=13,529 / calibration-dev 2014B=7,804 / test 2014J=11,260) plus learner-grouped sensitivity split; features frozen at day-60 window with final_result withheld (adapter-enforced); 2014B dual calibration/dev role recorded as protocol deviation."
+    },
+    "P06-T06": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/run_meta.json",
+        "research_artifacts_v3/runs/p06/dataset_card.json"
+      ],
+      "note": "Distribution checks: 10,156 withdrawn (31.2%), 4,247 zero-evidence rows (13.03%) identified before fitting and later routed to ABSTAIN; label distribution Pass 12,361 / Fail 7,052 / Distinction 3,024 documented in manuscript data section."
+    },
+    "P06-T07": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p06/risk_model.py",
+        "research_artifacts_v3/runs/p06/summary.json"
+      ],
+      "note": "C1 calibrated risk-only top-k (pinned classical model, calibration partition only; Brier 0.1424, ECE 0.0500) and C0 random-eligible chance line, same splits/seed (2026)/compute. C1 pooled Recall@k: 0.110/0.188/0.299 at k=25/50/100."
+    },
+    "P06-T08": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p06/METHOD.md",
+        "research_v3/manuscripts/p06/manuscript.md"
+      ],
+      "note": "Closest-work positioning recorded in manuscript related-work section: OULAD early-warning systems (delta: selection policy under budget on top of a pinned calibrated predictor, not a better predictor), budgeted multi-objective selection, group fairness in ranking. Novelty gate explicitly owned by research lead (human); no SOTA claim (spec B06)."
+    },
+    "P06-T09": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p06/selection.py",
+        "research_v3/methods/p06/risk_model.py",
+        "tests/research_v3/method/test_p06_selection.py"
+      ],
+      "note": "Typed selection with ABSTAIN for high-risk-no-actionable-evidence (unit-tested: test_high_risk_no_evidence_abstains), capacity certificate (test_budget_never_exceeded; 0 violations across all arms), two-phase greedy under group minima; noncausal attestation NONCAUSAL_UNTIL_PROVED pinned to ledger."
+    },
+    "P06-T10": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/ablations.json",
+        "research_v3/methods/p06/ablations.md"
+      ],
+      "note": "A1-A4 true-removal ablations on identical splits/seeds with expected failure families registered BEFORE running (ablations.md); A2 shows the capacity mechanism (29/27/22 violations when removed, fairness gap collapse to -9.295), A3 shows gate mechanism, A4 shows equity floor slack-equivalence to C1."
+    },
+    "P06-T11": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/run_meta.json",
+        "research_artifacts_v3/runs/p06/experiment_card.json"
+      ],
+      "note": "No learned parameters beyond the pinned calibrated risk model; calibration on held-out partition only (Brier/ECE reported); seed 2026; wall time 135.7s CPU; no frozen-test tuning."
+    },
+    "P06-T12": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p06/run_experiment.py",
+        "research_artifacts_v3/runs/p06/results.json",
+        "research_artifacts_v3/runs/p06/summary.json",
+        "research_artifacts_v3/runs/p06/run_meta.json"
+      ],
+      "note": "Full preregistered matrix on real OULAD (time split, 29 selection rounds, k in {25,50,100}): every cell has per-cohort results + pooled summary + run_meta. HONEST NULL: proposed did NOT beat C1 (Recall@k identical 0.110/0.188/0.299; paired McNemar 0 discordant cases, Holm p=1.0). Null result is a valid engineering outcome, recorded in null_results.json, not hidden."
+    },
+    "P06-T13": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/results.json",
+        "research_artifacts_v3/runs/p06/summary.json",
+        "research_v3/methods/p06/ablations.md"
+      ],
+      "note": "All preregistered stress surfaces reported: high-risk-no-evidence ABSTAIN behavior, k-anonymity suppression (subgroup cells with n<5 reported as suppressed_n_lt_5, never imputed), missing-VLE zero-click rows (4,247) surfaced as abstentions, binding-budget rounds with 0 capacity violations; both time and group sensitivity splits reported."
+    },
+    "P06-T14": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/paired_tests.json",
+        "research_artifacts_v3/runs/p06/null_results.json",
+        "research_artifacts_v3/runs/p06/summary.json"
+      ],
+      "note": "Preregistered tests executed: paired McNemar exact with Holm correction (all p_holm=1.0), cluster bootstrap CIs (learner clusters, 2000 resamples), effect sizes; is_null_or_negative=true recorded for all six PROPOSED-vs-C1/C0 family cells with the preregistered disclosure rule honored (H0 not rejected)."
+    },
+    "P06-T15": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p06/run_experiment.py",
+        "research_artifacts_v3/runs/p06/rerun_check.json"
+      ],
+      "note": "Source-to-table from run_experiment.py (no hand-entered metrics); independent replication check executed: two consecutive full runs compared byte-for-byte — all scientific payloads identical, only wall_time_seconds differs (expected nondeterminism declared); result PASS."
+    },
+    "P06-T16": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p06/noncausal_claims.md",
+        "research_artifacts_v3/runs/p06/noncausal_attestation.json",
+        "research_v3/manuscripts/p06/manuscript.md"
+      ],
+      "note": "Failure review + collision audit preserved: falsification outcome H0-NOT-REJECTED published as headline; noncausal ledger (frozen) bans all causal verbs and defines allowed wording (P06-C01..C04); attestation NONCAUSAL_UNTIL_PROVED with intervention_effect_claimed=false; P13 SRL overlap and LN-09 reuse decisions recorded in manuscript."
+    },
+    "P06-T17": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p06/manuscript.md",
+        "research_v3/manuscripts/p06/main.tex",
+        "research_v3/manuscripts/p06/tables/main_results.md"
+      ],
+      "note": "Manuscript skeleton + LaTeX + generated tables (main_results/paired_tests/ablations via render_tables.py from run artifacts); honest H0-not-rejected headline; NONCAUSAL_UNTIL_PROVED status; venue target Learning@Scale flagged unverified. Human evidence-ID/novelty review outstanding (T20 human-only)."
+    },
+    "P06-T18": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/rerun_check.json"
+      ],
+      "note": "Determinism rerun-check exists and passes (byte-identical scientific payloads across two full runs), but an independent external rerun from a clean clone with reviewer validation and issue list has not been performed."
+    },
+    "P06-T19": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_artifacts_v3/runs/p06/dataset_card.json"
+      ],
+      "note": "Human-only: ethics/human annotation/license approval requires documented actual signatures; none exist and none simulated. Dataset card records consent basis (public research dataset) but signoff is a human act."
+    },
+    "P06-T20": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p06/manuscript.md"
+      ],
+      "note": "Human-only: novelty/nearest-work signoff by research lead; manuscript explicitly marks related work as 'to be verified against full texts; novelty gate owned by research lead'."
+    },
+    "P06-T21": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p06/manuscript.md"
+      ],
+      "note": "Human-only: coauthor/venue/submission signoff; venue target (Learning@Scale) explicitly unverified; no submission claims made."
+    }
+  },
+  "summary": {
+    "done_engineering": 17,
+    "blocked_human_only": 3,
+    "blocked_engineering": 1,
+    "note": "P06 executed on real OULAD (32,593 rows, sealed 2014J test). HONEST NULL RESULT: proposed equity-constrained selector did NOT beat calibrated top-k C1 (identical Recall@k, McNemar 0 discordant, Holm p=1.0); H0 not rejected and disclosed per preregistration — null is a valid engineering outcome, retained in null_results.json. Engineering blockers: no external clean-clone rerun (T18); T19/T20/T21 human-only."
+  }
+}

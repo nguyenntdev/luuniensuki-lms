@@ -1,0 +1,76 @@
+schema_version: v3
+paper_id: P05
+cards:
+
+  - dataset_id: oulad-2013-2014
+    role: primary
+    status: APPROVED
+    provider: Open University (via UCI ML Repository, dataset 349)
+    source_url: https://archive.ics.uci.edu/dataset/349/open+university+learning+analytics+dataset
+    doi: 10.1038/sdata.2017.171
+    version: "2013J/2013B/2014J/2014B (2013-2014 release)"
+    retrieved_at: '2026-11-15T10:33:03Z'
+    archive_sha256: f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4
+    license_reconciliation:
+      registry_card_claim: CC BY 4.0 (per Scientific Data publication)
+      captured_license_text: Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
+      captured_license_sha256: 41003d4a74749c0220e33dd415042164b5a1093ed401f36277234f772d22d3d0
+      resolution: >-
+        The UCI redistribution of OULAD carries a CC BY-NC 4.0 license text while
+        the original Scientific Data publication states CC BY 4.0. We honour the
+        stricter captured term: non-commercial academic use with attribution,
+        no commercial redistribution. The present study is non-commercial
+        academic research, so use is compatible under BOTH readings; the NC
+        constraint is recorded and binding for all derived artifacts.
+    fields_used:
+      - studentAssessment.csv (id_assessment, id_student, date_submitted, score, is_banked)
+      - assessments.csv (code_module, code_presentation, date, assessment_type, weight)
+      - studentVle.csv (date, sum_click per site per day)
+      - studentInfo.csv (static demographics; id_student as group key only)
+      - courses.csv (module_presentation_length)
+    excluded_fields:
+      - final_result (course outcome — never a feature; not even our target)
+      - is_banked==1 rows (transfers without a real attempt)
+      - rows with date_submitted < 0 (unresolvable pre-course submissions)
+    status_rationale: >-
+      APPROVED for non-commercial academic analysis; the only APPROVED dataset
+      in the registry with genuine per-day temporal structure.
+
+  - dataset_id: assistments-2009-2010
+    role: candidate_kt_benchmark
+    status: BLOCKED
+    checked_url: https://sites.google.com/site/assistmentsdata/datasets
+    checked_at: '2026-11-15'
+    terms_observed: >-
+      ASSISTments datasets are distributed for research use with attribution;
+      however the registry card has no captured license-text hash, no version
+      selection, and no file hash. Per the fail-closed rule (a public URL is
+      not a license), the dataset may not back a primary claim.
+    blocked_reason: >-
+      License not captured in registry (no license_text_sha256, no original
+      file hash, no version pin). Not used. No data downloaded. No invented
+      substitute "ground truth" was created.
+
+  - dataset_id: ednet
+    role: candidate_kt_benchmark
+    status: BLOCKED
+    checked_url: https://github.com/riiid/ednet
+    checked_at: '2026-11-15'
+    terms_observed: >-
+      EdNet is released under Creative Commons Attribution-NonCommercial-
+      ShareAlike 4.0 (CC BY-NC-SA 4.0). Non-commercial only; ShareAlike
+      constrains redistribution of derivatives.
+    blocked_reason: >-
+      CC BY-NC-SA forbids commercial use and imposes share-alike on
+      derivatives; registry card is BLOCKED with no captured hash. Recorded
+      constraint: even if later approved, use must remain non-commercial and
+      derivative redistribution must comply with SA. Not used.
+
+  - dataset_id: junyi-academy-exercise-log
+    role: candidate_kt_benchmark
+    status: BLOCKED
+    checked_url: https://pslcdatashop.web.cmu.edu/Project?id=24
+    checked_at: '2026-11-15'
+    blocked_reason: >-
+      DataShop terms require an account-specific license agreement that has
+      not been executed; no registry card, no captured hash. Not used.

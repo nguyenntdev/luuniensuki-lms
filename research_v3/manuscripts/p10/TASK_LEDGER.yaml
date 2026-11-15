@@ -1,0 +1,32 @@
+# P10 task ticket ledger (machine-readable status; honest BLOCKED states)
+# Source: LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/06_TASK_TRACKER/V3_TASK_REGISTER.json
+# Rule: status changes require reviewer + evidence path + hash; no bulk DONE by assertion.
+paper: P10
+updated_at: "2026-11-15"
+tasks:
+  P10-T01: {status: CODE_READY, evidence: research_v3/methods/p10/METHOD.md, note: RQ/H0 frozen; collision boundaries written}
+  P10-T02: {status: CODE_READY, evidence: research_v3/methods/p10/provenance.py, note: rights assessment; hue corpus stays BLOCKED}
+  P10-T03: {status: CODE_READY, evidence: research_v3/methods/p10/anchors.py, note: typed schema + band constraints}
+  P10-T04: {status: CODE_READY, evidence: research_artifacts_v3/runs/p10 (manifest_sha256), note: SHA256 raw + payload hash}
+  P10-T05: {status: CODE_READY, evidence: research_v3/experiments/p10/pre_registration.yaml, note: design/eval set separation declared}
+  P10-T06: {status: CODE_READY, evidence: run payload corpus block, note: coverage/AI-generated fraction reported}
+  P10-T07: {status: CODE_READY, evidence: run payload designs C0/C1, note: matched inputs, same compute}
+  P10-T08: {status: BLOCKED, evidence: research_v3/experiments/p10/closest_published_blocker.yaml, note: no runnable C2; honest card; novelty signoff human-only}
+  P10-T09: {status: CODE_READY, evidence: research_v3/methods/p10/spiral_builder.py, note: typed failures, fixed constraints, no learned params}
+  P10-T10: {status: CODE_READY, evidence: research_v3/methods/p10/ablations.py, note: A1-A4 mechanism-removal + sensitivity measures}
+  P10-T11: {status: CODE_READY, evidence: run payload wall_time_unhashed, note: CPU-only, nothing fitted, no test tuning}
+  P10-T12: {status: CODE_READY, evidence: research_v3/experiments/p10/run_matrix.yaml + run JSON, note: every cell has manifest + exit codes}
+  P10-T13: {status: CODE_READY, evidence: certificate reason_codes + A4 inversions, note: failure strata reported}
+  P10-T14: {status: CODE_READY, evidence: metrics block w/ Wilson+CP CIs, note: reuse research_v3/eval/statistics.py; human comparison absent (disclosed)}
+  P10-T15: {status: CODE_READY, evidence: research_v3/methods/p10/experiment.py, note: source-to-table; checksum round trip via cli verify}
+  P10-T16: {status: CODE_READY, evidence: research_v3/manuscripts/p10/MANUSCRIPT.md §6, note: C0/A4 negative results preserved}
+  P10-T17: {status: CODE_READY, evidence: research_v3/manuscripts/p10/MANUSCRIPT.md, note: skeleton with evidence IDs; numbers auto from run}
+  P10-T18: {status: CODE_READY, evidence: research_v3/manuscripts/p10/MANUSCRIPT.md §8, note: clean-clone rerun commands; cli verify}
+  P10-T19: {status: BLOCKED, note: ethics/human annotation/license approval — real signatures required; checklist in MANUSCRIPT §7}
+  P10-T20: {status: BLOCKED, note: novelty & nearest-work signoff — research lead human-only}
+  P10-T21: {status: BLOCKED, note: coauthor/venue/submission signoff — human-only}
+summary:
+  code_ready: 18
+  blocked: 3
+  done: 0  # DONE requires human signoffs + release gate; not claimed
+release_status: ENGINEERING_PASS  # not SCIENTIFIC_REVIEW_READY (human validation outstanding)

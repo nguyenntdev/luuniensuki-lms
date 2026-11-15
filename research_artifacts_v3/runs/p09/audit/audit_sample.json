@@ -1,0 +1,772 @@
+{
+  "audit_version": "p09-eval-v1.0.0",
+  "auditor_instructions": "You are an independent human auditor. For each claim, open the cited source URL, check the locator, and fill auditor_fields. Do NOT assume the pipeline's badge is correct; the pipeline does not produce expert labels.",
+  "sample": [
+    {
+      "audit_task": "1) Confirm/deny the locator resolves inside the cited source. 2) Confirm/deny the claim text is a fair reading of that locator. 3) Mark any claim whose citation does not support it.",
+      "auditor_fields": {
+        "fair_reading": null,
+        "locator_resolves": null,
+        "notes": null
+      },
+      "claim_id": "P09-Q10769129-P31-00",
+      "claim_text": "Imperial City of Hue instance of Q16560",
+      "decisions": {
+        "c0_surface_everything": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q10769129$bb9440e7-44fb-7d45-355d-d0186b6dc9b8",
+            "source_id": "Q10769129",
+            "source_sha256": "60076a4a6ee752b3d1777e77ab9f3b3cc805ce0d9c620f08f9e2f156251319b0",
+            "source_url": "https://www.wikidata.org/wiki/Q10769129"
+          },
+          "claim_id": "P09-Q10769129-P31-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q10769129"
+          ],
+          "method_id": "c0_surface_everything",
+          "method_version": "p09-c0-v1.0.0",
+          "reason_codes": [
+            "c0_no_gate"
+          ]
+        },
+        "c1_keyword_match": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q10769129$bb9440e7-44fb-7d45-355d-d0186b6dc9b8",
+            "source_id": "Q10769129",
+            "source_sha256": "60076a4a6ee752b3d1777e77ab9f3b3cc805ce0d9c620f08f9e2f156251319b0",
+            "source_url": "https://www.wikidata.org/wiki/Q10769129"
+          },
+          "claim_id": "P09-Q10769129-P31-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q10769129"
+          ],
+          "method_id": "c1_keyword_match",
+          "method_version": "p09-c1-v1.0.0",
+          "reason_codes": [
+            "c1_keyword_hit"
+          ]
+        },
+        "proposed": {
+          "citation": null,
+          "claim_id": "P09-Q10769129-P31-00",
+          "decision": "abstain_unverified",
+          "epistemic_badge": "unverified",
+          "evidence_ids": [],
+          "method_id": "proposed",
+          "method_version": "p09-provenance-v1.0.0",
+          "reason_codes": [
+            "fail_closed_gate",
+            "badge_not_verified",
+            "unverified"
+          ]
+        }
+      },
+      "declared_locator": {
+        "kind": "statement_guid",
+        "source_id": "Q10769129",
+        "value": "Q10769129$bb9440e7-44fb-7d45-355d-d0186b6dc9b8"
+      },
+      "declared_source_id": "Q10769129",
+      "entity_qid": "Q10769129"
+    },
+    {
+      "audit_task": "1) Confirm/deny the locator resolves inside the cited source. 2) Confirm/deny the claim text is a fair reading of that locator. 3) Mark any claim whose citation does not support it.",
+      "auditor_fields": {
+        "fair_reading": null,
+        "locator_resolves": null,
+        "notes": null
+      },
+      "claim_id": "P09-Q10788196-P17-00",
+      "claim_text": "Tomb of Đồng Khánh country Q881",
+      "decisions": {
+        "c0_surface_everything": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q10788196$1e27801b-4896-60ae-771f-38c8c9077a2c",
+            "source_id": "Q10788196",
+            "source_sha256": "8afd28baa2013e86606b63a6ea5e2965759daab8ec55705d5d99526a1f458615",
+            "source_url": "https://www.wikidata.org/wiki/Q10788196"
+          },
+          "claim_id": "P09-Q10788196-P17-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q10788196"
+          ],
+          "method_id": "c0_surface_everything",
+          "method_version": "p09-c0-v1.0.0",
+          "reason_codes": [
+            "c0_no_gate"
+          ]
+        },
+        "c1_keyword_match": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q10788196$1e27801b-4896-60ae-771f-38c8c9077a2c",
+            "source_id": "Q10788196",
+            "source_sha256": "8afd28baa2013e86606b63a6ea5e2965759daab8ec55705d5d99526a1f458615",
+            "source_url": "https://www.wikidata.org/wiki/Q10788196"
+          },
+          "claim_id": "P09-Q10788196-P17-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q10788196"
+          ],
+          "method_id": "c1_keyword_match",
+          "method_version": "p09-c1-v1.0.0",
+          "reason_codes": [
+            "c1_keyword_hit"
+          ]
+        },
+        "proposed": {
+          "citation": null,
+          "claim_id": "P09-Q10788196-P17-00",
+          "decision": "abstain_unverified",
+          "epistemic_badge": "unverified",
+          "evidence_ids": [],
+          "method_id": "proposed",
+          "method_version": "p09-provenance-v1.0.0",
+          "reason_codes": [
+            "fail_closed_gate",
+            "badge_not_verified",
+            "unverified"
+          ]
+        }
+      },
+      "declared_locator": {
+        "kind": "statement_guid",
+        "source_id": "Q10788196",
+        "value": "Q10788196$1e27801b-4896-60ae-771f-38c8c9077a2c"
+      },
+      "declared_source_id": "Q10788196",
+      "entity_qid": "Q10788196"
+    },
+    {
+      "audit_task": "1) Confirm/deny the locator resolves inside the cited source. 2) Confirm/deny the claim text is a fair reading of that locator. 3) Mark any claim whose citation does not support it.",
+      "auditor_fields": {
+        "fair_reading": null,
+        "locator_resolves": null,
+        "notes": null
+      },
+      "claim_id": "P09-Q10788196-P31-00",
+      "claim_text": "Tomb of Đồng Khánh instance of Q381885",
+      "decisions": {
+        "c0_surface_everything": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q10788196$618ac8e3-4574-d4f6-3748-aee31fca2e1f",
+            "source_id": "Q10788196",
+            "source_sha256": "8afd28baa2013e86606b63a6ea5e2965759daab8ec55705d5d99526a1f458615",
+            "source_url": "https://www.wikidata.org/wiki/Q10788196"
+          },
+          "claim_id": "P09-Q10788196-P31-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q10788196"
+          ],
+          "method_id": "c0_surface_everything",
+          "method_version": "p09-c0-v1.0.0",
+          "reason_codes": [
+            "c0_no_gate"
+          ]
+        },
+        "c1_keyword_match": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q10788196$618ac8e3-4574-d4f6-3748-aee31fca2e1f",
+            "source_id": "Q10788196",
+            "source_sha256": "8afd28baa2013e86606b63a6ea5e2965759daab8ec55705d5d99526a1f458615",
+            "source_url": "https://www.wikidata.org/wiki/Q10788196"
+          },
+          "claim_id": "P09-Q10788196-P31-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q10788196"
+          ],
+          "method_id": "c1_keyword_match",
+          "method_version": "p09-c1-v1.0.0",
+          "reason_codes": [
+            "c1_keyword_hit"
+          ]
+        },
+        "proposed": {
+          "citation": null,
+          "claim_id": "P09-Q10788196-P31-00",
+          "decision": "abstain_unverified",
+          "epistemic_badge": "unverified",
+          "evidence_ids": [],
+          "method_id": "proposed",
+          "method_version": "p09-provenance-v1.0.0",
+          "reason_codes": [
+            "fail_closed_gate",
+            "badge_not_verified",
+            "unverified"
+          ]
+        }
+      },
+      "declared_locator": {
+        "kind": "statement_guid",
+        "source_id": "Q10788196",
+        "value": "Q10788196$618ac8e3-4574-d4f6-3748-aee31fca2e1f"
+      },
+      "declared_source_id": "Q10788196",
+      "entity_qid": "Q10788196"
+    },
+    {
+      "audit_task": "1) Confirm/deny the locator resolves inside the cited source. 2) Confirm/deny the claim text is a fair reading of that locator. 3) Mark any claim whose citation does not support it.",
+      "auditor_fields": {
+        "fair_reading": null,
+        "locator_resolves": null,
+        "notes": null
+      },
+      "claim_id": "P09-Q10788196-P625-00",
+      "claim_text": "Tomb of Đồng Khánh has coordinates latitude 16.429444444444, longitude 107.56833333333",
+      "decisions": {
+        "c0_surface_everything": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q10788196$5b442ea3-4e0d-58b4-3fd4-c17e0187cd45",
+            "source_id": "Q10788196",
+            "source_sha256": "8afd28baa2013e86606b63a6ea5e2965759daab8ec55705d5d99526a1f458615",
+            "source_url": "https://www.wikidata.org/wiki/Q10788196"
+          },
+          "claim_id": "P09-Q10788196-P625-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q10788196"
+          ],
+          "method_id": "c0_surface_everything",
+          "method_version": "p09-c0-v1.0.0",
+          "reason_codes": [
+            "c0_no_gate"
+          ]
+        },
+        "c1_keyword_match": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q10788196$5b442ea3-4e0d-58b4-3fd4-c17e0187cd45",
+            "source_id": "Q10788196",
+            "source_sha256": "8afd28baa2013e86606b63a6ea5e2965759daab8ec55705d5d99526a1f458615",
+            "source_url": "https://www.wikidata.org/wiki/Q10788196"
+          },
+          "claim_id": "P09-Q10788196-P625-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q10788196"
+          ],
+          "method_id": "c1_keyword_match",
+          "method_version": "p09-c1-v1.0.0",
+          "reason_codes": [
+            "c1_keyword_hit"
+          ]
+        },
+        "proposed": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q10788196$5b442ea3-4e0d-58b4-3fd4-c17e0187cd45",
+            "source_id": "Q10788196",
+            "source_sha256": "8afd28baa2013e86606b63a6ea5e2965759daab8ec55705d5d99526a1f458615",
+            "source_url": "https://www.wikidata.org/wiki/Q10788196"
+          },
+          "claim_id": "P09-Q10788196-P625-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q10788196"
+          ],
+          "method_id": "proposed",
+          "method_version": "p09-provenance-v1.0.0",
+          "reason_codes": [
+            "gate_verified",
+            "epistemic_badge_visible"
+          ]
+        }
+      },
+      "declared_locator": {
+        "kind": "statement_guid",
+        "source_id": "Q10788196",
+        "value": "Q10788196$5b442ea3-4e0d-58b4-3fd4-c17e0187cd45"
+      },
+      "declared_source_id": "Q10788196",
+      "entity_qid": "Q10788196"
+    },
+    {
+      "audit_task": "1) Confirm/deny the locator resolves inside the cited source. 2) Confirm/deny the claim text is a fair reading of that locator. 3) Mark any claim whose citation does not support it.",
+      "auditor_fields": {
+        "fair_reading": null,
+        "locator_resolves": null,
+        "notes": null
+      },
+      "claim_id": "P09-Q132521590-P625-00",
+      "claim_text": "Hiển Đức Gate, Tomb of Emperor Minh Mạng has coordinates latitude 16.3875939, longitude 107.5695047",
+      "decisions": {
+        "c0_surface_everything": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q132521590$5d3167c6-47d4-d30b-02a5-845c83b795fa",
+            "source_id": "Q132521590",
+            "source_sha256": "5744814b34e65334ec9bfdd86b1c5890db481148d71879cdb785642abe76d444",
+            "source_url": "https://www.wikidata.org/wiki/Q132521590"
+          },
+          "claim_id": "P09-Q132521590-P625-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q132521590"
+          ],
+          "method_id": "c0_surface_everything",
+          "method_version": "p09-c0-v1.0.0",
+          "reason_codes": [
+            "c0_no_gate"
+          ]
+        },
+        "c1_keyword_match": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q132521590$5d3167c6-47d4-d30b-02a5-845c83b795fa",
+            "source_id": "Q132521590",
+            "source_sha256": "5744814b34e65334ec9bfdd86b1c5890db481148d71879cdb785642abe76d444",
+            "source_url": "https://www.wikidata.org/wiki/Q132521590"
+          },
+          "claim_id": "P09-Q132521590-P625-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q132521590"
+          ],
+          "method_id": "c1_keyword_match",
+          "method_version": "p09-c1-v1.0.0",
+          "reason_codes": [
+            "c1_keyword_hit"
+          ]
+        },
+        "proposed": {
+          "citation": null,
+          "claim_id": "P09-Q132521590-P625-00",
+          "decision": "abstain_unverified",
+          "epistemic_badge": "unverified",
+          "evidence_ids": [],
+          "method_id": "proposed",
+          "method_version": "p09-provenance-v1.0.0",
+          "reason_codes": [
+            "fail_closed_gate",
+            "badge_not_verified",
+            "unverified"
+          ]
+        }
+      },
+      "declared_locator": {
+        "kind": "statement_guid",
+        "source_id": "Q132521590",
+        "value": "Q132521590$5d3167c6-47d4-d30b-02a5-845c83b795fa"
+      },
+      "declared_source_id": "Q132521590",
+      "entity_qid": "Q132521590"
+    },
+    {
+      "audit_task": "1) Confirm/deny the locator resolves inside the cited source. 2) Confirm/deny the claim text is a fair reading of that locator. 3) Mark any claim whose citation does not support it.",
+      "auditor_fields": {
+        "fair_reading": null,
+        "locator_resolves": null,
+        "notes": null
+      },
+      "claim_id": "P09-Q132521821-P17-00",
+      "claim_text": "Sùng Ân Temple, Tomb of Emperor Minh Mạng country Q881",
+      "decisions": {
+        "c0_surface_everything": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q132521821$8706f6d5-4a62-07b7-8ea0-9e97d2461fcf",
+            "source_id": "Q132521821",
+            "source_sha256": "ba4ebb65729e40ea62b3a34d12bd3b311af423a36fa4d838f87f3ccd287f6c26",
+            "source_url": "https://www.wikidata.org/wiki/Q132521821"
+          },
+          "claim_id": "P09-Q132521821-P17-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q132521821"
+          ],
+          "method_id": "c0_surface_everything",
+          "method_version": "p09-c0-v1.0.0",
+          "reason_codes": [
+            "c0_no_gate"
+          ]
+        },
+        "c1_keyword_match": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q132521821$8706f6d5-4a62-07b7-8ea0-9e97d2461fcf",
+            "source_id": "Q132521821",
+            "source_sha256": "ba4ebb65729e40ea62b3a34d12bd3b311af423a36fa4d838f87f3ccd287f6c26",
+            "source_url": "https://www.wikidata.org/wiki/Q132521821"
+          },
+          "claim_id": "P09-Q132521821-P17-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q132521821"
+          ],
+          "method_id": "c1_keyword_match",
+          "method_version": "p09-c1-v1.0.0",
+          "reason_codes": [
+            "c1_keyword_hit"
+          ]
+        },
+        "proposed": {
+          "citation": null,
+          "claim_id": "P09-Q132521821-P17-00",
+          "decision": "abstain_unverified",
+          "epistemic_badge": "unverified",
+          "evidence_ids": [],
+          "method_id": "proposed",
+          "method_version": "p09-provenance-v1.0.0",
+          "reason_codes": [
+            "fail_closed_gate",
+            "badge_not_verified",
+            "unverified"
+          ]
+        }
+      },
+      "declared_locator": {
+        "kind": "statement_guid",
+        "source_id": "Q132521821",
+        "value": "Q132521821$8706f6d5-4a62-07b7-8ea0-9e97d2461fcf"
+      },
+      "declared_source_id": "Q132521821",
+      "entity_qid": "Q132521821"
+    },
+    {
+      "audit_task": "1) Confirm/deny the locator resolves inside the cited source. 2) Confirm/deny the claim text is a fair reading of that locator. 3) Mark any claim whose citation does not support it.",
+      "auditor_fields": {
+        "fair_reading": null,
+        "locator_resolves": null,
+        "notes": null
+      },
+      "claim_id": "P09-Q132521821-P361-00",
+      "claim_text": "Sùng Ân Temple, Tomb of Emperor Minh Mạng part of Q7481070",
+      "decisions": {
+        "c0_surface_everything": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q132521821$b8c9388c-4202-97eb-c58b-6e20e07eca13",
+            "source_id": "Q132521821",
+            "source_sha256": "ba4ebb65729e40ea62b3a34d12bd3b311af423a36fa4d838f87f3ccd287f6c26",
+            "source_url": "https://www.wikidata.org/wiki/Q132521821"
+          },
+          "claim_id": "P09-Q132521821-P361-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q132521821"
+          ],
+          "method_id": "c0_surface_everything",
+          "method_version": "p09-c0-v1.0.0",
+          "reason_codes": [
+            "c0_no_gate"
+          ]
+        },
+        "c1_keyword_match": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q132521821$b8c9388c-4202-97eb-c58b-6e20e07eca13",
+            "source_id": "Q132521821",
+            "source_sha256": "ba4ebb65729e40ea62b3a34d12bd3b311af423a36fa4d838f87f3ccd287f6c26",
+            "source_url": "https://www.wikidata.org/wiki/Q132521821"
+          },
+          "claim_id": "P09-Q132521821-P361-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q132521821"
+          ],
+          "method_id": "c1_keyword_match",
+          "method_version": "p09-c1-v1.0.0",
+          "reason_codes": [
+            "c1_keyword_hit"
+          ]
+        },
+        "proposed": {
+          "citation": null,
+          "claim_id": "P09-Q132521821-P361-00",
+          "decision": "abstain_unverified",
+          "epistemic_badge": "unverified",
+          "evidence_ids": [],
+          "method_id": "proposed",
+          "method_version": "p09-provenance-v1.0.0",
+          "reason_codes": [
+            "fail_closed_gate",
+            "badge_not_verified",
+            "unverified"
+          ]
+        }
+      },
+      "declared_locator": {
+        "kind": "statement_guid",
+        "source_id": "Q132521821",
+        "value": "Q132521821$b8c9388c-4202-97eb-c58b-6e20e07eca13"
+      },
+      "declared_source_id": "Q132521821",
+      "entity_qid": "Q132521821"
+    },
+    {
+      "audit_task": "1) Confirm/deny the locator resolves inside the cited source. 2) Confirm/deny the claim text is a fair reading of that locator. 3) Mark any claim whose citation does not support it.",
+      "auditor_fields": {
+        "fair_reading": null,
+        "locator_resolves": null,
+        "notes": null
+      },
+      "claim_id": "P09-Q61127244-P361-00",
+      "claim_text": "Q61127244 part of Q10769129",
+      "decisions": {
+        "c0_surface_everything": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q61127244$cf189519-437c-13c7-b559-af5542aeb362",
+            "source_id": "Q61127244",
+            "source_sha256": "56fcd7021fa156d0f4595707d96f9fba0b5307ecc104ce40019122053d46ea6a",
+            "source_url": "https://www.wikidata.org/wiki/Q61127244"
+          },
+          "claim_id": "P09-Q61127244-P361-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q61127244"
+          ],
+          "method_id": "c0_surface_everything",
+          "method_version": "p09-c0-v1.0.0",
+          "reason_codes": [
+            "c0_no_gate"
+          ]
+        },
+        "c1_keyword_match": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q61127244$cf189519-437c-13c7-b559-af5542aeb362",
+            "source_id": "Q61127244",
+            "source_sha256": "56fcd7021fa156d0f4595707d96f9fba0b5307ecc104ce40019122053d46ea6a",
+            "source_url": "https://www.wikidata.org/wiki/Q61127244"
+          },
+          "claim_id": "P09-Q61127244-P361-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q61127244"
+          ],
+          "method_id": "c1_keyword_match",
+          "method_version": "p09-c1-v1.0.0",
+          "reason_codes": [
+            "c1_keyword_hit"
+          ]
+        },
+        "proposed": {
+          "citation": null,
+          "claim_id": "P09-Q61127244-P361-00",
+          "decision": "abstain_unverified",
+          "epistemic_badge": "unverified",
+          "evidence_ids": [],
+          "method_id": "proposed",
+          "method_version": "p09-provenance-v1.0.0",
+          "reason_codes": [
+            "fail_closed_gate",
+            "badge_not_verified",
+            "unverified"
+          ]
+        }
+      },
+      "declared_locator": {
+        "kind": "statement_guid",
+        "source_id": "Q61127244",
+        "value": "Q61127244$cf189519-437c-13c7-b559-af5542aeb362"
+      },
+      "declared_source_id": "Q61127244",
+      "entity_qid": "Q61127244"
+    },
+    {
+      "audit_task": "1) Confirm/deny the locator resolves inside the cited source. 2) Confirm/deny the claim text is a fair reading of that locator. 3) Mark any claim whose citation does not support it.",
+      "auditor_fields": {
+        "fair_reading": null,
+        "locator_resolves": null,
+        "notes": null
+      },
+      "claim_id": "P09-Q7481070-P131-00",
+      "claim_text": "Tomb of Emperor Minh Mang located in Q36167",
+      "decisions": {
+        "c0_surface_everything": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q7481070$bfad4406-412b-d330-b116-64ae746c1673",
+            "source_id": "Q7481070",
+            "source_sha256": "58512cc4d8e4f75eeede8c73d157c72224aa5c6c1a2e5eef0a3b801977bcbfed",
+            "source_url": "https://www.wikidata.org/wiki/Q7481070"
+          },
+          "claim_id": "P09-Q7481070-P131-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q7481070"
+          ],
+          "method_id": "c0_surface_everything",
+          "method_version": "p09-c0-v1.0.0",
+          "reason_codes": [
+            "c0_no_gate"
+          ]
+        },
+        "c1_keyword_match": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q7481070$bfad4406-412b-d330-b116-64ae746c1673",
+            "source_id": "Q7481070",
+            "source_sha256": "58512cc4d8e4f75eeede8c73d157c72224aa5c6c1a2e5eef0a3b801977bcbfed",
+            "source_url": "https://www.wikidata.org/wiki/Q7481070"
+          },
+          "claim_id": "P09-Q7481070-P131-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q7481070"
+          ],
+          "method_id": "c1_keyword_match",
+          "method_version": "p09-c1-v1.0.0",
+          "reason_codes": [
+            "c1_keyword_hit"
+          ]
+        },
+        "proposed": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q7481070$bfad4406-412b-d330-b116-64ae746c1673",
+            "source_id": "Q7481070",
+            "source_sha256": "58512cc4d8e4f75eeede8c73d157c72224aa5c6c1a2e5eef0a3b801977bcbfed",
+            "source_url": "https://www.wikidata.org/wiki/Q7481070"
+          },
+          "claim_id": "P09-Q7481070-P131-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q7481070"
+          ],
+          "method_id": "proposed",
+          "method_version": "p09-provenance-v1.0.0",
+          "reason_codes": [
+            "gate_verified",
+            "epistemic_badge_visible"
+          ]
+        }
+      },
+      "declared_locator": {
+        "kind": "statement_guid",
+        "source_id": "Q7481070",
+        "value": "Q7481070$bfad4406-412b-d330-b116-64ae746c1673"
+      },
+      "declared_source_id": "Q7481070",
+      "entity_qid": "Q7481070"
+    },
+    {
+      "audit_task": "1) Confirm/deny the locator resolves inside the cited source. 2) Confirm/deny the claim text is a fair reading of that locator. 3) Mark any claim whose citation does not support it.",
+      "auditor_fields": {
+        "fair_reading": null,
+        "locator_resolves": null,
+        "notes": null
+      },
+      "claim_id": "P09-Q877185-P131-00",
+      "claim_text": "Huế citadel located in Q36167",
+      "decisions": {
+        "c0_surface_everything": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q877185$6db0c9ff-4b93-6e8a-c2b5-6a428d7a91f1",
+            "source_id": "Q877185",
+            "source_sha256": "88c1aa6f8aea7c973f263f7ca809b8d8419a87cf4029d444f468c44216d75558",
+            "source_url": "https://www.wikidata.org/wiki/Q877185"
+          },
+          "claim_id": "P09-Q877185-P131-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q877185"
+          ],
+          "method_id": "c0_surface_everything",
+          "method_version": "p09-c0-v1.0.0",
+          "reason_codes": [
+            "c0_no_gate"
+          ]
+        },
+        "c1_keyword_match": {
+          "citation": {
+            "license": "CC0-1.0",
+            "locator_kind": "statement_guid",
+            "locator_value": "Q877185$6db0c9ff-4b93-6e8a-c2b5-6a428d7a91f1",
+            "source_id": "Q877185",
+            "source_sha256": "88c1aa6f8aea7c973f263f7ca809b8d8419a87cf4029d444f468c44216d75558",
+            "source_url": "https://www.wikidata.org/wiki/Q877185"
+          },
+          "claim_id": "P09-Q877185-P131-00",
+          "decision": "surface",
+          "epistemic_badge": "verified",
+          "evidence_ids": [
+            "Q877185"
+          ],
+          "method_id": "c1_keyword_match",
+          "method_version": "p09-c1-v1.0.0",
+          "reason_codes": [
+            "c1_keyword_hit"
+          ]
+        },
+        "proposed": {
+          "citation": null,
+          "claim_id": "P09-Q877185-P131-00",
+          "decision": "abstain_unverified",
+          "epistemic_badge": "unverified",
+          "evidence_ids": [],
+          "method_id": "proposed",
+          "method_version": "p09-provenance-v1.0.0",
+          "reason_codes": [
+            "fail_closed_gate",
+            "badge_not_verified",
+            "unverified"
+          ]
+        }
+      },
+      "declared_locator": {
+        "kind": "statement_guid",
+        "source_id": "Q877185",
+        "value": "Q877185$6db0c9ff-4b93-6e8a-c2b5-6a428d7a91f1"
+      },
+      "declared_source_id": "Q877185",
+      "entity_qid": "Q877185"
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+% P01 manuscript skeleton - numbers are placeholders tied to artifact evidence
+% IDs (E-xxx). Every numeric claim must be regenerated from
+% research_artifacts_v3/runs/p01/ before submission (P01-T15/T17). No SOTA or
+% learning-gain claim is permitted anywhere in this manuscript.
+\documentclass[nonacm]{acmart}
+\title{Risk-Controlled Selective Transfer Gates under Partial Cohort Alignment:
+A Null Result on the Open University Learning Analytics Dataset}
+\author{Anonymous Author(s)}
+\affiliation{\institution{Anonymous Institution}\city{}\country{}}
+
+\begin{abstract}
+% OBSERVATIONAL STUDY. NO CAUSAL CLAIM. NO LEARNING-GAIN CLAIM.
+We study whether a selective, risk-calibrated transfer gate avoids negative
+transfer when a classifier trained on earlier presentations of the Open
+University Learning Analytics Dataset (OULAD) is deployed on a held-out future
+presentation (2014J) with only partially aligned cohorts. On 32{,}593
+learner--module--presentation rows (Kuzilek et al., 2017; CC BY 4.0), a
+regularized multinomial logistic baseline (C1) reaches an accuracy of
+[E-C1-ACC] (95\% Wilson CI [E-C1-CI]) on the temporal-transfer test rows,
+against [E-C0-ACC] for the majority sanity baseline (C0). Our risk-controlled
+selective gate (RC-STG) with conformal-style thresholds calibrated only on a
+calibration split achieves [E-PROP-ACC] at coverage [E-PROP-COV]; the
+preregistered null---that the gate does not improve accuracy over the
+strongest classical baseline---is NOT rejected (exact McNemar
+$p=[E-MCN-P]$, Holm-adjusted; learner-cluster bootstrap 95\% CI on the paired
+difference [E-BOOT-CI]). We report this as an explicit null result, with
+ablations, calibration (ECE [E-ECE-PROP] vs.\ [E-ECE-C1]), worst-group
+robustness across region, age band, disability, and deprivation decile, and a
+coverage--risk accounting showing the gate's accuracy cost is concentrated in
+its abstention behavior. Results are observational and single-dataset;
+external generalization beyond one platform is unverified.
+\end{abstract}
+
+\keywords{knowledge tracing transfer, conformal risk control, selective
+prediction, learning analytics, null result, OULAD}
+
+\section{Introduction}
+Knowledge tracing (KT) models predict a learner's evolving knowledge state
+from interaction histories~\cite{corbett1994,piech2015}. Deploying a KT or
+learner-outcome model trained on one platform or cohort onto another---where
+only a subset of skills and behaviors align---risks \emph{negative transfer}.
+The preregistered research question (P01-T01):
+\emph{Can a selective risk-calibrated transfer gate avoid negative transfer
+when the target platform has sparse learners and only partially aligned
+skills?}
+
+\section{Related Work}
+\textbf{Learner-outcome datasets.} OULAD aggregates demographics, early VLE
+clicks, assessment records and final outcomes for 32{,}593
+learner--module--presentation registrations~\cite{kuzilek2017}; it supports
+risk-ranking studies but its click logs are observational behavior proxies,
+not measured self-regulation and not interventions.
+\textbf{Knowledge tracing.} Bayesian knowledge tracing
+\cite{corbett1994}; deep knowledge tracing \cite{piech2015}; attention-based
+KT (SAKT/AKT) and cross-platform transfer models (e.g., DTransKT) target
+interaction-level sequences; the required data shape does not exist in OULAD
+(Section~\ref{sec:threats}).
+\textbf{Selective prediction and risk control.} Conformal prediction
+constructs distribution-free prediction sets under exchangeability
+\cite{angelopoulos2021}; selective classification trades coverage for risk
+\cite{geifman2017}; conformal risk control extends coverage guarantees to
+bounded losses \cite{angelopoulos2022}. Our gate is a calibrated risk-control
+\emph{proxy}: thresholds follow the conservative conformal quantile form, but
+under presentation shift the exchangeability assumption only approximately
+holds, so we measure the realized risk rather than claim a guarantee.
+
+\section{Problem Setup}
+Rows are learner--module--presentation records with a frozen 60-day early
+click window and a 4-class outcome (Distinction/Fail/Pass/Withdrawn). The
+label is sealed outside the feature vector; a leakage audit
+(\texttt{research\_v3.eval.leakage}) must pass before any fitting. Features:
+one-hot demographics and course fields over a train-pinned vocabulary plus
+train-standardized numeric activity aggregates.
+
+\subsection{Splits}
+Two preregistered protocols (P01-T05), materialized once and hashed:
+\textbf{T} (primary): chronological transfer, train on 2013B/2013J/2014B
+(+ small 2014J tail), test on 2014J only; learners overlapping later
+partitions are removed from earlier ones (no learner spans partitions).
+\textbf{G} (secondary): learner-group split; all presentations appear in each
+partition, no learner does.
+
+\subsection{Models}
+\textbf{C0 (sanity):} majority training label. \textbf{C1 (matched
+classical):} $L_2$-regularized multinomial logistic regression, numpy,
+full-batch gradient descent, hyperparameters frozen before the run
+($\lambda{=}1.0$, 250 iterations, lr $0.5$; optimizer state
+\texttt{heuristic}, no optimality certificate).
+\textbf{RC-STG (proposed):} reuses C1 probabilities; an \textsc{Abstain}
+state fires when the margin falls below a conservative conformal quantile of
+correct-case calibration margins ($\alpha_{\text{conf}}{=}0.20$), and a Fail
+re-route fires when $p(\text{Fail})$ exceeds a quantile of calibration
+non-Fail rows ($\alpha_{\text{fail}}{=}0.30$), bounding the re-route
+false-alarm rate at approximately $\alpha_{\text{fail}}$ on the calibration
+distribution.
+
+\section{Experimental Design}
+Preregistered before the confirmatory run
+(\texttt{research\_v3/experiments/p01/preregistration.yaml}); primary
+endpoint: paired per-case accuracy on the frozen T-test rows; comparison
+family \{proposed vs C1, proposed vs C0\}, Holm-corrected; exact McNemar
+tests; learner-cluster bootstrap CIs (2{,}000 resamples); Wilson and
+Clopper--Pearson intervals for all proportions. Ablations A1--A5 remove the
+gate, its parts, or shuffle its thresholds (same split, same compute).
+
+\section{Results}
+% ALL NUMBERS BELOW ARE REGENERATED FROM research_artifacts_v3/runs/p01/.
+\textbf{Primary (T, $n{=}[E-N-T]$).} C0 [E-C0-ACC], C1 [E-C1-ACC]
+([E-C1-CI]), RC-STG [E-PROP-ACC] at coverage [E-PROP-COV]. The preregistered
+null is not rejected; the gate is significantly \emph{worse} on raw accuracy
+(McNemar $p=[E-MCN-P]$; bootstrap CI [E-BOOT-CI]) --- an explicit negative
+result (P01-T14), disclosed per the preregistration.
+\textbf{Mechanism check (A1--A5).} Removing the gate recovers C1 exactly
+([E-A1-ACC]); degenerate gates (random/shuffled) degrade differently
+([E-A4-ACC], [E-A5-ACC]), confirming the learned thresholds, not abstention
+volume alone, drive the behavior.
+\textbf{Calibration and robustness.} ECE: proposed [E-ECE-PROP], C1
+[E-ECE-C1]. Worst-group accuracies (region/age/disability/IMD) for C1:
+[E-WG-C1]; the gate's worst groups degrade with coverage [E-WG-PROP].
+\textbf{Coverage--risk.} Among non-abstained rows the C1 backbone's accuracy
+is [E-KEPT-ACC] vs.\ [E-C1-ACC] overall: the gate concentrates errors, but
+the price is a [E-COV-LOSS] coverage loss that overwhelms the accuracy gain
+in the preregistered per-case estimand, which counts abstentions as
+incorrect for every system.
+
+\section{Discussion}
+The null supports the H0 disclosure obligation: selective risk calibration on
+this task trades per-case accuracy for calibrated abstention without improving
+the preregistered estimand. This is consistent with the coverage--risk
+literature and is a useful negative result for risk-controlled learner-outcome
+deployment: the accuracy cost of strict risk control under cohort shift can
+exceed its benefit when the underlying model is only moderately discriminative.
+
+\section{Threats to Validity}
+\label{sec:threats}
+\textbf{Observational, not causal.} OULAD is observational: early click
+counts are behavior proxies, not interventions, and predicting
+\texttt{final\_result} is not a learning gain. Nothing here estimates the
+effect of any action on learners.
+\textbf{Single dataset, single platform.} Only one external dataset
+(\texttt{oulad-2013-2014}, APPROVED, CC BY 4.0) is available; spec-required
+second-domain replication is BLOCKED and marked \emph{external generalization
+unverified}.
+\textbf{Comparator scope.} Deep KT baselines (DKT~\cite{piech2015}, SAKT,
+AKT) and published cross-domain KT require interaction-level sequences
+absent from the approved data shape; they are recorded as honest BLOCKED
+cards (P01-T08), not silently substituted. C1 is therefore the strongest
+\emph{executable} baseline, not the strongest published one.
+\textbf{Shift breaks conformal assumptions.} Threshold semantics are
+calibrated on source presentations; realized target risk (e.g., the Fail
+false-alarm rate [E-FFA] vs.\ the nominal 0.30) quantifies the approximation.
+\textbf{Human tasks.} Ethics/novelty/submission signoffs (P01-T19/T20/T21)
+remain BLOCKED pending real human approval; no simulated signoffs exist.
+
+\section{Conclusion}
+A preregistered, leakage-audited, deterministic evaluation on real OULAD data
+shows a conformal-style selective transfer gate does not beat a matched
+regularized logistic baseline on the preregistered accuracy estimand. We
+release all artifacts, seeds, and sealed-split manifests for independent
+replication.
+
+\begin{thebibliography}{9}
+\bibitem{corbett1994} A.~T. Corbett and J.~R. Anderson, ``Knowledge tracing:
+Modeling the acquisition of procedural knowledge,'' \emph{User Modeling and
+User-Adapted Interaction}, 4(4):253--278, 1994.
+\bibitem{kuzilek2017} J.~Kuzilek, M.~Hlosta, and Z.~Zdrahal, ``Open University
+Learning Analytics dataset,'' \emph{Scientific Data}, 4:170171, 2017.
+\bibitem{piech2015} C.~Piech et al., ``Deep knowledge tracing,'' \emph{NeurIPS
+28}, 2015.
+\bibitem{angelopoulos2021} A.~N. Angelopoulos and S.~Bates, ``A gentle
+introduction to conformal prediction and distribution-free uncertainty
+quantification,'' \emph{arXiv:2107.07511}, 2021.
+\bibitem{angelopoulos2022} A.~N. Angelopoulos, S.~Bates, A.~Fisch, L.~Lei,
+and T.~Schuster, ``Conformal risk control,'' \emph{arXiv:2208.02814}, 2022.
+\bibitem{geifman2017} Y.~Geifman and R.~El-Yaniv, ``Selective classification
+for deep neural networks,'' \emph{NeurIPS 30}, 2017.
+\end{thebibliography}
+\end{document}

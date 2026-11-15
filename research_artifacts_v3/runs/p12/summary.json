@@ -1,0 +1,87 @@
+{
+  "paper_id": "P12",
+  "status": "ENGINEERING_PASS",
+  "scientific_status": "BLOCKED_PENDING_HUMAN_REVIEW (T19/T20/T21)",
+  "executed_at_utc": "2026-11-15T11:51:12Z",
+  "corpus": {
+    "n_claims": 63,
+    "n_sources": 16,
+    "ingest_skipped": 0,
+    "provenance": {
+      "mode": "READ_ONLY_DOCUMENTED_CLAIMS",
+      "network_access": "none",
+      "inputs": [
+        {
+          "path": "data/imperial/historical_sources_extended.json",
+          "sha256": "833fed9c9cc345c90f9064083996ef4f08ada8566ef099238f75a2b3060c5063",
+          "size_bytes": 23825
+        },
+        {
+          "path": "data/imperial/monument_claims_matrix.json",
+          "sha256": "b582f913228b3dba3715e342b01986d09c647903a3e76c566bc22c4591cf4846",
+          "size_bytes": 76781
+        },
+        {
+          "path": "data/imperial/heritage_provenance_audit_report.json",
+          "sha256": "015d7762df590c28ee113b96e9023b0f5852c72df854be374bd0ccea0004d7b1",
+          "size_bytes": 155499
+        }
+      ],
+      "sources_registry_version": "5.1.0",
+      "claims_matrix_version": "5.1.0",
+      "audit_report_version": "1.0.0",
+      "ingest_hash": "8e0952deaaa465689319ade0292fa330aa8c79f31c494d18a0964630f0dc3600"
+    }
+  },
+  "metrics": {
+    "C0": {
+      "unsourced_claim_rate": 0.0,
+      "locator_completeness_rate": 0.0,
+      "contradiction_count": 0
+    },
+    "C1": {
+      "unsourced_claim_rate": 0.0,
+      "locator_completeness_rate": null,
+      "contradiction_count": 0
+    },
+    "PROPOSED": {
+      "unsourced_claim_rate": 0.0,
+      "locator_completeness_rate": 1.0,
+      "contradiction_count": 0,
+      "abstain_count": 62,
+      "chain": {
+        "events": 63,
+        "chain_head": "88c219d64e83bccedf6388e5a8a9dd2069995d8b2f04885ed47860448ea91005",
+        "status": "PASS"
+      },
+      "chain_digest": "f2f10b07019b185d2487e56dcbfdcb7f251981cae67e94bd9c10a73b79651080"
+    }
+  },
+  "interpretation_note": "Engineering smoke metrics on 63 documented claims read from the repo registry. Not scientific results: labels are inherited documented assertions pending human archival verification. The proposed arm's value here is that it routes all 63 inherited archival/expert/editor labels to ABSTAIN (human review) instead of PASS — honest fail-closed behaviour, not a performance claim.",
+  "blocked": {
+    "tasks": {
+      "P12-T19": "Ethics/human annotation/license approval — requires real expert signatures and archival access; never simulated.",
+      "P12-T20": "Novelty and nearest-work signoff — requires research lead review of latest full texts; not delegated to code.",
+      "P12-T21": "Coauthor/venue/submission signoff — human-only approval; no simulated success."
+    },
+    "data": "Vietnamese primary archives (ĐNTL, HĐSL, ĐNNTC): BLOCKED for automated ingestion (page-level rights not cleared; no scraping). Locators in the documented corpus are inherited verbatim and NOT machine-verified.",
+    "human_measures": "verified_claim_rate, annotation_agreement, editor_time, conflict_resolution_rate: UNMEASURED until P12-T19 executes."
+  },
+  "wikidata_entity_links": [
+    {
+      "label": "Ngọ Môn",
+      "status": "ok",
+      "qid": "Q1140102"
+    },
+    {
+      "label": "Điện Thái Hòa",
+      "status": "ok",
+      "qid": "Q3393365"
+    },
+    {
+      "label": "Minh Mạng",
+      "status": "ok",
+      "qid": "Q434419"
+    }
+  ]
+}

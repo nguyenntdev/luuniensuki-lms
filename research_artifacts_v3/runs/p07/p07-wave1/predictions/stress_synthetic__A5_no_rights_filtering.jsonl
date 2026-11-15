@@ -1,0 +1,17 @@
+{"case_id": "S1-POS-feasible-text", "decision": "select", "group_id": "G-S1", "kb_used": 10, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": "syn_text"}
+{"case_id": "S1-NEG-raster-missing-inscription", "decision": "reject_infeasible", "group_id": "G-S1", "kb_used": null, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": null}
+{"case_id": "S1-NEG-rubbing-missing-inscription", "decision": "reject_infeasible", "group_id": "G-S1", "kb_used": null, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": null}
+{"case_id": "S2-POS-audio-with-transcript", "decision": "select", "group_id": "G-S2", "kb_used": 480, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": "syn_audio"}
+{"case_id": "S2-NEG-audio-missing-transcript", "decision": "reject_infeasible", "group_id": "G-S2", "kb_used": null, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": null}
+{"case_id": "S3-POS-3d-keyboard-ok", "decision": "select", "group_id": "G-S3", "kb_used": 95, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": "syn_rubbing"}
+{"case_id": "S3-NEG-3d-keyboard-inaccessible", "decision": "select", "group_id": "G-S3", "kb_used": 95, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": "syn_rubbing"}
+{"case_id": "S4-POS-lowbw-text-transcript", "decision": "select", "group_id": "G-S4", "kb_used": 10, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": "syn_text"}
+{"case_id": "S4-NEG-lowbw-text-no-transcript", "decision": "reject_infeasible", "group_id": "G-S4", "kb_used": null, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": null}
+{"case_id": "S4-POS-lowbw-rubbing", "decision": "select", "group_id": "G-S4", "kb_used": 95, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": "syn_rubbing"}
+{"case_id": "S5-NEG-all-license-unknown", "decision": "select", "group_id": "G-S5", "kb_used": 95, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": "syn_rubbing"}
+{"case_id": "S5-POS-license-cc0", "decision": "select", "group_id": "G-S5", "kb_used": 95, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": "syn_rubbing"}
+{"case_id": "S6-PAIR-A-inscription-present", "decision": "select", "group_id": "G-S6-PAIR", "kb_used": 10, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": "syn_text"}
+{"case_id": "S6-PAIR-B-inscription-removed", "decision": "reject_infeasible", "group_id": "G-S6-PAIR", "kb_used": null, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": null}
+{"case_id": "S6-PAIR-C-transcript-present", "decision": "select", "group_id": "G-S6-PAIR", "kb_used": 480, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": "syn_audio"}
+{"case_id": "S6-PAIR-D-transcript-removed", "decision": "reject_infeasible", "group_id": "G-S6-PAIR", "kb_used": null, "missing_affordances": [], "reason_codes": ["ablation"], "selected_object_id": null}
+{"case_id": "S7-NEG-empty-pool", "decision": "abstain", "group_id": "G-S7", "kb_used": null, "missing_affordances": [], "reason_codes": ["no_candidate_objects"], "selected_object_id": null}

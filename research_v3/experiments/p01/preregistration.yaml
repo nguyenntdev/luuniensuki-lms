@@ -1,0 +1,196 @@
+# P01 preregistration - frozen BEFORE the confirmatory matrix run (P01-T12).
+# Statuses allowed: PREREGISTERED | EXECUTED | BLOCKED. Any post-hoc change must
+# create a new version; this file is hashed into the ExperimentCard.
+paper_id: P01
+prereg_version: "1.0.0"
+frozen_at: "2026-11-15T00:00:00Z"
+status: PREREGISTERED
+
+research_question: >
+  Can a selective risk-calibrated transfer gate (confidence ABSTAIN plus a
+  Fail re-route threshold calibrated only on a calibration split) avoid
+  negative transfer when the target platform (OULAD presentation 2014J) has
+  sparse learners and only partially aligned cohorts relative to the source
+  presentations, measured as per-case accuracy against the strongest classical
+  baseline trained under an identical budget?
+
+estimand: >
+  Per-case 4-class accuracy (labels: Distinction/Fail/Pass/Withdrawn) on the
+  frozen temporal-transfer test rows (2014J), compared paired per case between
+  the proposed RC-STG gate and the C1 regularized multinomial logistic
+  regression baseline. Unit of analysis: one learner-module-presentation row
+  (cluster id = group_id = id_student).
+
+null_hypothesis_h0: >
+  The selective risk-calibrated transfer gate does not improve frozen-test
+  accuracy over the strongest executed classical baseline (C1). If not
+  rejected, this null MUST be disclosed as an explicit null result; the gate
+  trades accuracy for risk control and abstention, so a null is the expected
+  honest outcome and must never be tuned away.
+
+primary_endpoint:
+  name: accuracy_transfer_test
+  direction: higher_is_better
+  definition: >
+    Fraction of frozen temporal-transfer test rows (presentation 2014J) where
+    the model decision equals the sealed final_result label. ABSTAIN and
+    NOT_APPLICABLE count as incorrect for every system (no exclusion credit).
+  denominator: one frozen test row (learner x module x presentation 2014J)
+  unit_of_analysis: learner (cluster id = group_id)
+
+secondary_endpoints:
+  - name: macro_f1
+    direction: higher_is_better
+    definition: unweighted mean of per-class F1 over the 4 frozen labels
+  - name: per_class_recall
+    direction: higher_is_better
+    definition: per-class recall with Wilson and Clopper-Pearson 95% CIs
+  - name: coverage
+    direction: higher_is_better
+    definition: fraction of test rows receiving a class decision (not ABSTAIN)
+  - name: ece_margin
+    direction: lower_is_better
+    definition: >
+      10-bin expected calibration error of the margin of the emitted class
+      (ABSTAIN rows scored at 0 and counted as incorrect), on the test rows
+  - name: fail_false_alarm_rate
+    direction: lower_is_better
+    definition: >
+      fraction of non-Fail test rows re-routed to Fail by the gate (empirical
+      check of the alpha_fail bound under shift)
+  - name: worst_group_accuracy
+    direction: higher_is_better
+    definition: >
+      lowest-accuracy subgroup (region, age_band, disability, imd_band) with
+      n >= 20 on the test rows
+
+comparison_family:
+  - C0_majority_sanity
+  - C1_regularized_logistic
+  - proposed_rc_stg
+  # C2 (published cross-domain KT, e.g. DTransKT) is BLOCKED: requires
+  # interaction-level click streams and a second platform with a skill graph;
+  # OULAD provides neither at the required granularity. See blocked_cards.
+  # B00 DKT / B01 SAKT / B02 AKT / B04 source-only fine-tuning / B06 published
+  # cross-domain KT are BLOCKED for the same data-shape reason.
+
+multiple_testing:
+  method: holm
+  family: >
+    Exactly two confirmatory contrasts: proposed vs C1 (primary) and proposed
+    vs C0 (secondary), both on the frozen temporal-transfer test rows. One
+    family, Holm-corrected. Ablation and robustness contrasts are exploratory
+    and are NOT part of the confirmatory family.
+
+confidence_intervals:
+  proportions: wilson_95 plus clopper_pearson_95 (zero-error cells never [0,0])
+  paired_tests: mcnemar_exact on paired per-case correctness
+  effect_uncertainty: cluster_bootstrap_paired resampling learners (id_student, 2000 draws)
+
+power_and_effect:
+  smallest_meaningful_effect: 0.02 absolute accuracy difference
+  note: >
+    Algorithmic endpoint, no human-power assumptions. With n_test ~ 3228 the
+    design is sensitive to small effects; the gate is nonetheless preregistered
+    with the explicit expectation that accuracy may NOT improve (risk control
+    buys calibrated risk, not raw accuracy).
+
+splits:
+  protocols:
+    - id: T
+      primary: true
+      description: temporal transfer; train on 2013B/2013J/2014B (+small 2014J tail), test on 2014J
+      mechanism: research_v3.eval.splitters.time_split(time_key="time_key", train_fraction=0.70)
+      learner_overlap_rule: learners in a later partition are removed from all earlier partitions
+    - id: G
+      primary: false
+      description: learner-group split, all presentations mixed
+      mechanism: research_v3.eval.splitters.group_split(group_key="group_id", fractions=0.70/0.10/0.10/0.10, salt="p01-v3")
+  fractions: {train: 0.70, calibration: 0.10, dev: 0.10, test: 0.10}
+  freeze: research_v3/experiments/p01/splits.yaml materialized once and hashed
+  rules: >
+    train/calibration/dev/test disjoint on group_id (learner); temporal protocol
+    trains only on the past; no final_result or post-cutoff activity in inputs;
+    leakage audit (research_v3.eval.leakage) must PASS before any fitting.
+
+seeds:
+  deterministic_single_seed: 0
+  determinism_check: rerun with the same seed must reproduce prediction bytes
+  note: >
+    The pipeline is deterministic (no stochastic training); one scored seed plus
+    a byte-identity check per the V3 reliability rules. No fake multi-seed
+    claims.
+
+hyperparameters_frozen:
+  C1_and_proposed_base:
+    l2_lambda: 1.0
+    max_iters: 250
+    learning_rate: 0.5
+    optimizer: full_batch_gradient_descent_numpy
+  gate:
+    alpha_conf: 0.20
+    alpha_fail: 0.30
+    conformal_quantile: higher_is_better_conservative
+    tau_conf_definition: >
+      ceil((1-alpha_conf)*(n+1))/n quantile of calibration margins over rows
+      where the C1 argmax was CORRECT (concentrates abstention on the error
+      region; risk-control proxy, not a finite-sample guarantee under shift)
+    tau_fail_definition: >
+      ceil((1-alpha_fail)*(n+1))/n quantile of p(Fail) over calibration rows
+      whose true label is not Fail (bounds the re-route false-alarm rate)
+  budget_note: >
+    Frozen before the confirmatory run; a dev-split sweep is recorded for
+    transparency in hyperparameter_search.json but the frozen values are used
+    regardless of sweep outcome (no test tuning, no post-hoc changes).
+
+data_status_at_prereg:
+  external_dataset: oulad-2013-2014 (Kuzilek et al. 2017, CC BY 4.0), status APPROVED
+  external_status: DATA_READY
+  row_count_expected: 32593
+  second_external_domain: BLOCKED (no other approved card with required schema in this environment)
+  synthetic_stress: none used in confirmatory analysis
+
+ablations:  # A1..A5 true removals, run on the SAME frozen test split
+  - A1_no_gate
+  - A2_no_fail_gate
+  - A3_no_abstention
+  - A4_random_gate
+  - A5_shuffled_thresholds
+
+subgroups_required:  # fail-closed: every family must be reported even if we lose
+  - region
+  - age_band
+  - disability
+  - imd_band
+
+blocked_cards:
+  c2_published_cross_domain_kt:
+    status: BLOCKED
+    reason: >
+      DTransKT / RAG-KT style comparators require interaction-level sequences
+      and multi-platform skill graphs. OULAD is learner x presentation level
+      with a single platform; no second licensed KT corpus is available in this
+      environment. C2 may only be unblocked by actually running a licensed
+      published implementation and recording version/license here.
+  b00_b02_deep_kt_backbones:
+    status: BLOCKED
+    reason: >
+      DKT/SAKT/AKT require per-(learner, question, timestamp) interaction
+      streams. The approved OULAD card exposes a frozen 60-day aggregate click
+      window per learner-module-presentation; the required data shape does not
+      exist here. Honest BLOCKED per spec section 4, not silently substituted.
+  second_external_domain:
+    status: BLOCKED
+    reason: >
+      Spec section 6 asks for >= 2 external domains when rights and task fit
+      allow. Only oulad-2013-2014 is APPROVED with the required schema, so
+      external generalization beyond one platform is declared UNVERIFIED.
+
+external_validity_declaration: >
+  Results are observational, single-dataset, single-platform. No causal claim
+  is made or permitted: OULAD click counts are behaviour proxies, not
+  interventions, and accuracy on final_result is not a learning gain. Worst-
+  group and calibration results describe this dataset's 2014J presentation only.
+
+human_measurements: none_planned
+human_tasks_blocked: [P01-T19, P01-T20, P01-T21]

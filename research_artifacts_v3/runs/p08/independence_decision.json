@@ -1,0 +1,105 @@
+{
+  "gate": "MANDATORY_INDEPENDENCE_GATE",
+  "paper_id": "P08",
+  "decided_at": "2026-11-15",
+  "decided_by": "P08 code agent (deterministic protocol check; human signoff P08-T20 still required)",
+  "decision": "PROCEED",
+  "comparison_basis": {
+    "v2_ln05_asset": "LN-05 anti-replay badge software-policy tests: a deterministic 5-gate policy (freshness, actor provenance, event uniqueness + content-derived replay ledger, competency mastery, grant) evaluated on 120 synthetic policy-correctness cases with gold labels {grant_if_eligible, deny_mastery_badge, reject_forged_event, deduplicate_events, revalidate_badge}. Artifact: research_v2/methods/ln05/ + research_artifacts/LN-05/ (57/57 tests passing at HEAD 4e5a792e16250106b9d0a577849e864ab7007c92).",
+    "p08_spec_rq_verbatim": "Does requiring valid evidence of mastery before rewards change trust, engagement and unintended gaming behavior compared with ordinary badge rules?",
+    "ln_to_p_mapping_boundary": "P08 | LN-05 | 'LN-05 anti-replay badge software-policy tests' (reuse map only; reuse is NOT evidence the new study exists). NOVELTY_AND_LITERATURE.md collision rule: 'P08 vs LN-05: cannot simply republish anti-replay software QA as design-science evidence.'",
+    "spec_conditional_clause": "P08 is EXPLICITLY CONDITIONAL (05_PAPERS/P08 §1): merge into an engineering paper or withdraw if the contribution is only LN-05 under a new name; the DiGRA-facing RQ requires user-study evidence that does not exist and cannot be fabricated.",
+    "external_data_gate": "P08-T02 candidate sources checked against research_v3/datasets/registry.yaml (2026-11-15): assistments = BLOCKED, ednet = BLOCKED, europeana = BLOCKED, hue-heritage-corpus = BLOCKED; OULAD = APPROVED but its schema (demographics, clicks, assessments, final_result) contains no reward/attack/award semantics, so no external dataset provides reward-attack ground truth. Therefore any P08 empirical content is a SOFTWARE SECURITY evaluation, labeled exactly that."
+  },
+  "empirical_collision_probes": {
+    "purpose": "Do not assert overlap from code reading alone; drive the actual V2 LN-05 engine (research_v2.methods.ln05.predict_batch) under P08's attack scenarios and record what it does.",
+    "probe_1_100x_duplicate_one_batch": {
+      "scenario": "100 deliveries of one valid submission within a single evaluation batch",
+      "ln05_result": "exactly 1 grant, 99 rejections (deduplicate_events)",
+      "covered_by_ln05": true,
+      "evidence": "tests/research_v2/ln05/test_duplicate_concurrency_100x.py (passing)"
+    },
+    "probe_2_timestamp_and_event_id_mutation_same_batch": {
+      "scenario": "redelivery with mutated timestamp, rotated event_id, fresh delivery ids",
+      "ln05_result": "rejected (deduplicate_events): delivery-variant fields are stripped before the content-derived dedup key",
+      "covered_by_ln05": true,
+      "evidence": "tests/research_v2/ln05/test_duplicate_concurrency_100x.py::test_clock_skewed_duplicate_with_new_timestamp_is_rejected, ::test_rotated_event_id_only_is_rejected (passing)"
+    },
+    "probe_3_cross_device_redelivery": {
+      "scenario": "same submission redelivered as if from a new device: rotated event_id, fresh timestamps, new session_id, device_fingerprint",
+      "ln05_result": {
+        "within_one_batch": "REJECTED (deduplicate_events) - delivery-variant stripping covers transport mutation",
+        "across_separate_batches": "GRANTED - ReplayLedger is instantiated inside predict_batch (research_v2/methods/ln05/proposed.py:546 predict_batch constructs ReplayLedger per call), so a session restart or second device gets a fresh ledger and re-earns the award",
+        "covered_by_ln05": "partial - only the same-batch case"
+      }
+    },
+    "probe_4_forged_server_actor": {
+      "scenario": "attacker controls the delivery channel to the reward endpoint and stamps reward events with actor='server' plus forged maximal skill evidence and a corroborating profile",
+      "ln05_result": "GRANTED (grant_if_eligible, reason codes 'verified_competency_achieved','provenance_validated') - the provenance gate inspects a client-supplied actor string; it defends against mislabeled traffic, not an adversary who controls the channel",
+      "covered_by_ln05": false,
+      "rationale": "LN-05's threat model is honest delivery of policy-ambiguous events; it has no answer to a channel-controlling adversary"
+    },
+    "probe_5_fast_click_reward_farming": {
+      "scenario": "30 distinct valid-evidence submissions in one burst (no replay involved)",
+      "ln05_result": "30/30 granted - no velocity or burst gate exists anywhere in research_v2/methods/ln05/",
+      "covered_by_ln05": false
+    },
+    "probe_6_deceptive_badge_copy": {
+      "scenario": "reward UI copy / transparency layer",
+      "ln05_result": "out of LN-05's data model entirely (no copy, no UI surface); human-perception strata require user studies that are BLOCKED (no IRB, no participants)",
+      "covered_by_ln05": false,
+      "p08_treatment": "stratum retained in the fixture schema, graded NOT_APPLICABLE in the software-security evaluation; any human claim remains BLOCKED"
+    },
+    "reproduction": "python3 - <<'EOF' probe scripts recorded in research_v3/experiments/p08/PROBES.md (sha256 of this file recorded in evaluation_manifest.json)"
+    },
+  "overlap_analysis": {
+    "same_reused_invariant": "anti-replay idempotency (one award per unique submission) - REUSED as a concept from LN-05",
+    "what_is_genuinely_new": [
+      "Threat model: an ACTIVE adversary who controls the delivery channel (can forge the server actor string, restart sessions, replay across devices), versus LN-05's honest-delivery policy-correctness model",
+      "Defense mechanisms LN-05 does not have: HMAC-SHA256 server-side reward attestation (attacker cannot mint actor='server' without the server key), persistent cross-session idempotency ledger (award identity survives session/device changes), velocity/burst gates",
+      "Evaluation boundary LN-05 explicitly never claimed: persistent state across predict_batch calls; P08 measures exactly that boundary",
+      "New metrics: attack-detection recall and per-attack-vector defense rates over 6 attack vectors x 500 deliveries, distinct from LN-05's family-classification accuracy"
+    ],
+    "what_is_not_claimed": [
+      "NO human-outcome evidence of any kind: no motivation, engagement, trust, completion, or learning-effect claims (human strata = BLOCKED; deceptive-copy stratum = NOT_APPLICABLE in this evaluation)",
+      "NO gamification-design science: the DiGRA RQ (trust/engagement/gaming behavior) cannot be estimated without users; P08 is a software-security/integrity paper or nothing",
+      "NO claim that LN-05 is wrong: LN-05 is correct within its stated boundary (single-batch policy correctness); P08 evaluates the boundary LN-05 never claimed"
+    ]
+  },
+  "collision_check": {
+    "same_primary_hypothesis_as_v2_ln05": false,
+    "same_primary_outcome_table_as_v2_ln05": false,
+    "primary_hypothesis_p08": "A reward-integrity defender combining (D1) HMAC server attestation, (D2) persistent cross-session idempotency, (D3) velocity control, and (D4) server-side evidence re-verification rejects >= 99.9% of 3000 adversarial deliveries (6 attack vectors x 500) with false-award rate 0 and <= 1 false rejection of honest traffic, under a frozen attack suite and seed.",
+    "primary_hypothesis_v2_ln05": "The LN-05 5-gate policy classifies 120 synthetic policy cases into the correct gold decision family (family-classification accuracy; no active adversary, no persistent state, no human outcomes).",
+    "primary_outcome_table_p08": "per-attack-vector defense matrix: [attack-detection recall, false-award count, duplicate-award count, false-rejection count of honest traffic] x 6 attack vectors + idempotency proof (100x -> exactly 1 award), all from one frozen campaign run",
+    "primary_outcome_table_v2_ln05": "confusion matrix over 5 decision families on 120 labeled synthetic cases",
+    "salami_slicing_risk": "REAL and the reason this gate exists: without the active-adversary delta, P08 would be LN-05 renamed. The delta is bounded and must be defended by the frozen suite: if the P08 defender cannot demonstrate a defense LN-05 measurably lacks (cross-session replay, forged server attestation, velocity farming), P08 degenerates to LN-05 and must MERGE.",
+    "other_paper_collisions_checked": [
+      "P04 (benchmark protocol): declared in P04's own independence_decision.json as 'disjoint outcome domain (badge integrity), no collision' - P08's principal table is a defense matrix, not a predictor-population degradation leaderboard.",
+      "P09 (evidence guards UI): P09's unit is interface effectiveness; P08's unit is award-integrity defense rates. Disjoint primary tables.",
+      "P11/P12 (rubric/source gates): publication-gate workflows, not reward-security; no shared outcome table."
+    ]
+  },
+  "merge_trigger": "If the frozen P08 suite shows the P08 defender does not measurably improve on LN-05's single-batch behavior for at least one of {cross-session replay, forged server attestation, velocity farming}, P08 is only LN-05 under a new name: set decision = MERGE_INTO_V2_LN05, merge the defender into research_v2/methods/ln05/ as a hardening release, and stop the separate paper.",
+  "consequences": {
+    "PROCEED": "Execute the software-security evaluation only: implement attack suite + defender under P08-T09/T10 semantics, freeze pre_registration.yaml BEFORE the campaign, run one frozen campaign, publish the defense matrix with honest failure strata. Label: SOFTWARE SECURITY EVALUATION. P08-T19/T20/T21 remain BLOCKED (human-only). DiGRA design-science/user-study tracks remain BLOCKED (no participants, no IRB).",
+    "revisit_trigger": "If a real external dataset with reward-attack ground truth is later APPROVED in research_v3/datasets/registry.yaml, or human/IRB approval for gamification user studies is obtained, re-run this gate before adding any human-outcome claim."
+  },
+  "decision_justification": "P08 PROCEEDs as a SOFTWARE SECURITY evaluation because the empirical probes show LN-05 measurably fails three attack classes it never claimed to cover - cross-session replay (fresh ledger per predict_batch call grants a re-delivered award), forged server-actor attestation (actor='server' is client-supplied and accepted with forged evidence), and velocity farming (30/30 burst grants) - and P08's frozen hypothesis targets exactly those boundaries with defenses LN-05 lacks (HMAC attestation, persistent idempotency, velocity control). The reused part (the anti-replay invariant concept and honest-delivery sanity cases) is disclosed as reuse from LN-05; the primary outcome table (per-vector defense rates + idempotency proof under an active adversary) cannot be produced by switching LN-05's parameters (reviewer checklist item 7), because LN-05 has no attestation key, no persistent ledger, and no velocity gate to switch on. P08 is therefore not 'LN-05 under a new name': different threat model, different defense mechanisms, different estimand, different primary table. All human-outcome claims (trust, engagement, motivation, learning) are BLOCKED and will never be claimed; the paper, if it proceeds to manuscript, is framed as a security/integrity contribution with no human-subjects evidence.",
+  "reuse_ledger": {
+    "reused_from_ln05": [
+      "anti-replay idempotency invariant concept (one award per unique submission identity)",
+      "delivery-variant stripping concept (transport metadata excluded from award identity)",
+      "honest-delivery sanity expectations (valid evidence grants once; invalid denies)"
+    ],
+    "new_in_p08": [
+      "active-adversary threat model (channel control, session restart, cross-device replay, velocity farming)",
+      "HMAC-SHA256 server attestation of reward events (new mechanism)",
+      "persistent cross-session idempotency ledger bound to a policy epoch (new mechanism)",
+      "velocity/burst control (new mechanism)",
+      "attack-detection recall / false-award / duplicate-award / false-rejection metrics (new estimand)",
+      "frozen 3000-delivery adversarial campaign with fixed seed (new evaluation)"
+    ],
+    "cited_predecessor": "LN-05 (research_artifacts/LN-05/, research_v2/methods/ln05/), to be cited in the manuscript as the single-batch policy-correctness predecessor"
+  }
+}

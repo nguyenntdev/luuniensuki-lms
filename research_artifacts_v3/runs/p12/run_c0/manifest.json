@@ -1,0 +1,27 @@
+{
+  "run_id": "aaf2d4eb4b4e15315a96671ba785bfc54359a7c5f75a453ff24248caf2301ec7",
+  "paper_id": "P12",
+  "arm": "C0",
+  "executed_at_utc": "2026-11-15T11:51:12Z",
+  "git": {
+    "head_sha": "4e5a792e16250106b9d0a577849e864ab7007c92",
+    "dirty": true
+  },
+  "ingest_manifest": "ingest_manifest.json",
+  "result": {
+    "baseline": "C0",
+    "name": "no-citation pass-through",
+    "n_claims": 63,
+    "accepted": 63,
+    "rejected": [],
+    "unsourced_claim_rate": 0.0,
+    "locator_completeness_rate": 0.0,
+    "contradiction_count": 0,
+    "verdict_counts": {
+      "PASS": 63,
+      "REJECT": 0,
+      "ABSTAIN": 0
+    },
+    "note": "Sanity floor: zero scrutiny, zero detected defects. Never a serious comparator."
+  }
+}

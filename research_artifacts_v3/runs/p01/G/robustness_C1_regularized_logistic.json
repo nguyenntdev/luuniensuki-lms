@@ -1,0 +1,58 @@
+{
+  "age_band": {
+    "groups_below_min_n_skipped": [],
+    "macro_accuracy": 0.586936802993895,
+    "n_groups_evaluated": 3,
+    "worst_group": {
+      "accuracy": 0.5454950936663693,
+      "ci_95": [
+        0.5248239559226282,
+        0.5660105948417529
+      ],
+      "group": "0-35",
+      "n": 2242
+    }
+  },
+  "disability": {
+    "groups_below_min_n_skipped": [],
+    "macro_accuracy": 0.5437833469472879,
+    "n_groups_evaluated": 2,
+    "worst_group": {
+      "accuracy": 0.5337423312883436,
+      "ci_95": [
+        0.4795117346964699,
+        0.5871869758860573
+      ],
+      "group": "Y",
+      "n": 326
+    }
+  },
+  "imd_band": {
+    "groups_below_min_n_skipped": [],
+    "macro_accuracy": 0.5550496633187387,
+    "n_groups_evaluated": 11,
+    "worst_group": {
+      "accuracy": 0.5043731778425656,
+      "ci_95": [
+        0.4517065209685714,
+        0.5569429640445538
+      ],
+      "group": "20-30%",
+      "n": 343
+    }
+  },
+  "region": {
+    "groups_below_min_n_skipped": [],
+    "macro_accuracy": 0.5520294158148324,
+    "n_groups_evaluated": 13,
+    "worst_group": {
+      "accuracy": 0.4322033898305085,
+      "ci_95": [
+        0.3463537604731341,
+        0.522328048207882
+      ],
+      "group": "Ireland",
+      "n": 118
+    }
+  }
+}

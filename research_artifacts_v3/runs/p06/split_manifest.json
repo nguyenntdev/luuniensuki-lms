@@ -1,0 +1,28 @@
+{
+  "group": {
+    "hash": "fd86564d1b69d37296070e494d4fc528009468b53cbac152ffc3d08b6cd28d57",
+    "protocol": "group",
+    "sizes": {
+      "calibration": 3328,
+      "dev": 3166,
+      "test": 3320,
+      "train": 22779
+    }
+  },
+  "time": {
+    "calibration_dev_presentation": "2014B",
+    "note": "2014B serves calibration and dev roles (same presentation, disjoint uses by seed); recorded as a protocol deviation",
+    "protocol": "time",
+    "sizes": {
+      "calibration": 7804,
+      "dev": 7804,
+      "test": 11260,
+      "train": 13529
+    },
+    "test_presentation": "2014J",
+    "train_presentations": [
+      "2013B",
+      "2013J"
+    ]
+  }
+}

@@ -1,0 +1,199 @@
+{
+  "baselines": {
+    "C0_has_image": [
+      {
+        "object_id": "syn-obj-01-compliant",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-02-no-alt",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-03-no-transcript",
+        "verdict": "FAIL"
+      },
+      {
+        "object_id": "syn-obj-04-keyboard-trap",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-05-lbw-with-transcript",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-06-video-no-captions",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-07-low-contrast",
+        "verdict": "FAIL"
+      },
+      {
+        "object_id": "syn-obj-08-no-lbw",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-09-image-only",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-10-3d-no-keyboard",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-11-contrast-unknown",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-12-no-goal",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-13-compliant-interactive",
+        "verdict": "PASS"
+      }
+    ],
+    "C1_wcag_checklist_only": [
+      {
+        "object_id": "syn-obj-01-compliant",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-02-no-alt",
+        "verdict": "FAIL"
+      },
+      {
+        "object_id": "syn-obj-03-no-transcript",
+        "verdict": "FAIL"
+      },
+      {
+        "object_id": "syn-obj-04-keyboard-trap",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-05-lbw-with-transcript",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-06-video-no-captions",
+        "verdict": "FAIL"
+      },
+      {
+        "object_id": "syn-obj-07-low-contrast",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-08-no-lbw",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-09-image-only",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-10-3d-no-keyboard",
+        "verdict": "FAIL"
+      },
+      {
+        "object_id": "syn-obj-11-contrast-unknown",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-12-no-goal",
+        "verdict": "PASS"
+      },
+      {
+        "object_id": "syn-obj-13-compliant-interactive",
+        "verdict": "PASS"
+      }
+    ]
+  },
+  "manifest_sha256": "7adeca616dbf0290c23079cae2e160818bb914296b8ecc4ce3c1a704bc6a3e75",
+  "paired_comparisons": {
+    "C0_has_image": {
+      "baseline_pass": 11,
+      "n_objects": 13,
+      "note": "Compares audit verdicts only; NOT a learning-outcome comparison and must not be reported as one.",
+      "proposed_pass": 4,
+      "statistic": {
+        "b_intervention_only": 0,
+        "c_comparator_only": 7,
+        "method": "mcnemar_exact_binomial",
+        "n_discordant": 7,
+        "p_value": 0.015625,
+        "statistic": 0.0
+      },
+      "test": "mcnemar_exact"
+    },
+    "C1_wcag_checklist_only": {
+      "baseline_pass": 9,
+      "n_objects": 13,
+      "note": "Compares audit verdicts only; NOT a learning-outcome comparison and must not be reported as one.",
+      "proposed_pass": 4,
+      "statistic": {
+        "b_intervention_only": 0,
+        "c_comparator_only": 5,
+        "method": "mcnemar_exact_binomial",
+        "n_discordant": 5,
+        "p_value": 0.0625,
+        "statistic": 0.0
+      },
+      "test": "mcnemar_exact"
+    }
+  },
+  "proposed": [
+    {
+      "object_id": "syn-obj-01-compliant",
+      "pass": true
+    },
+    {
+      "object_id": "syn-obj-02-no-alt",
+      "pass": false
+    },
+    {
+      "object_id": "syn-obj-03-no-transcript",
+      "pass": false
+    },
+    {
+      "object_id": "syn-obj-04-keyboard-trap",
+      "pass": false
+    },
+    {
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "pass": true
+    },
+    {
+      "object_id": "syn-obj-06-video-no-captions",
+      "pass": false
+    },
+    {
+      "object_id": "syn-obj-07-low-contrast",
+      "pass": false
+    },
+    {
+      "object_id": "syn-obj-08-no-lbw",
+      "pass": false
+    },
+    {
+      "object_id": "syn-obj-09-image-only",
+      "pass": false
+    },
+    {
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "pass": false
+    },
+    {
+      "object_id": "syn-obj-11-contrast-unknown",
+      "pass": true
+    },
+    {
+      "object_id": "syn-obj-12-no-goal",
+      "pass": false
+    },
+    {
+      "object_id": "syn-obj-13-compliant-interactive",
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+# Template; NONE of these external sources are marked APPROVED by this spec.
+datasets:
+  - dataset_id: ASSISTments-TO_BE_SELECTED
+    source_url: https://sites.google.com/site/assistmentsdata/datasets
+    version: null
+    retrieved_at: null
+    license_text_sha256: null
+    original_sha256: null
+    transformed_sha256: null
+    allowed_use: null
+    redistribution: null
+    responsible_reviewer: null
+    unit: learner_interaction
+    group_keys: [learner_id]
+    time_key: timestamp
+    status: BLOCKED
+    blocked_reason: version/license/bytes/split not yet verified
+  - dataset_id: EdNet-TO_BE_SELECTED
+    source_url: https://github.com/riiid/ednet
+    version: null
+    license_name: CC-BY-NC-4.0
+    original_sha256: null
+    status: BLOCKED
+    blocked_reason: source snapshot/license acceptance and checksum missing

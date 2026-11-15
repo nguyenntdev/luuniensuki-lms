@@ -1,0 +1,60 @@
+{
+  "age_band": {
+    "groups_below_min_n_skipped": [
+      "55<="
+    ],
+    "macro_accuracy": 0.21672897373395383,
+    "n_groups_evaluated": 2,
+    "worst_group": {
+      "accuracy": 0.197245668591737,
+      "ci_95": [
+        0.18132912381120633,
+        0.214193787714084
+      ],
+      "group": "0-35",
+      "n": 2251
+    }
+  },
+  "disability": {
+    "groups_below_min_n_skipped": [],
+    "macro_accuracy": 0.1946838786430152,
+    "n_groups_evaluated": 2,
+    "worst_group": {
+      "accuracy": 0.17571059431524547,
+      "ci_95": [
+        0.14103356052937469,
+        0.21676230698847995
+      ],
+      "group": "Y",
+      "n": 387
+    }
+  },
+  "imd_band": {
+    "groups_below_min_n_skipped": [],
+    "macro_accuracy": 0.2161228843627992,
+    "n_groups_evaluated": 11,
+    "worst_group": {
+      "accuracy": 0.17142857142857143,
+      "ci_95": [
+        0.13383001718498286,
+        0.2169445001389704
+      ],
+      "group": "40-50%",
+      "n": 315
+    }
+  },
+  "region": {
+    "groups_below_min_n_skipped": [],
+    "macro_accuracy": 0.21087640577307468,
+    "n_groups_evaluated": 13,
+    "worst_group": {
+      "accuracy": 0.1320754716981132,
+      "ci_95": [
+        0.09298326347516739,
+        0.18426402324932695
+      ],
+      "group": "Wales",
+      "n": 212
+    }
+  }
+}

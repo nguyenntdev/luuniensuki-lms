@@ -1,0 +1,50 @@
+{
+  "paper_id": "P04",
+  "title": "CurriculumShiftBench: Evaluation under Incomplete Skill Mappings",
+  "priority": "CONDITIONAL",
+  "updated_at": "2026-11-15",
+  "release_status": "ENGINEERING_PASS",
+  "independence_gate": {
+    "artifact": "research_artifacts_v3/runs/p04/independence_decision.json",
+    "decision": "PROCEED",
+    "decided_at": "2026-11-15",
+    "human_signoff_required": true,
+    "note": "Distinct estimand + primary table vs P01; revisit trigger recorded if P01 later publishes a reusable multi-model leaderboard with the same strata."
+  },
+  "tasks": {
+    "P04-T01": {"status": "EVIDENCE_VERIFIED", "outputs": ["research_artifacts_v3/runs/p04/independence_decision.json", "research_v3/methods/p04/METHOD.md"], "note": "RQ, estimand, H0 frozen; collision checks recorded"},
+    "P04-T02": {"status": "EVIDENCE_VERIFIED", "outputs": ["research_v3/methods/p04/datasheets/P04_datasheet.md", "research_v3/methods/p04/rights.py"], "note": "OULAD + UCI APPROVED with hash verification; ASSISTments/Junyi/EdNet BLOCKED with exact reasons"},
+    "P04-T03": {"status": "EVIDENCE_VERIFIED", "outputs": ["research_v3/methods/p04/bridge.py", "research_v3/methods/p04/scenarios.py"], "note": "Typed schema; NOT_APPLICABLE/ABSTAIN first-class; strata S0-S4 + A1-A4"},
+    "P04-T04": {"status": "EVIDENCE_VERIFIED", "outputs": ["research_artifacts_v3/runs/p04/rights/raw_manifest.json"], "note": "SHA256 of raw archives + license texts + per-file hashes, verified against provenance.json"},
+    "P04-T05": {"status": "EVIDENCE_VERIFIED", "outputs": ["research_v3/methods/p04/protocols/p04_splits.json", "research_v3/methods/p04/bench.py::freeze_splits"], "note": "Group/time splits frozen and hashed; leakage tests pass"},
+    "P04-T06": {"status": "EVIDENCE_VERIFIED", "outputs": ["research_artifacts_v3/runs/p04/reference_eval/leaderboard.json"], "note": "Descriptive cells (coverage/mapping_coverage/denominators) recorded for every stratum before scoring claims"},
+    "P04-T07": {"status": "EVIDENCE_VERIFIED", "outputs": ["research_v3/methods/p04/baselines.py", "research_artifacts_v3/runs/p04/reference_eval/leaderboard.json"], "note": "C0 + C1 measured on identical splits/budgets"},
+    "P04-T08": {"status": "TODO", "note": "DKT/SAKT/AKT/GKT implementations pending; BLOCKED card alternative acceptable if pinned implementations unavailable"},
+    "P04-T09": {"status": "EVIDENCE_VERIFIED", "outputs": ["research_v3/methods/p04/bench.py", "research_v3/methods/p04/METHOD.md"], "note": "Protocol engine with typed failures; contract tests pass"},
+    "P04-T10": {"status": "TODO", "note": "Ablations A1-A4 defined in protocol; execution pending"},
+    "P04-T11": {"status": "PARTIAL", "note": "Reference baselines calibrated (frozen config, seed 42); KT models pending with T08"},
+    "P04-T12": {"status": "PARTIAL", "note": "Reference matrix complete for C0/C1 on OULAD+UCI; full matrix requires T08/T10"},
+    "P04-T13": {"status": "PARTIAL", "note": "Strata S1-S4 + worst-group + ECE measured; stress suites (duplicate aliases, exposed IDs) pending"},
+    "P04-T14": {"status": "PARTIAL", "note": "Cluster bootstrap CIs + null assessment done; Holm correction over confirmatory family pending T08"},
+    "P04-T15": {"status": "EVIDENCE_VERIFIED", "outputs": ["research_artifacts_v3/runs/p04/reference_eval/leaderboard.json"], "note": "All manuscript numbers generated from artifact (verified programmatically); deterministic rerun"},
+    "P04-T16": {"status": "TODO", "note": "Scientific failure review after T08/T10"},
+    "P04-T17": {"status": "PARTIAL", "outputs": ["research_v3/manuscripts/p04/MANUSCRIPT.md"], "note": "Methods/limitations/tables drafted with evidence IDs; figures pending"},
+    "P04-T18": {"status": "TODO", "note": "External reproduction from clean clone pending"},
+    "P04-T19": {"status": "BLOCKED", "note": "Human-only: ethics/license approval signatures required"},
+    "P04-T20": {"status": "BLOCKED", "note": "Human-only: research-lead novelty signoff; independence gate prepared but not signed"},
+    "P04-T21": {"status": "BLOCKED", "note": "Human-only: coauthor/venue signoff"}
+  },
+  "reference_evaluation": {
+    "experiment_card": "research_artifacts_v3/runs/p04/reference_eval/experiment_card.json",
+    "leaderboard": "research_artifacts_v3/runs/p04/reference_eval/leaderboard.json",
+    "leaderboard_sha256": "3fc06e0d0be3271b711e5dcb427da537b88d2e18a027867cba0db13dad116c36",
+    "determinism_verified": true,
+    "h0_stands": false,
+    "reliable_failures": ["S1@20%", "S1@50%", "S3 presentation shift", "S3 course shift (C1)"]
+  },
+  "data_rights": {
+    "approved": ["oulad-2013-2014 (CC BY-NC 4.0 captured; academic, non-commercial)", "uci-student-performance-2014 (CC BY 4.0)"],
+    "blocked": ["assistments", "junyi", "ednet"],
+    "external_generalization": "UNVERIFIED beyond two education datasets"
+  }
+}

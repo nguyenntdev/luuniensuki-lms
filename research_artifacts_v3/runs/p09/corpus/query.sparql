@@ -1,0 +1,14 @@
+# P09 frozen discovery query: heritage entities that are part of the
+# Complex of Hué Monuments (Q10810560), a UNESCO World Heritage Site in Vietnam.
+# P361+ is transitive part-of; the class filter restricts to built-heritage types.
+SELECT DISTINCT ?item ?itemLabel WHERE {
+  ?item wdt:P361+ wd:Q10810560 .
+  ?item wdt:P31 ?cls .
+  FILTER(?cls IN (
+    wd:Q16560, wd:Q88291, wd:Q381885, wd:Q162875, wd:Q5393308,
+    wd:Q618618, wd:Q88372, wd:Q57831, wd:Q697295, wd:Q41176,
+    wd:Q53060, wd:Q18247357
+  ))
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+ORDER BY ?item

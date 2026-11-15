@@ -1,0 +1,89 @@
+{
+  "accuracy": 0.5038095238095238,
+  "clopper_pearson_ci_95": [
+    0.4861938656806248,
+    0.5214181005387521
+  ],
+  "confusion": {
+    "Distinction->Distinction": 6,
+    "Distinction->Fail": 38,
+    "Distinction->Pass": 210,
+    "Distinction->Withdrawn": 25,
+    "Fail->Distinction": 1,
+    "Fail->Fail": 377,
+    "Fail->Pass": 179,
+    "Fail->Withdrawn": 152,
+    "Pass->Distinction": 2,
+    "Pass->Fail": 307,
+    "Pass->Pass": 735,
+    "Pass->Withdrawn": 129,
+    "Withdrawn->Fail": 356,
+    "Withdrawn->Pass": 164,
+    "Withdrawn->Withdrawn": 469
+  },
+  "coverage": 1.0,
+  "macro_f1": 0.398166766923165,
+  "model_id": "A3_no_abstention",
+  "n": 3150,
+  "n_abstained": 0,
+  "n_correct": 1587,
+  "per_class_recall": {
+    "Distinction": {
+      "clopper_pearson_ci_95": [
+        0.007932025024049572,
+        0.04621805754020668
+      ],
+      "correct": 6,
+      "n": 279,
+      "recall": 0.021505376344086023,
+      "wilson_ci_95": [
+        0.009892493364172656,
+        0.04611576966326682
+      ]
+    },
+    "Fail": {
+      "clopper_pearson_ci_95": [
+        0.4942326556761319,
+        0.568971932331722
+      ],
+      "correct": 377,
+      "n": 709,
+      "recall": 0.5317348377997179,
+      "wilson_ci_95": [
+        0.4949327316472759,
+        0.5681949097702795
+      ]
+    },
+    "Pass": {
+      "clopper_pearson_ci_95": [
+        0.5982014427635043,
+        0.6543588661103015
+      ],
+      "correct": 735,
+      "n": 1173,
+      "recall": 0.6265984654731458,
+      "wilson_ci_95": [
+        0.5985463456986722,
+        0.653824097043566
+      ]
+    },
+    "Withdrawn": {
+      "clopper_pearson_ci_95": [
+        0.44270709821886733,
+        0.5058795727805476
+      ],
+      "correct": 469,
+      "n": 989,
+      "recall": 0.474216380182002,
+      "wilson_ci_95": [
+        0.4432560888783583,
+        0.5053761931975954
+      ]
+    }
+  },
+  "predictions_sha256": "085fdcf4cbff5f8342a5041b114ce85eab2afb2db7b6db6dfb17ada53ab38bce",
+  "wilson_ci_95": [
+    0.4863552796943003,
+    0.5212544877316673
+  ]
+}

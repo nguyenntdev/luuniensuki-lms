@@ -1,0 +1,404 @@
+{
+  "P09-Q10769129-P131-00": {
+    "claim_id": "P09-Q10769129-P131-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q10769129-P31-00": {
+    "claim_id": "P09-Q10769129-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q10769129-P361-00": {
+    "claim_id": "P09-Q10769129-P361-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q10769129-P571-00": {
+    "claim_id": "P09-Q10769129-P571-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q10788178-P31-00": {
+    "claim_id": "P09-Q10788178-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q10788196-P131-00": {
+    "claim_id": "P09-Q10788196-P131-00",
+    "outcome": "verified",
+    "reason_codes": [
+      "gate_passed"
+    ]
+  },
+  "P09-Q10788196-P17-00": {
+    "claim_id": "P09-Q10788196-P17-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q10788196-P31-00": {
+    "claim_id": "P09-Q10788196-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q10788196-P625-00": {
+    "claim_id": "P09-Q10788196-P625-00",
+    "outcome": "verified",
+    "reason_codes": [
+      "gate_passed"
+    ]
+  },
+  "P09-Q13017650-P31-00": {
+    "claim_id": "P09-Q13017650-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q13017650-P361-00": {
+    "claim_id": "P09-Q13017650-P361-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132521590-P17-00": {
+    "claim_id": "P09-Q132521590-P17-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132521590-P31-00": {
+    "claim_id": "P09-Q132521590-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132521590-P361-00": {
+    "claim_id": "P09-Q132521590-P361-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132521590-P625-00": {
+    "claim_id": "P09-Q132521590-P625-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132521821-P17-00": {
+    "claim_id": "P09-Q132521821-P17-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132521821-P31-00": {
+    "claim_id": "P09-Q132521821-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132521821-P361-00": {
+    "claim_id": "P09-Q132521821-P361-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132521821-P625-00": {
+    "claim_id": "P09-Q132521821-P625-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132522658-P17-00": {
+    "claim_id": "P09-Q132522658-P17-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132522658-P31-00": {
+    "claim_id": "P09-Q132522658-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132522658-P361-00": {
+    "claim_id": "P09-Q132522658-P361-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132522658-P625-00": {
+    "claim_id": "P09-Q132522658-P625-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132524026-P17-00": {
+    "claim_id": "P09-Q132524026-P17-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132524026-P31-00": {
+    "claim_id": "P09-Q132524026-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132524026-P361-00": {
+    "claim_id": "P09-Q132524026-P361-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q132524026-P625-00": {
+    "claim_id": "P09-Q132524026-P625-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q140877128-P131-00": {
+    "claim_id": "P09-Q140877128-P131-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q140877128-P17-00": {
+    "claim_id": "P09-Q140877128-P17-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q140877128-P31-00": {
+    "claim_id": "P09-Q140877128-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q140877128-P31-01": {
+    "claim_id": "P09-Q140877128-P31-01",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q140877128-P361-00": {
+    "claim_id": "P09-Q140877128-P361-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q140877128-P625-00": {
+    "claim_id": "P09-Q140877128-P625-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q61127244-P31-00": {
+    "claim_id": "P09-Q61127244-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q61127244-P361-00": {
+    "claim_id": "P09-Q61127244-P361-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q7023311-P131-00": {
+    "claim_id": "P09-Q7023311-P131-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q7023311-P17-00": {
+    "claim_id": "P09-Q7023311-P17-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q7023311-P31-00": {
+    "claim_id": "P09-Q7023311-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q7023311-P31-01": {
+    "claim_id": "P09-Q7023311-P31-01",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q7023311-P361-00": {
+    "claim_id": "P09-Q7023311-P361-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q7481070-P131-00": {
+    "claim_id": "P09-Q7481070-P131-00",
+    "outcome": "verified",
+    "reason_codes": [
+      "gate_passed"
+    ]
+  },
+  "P09-Q7481070-P17-00": {
+    "claim_id": "P09-Q7481070-P17-00",
+    "outcome": "verified",
+    "reason_codes": [
+      "gate_passed"
+    ]
+  },
+  "P09-Q7481070-P625-00": {
+    "claim_id": "P09-Q7481070-P625-00",
+    "outcome": "verified",
+    "reason_codes": [
+      "gate_passed"
+    ]
+  },
+  "P09-Q7818615-P131-00": {
+    "claim_id": "P09-Q7818615-P131-00",
+    "outcome": "verified",
+    "reason_codes": [
+      "gate_passed"
+    ]
+  },
+  "P09-Q7818615-P17-00": {
+    "claim_id": "P09-Q7818615-P17-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q7818615-P31-00": {
+    "claim_id": "P09-Q7818615-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q7818621-P31-01": {
+    "claim_id": "P09-Q7818621-P31-01",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q877185-P131-00": {
+    "claim_id": "P09-Q877185-P131-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q877185-P17-00": {
+    "claim_id": "P09-Q877185-P17-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q877185-P31-00": {
+    "claim_id": "P09-Q877185-P31-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  },
+  "P09-Q877185-P361-00": {
+    "claim_id": "P09-Q877185-P361-00",
+    "outcome": "unverified",
+    "reason_codes": [
+      "badge_not_verified",
+      "unverified"
+    ]
+  }
+}

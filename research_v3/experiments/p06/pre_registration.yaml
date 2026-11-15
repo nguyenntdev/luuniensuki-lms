@@ -1,0 +1,98 @@
+paper_id: P06
+title: Budget-Constrained Teacher Intervention Prioritization
+rq: >-
+  With fixed teacher capacity (k interventions per selection round), can
+  uncertainty-aware, equity-constrained prioritization improve identification
+  and coverage of at-risk learners over random selection (C0) and calibrated
+  risk-only top-k (C1), without claiming any intervention effect?
+status: NONCAUSAL_UNTIL_PROVED
+frozen_at: '2026-11-15T00:00:00Z'
+
+estimand: >-
+  Selection quality against realized outcomes: failure capture of the selected
+  set within each course-presentation cohort at budget k. NOT an intervention
+  effect; OULAD is observational.
+
+primary_endpoint:
+  metric: recall_at_k
+  direction: higher_is_better
+  denominator: >-
+    per cohort: |selected ∩ Fail| / |Fail cases in cohort (non-withdrawn,
+    eligible-ranking context)|; paired across arms on identical cohorts.
+  smallest_meaningful_effect: 0.02   # absolute Recall@k, preregistered indifference margin
+
+null_hypothesis:
+  text: >-
+    Constrained (equity-aware) ranking adds no material benefit over calibrated
+    top-K risk ranking (C1) on failure capture at any preregistered k.
+  disclosure_rule: >-
+    If not rejected, publish H0 verbatim in abstract and results; the
+    fairness/coverage trade-off becomes the primary reported finding.
+
+comparison_family:
+  - PROPOSED_vs_C1_k25
+  - PROPOSED_vs_C1_k50
+  - PROPOSED_vs_C1_k100
+  - PROPOSED_vs_C0_k25
+  - PROPOSED_vs_C0_k50
+  - PROPOSED_vs_C0_k100
+multiplicity: holm
+alpha: 0.05
+
+tests:
+  paired: mcnemar_exact            # per-learner captured-by-A-not-by-B
+  uncertainty: cluster_bootstrap   # clusters = group_id (learner)
+  effect_size: cliffs_delta
+  n_bootstrap: 2000
+  bootstrap_seed: 42
+
+fixed_constants:
+  ks: [25, 50, 100]
+  min_actable_risk: 0.05
+  equity_attribute: disability
+  equity_quotas: {Y: 0.5, N: 0.5}
+  k_anonymity_min_n: 5
+  costs: {Y: 1.0, N: 1.0}   # cost-neutral by preregistration
+
+label_semantics:
+  target: 'is_fail = 1{final_result == "Fail"}'
+  excluded_from_scoring: ['Withdrawn']   # preregistered exclusion, not post hoc
+  pass_distinction_are_negatives: true
+
+splits:
+  primary: time        # train 2013B+2013J; calib/dev 2014B; test 2014J
+  sensitivity: group   # group_split by id_student, salt p06-v3
+  evaluation_unit: cohort (course-presentation) — one selection round per cohort
+  adapter: research_v3/datasets/adapters/oulad.py (early 60-day window; no future features)
+
+datasets:
+  - oulad-2013-2014    # APPROVED in research_v3/datasets/registry.yaml
+
+arms:
+  - id: C0
+    name: random-eligible
+  - id: C1
+    name: risk-only top-k (calibrated)
+  - id: PROPOSED
+    name: budget-aware + equity floor + evidence gating
+  - id: A1
+    name: no calibrated uncertainty (raw margins)
+  - id: A2
+    name: no capacity constraint
+  - id: A3
+    name: no missingness/evidence gating
+  - id: A4
+    name: no equity bound
+
+secondary_metrics: [precision_at_k, ndcg_at_k, brier, ece, subgroup_coverage, fairness_gap, capacity_violations, selective_coverage]
+
+statistical_limitations:
+  - single external dataset (OULAD); external generalization unverified
+  - few test cohorts (S2: 6 course-presentations); cluster bootstrap CIs wide
+  - Withdrawn excluded by preregistration; sensitivity to this choice is a threat to validity
+  - observational data; no causal interpretation permitted
+
+falsification:
+  rule: >-
+    H0 stands if no Holm-corrected test shows PROPOSED > C1, or if the equity
+    floor costs more than 0.02 absolute Recall@k at every k.

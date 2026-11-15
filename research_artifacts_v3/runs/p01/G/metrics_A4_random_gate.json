@@ -1,0 +1,93 @@
+{
+  "accuracy": 0.45174603174603173,
+  "clopper_pearson_ci_95": [
+    0.43425969731040226,
+    0.46932206884174427
+  ],
+  "confusion": {
+    "Distinction->ABSTAIN": 57,
+    "Distinction->Distinction": 6,
+    "Distinction->Fail": 7,
+    "Distinction->Pass": 188,
+    "Distinction->Withdrawn": 21,
+    "Fail->ABSTAIN": 142,
+    "Fail->Distinction": 1,
+    "Fail->Fail": 100,
+    "Fail->Pass": 217,
+    "Fail->Withdrawn": 249,
+    "Pass->ABSTAIN": 209,
+    "Pass->Distinction": 1,
+    "Pass->Fail": 55,
+    "Pass->Pass": 744,
+    "Pass->Withdrawn": 164,
+    "Withdrawn->ABSTAIN": 190,
+    "Withdrawn->Fail": 47,
+    "Withdrawn->Pass": 179,
+    "Withdrawn->Withdrawn": 573
+  },
+  "coverage": 0.8101587301587302,
+  "macro_f1": 0.35719677055607024,
+  "model_id": "A4_random_gate",
+  "n": 3150,
+  "n_abstained": 598,
+  "n_correct": 1423,
+  "per_class_recall": {
+    "Distinction": {
+      "clopper_pearson_ci_95": [
+        0.007932025024049572,
+        0.04621805754020668
+      ],
+      "correct": 6,
+      "n": 279,
+      "recall": 0.021505376344086023,
+      "wilson_ci_95": [
+        0.009892493364172656,
+        0.04611576966326682
+      ]
+    },
+    "Fail": {
+      "clopper_pearson_ci_95": [
+        0.11625462970944617,
+        0.16886259634021045
+      ],
+      "correct": 100,
+      "n": 709,
+      "recall": 0.14104372355430184,
+      "wilson_ci_95": [
+        0.11735363846355724,
+        0.16860259528009175
+      ]
+    },
+    "Pass": {
+      "clopper_pearson_ci_95": [
+        0.6059731537401865,
+        0.6618937833945757
+      ],
+      "correct": 744,
+      "n": 1173,
+      "recall": 0.6342710997442456,
+      "wilson_ci_95": [
+        0.6063119953031713,
+        0.6613536257870813
+      ]
+    },
+    "Withdrawn": {
+      "clopper_pearson_ci_95": [
+        0.547902697530273,
+        0.6103695947713713
+      ],
+      "correct": 573,
+      "n": 989,
+      "recall": 0.5793731041456016,
+      "wilson_ci_95": [
+        0.5483575721841063,
+        0.6097744222095263
+      ]
+    }
+  },
+  "predictions_sha256": "1c94be77cfb7f1027e3c2c2d20884909e47b58c4164bf5019eae45010fb2e2ae",
+  "wilson_ci_95": [
+    0.43443605032149807,
+    0.4691735622829117
+  ]
+}

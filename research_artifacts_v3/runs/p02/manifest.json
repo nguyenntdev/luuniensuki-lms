@@ -1,0 +1,12 @@
+{
+  "artifacts": {
+    "instances.jsonl": "678d24d46d97f6c3982bdc4adc47686109f7488f2846d60305af1f5cc9ff85be",
+    "predictions.jsonl": "68235454da9e6b3ac25e2bed9183d92c9957300b939017978d2d5bee0c32d0cb",
+    "study_metric.json": "a621a9afe989f1ce38ef232413a1b2a5b6e5497f52067d5ab7276c786595dee4"
+  },
+  "generated_at": "2026-11-15T18:59:21+0700",
+  "instances_per_cell": 30,
+  "paper_id": "P02",
+  "run": "benchmark_matrix",
+  "seed": 20261115
+}

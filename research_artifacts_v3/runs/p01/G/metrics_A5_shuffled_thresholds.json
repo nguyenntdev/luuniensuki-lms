@@ -1,0 +1,93 @@
+{
+  "accuracy": 0.2787301587301587,
+  "clopper_pearson_ci_95": [
+    0.26312483292474786,
+    0.2947473539366274
+  ],
+  "confusion": {
+    "Distinction->ABSTAIN": 120,
+    "Distinction->Distinction": 3,
+    "Distinction->Fail": 17,
+    "Distinction->Pass": 129,
+    "Distinction->Withdrawn": 10,
+    "Fail->ABSTAIN": 359,
+    "Fail->Distinction": 1,
+    "Fail->Fail": 111,
+    "Fail->Pass": 113,
+    "Fail->Withdrawn": 125,
+    "Pass->ABSTAIN": 560,
+    "Pass->Distinction": 1,
+    "Pass->Fail": 107,
+    "Pass->Pass": 419,
+    "Pass->Withdrawn": 86,
+    "Withdrawn->ABSTAIN": 444,
+    "Withdrawn->Fail": 102,
+    "Withdrawn->Pass": 98,
+    "Withdrawn->Withdrawn": 345
+  },
+  "coverage": 0.5292063492063492,
+  "macro_f1": 0.277710292449722,
+  "model_id": "A5_shuffled_thresholds",
+  "n": 3150,
+  "n_abstained": 1483,
+  "n_correct": 878,
+  "per_class_recall": {
+    "Distinction": {
+      "clopper_pearson_ci_95": [
+        0.002222975895481188,
+        0.031100592293758153
+      ],
+      "correct": 3,
+      "n": 279,
+      "recall": 0.010752688172043012,
+      "wilson_ci_95": [
+        0.003663494984641918,
+        0.03113147058274001
+      ]
+    },
+    "Fail": {
+      "clopper_pearson_ci_95": [
+        0.13057938137035313,
+        0.18543235369630745
+      ],
+      "correct": 111,
+      "n": 709,
+      "recall": 0.15655853314527504,
+      "wilson_ci_95": [
+        0.1316693902569466,
+        0.1851492459575074
+      ]
+    },
+    "Pass": {
+      "clopper_pearson_ci_95": [
+        0.3297429192098362,
+        0.38538279178163803
+      ],
+      "correct": 419,
+      "n": 1173,
+      "recall": 0.35720375106564367,
+      "wilson_ci_95": [
+        0.3302890310412716,
+        0.38505070525957097
+      ]
+    },
+    "Withdrawn": {
+      "clopper_pearson_ci_95": [
+        0.3191157088618915,
+        0.3794619384183813
+      ],
+      "correct": 345,
+      "n": 989,
+      "recall": 0.3488372093023256,
+      "wilson_ci_95": [
+        0.31977043417747353,
+        0.37907372936586314
+      ]
+    }
+  },
+  "predictions_sha256": "7da766587c91a605f9f706fe2eba92bb51a3b7e4ee4c253fe3b4748ceb2abb44",
+  "wilson_ci_95": [
+    0.26334898302546567,
+    0.29465035898291353
+  ]
+}

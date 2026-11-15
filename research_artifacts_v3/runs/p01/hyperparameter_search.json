@@ -1,0 +1,46 @@
+{
+  "c1_l2": [
+    {
+      "dev_accuracy": 0.5777080062794349,
+      "dev_macro_f1": 0.35557944619519644,
+      "l2_lambda": 0.1
+    },
+    {
+      "dev_accuracy": 0.5777080062794349,
+      "dev_macro_f1": 0.35557944619519644,
+      "l2_lambda": 1.0
+    },
+    {
+      "dev_accuracy": 0.5777080062794349,
+      "dev_macro_f1": 0.3549418224828592,
+      "l2_lambda": 10.0
+    }
+  ],
+  "gate_alpha_conf": [
+    {
+      "alpha_conf": 0.05,
+      "dev_accuracy": 0.08226059654631084,
+      "dev_coverage": 0.1054945054945055,
+      "tau_conf": 0.7152865359422034
+    },
+    {
+      "alpha_conf": 0.1,
+      "dev_accuracy": 0.12747252747252746,
+      "dev_coverage": 0.17425431711145997,
+      "tau_conf": 0.6747766594601456
+    },
+    {
+      "alpha_conf": 0.2,
+      "dev_accuracy": 0.18869701726844584,
+      "dev_coverage": 0.28037676609105183,
+      "tau_conf": 0.6293902741610474
+    },
+    {
+      "alpha_conf": 0.4,
+      "dev_accuracy": 0.27472527472527475,
+      "dev_coverage": 0.458712715855573,
+      "tau_conf": 0.5544609746879655
+    }
+  ],
+  "note": "DEV-split transparency sweep; frozen prereg values used for the run regardless"
+}

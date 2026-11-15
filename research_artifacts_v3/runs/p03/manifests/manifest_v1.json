@@ -1,0 +1,127 @@
+{
+ "c2_status": {
+  "reason": "No licensed executable LLM in environment (2 GiB GPU, 3.2 GiB disk free, no ollama/vllm/llama-cli, no API credentials). C2 may only be claimed after an actual run with model id/version and cost recorded.",
+  "status": "BLOCKED"
+ },
+ "evidence_card": {
+  "allowed_wording": "On the frozen MRBench-derived test split, the proposed policy achieved a strict per-case win rate of 1.000 (95% Wilson CI 0.986-1.000, n=272) with answer-leakage rate 0.0 on leak-risk strata; no real LLM (C2) and no human teacher reference (B05) were evaluated.",
+  "analysis_script": "research_v3/experiments/p03/run_matrix.py",
+  "ci": [
+   0.9860736713142486,
+   1.0
+  ],
+  "claim_id": "P03-E01-primary",
+  "code_sha": "d9a2f56e0bdc33ba53682f5091e2cef691a9f6283bd3264e24c453a25e28d483",
+  "comparison_family": "C0_direct_answer;C1_simulated_proxy_rulebased;A1..A5",
+  "denominator": 272,
+  "experiment_ids": [
+   "P03-matrix-v1"
+  ],
+  "limitations": [
+   "Synthetic scenario ground truth (deterministic generator); decision-layer probe, not generated-tutor-text scoring; C2 real-LLM BLOCKED; single external collection (MRBench devset) - external generalization beyond math tutoring unverified."
+  ],
+  "paper_id": "P03",
+  "reviewer_signoffs": [],
+  "source_sha256": "a395feab801de50d44b73e1e9b88f84824a1f1d92e15ae86842d90c2b6dbf33c",
+  "source_type": "preregistered_matrix",
+  "table_cell_ids": [
+   "primary.pedagogy_win_rate",
+   "primary.answer_leakage_rate",
+   "primary.injection_refusal_rate",
+   "primary.abstention_precision",
+   "primary.abstention_recall",
+   "primary.citation_grounding_rate",
+   "primary.calibration_ece"
+  ]
+ },
+ "evidence_card_sha256": "99931ed44ccce09fa3ff42441996957d456d2a32a2a32833881fe66778c501d1",
+ "experiment_card": {
+  "baseline_version": "C0/C1 rule-based (simulated_proxy, NOT a real LLM); C2=BLOCKED",
+  "dependency_lock_sha256": "e5fe69b532bb978b472d7200f7be15182e4e196858fd16a4b54177db43f2122b",
+  "feature_cutoff": "2026-11-15T11:15:43.101393+00:00",
+  "hardware": "1x CPU (deterministic policy), no GPU used",
+  "holdout_dataset_ids": [
+   "mrbench-v3-devset"
+  ],
+  "hyperparameter_budget": "tau=0.60; weights 0.5/0.3/0.2; frozen in METHOD.md v1.0.0 (no tuning)",
+  "method_commit_sha": "4e5a792e16250106b9d0a577849e864ab7007c92",
+  "method_hash": "d9a2f56e0bdc33ba53682f5091e2cef691a9f6283bd3264e24c453a25e28d483",
+  "output_path": "research_artifacts_v3/runs/p03/reports/summaries_v1.json",
+  "paper_id": "P03",
+  "prereg_sha256": "526c4a77ab3799186efed26313d3b8088398c9190d3402fccfa797264491fe50",
+  "protocol_deviations": [
+   "C2 real LLM BLOCKED; MathTutorBench main tasks BLOCKED for direct policy scoring (generation-required); MRBench used as decision-layer probe with deterministic scenario injection, not generation scoring."
+  ],
+  "rq_id": "P03-RQ1",
+  "seed": 42,
+  "split_hash": "9b3fbfd586337fb4912b52eaf684c7c8741245134bbffb097bdb0918809b72a8",
+  "status": "PARTIAL",
+  "train_dataset_ids": [
+   "synthetic-stress-v1"
+  ],
+  "wall_time_seconds": 0.0
+ },
+ "experiment_card_sha256": "ce0f19e381eedf774bcb1557b61a1543ad86804f871662ed7fd68fdec051ebeb",
+ "external_validity": "PASS",
+ "files": {
+  "decisions": {
+   "path": "research_artifacts_v3/runs/p03/reports/decisions_v1.json",
+   "sha256": "7f851acb7411caa183198607919af6cb4c6704d0980b198ecc861c205aeb044e"
+  },
+  "paired_stats": {
+   "path": "research_artifacts_v3/runs/p03/reports/paired_stats_v1.json",
+   "sha256": "51085900dc3d91993a6d4791e2adbe5190a462bacf8dbe7a8d401d699417b54e"
+  },
+  "pre_registration": {
+   "path": "research_v3/experiments/p03/pre_registration.yaml",
+   "sha256": "526c4a77ab3799186efed26313d3b8088398c9190d3402fccfa797264491fe50"
+  },
+  "sealed_labels": {
+   "path": "research_artifacts_v3/runs/p03/reports/sealed_labels_v1.json",
+   "sha256": "fd9cc9c4ce9e9cfcd6ad99b268884590396edf40359949148f7275989c49a030"
+  },
+  "summaries": {
+   "path": "research_artifacts_v3/runs/p03/reports/summaries_v1.json",
+   "sha256": "69e402f0f8511677be3fd5de27e427aa4e75fe6a3819038cda29d1cfc4cff152"
+  }
+ },
+ "finished_utc": "2026-11-15T11:15:44.467866+00:00",
+ "leakage_audit": {
+  "duplicates": 0,
+  "findings": [],
+  "rows": 272,
+  "status": "PASS",
+  "unique_case_ids": 272
+ },
+ "method_version": "p03-policy-v1.0.0",
+ "n_test_cases": 272,
+ "paper_id": "P03",
+ "raw_dataset": {
+  "n_conversations": 300,
+  "sha256": "a395feab801de50d44b73e1e9b88f84824a1f1d92e15ae86842d90c2b6dbf33c",
+  "url": "https://github.com/kaushal0494/UnifyingAITutorEvaluation/raw/main/BEA_Shared_Task_2025_Datasets/mrbench_v3_devset.json"
+ },
+ "run_stamp": "v1",
+ "seed": 42,
+ "split": {
+  "hash": "9b3fbfd586337fb4912b52eaf684c7c8741245134bbffb097bdb0918809b72a8",
+  "protocol": "group",
+  "sizes": {
+   "calibration": 29,
+   "dev": 40,
+   "test": 34,
+   "train": 197
+  }
+ },
+ "started_utc": "2026-11-15T11:15:43.101393+00:00",
+ "strata": [
+  "answer_appropriate",
+  "clean_grounded",
+  "contradictory_sources",
+  "injection",
+  "lowconf_calibration",
+  "malicious_note",
+  "no_evidence",
+  "premature_answer_request"
+ ]
+}

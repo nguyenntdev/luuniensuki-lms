@@ -1,0 +1,45 @@
+[
+  {
+    "allowed_wording": "no material difference in failure capture vs calibrated top-k (H0 not rejected)",
+    "analysis_script": "research_v3/experiments/p06/run_experiment.py",
+    "ci": null,
+    "claim_id": "P06-C01",
+    "code_sha": "dfe7f219b3e60a6091a5e66f4ae18a360dbf7857f897a9218e41849f3f8be694",
+    "comparison_family": "PROPOSED_vs_C1_and_C0_ks_25_50_100",
+    "denominator": 13839,
+    "experiment_ids": [
+      "P06-RQ1"
+    ],
+    "limitations": [
+      "observational data; no intervention effect estimable",
+      "single external dataset"
+    ],
+    "paper_id": "P06",
+    "reviewer_signoffs": [],
+    "source_sha256": "248eb0b5cfd42513d5b2a8b86654d40308bfcf27a970ffaf44dfda84e665377f",
+    "source_type": "experiment_artifact",
+    "table_cell_ids": [
+      "summary.C0.k25.recall_at_k_pooled",
+      "summary.C0.k50.recall_at_k_pooled",
+      "summary.C0.k100.recall_at_k_pooled",
+      "summary.C1.k25.recall_at_k_pooled",
+      "summary.C1.k50.recall_at_k_pooled",
+      "summary.C1.k100.recall_at_k_pooled",
+      "summary.PROPOSED.k25.recall_at_k_pooled",
+      "summary.PROPOSED.k50.recall_at_k_pooled",
+      "summary.PROPOSED.k100.recall_at_k_pooled",
+      "summary.A1.k25.recall_at_k_pooled",
+      "summary.A1.k50.recall_at_k_pooled",
+      "summary.A1.k100.recall_at_k_pooled",
+      "summary.A2.k25.recall_at_k_pooled",
+      "summary.A2.k50.recall_at_k_pooled",
+      "summary.A2.k100.recall_at_k_pooled",
+      "summary.A3.k25.recall_at_k_pooled",
+      "summary.A3.k50.recall_at_k_pooled",
+      "summary.A3.k100.recall_at_k_pooled",
+      "summary.A4.k25.recall_at_k_pooled",
+      "summary.A4.k50.recall_at_k_pooled",
+      "summary.A4.k100.recall_at_k_pooled"
+    ]
+  }
+]

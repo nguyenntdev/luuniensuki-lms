@@ -1,0 +1,93 @@
+{
+  "audit_sample_sha256": "68b07c5e2bba793d01861d84c8bcf0c3f0864a9119adb64462a79862b2ccc954",
+  "baselines": [
+    "c0_surface_everything",
+    "c1_keyword_match"
+  ],
+  "claims_sha256": "7166dbdab80988454f4517dc387669a35a5b2db44869c53d7c02d5413fa2766f",
+  "corpus_manifest_sha256": "89649b0a9f40d3b7465fbd45faeeefda10dcd467157f144349048d35bc13dda4",
+  "counterexample_summary": {
+    "all_pass": true,
+    "n_cases": 4,
+    "n_pass": 4
+  },
+  "counterexamples_sha256": "e2e4d985500c9de7cb746aede55723fc8575ff77cb703b3d466353d2598b828d",
+  "matrix_path": "research_v3/experiments/p09/matrix.yaml",
+  "method_id": "proposed",
+  "method_versions": {
+    "c0_surface_everything": "p09-c0-v1.0.0",
+    "c1_keyword_match": "p09-c1-v1.0.0",
+    "proposed": "p09-provenance-v1.0.0"
+  },
+  "metrics": {
+    "c0_surface_everything": {
+      "abstention_rate": 0.0,
+      "citation_grounding_rate": 0.11764705882352941,
+      "method_id": "c0_surface_everything",
+      "n_claims": 51,
+      "n_grounded_surfaced": 6,
+      "n_rejected_invalid": 0,
+      "n_surfaced": 51,
+      "n_unsupported_surfaced": 45,
+      "unsupported_ci95": {
+        "clopper_pearson_ci_95": [
+          0.7613239527359255,
+          0.9555798581436852
+        ],
+        "wilson_ci_95": [
+          0.7661915568567753,
+          0.9449492632208182
+        ]
+      },
+      "unsupported_claim_surfacing_rate": 0.8823529411764706
+    },
+    "c1_keyword_match": {
+      "abstention_rate": 0.09803921568627451,
+      "citation_grounding_rate": 0.11764705882352941,
+      "method_id": "c1_keyword_match",
+      "n_claims": 51,
+      "n_grounded_surfaced": 6,
+      "n_rejected_invalid": 0,
+      "n_surfaced": 46,
+      "n_unsupported_surfaced": 40,
+      "unsupported_ci95": {
+        "clopper_pearson_ci_95": [
+          0.6467859364904807,
+          0.8871094002502565
+        ],
+        "wilson_ci_95": [
+          0.6537364041400255,
+          0.8750606159176724
+        ]
+      },
+      "unsupported_claim_surfacing_rate": 0.7843137254901961
+    },
+    "proposed": {
+      "abstention_rate": 0.8823529411764706,
+      "citation_grounding_rate": 0.11764705882352941,
+      "method_id": "proposed",
+      "n_claims": 51,
+      "n_grounded_surfaced": 6,
+      "n_rejected_invalid": 0,
+      "n_surfaced": 6,
+      "n_unsupported_surfaced": 0,
+      "unsupported_ci95": {
+        "clopper_pearson_ci_95": [
+          0.0,
+          0.06977703074953864
+        ],
+        "wilson_ci_95": [
+          0.0,
+          0.07004661989853143
+        ]
+      },
+      "unsupported_claim_surfacing_rate": 0.0
+    }
+  },
+  "metrics_sha256": "8399fe3c6471cf84b4ec6b32ceaa19a963633c6e70201c249cb9b9efe66e8bb8",
+  "n_claims": 51,
+  "preregistration_path": "research_v3/experiments/p09/pre_registration.yaml",
+  "run_version": "p09-provenance-v1.0.0",
+  "scientific_labeling": "Deterministic rule evaluation on a real CC0 Wikidata corpus; audit sample is UNLABELED; no expert adjudication; no user study.",
+  "verification_outcomes_sha256": "2ae4530a1e66a46deea0328a7d4b70bcf3f558b85a687dbe52bbc178077e7ed2"
+}

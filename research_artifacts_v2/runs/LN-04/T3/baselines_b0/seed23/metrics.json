@@ -51,11 +51,11 @@
   "predictions_sha256": "451bb070ef99948f3b6debdfff2e919a1c330788ac4c537c9bb2defab714c8b2",
   "gold_sha256": "c8a97ca6f81f813dddbfba4a3b532f76a3274e3ef40079efeb5177a772921fd8",
   "label_map": {
-    "socratic_question": "hint_then_fade",
-    "hint": "restrict_leakage",
     "abstain_insufficient_source": "abstain_source_gap",
+    "direct_answer": "direct_answer",
+    "hint": "restrict_leakage",
     "reject_injection": "reject_injection",
-    "direct_answer": "direct_answer"
+    "socratic_question": "hint_then_fade"
   },
   "cases": [
     {

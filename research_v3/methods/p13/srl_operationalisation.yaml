@@ -1,0 +1,75 @@
+# P13 — SRL proxy definitions (machine-readable twin of srl_operationalisation.md)
+# Every proxy carries construct_validity: proxy_only. No exceptions.
+schema_version: "1.0"
+paper_id: P13
+construct: self-regulated learning (Zimmerman, 2000) — PROXIED, NOT MEASURED
+observation_window:
+  start_day: 0
+  end_day: 60
+proxies:
+  - name: plan_regularity
+    zimmerman_phase: forethought
+    operationalisation: coefficient of variation of gaps between active days (lower = more regular)
+    direction: lower_is_more_regular
+    citation: "Kizilcec et al. 2013 LAK; Zimmerman 2000"
+    construct_validity: proxy_only
+  - name: plan_early_start
+    zimmerman_phase: forethought
+    operationalisation: first active day inside the window (earlier = earlier task engagement)
+    citation: "Zimmerman 2000"
+    construct_validity: proxy_only
+  - name: plan_consistency_weekend_weekday
+    zimmerman_phase: forethought
+    operationalisation: |weekend_active_days - weekday_active_days_mean| regularised ratio
+    citation: "Winne & Hadwin 1998"
+    construct_validity: proxy_only
+  - name: effort_mean_daily_clicks
+    zimmerman_phase: performance
+    operationalisation: mean sum_click over active days in window
+    citation: "Gasevic et al. 2016 (low-inference metric caveat)"
+    construct_validity: proxy_only
+  - name: effort_dispersion
+    zimmerman_phase: performance
+    operationalisation: Gini coefficient of clicks across active days
+    citation: "Kizilcec et al. 2013"
+    construct_validity: proxy_only
+  - name: effort_diversity
+    zimmerman_phase: performance
+    operationalisation: Shannon entropy of click share across activity_type
+    citation: "Jovanovic et al. 2017"
+    construct_validity: proxy_only
+  - name: help_seeking_forum_clicks
+    zimmerman_phase: performance
+    operationalisation: clicks on forumng sites in window
+    citation: "Zimmerman & Martinez-Pons 1988; Jovanovic et al. 2017"
+    construct_validity: proxy_only
+  - name: help_seeking_forum_share
+    zimmerman_phase: performance
+    operationalisation: forumng clicks / total clicks
+    citation: "Jovanovic et al. 2017"
+    construct_validity: proxy_only
+  - name: self_observation_revisits
+    zimmerman_phase: performance
+    operationalisation: share of distinct sites visited on >= 2 distinct days
+    citation: "Winne & Hadwin 1998"
+    construct_validity: proxy_only
+  - name: reflect_late_activity
+    zimmerman_phase: self_reflection
+    operationalisation: clicks on days 45..60 / clicks on days 0..44
+    citation: "Zimmerman 2000; OULAD TMA calendar (assessments.csv days 19/54)"
+    construct_validity: proxy_only
+  - name: session_consistency
+    zimmerman_phase: performance
+    operationalisation: std of daily click counts over the window (low = consistent)
+    citation: "Kizilcec et al. 2013"
+    construct_validity: proxy_only
+features_c0:
+  - early_click_total
+features_c1:
+  - active_days
+  - mean_daily_clicks
+  - click_std
+  - session_regularity_cv
+  - days_since_last_activity
+mutation_hooks:
+  - temporal_order_integrity   # A2 ablation: shuffle date assignment within student

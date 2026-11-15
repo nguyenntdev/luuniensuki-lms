@@ -1,0 +1,180 @@
+{
+  "paper_id": "P09",
+  "updated_at": "2026-11-15",
+  "updated_by": "P09 code agent",
+  "tasks": {
+    "P09-T01": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p09/pre_registration.yaml",
+        "research_v3/manuscripts/p09/MANUSCRIPT.md#1-introduction-rq"
+      ],
+      "note": "RQ, H1-H4 and primary endpoint (unsupported_claim_surfacing_rate) frozen in prereg. H0 (citation-only interface equivalence) carried forward UNTESTED pending the blocked human study. Collision boundary stated: P09 owns interactive provenance surfacing; P12 owns scholarly curation; P03 owns tutor citation faithfulness."
+    },
+    "P09-T02": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p09/corpus/corpus_manifest.json",
+        "research_v3/experiments/p09/pre_registration.yaml"
+      ],
+      "note": "Real CC0 Wikidata corpus selected: 23 entities of the Complex of Hue Monuments, 51 claims, discovery query sha256 dc811b88... and discovery response sha256 b149d182... recorded. Hue heritage corpus and Europeana BLOCKED in corpus_manifest blocked_alternatives (no archival permission / no API key); registry cards untouched."
+    },
+    "P09-T03": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p09/provenance.py",
+        "research_v3/methods/p09/METHOD.md"
+      ],
+      "note": "Typed claim -> source -> locator schema with kind-validated locators (statement GUID / property / page / section); default badge unverified-until-linked; verification outcome vocabulary {verified, unverified, invalid} closed."
+    },
+    "P09-T04": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p09/corpus/entity_json",
+        "research_artifacts_v3/runs/p09/corpus/corpus_manifest.json#entity_snapshot_sha256",
+        "tests/research_v3/method/test_p09_rights_and_integrity.py"
+      ],
+      "note": "Per-entity Wikidata snapshots stored verbatim with per-byte SHA-256 recorded in corpus_manifest; contract test re-verifies every entity hash and the discovery-response hash round trip."
+    },
+    "P09-T05": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p09/pre_registration.yaml#split_id",
+        "research_v3/methods/p09/provenance.py"
+      ],
+      "note": "N/A by design, documented: deterministic rule system with zero learned parameters uses the full frozen corpus (split_id: full_corpus); no training split exists. Audit sidecar is sealed from all policy inputs, so no gold can leak into policies."
+    },
+    "P09-T06": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p09/eval/metrics.json"
+      ],
+      "note": "Corpus distribution reported before any policy comparison: 51 claims, verified vs unverified vs invalid fractions, grounded-surfaced counts per method (proposed 6/51 surfaced, C0 51/51, C1 46/51), abstention rates."
+    },
+    "P09-T07": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p09/baselines.py",
+        "research_artifacts_v3/runs/p09/eval/decisions_c1_keyword_match.jsonl"
+      ],
+      "note": "Matched-input baselines on the identical frozen corpus: C0 surface-everything and C1 deterministic keyword-match heuristic. C1 is explicitly labeled a classical heuristic proxy, NOT a real UI system; no tuning, same compute."
+    },
+    "P09-T08": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/experiments/p09/baseline_cards.yaml"
+      ],
+      "note": "Dated BLOCKED rationale (2026-11-15): no runnable published comparator with compatible license + task fit (KG+RAG citation QA, EDM/CIDOC provenance models, uncertainty-badge UI work). Comparisons limited to C0/C1; no SOTA claim made. Final nearest-work certification is human-only (T20)."
+    },
+    "P09-T09": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p09/policy.py",
+        "research_v3/methods/p09/provenance.py",
+        "research_v3/methods/p09/METHOD.md",
+        "tests/research_v3/method/test_p09_provenance_gate.py"
+      ],
+      "note": "Fail-closed 5-stage verification gate (structural validation -> registry existence -> source fidelity byte-match -> statement-GUID resolution -> badge check); decisions {surface, abstain_unverified, reject_invalid_source}; gate never upgrades a claim. Invariants I1-I4 proven in METHOD.md and enforced by contract tests."
+    },
+    "P09-T10": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_artifacts_v3/runs/p09/eval/counterexamples.json",
+        "research_artifacts_v3/runs/p09/manifest.json#counterexample_summary"
+      ],
+      "note": "Adversarial citation-mutation counterexamples complete: 4/4 named mutation cases (two editions disagree; misattributed public-domain image; false citation; identical entity labels; missing rights statement family) rejected, never surfaced. Interface-level ablations (plain cards vs KG-RAG citations vs provenance conflict UI) are UI-arm measures and stay BLOCKED with the human study."
+    },
+    "P09-T11": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p09/pre_registration.yaml#methods",
+        "research_v3/methods/p09/policy.py"
+      ],
+      "note": "N/A by design, documented: zero learned parameters, zero calibration; policies are pure deterministic rules; nothing tuned on any evaluation data. Single seed 42 affects only the audit-sample draw."
+    },
+    "P09-T12": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p09/manifest.json",
+        "research_v3/experiments/p09/matrix.yaml",
+        "research_artifacts_v3/runs/p09/eval/decisions_proposed.jsonl"
+      ],
+      "note": "Full preregistered offline matrix executed on the real CC0 corpus: proposed unsupported-claim surfacing rate 0.0 (51/51 claims) vs C0 0.882 (45/51) and C1 0.784 (40/51); per-cell decisions, metrics and SHA-256 manifest committed. Offline gate tier only; the human-study tier is BLOCKED."
+    },
+    "P09-T13": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_artifacts_v3/runs/p09/eval/counterexamples.json",
+        "research_artifacts_v3/runs/p09/eval/verification_outcomes.json"
+      ],
+      "note": "Adversarial stress strata (citation mutation, source tampering, malformed GUIDs) reported with 4/4 rejections and full verification-outcome distribution. User-level robustness strata (per-subgroup usability, shift over time) require the BLOCKED human study and are not reported."
+    },
+    "P09-T14": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p09/eval/metrics.json",
+        "research_v3/methods/p09/metrics.py"
+      ],
+      "note": "Wilson and Clopper-Pearson 95% CIs computed for every rate including zero-error cells (proposed unsupported rate CI [0, 0.070]) per prereg analysis_plan; abstain decisions kept in denominators; no multiplicity issue (single preregistered primary endpoint, exact arithmetic on full corpus)."
+    },
+    "P09-T15": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p09/manifest.json",
+        "tests/research_v3/method/test_p09_rights_and_integrity.py"
+      ],
+      "note": "Source-to-table: corpus/eval artifacts generated by research_v3/experiments/p09/run_p09.py; manifest.json pins SHA-256 for claims, verification outcomes, metrics, counterexamples and audit sample; contract test re-verifies every hash round trip. No hand-entered metrics."
+    },
+    "P09-T16": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p09/MANUSCRIPT.md#6-limitations",
+        "research_v3/manuscripts/p09/MANUSCRIPT.md#1-introduction-rq"
+      ],
+      "note": "Failure review and collision audit written up: C0/C1 leakage quantified as the honest baseline story; salami-slicing boundary vs P12 (scholarly curation) and P03 (tutor citations) documented; engineering-result-only framing enforced (no user-outcome claim)."
+    },
+    "P09-T17": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_v3/manuscripts/p09/MANUSCRIPT.md"
+      ],
+      "note": "Manuscript skeleton built with frozen numbers bound to run artifacts and mandatory limitations; release status ENGINEERING_PASS. Figures are planned system-behavior mocks; the comprehension/usability results section cannot be written without the BLOCKED human study."
+    },
+    "P09-T18": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_v3/methods/p09/METHOD.md",
+        "research_v3/manuscripts/p09/MANUSCRIPT.md#9-reproduction"
+      ],
+      "note": "Deterministic rerun commands staged (build -> evaluate -> pytest, 35 contract tests) and every artifact hash-pinned, so a clean-clone rerun is reproducible; independent external reviewer reproduction has NOT been executed (requires an external human reviewer)."
+    },
+    "P09-T19": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/experiments/p09/pre_registration.yaml#blocked_tasks"
+      ],
+      "note": "Human-only: ethics/human annotation/license approval. The human audit sample (research_artifacts_v3/runs/p09/audit/audit_sample.json, sha256 68b07c5e...) is deliberately UNLABELED for an independent human auditor; no expert labels or simulated approvals exist."
+    },
+    "P09-T20": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/experiments/p09/baseline_cards.yaml"
+      ],
+      "note": "Human-only: novelty and nearest-work signoff by the research lead. Agent surfaced the dated comparator rationale (baseline_cards.yaml) but must not certify novelty."
+    },
+    "P09-T21": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p09/MANUSCRIPT.md#8-task-status"
+      ],
+      "note": "Human-only: coauthor/venue/submission signoff. Manuscript explicitly states it will not be submitted in its current state; no venue claims made."
+    }
+  },
+  "summary": {
+    "done_engineering": 13,
+    "partial": 4,
+    "blocked_human_only": 3,
+    "blocked_data": 1,
+    "note": "Offline gate evaluation complete on the real CC0 Wikidata corpus: proposed provenance gate reaches unsupported-claim surfacing rate 0.0 vs 0.882 (C0) and 0.784 (C1); 23 entities / 51 claims with query and response SHA-256 recorded; human audit sample unlabeled. Hue heritage corpus and Europeana BLOCKED. Every human-subject and human-signoff cell remains BLOCKED; H0 carried forward untested; release status ENGINEERING_PASS, not SCIENTIFIC_REVIEW_READY."
+  }
+}

@@ -1,0 +1,106 @@
+# P04 pre-registration — frozen 2026-11-15 BEFORE any reference-evaluation scoring
+# Canonical hash of this file is recorded in the experiment card; any later edit
+# invalidates the prereg hash and requires a new dated version.
+paper_id: P04
+prereg_version: 1.0
+frozen_at: "2026-11-15"
+
+research_question: >-
+  Do predictors degrade systematically and reproducibly under realistic
+  incomplete/ambiguous skill mappings, and can a portable frozen benchmark
+  protocol quantify these failures across a population of predictors?
+
+primary_hypothesis_h1: >-
+  The frozen mapping-degradation strata (S1 partial mappings, S2 unknown
+  categories, S3 domain shift, S4 cold start) produce statistically
+  distinguishable, rank-stable performance degradation in a population of
+  predictors, beyond what a known cross-domain split alone shows.
+
+null_h0: >-
+  Benchmark reveals no reliable new failure mode beyond known cross-domain
+  splits (bootstrap CIs of AUC degradation include 0 across all strata and rank
+  stability is perfect), or the benchmark cannot be released lawfully.
+
+estimand: >-
+  Per-stratum AUC degradation delta = AUC(reference C1 logistic regression on
+  the unshifted in-domain test partition) minus AUC(same fitted predictor on
+  the shifted stratum test partition), with a learner-cluster bootstrap 95% CI.
+
+primary_metric: auc_degradation
+primary_metric_direction: positive_degradation_is_failure
+primary_denominator: >-
+  All test-partition cases of the stratum whose mapped_canonical is not
+  NOT_APPLICABLE; ABSTAIN outputs are excluded and reported as coverage.
+  Denominator is disclosed in every cell.
+
+primary_table:
+  rows: shift strata S0(in-domain reference), S1(20/50/80%), S2, S3, S4
+  columns: [n_total, n_scored, n_abstain, n_not_applicable, coverage,
+            mapping_coverage, accuracy, auc, auc_degradation_vs_baseline,
+            auc_ci95, worst_group_accuracy]
+  population: [C0_majority, C1_logistic_regression]
+
+degradation_anchor: >-
+  auc_degradation_vs_baseline is computed against the SAME predictor's S0
+  in-domain reference cell (C0 delta vs C0@S0; C1 delta vs C1@S0), not across
+  predictors. The anchor row is S0 and carries delta = 0 by construction.
+
+secondary_metrics: [ece, rank_stability, mapping_coverage_sensitivity]
+
+strata_definitions_frozen:
+  S0: in-domain group-split reference (learner-level, salt p04-v1)
+  S1: hide_fraction of verified bridge edges before mapping (0.2/0.5/0.8), salt p04-<scenario>
+  S2: >-
+    annotation-budget bridge: verified edges learned ONLY from train-partition
+    courses (AAA,DDD); test-partition categories outside that budget (BBB,EEE
+    platform categories) become real unknown edges -> NOT_APPLICABLE mapping
+    for affected test cases. Injects nothing; selects real unseen categories.
+  S3: presentation shift 2013->2014; course shift to held-out FFF/GGG;
+      cross-subject shift mathematics->portuguese (UCI)
+  S4: cold-start learners (early_click_total == 0 in the 60-day OULAD window)
+
+comparison_family:
+  - C1 logistic regression vs C0 majority (reference contrast)
+  - per-stratum degradation contrasts within C1
+multiplicity_correction: holm
+alpha: 0.05
+
+resampling:
+  unit: learner (group_id)
+  method: learner-cluster bootstrap
+  n_bootstrap: 1000
+  seed: 42
+  note: >-
+    Deterministic bootstrap; never present repeated deterministic hashes as
+    independent seeds.
+
+splits:
+  oulad_group_split: learner-level group_split, salt p04-v1, frozen in p04_splits.json
+  oulad_time_split: time_split on code_presentation (2013 train / 2014 test)
+  uci_group_split: student-level group_split, salt p04-v1
+  frozen_test_policy: >-
+    Benchmark authors may not tune on any test partition. Hyperparameters are
+    selected on train partitions only; no stratum cell is edited after freeze.
+
+data:
+  primary_dataset: oulad-2013-2014 (APPROVED, CC BY-NC 4.0, academic use)
+  secondary_dataset: uci-student-performance-2014 (APPROVED, CC BY 4.0)
+  blocked_datasets: [assistments, junyi, ednet]
+  external_generalization_disclosure: >-
+    Two education datasets only; external generalization beyond these platforms
+    is UNVERIFIED while ASSISTments/Junyi/EdNet remain BLOCKED.
+
+output_classes:
+  predictions: [0, 1, ABSTAIN]
+  mapping_outcomes: [canonical category, NOT_APPLICABLE]
+  scoring_rules: >-
+    ABSTAIN excludes the case from AUC/accuracy denominators and is reported as
+    n_abstain; NOT_APPLICABLE excludes the case and is reported as
+    n_not_applicable; neither is ever counted as a negative prediction.
+
+failure_reporting:
+  - all strata reported even when the predictor fails (fail-closed)
+  - negative/null results published with the same rigor as positive
+  - frozen test labels never edited
+
+status_of_this_prereg: FROZEN

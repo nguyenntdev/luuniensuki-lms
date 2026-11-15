@@ -1,0 +1,51 @@
+# P01 run matrix - every cell must produce a manifest, predictions and metrics
+# with a strict exit code (P01-T12). Fail-closed: no cell may be skipped.
+paper_id: P01
+matrix_version: "1.0.0"
+
+dataset:
+  dataset_id: oulad-2013-2014
+  adapter: research_v3.datasets.adapters.oulad.load_students
+  expected_rows: 32593
+
+models:
+  - id: C0_majority_sanity
+    kind: sanity
+    description: majority training label for every case
+  - id: C1_regularized_logistic
+    kind: classical
+    description: L2-regularized multinomial logistic regression (numpy), frozen hyperparameters
+  - id: proposed_rc_stg
+    kind: proposed
+    description: C1 base + conformal-style confidence ABSTAIN + Fail re-route gate
+    thresholds_from: calibration split only
+
+ablations:  # proposed-method removals, same split and compute
+  - A1_no_gate
+  - A2_no_fail_gate
+  - A3_no_abstention
+  - A4_random_gate
+  - A5_shuffled_thresholds
+
+protocols:
+  - id: T
+    primary: true
+    splitter: time_split
+    splitter_kwargs: {time_key: time_key, train_fraction: 0.70}
+    learner_disjoint_enforcement: true
+  - id: G
+    primary: false
+    splitter: group_split
+    splitter_kwargs: {group_key: group_id, fractions: [0.70, 0.10, 0.10, 0.10], salt: p01-v3}
+
+required_outputs_per_cell:
+  - predictions.jsonl
+  - metrics.json
+  - calibration.json   # proposed + C1 only
+  - robustness.json    # proposed + C1 only
+
+confirmatory_family:  # Holm-corrected, protocol T only
+  - proposed_rc_stg vs C1_regularized_logistic
+  - proposed_rc_stg vs C0_majority_sanity
+
+exit_policy: any failed audit, missing artifact or metric recomputation mismatch fails the run with nonzero exit

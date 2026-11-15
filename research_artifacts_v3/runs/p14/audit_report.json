@@ -1,0 +1,1229 @@
+{
+  "audit_engine_version": "p14-audit-1.0.0",
+  "criterion_results": [
+    {
+      "criterion_id": "udl-rep-alt-text",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-01-compliant",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-transcript",
+      "evidence": "all A/V assets declare transcripts",
+      "object_id": "syn-obj-01-compliant",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "3 modalities present",
+      "object_id": "syn-obj-01-compliant",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "all visuals carry caption/source",
+      "object_id": "syn-obj-01-compliant",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-01-compliant",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-01-compliant",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-01-compliant",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #1a1a1a|#ffffff passes AA",
+      "object_id": "syn-obj-01-compliant",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-01-compliant",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-alt-text",
+      "evidence": "",
+      "object_id": "syn-obj-02-no-alt",
+      "remediation": "Add text alternatives for assets: b-img",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "2 modalities present",
+      "object_id": "syn-obj-02-no-alt",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "",
+      "object_id": "syn-obj-02-no-alt",
+      "remediation": "Attach inscription/source captions to unlabeled visuals",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-02-no-alt",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-02-no-alt",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-02-no-alt",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #000000|#ffffff passes AA",
+      "object_id": "syn-obj-02-no-alt",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "",
+      "object_id": "syn-obj-02-no-alt",
+      "remediation": "Add text alternatives for assets: b-img",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-rep-transcript",
+      "evidence": "",
+      "object_id": "syn-obj-03-no-transcript",
+      "remediation": "Add transcripts for assets: c-audio",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "2 modalities present",
+      "object_id": "syn-obj-03-no-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-03-no-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-03-no-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-03-no-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #000000|#ffffff passes AA",
+      "object_id": "syn-obj-03-no-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "no image/3D assets",
+      "object_id": "syn-obj-03-no-transcript",
+      "remediation": null,
+      "verdict": "NOT_APPLICABLE"
+    },
+    {
+      "criterion_id": "udl-rep-alt-text",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "2 modalities present",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "all visuals carry caption/source",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-reduced-motion",
+      "evidence": "reduced-motion honoured",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-keyboard",
+      "evidence": "",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": "Remove the keyboard trap so focus can always exit (WCAG 2.1.2)",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #000000|#ffffff passes AA",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-focus-visible",
+      "evidence": "focus indicators declared",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-transcript",
+      "evidence": "all A/V assets declare transcripts",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-captions",
+      "evidence": "all videos declare captions",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "2 modalities present",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "all visuals carry caption/source",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-reduced-motion",
+      "evidence": "reduced-motion honoured",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-keyboard",
+      "evidence": "player controls keyboard operable",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #000000|#ffffff passes AA",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-focus-visible",
+      "evidence": "no interactive assets",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "NOT_APPLICABLE"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "no image/3D assets",
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "remediation": null,
+      "verdict": "NOT_APPLICABLE"
+    },
+    {
+      "criterion_id": "udl-rep-transcript",
+      "evidence": "all A/V assets declare transcripts",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-captions",
+      "evidence": "",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": "Add captions to: f-video",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "2 modalities present",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": "Attach inscription/source captions to unlabeled visuals",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-reduced-motion",
+      "evidence": "reduced-motion honoured",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-keyboard",
+      "evidence": "",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": "Make media player/3D controls keyboard operable without a trap",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #000000|#ffffff passes AA",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-focus-visible",
+      "evidence": "no interactive assets",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": null,
+      "verdict": "NOT_APPLICABLE"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "no image/3D assets",
+      "object_id": "syn-obj-06-video-no-captions",
+      "remediation": null,
+      "verdict": "NOT_APPLICABLE"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "",
+      "object_id": "syn-obj-07-low-contrast",
+      "remediation": "Provide the key content in a second modality (e.g. a text summary)",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-07-low-contrast",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-07-low-contrast",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-07-low-contrast",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "",
+      "object_id": "syn-obj-07-low-contrast",
+      "remediation": "Increase contrast of pair #aaaaaa|#ffffff to at least 4.5:1",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-rep-alt-text",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-08-no-lbw",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "2 modalities present",
+      "object_id": "syn-obj-08-no-lbw",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "all visuals carry caption/source",
+      "object_id": "syn-obj-08-no-lbw",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "",
+      "object_id": "syn-obj-08-no-lbw",
+      "remediation": "Provide a low-bandwidth variant preserving task feasibility",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-08-no-lbw",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-08-no-lbw",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #000000|#ffffff passes AA",
+      "object_id": "syn-obj-08-no-lbw",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-08-no-lbw",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-alt-text",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-09-image-only",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "",
+      "object_id": "syn-obj-09-image-only",
+      "remediation": "Provide the key content in a second modality (e.g. a text summary)",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "all visuals carry caption/source",
+      "object_id": "syn-obj-09-image-only",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-09-image-only",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-09-image-only",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-09-image-only",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #000000|#ffffff passes AA",
+      "object_id": "syn-obj-09-image-only",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-09-image-only",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-alt-text",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "2 modalities present",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "all visuals carry caption/source",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-reduced-motion",
+      "evidence": "reduced-motion honoured",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-keyboard",
+      "evidence": "",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": "Make media player/3D controls keyboard operable without a trap",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #000000|#ffffff passes AA",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-focus-visible",
+      "evidence": "focus indicators declared",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-alt-text",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-11-contrast-unknown",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "2 modalities present",
+      "object_id": "syn-obj-11-contrast-unknown",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "all visuals carry caption/source",
+      "object_id": "syn-obj-11-contrast-unknown",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-11-contrast-unknown",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-11-contrast-unknown",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-11-contrast-unknown",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "no declared colour pair; rendering-level audit required",
+      "object_id": "syn-obj-11-contrast-unknown",
+      "remediation": null,
+      "verdict": "ABSTAIN"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-11-contrast-unknown",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-alt-text",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-12-no-goal",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "2 modalities present",
+      "object_id": "syn-obj-12-no-goal",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "all visuals carry caption/source",
+      "object_id": "syn-obj-12-no-goal",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-12-no-goal",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "",
+      "object_id": "syn-obj-12-no-goal",
+      "remediation": "State the object's learning goal",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "",
+      "object_id": "syn-obj-12-no-goal",
+      "remediation": "Offer at least one keyboard/text response format",
+      "verdict": "FAIL"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #000000|#ffffff passes AA",
+      "object_id": "syn-obj-12-no-goal",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-12-no-goal",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-alt-text",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-multi-modal",
+      "evidence": "2 modalities present",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-rep-inscription-source",
+      "evidence": "all visuals carry caption/source",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-low-bandwidth",
+      "evidence": "low-bandwidth variant present",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-goal-transparency",
+      "evidence": "learning goal stated",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-eng-reduced-motion",
+      "evidence": "reduced-motion honoured",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-keyboard",
+      "evidence": "keyboard operable, no trap",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "udl-action-alternative-response",
+      "evidence": "non-pointer response format offered",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-contrast",
+      "evidence": "declared pair #000000|#ffffff passes AA",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-focus-visible",
+      "evidence": "focus indicators declared",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    },
+    {
+      "criterion_id": "wcag-text-alternative",
+      "evidence": "all visual assets declare alt text",
+      "object_id": "syn-obj-13-compliant-interactive",
+      "remediation": null,
+      "verdict": "PASS"
+    }
+  ],
+  "learned_parameters": {},
+  "manifest": {
+    "builtin": "p14-synthetic-manifest-1.0.0",
+    "media_scope": "synthetic-only (external media BLOCKED; study PARTIAL)",
+    "rights": {
+      "cards": [
+        {
+          "allowed_uses": [],
+          "blocked_reason": "API key unavailable in this environment: search endpoint returns HTTP 403 without api_key (verified 2026-11-15). CC0 gate requires item-level 'open access' filtering, which needs the key.",
+          "consent_basis": "",
+          "dataset_id": "smithsonian-open-access",
+          "doi": null,
+          "group_keys": [
+            "edan_id"
+          ],
+          "leakage_audit": "not run",
+          "license_text_sha256": "",
+          "original_sha256": "",
+          "provider": "Smithsonian Institution",
+          "redistribution_policy": "CC0-marked items only; API key required for data access (https://www.si.edu/openaccess/api/v1/terms)",
+          "retrieved_at": "2026-11-15T00:00:00Z",
+          "sample_count": 0,
+          "schema_version": "",
+          "source_attribution": "Smithsonian Open Access (CC0 items only)",
+          "source_url": "https://www.si.edu/openaccess/devtools",
+          "status": "BLOCKED",
+          "time_key": null,
+          "transformed_sha256": null,
+          "units": "heritage-object-record",
+          "version": "api-v1.0"
+        },
+        {
+          "allowed_uses": [],
+          "blocked_reason": "API key unavailable in this environment: search endpoint returns HTTP 401 without wskey (verified 2026-11-15). Item-level rights filtering cannot be verified without the key.",
+          "consent_basis": "",
+          "dataset_id": "europeana-metadata",
+          "doi": null,
+          "group_keys": [
+            "provider",
+            "edm_id"
+          ],
+          "leakage_audit": "not run",
+          "license_text_sha256": "",
+          "original_sha256": "",
+          "provider": "Europeana Foundation",
+          "redistribution_policy": "Metadata CC0; item-level media rights vary per provider and must be checked per object (https://pro.europeana.eu/page/now-available)",
+          "retrieved_at": "2026-11-15T00:00:00Z",
+          "sample_count": 0,
+          "schema_version": "",
+          "source_attribution": "Europeana (metadata CC0; media item-level rights)",
+          "source_url": "https://pro.europeana.eu/page/apis",
+          "status": "BLOCKED",
+          "time_key": null,
+          "transformed_sha256": null,
+          "units": "heritage-object-record",
+          "version": "record-api-v2"
+        },
+        {
+          "allowed_uses": [],
+          "blocked_reason": "Study rule: copyrighted Huế imagery must not be reused; no written permission on file. Corpus is out of scope for P14.",
+          "consent_basis": "requires archive permission and page-level citations",
+          "dataset_id": "hue-heritage-corpus",
+          "doi": null,
+          "group_keys": [
+            "page_id"
+          ],
+          "leakage_audit": "not run",
+          "license_text_sha256": "",
+          "original_sha256": "",
+          "provider": "Hue Monuments Conservation Centre",
+          "redistribution_policy": "unlicensed until written permission obtained",
+          "retrieved_at": "2026-11-15T00:00:00Z",
+          "sample_count": 0,
+          "schema_version": "",
+          "source_attribution": "Huế World Heritage (unlicensed)",
+          "source_url": "https://www.hueworldheritage.org.vn/",
+          "status": "BLOCKED",
+          "time_key": null,
+          "transformed_sha256": null,
+          "units": "heritage-object-record",
+          "version": "unspecified"
+        }
+      ],
+      "external_media_status": "BLOCKED",
+      "fallback": "documented synthetic manifest labelled 'synthetic, no third-party rights'",
+      "hué_imagery_used": false,
+      "key_application_urls": {
+        "europeana": "https://pro.europeana.eu/page/get-api",
+        "smithsonian": "https://www.si.edu/openaccess/api/v1/request-account"
+      },
+      "study_external_media_mark": "PARTIAL",
+      "verified_http_probes": {
+        "europeana_no_key": "HTTP 401 (2026-11-15)",
+        "smithsonian_no_key": "HTTP 403 (2026-11-15)"
+      }
+    },
+    "sha256": "7adeca616dbf0290c23079cae2e160818bb914296b8ecc4ce3c1a704bc6a3e75"
+  },
+  "metrics": {
+    "accessibility_conformance_rate": 0.8661,
+    "criteria_abstained": 1,
+    "criteria_evaluated": 112,
+    "criteria_failed": 15,
+    "criteria_passed": 97,
+    "missing_affordance_count": 15,
+    "objects_abstain": 0,
+    "objects_audited": 13,
+    "objects_fail": 9,
+    "objects_pass": 4,
+    "per_framework": {
+      "udl-action": {
+        "fail": 4,
+        "pass": 14
+      },
+      "udl-engagement": {
+        "fail": 2,
+        "pass": 29
+      },
+      "udl-representation": {
+        "fail": 7,
+        "pass": 32
+      },
+      "wcag22": {
+        "fail": 2,
+        "pass": 22
+      }
+    },
+    "udl_principle_coverage": {
+      "udl-action": 0.7778,
+      "udl-engagement": 0.9355,
+      "udl-representation": 0.8205,
+      "wcag22": 0.9167
+    }
+  },
+  "object_verdicts": [
+    {
+      "abstained": 0,
+      "failed": 0,
+      "missing_affordances": [],
+      "not_applicable": 0,
+      "object_id": "syn-obj-01-compliant",
+      "passed": 9,
+      "total_applicable": 9,
+      "verdict": "PASS"
+    },
+    {
+      "abstained": 0,
+      "failed": 3,
+      "missing_affordances": [
+        "udl-rep-alt-text",
+        "udl-rep-inscription-source",
+        "wcag-text-alternative"
+      ],
+      "not_applicable": 0,
+      "object_id": "syn-obj-02-no-alt",
+      "passed": 5,
+      "total_applicable": 8,
+      "verdict": "FAIL"
+    },
+    {
+      "abstained": 0,
+      "failed": 1,
+      "missing_affordances": [
+        "udl-rep-transcript"
+      ],
+      "not_applicable": 1,
+      "object_id": "syn-obj-03-no-transcript",
+      "passed": 5,
+      "total_applicable": 7,
+      "verdict": "FAIL"
+    },
+    {
+      "abstained": 0,
+      "failed": 1,
+      "missing_affordances": [
+        "udl-action-keyboard"
+      ],
+      "not_applicable": 0,
+      "object_id": "syn-obj-04-keyboard-trap",
+      "passed": 10,
+      "total_applicable": 11,
+      "verdict": "FAIL"
+    },
+    {
+      "abstained": 0,
+      "failed": 0,
+      "missing_affordances": [],
+      "not_applicable": 2,
+      "object_id": "syn-obj-05-lbw-with-transcript",
+      "passed": 10,
+      "total_applicable": 12,
+      "verdict": "PASS"
+    },
+    {
+      "abstained": 0,
+      "failed": 3,
+      "missing_affordances": [
+        "udl-rep-captions",
+        "udl-rep-inscription-source",
+        "udl-action-keyboard"
+      ],
+      "not_applicable": 2,
+      "object_id": "syn-obj-06-video-no-captions",
+      "passed": 7,
+      "total_applicable": 12,
+      "verdict": "FAIL"
+    },
+    {
+      "abstained": 0,
+      "failed": 2,
+      "missing_affordances": [
+        "udl-rep-multi-modal",
+        "wcag-contrast"
+      ],
+      "not_applicable": 0,
+      "object_id": "syn-obj-07-low-contrast",
+      "passed": 3,
+      "total_applicable": 5,
+      "verdict": "FAIL"
+    },
+    {
+      "abstained": 0,
+      "failed": 1,
+      "missing_affordances": [
+        "udl-eng-low-bandwidth"
+      ],
+      "not_applicable": 0,
+      "object_id": "syn-obj-08-no-lbw",
+      "passed": 7,
+      "total_applicable": 8,
+      "verdict": "FAIL"
+    },
+    {
+      "abstained": 0,
+      "failed": 1,
+      "missing_affordances": [
+        "udl-rep-multi-modal"
+      ],
+      "not_applicable": 0,
+      "object_id": "syn-obj-09-image-only",
+      "passed": 7,
+      "total_applicable": 8,
+      "verdict": "FAIL"
+    },
+    {
+      "abstained": 0,
+      "failed": 1,
+      "missing_affordances": [
+        "udl-action-keyboard"
+      ],
+      "not_applicable": 0,
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "passed": 10,
+      "total_applicable": 11,
+      "verdict": "FAIL"
+    },
+    {
+      "abstained": 1,
+      "failed": 0,
+      "missing_affordances": [],
+      "not_applicable": 0,
+      "object_id": "syn-obj-11-contrast-unknown",
+      "passed": 7,
+      "total_applicable": 8,
+      "verdict": "PASS"
+    },
+    {
+      "abstained": 0,
+      "failed": 2,
+      "missing_affordances": [
+        "udl-eng-goal-transparency",
+        "udl-action-alternative-response"
+      ],
+      "not_applicable": 0,
+      "object_id": "syn-obj-12-no-goal",
+      "passed": 6,
+      "total_applicable": 8,
+      "verdict": "FAIL"
+    },
+    {
+      "abstained": 0,
+      "failed": 0,
+      "missing_affordances": [],
+      "not_applicable": 0,
+      "object_id": "syn-obj-13-compliant-interactive",
+      "passed": 11,
+      "total_applicable": 11,
+      "verdict": "PASS"
+    }
+  ],
+  "remediation_list": [
+    {
+      "action": "Add text alternatives for assets: b-img",
+      "criterion_id": "udl-rep-alt-text",
+      "framework": "udl-representation",
+      "object_id": "syn-obj-02-no-alt",
+      "severity": "critical"
+    },
+    {
+      "action": "Attach inscription/source captions to unlabeled visuals",
+      "criterion_id": "udl-rep-inscription-source",
+      "framework": "udl-representation",
+      "object_id": "syn-obj-02-no-alt",
+      "severity": "minor"
+    },
+    {
+      "action": "Add text alternatives for assets: b-img",
+      "criterion_id": "wcag-text-alternative",
+      "framework": "wcag22",
+      "object_id": "syn-obj-02-no-alt",
+      "severity": "critical"
+    },
+    {
+      "action": "Add transcripts for assets: c-audio",
+      "criterion_id": "udl-rep-transcript",
+      "framework": "udl-representation",
+      "object_id": "syn-obj-03-no-transcript",
+      "severity": "critical"
+    },
+    {
+      "action": "Remove the keyboard trap so focus can always exit (WCAG 2.1.2)",
+      "criterion_id": "udl-action-keyboard",
+      "framework": "udl-action",
+      "object_id": "syn-obj-04-keyboard-trap",
+      "severity": "critical"
+    },
+    {
+      "action": "Add captions to: f-video",
+      "criterion_id": "udl-rep-captions",
+      "framework": "udl-representation",
+      "object_id": "syn-obj-06-video-no-captions",
+      "severity": "critical"
+    },
+    {
+      "action": "Attach inscription/source captions to unlabeled visuals",
+      "criterion_id": "udl-rep-inscription-source",
+      "framework": "udl-representation",
+      "object_id": "syn-obj-06-video-no-captions",
+      "severity": "minor"
+    },
+    {
+      "action": "Make media player/3D controls keyboard operable without a trap",
+      "criterion_id": "udl-action-keyboard",
+      "framework": "udl-action",
+      "object_id": "syn-obj-06-video-no-captions",
+      "severity": "critical"
+    },
+    {
+      "action": "Provide the key content in a second modality (e.g. a text summary)",
+      "criterion_id": "udl-rep-multi-modal",
+      "framework": "udl-representation",
+      "object_id": "syn-obj-07-low-contrast",
+      "severity": "critical"
+    },
+    {
+      "action": "Increase contrast of pair #aaaaaa|#ffffff to at least 4.5:1",
+      "criterion_id": "wcag-contrast",
+      "framework": "wcag22",
+      "object_id": "syn-obj-07-low-contrast",
+      "severity": "critical"
+    },
+    {
+      "action": "Provide a low-bandwidth variant preserving task feasibility",
+      "criterion_id": "udl-eng-low-bandwidth",
+      "framework": "udl-engagement",
+      "object_id": "syn-obj-08-no-lbw",
+      "severity": "critical"
+    },
+    {
+      "action": "Provide the key content in a second modality (e.g. a text summary)",
+      "criterion_id": "udl-rep-multi-modal",
+      "framework": "udl-representation",
+      "object_id": "syn-obj-09-image-only",
+      "severity": "critical"
+    },
+    {
+      "action": "Make media player/3D controls keyboard operable without a trap",
+      "criterion_id": "udl-action-keyboard",
+      "framework": "udl-action",
+      "object_id": "syn-obj-10-3d-no-keyboard",
+      "severity": "critical"
+    },
+    {
+      "action": "State the object's learning goal",
+      "criterion_id": "udl-eng-goal-transparency",
+      "framework": "udl-engagement",
+      "object_id": "syn-obj-12-no-goal",
+      "severity": "minor"
+    },
+    {
+      "action": "Offer at least one keyboard/text response format",
+      "criterion_id": "udl-action-alternative-response",
+      "framework": "udl-action",
+      "object_id": "syn-obj-12-no-goal",
+      "severity": "critical"
+    }
+  ],
+  "rubric_version": "p14-udl-rubric-1.0.0"
+}

@@ -1,0 +1,185 @@
+{
+  "paper_id": "P13",
+  "updated_at": "2026-11-15",
+  "updated_by": "P13 code agent",
+  "tasks": {
+    "P13-T01": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p13/pre_registration.yaml",
+        "research_v3/manuscripts/p13/main.md#1-introduction"
+      ],
+      "note": "RQ frozen: which observable clickstream patterns, operationalised as Zimmerman phase-structured SRL PROXIES, differ across outcome groups and how far can outcome be predicted within the day 0-60 window. Positioning is descriptive/observational; NOT a study of the SRL psychological construct. H0_primary (C2 does not beat C0 by 0.02 AUC) was NOT rejected and is published as an honest null."
+    },
+    "P13-T02": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p13/dataset_provenance.yaml",
+        "research_artifacts_v3/runs/p13/metrics_full.json#E00"
+      ],
+      "note": "Real OULAD selected: UCI id 349, CC BY 4.0, archive sha256 f2ed1902... and license-text sha256 verified by the runner's E00 stage; raw files kept out of git (private_data/ ignored); dataset card addendum records schema and integrity checks."
+    },
+    "P13-T03": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p13/srl_features.py",
+        "research_v3/methods/p13/srl_operationalisation.yaml",
+        "research_v3/experiments/p13/dataset_provenance.yaml#construct_capability_note"
+      ],
+      "note": "Target schema: final_result is the ONLY supervised target; 11 SRL features are behavioural proxies each tagged construct_validity: proxy_only with Zimmerman phase and threat-to-validity citations. OULAD contains NO SRL instrument, so no construct-level target exists - this is documented, not assumed away."
+    },
+    "P13-T04": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p13/dataset_provenance.yaml#integrity_checks",
+        "research_artifacts_v3/runs/p13/metrics_full.json#data"
+      ],
+      "note": "Immutable provenance: archive + license SHA-256 verified at load (fail-closed); 10,655,280 studentVle rows (3,810,268 in the day 0-60 window), 32,593 learner-module-presentation rows, join and null checks recorded in the dataset card."
+    },
+    "P13-T05": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p13/splits.py",
+        "research_artifacts_v3/runs/p13/splits_manifest.json",
+        "tests/research_v3/method/test_p13_splits_leakage.py"
+      ],
+      "note": "Leakage-safe splits: learner-grouped 70/10/10/10 (salted hash, split_hash d9bc0a17...) and temporal holdout (train 2013B/J + 2014B -> test 2014J) with recurring learners purged from train; only pre-cutoff (day 0-60) clicks used; leakage audit PASS over 5,000 rows; disjointness verified by contract tests."
+    },
+    "P13-T06": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p13/metrics_full.json#data",
+        "research_artifacts_v3/runs/p13/FINDINGS.md"
+      ],
+      "note": "Descriptive baseline reported before modelling: outcome counts (Pass 12,361 / Fail 7,052 / Withdrawn 10,156 / Distinction 3,024), prevalence 0.382 on the group test split, 4,247 rows with zero in-window clicks retained and flagged, never silently dropped."
+    },
+    "P13-T07": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p13/analysis.py",
+        "research_artifacts_v3/runs/p13/summary.json#headline"
+      ],
+      "note": "Matched-input classical baselines: C0 raw click count (AUC 0.7150 group / 0.7200 time) and C1 session/time descriptives (0.7357 / 0.7424), all with the same fixed L2 logistic regression (C=1.0, no search), identical splits and compute."
+    },
+    "P13-T08": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/experiments/p13/run_matrix.yaml#blocked_cells"
+      ],
+      "note": "Dated BLOCKED card (E04_C2_published): no published SRL-proxy implementation discloses code + license compatible with an exact re-run on OULAD under the same cutoff protocol (Jovanovic 2017, Kizilcec 2013 published without reusable code; reimplemented conceptually as C2/ablations instead). Disclosed per spec, not silently skipped."
+    },
+    "P13-T09": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p13/srl_features.py",
+        "research_v3/methods/p13/construct_validity.py",
+        "research_v3/methods/p13/srl_operationalisation.md",
+        "tests/research_v3/method/test_p13_construct_guard.py"
+      ],
+      "note": "Method implemented with invariant proofs: Zimmerman phase-structured proxy features (planning/execution/reflection) plus a machine-checkable construct-validity guard that FAILS any artifact claiming construct-quantified SRL or causal wording (construct_flag: proxy_only, no construct quantification). Proxy may never be promoted to a construct claim."
+    },
+    "P13-T10": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p13/metrics_full.json#E06_ablations",
+        "tests/research_v3/method/test_p13_construct_guard.py"
+      ],
+      "note": "True mechanism-removal ablations A1-A4 (forethought, temporal order, help-seeking, effort) verified as actual feature-set removals by tests, on both splits. Guard-counterexamples (clicks != SRL; fake reflection completion; missing logs) are enforced as failing cases of the construct guard rather than simulated data."
+    },
+    "P13-T11": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p13/experiment_card.json"
+      ],
+      "note": "Frozen hyperparameter budget: fixed C=1.0, no search (preregistered); seed 20261115; dependency-lock and method hashes recorded; wall time 309.4 s CPU; nothing tuned on the test split."
+    },
+    "P13-T12": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p13/run_matrix.yaml",
+        "research_artifacts_v3/runs/p13/summary.json",
+        "research_artifacts_v3/runs/p13/metrics_full.json"
+      ],
+      "note": "Full preregistered matrix executed on real OULAD with manifest + exit code (experiment_card status PASS, zero protocol deviations). HONEST NULL RECORDED: C2 SRL-proxy profile does NOT beat C0 - delta AUC -0.0080 (group, CI95 [-0.0253, 0.0063]) and -0.0190 (time, CI95 [-0.0296, -0.0042]); H0_primary NOT rejected and published per prereg."
+    },
+    "P13-T13": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p13/metrics_full.json#E07_subgroups",
+        "research_artifacts_v3/runs/p13/metrics_full.json#E07_presentation_profile"
+      ],
+      "note": "Robustness/shift strata reported, not only averages: subgroup AUCs (presentation, gender, age band, IMD, education, disability) with min_n=20 guard; presentation profile shows temporal shift (forum share 0.23 -> 0.09) so proxies are NOT presentation-invariant; below-min_n groups flagged."
+    },
+    "P13-T14": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p13/summary.json#h0_primary_verdict",
+        "research_artifacts_v3/runs/p13/metrics_full.json#E09_paired_auc",
+        "research_v3/eval/statistics.py",
+        "tests/research_v3/method/test_p13_calibration_stats.py"
+      ],
+      "note": "Statistics: paired AUC deltas via learner-cluster bootstrap CIs, Holm control within the preregistered family, Brier/ECE calibration, Cliff's delta with CIs as primary descriptive evidence (p-values secondary). Negative result published: all four C2 comparisons fail the 0.02 prereg threshold."
+    },
+    "P13-T15": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p13/run_p13.py",
+        "research_artifacts_v3/runs/p13/experiment_card.json",
+        "research_artifacts_v3/runs/p13/splits_manifest.json"
+      ],
+      "note": "Source-to-table: all numbers generated by methods/p13/run_p13.py into runs/p13 (summary, metrics_full, splits manifest, experiment card with prereg/split/dependency hashes); no hand-entered metrics. Determinism and corpus guards enforced by contract tests."
+    },
+    "P13-T16": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p13/FINDINGS.md",
+        "research_v3/manuscripts/p13/main.md#9-limitations-failure-analysis"
+      ],
+      "note": "Scientific failure review: H0 not rejected is retained as the headline (not buried); blocked cells E04 (no re-runnable published comparator) and E11 (single dataset, external generalization UNVERIFIED) preserved. Collision audit: P13 is an SRL-proxy/construct study, distinct from P06 (budget-constrained intervention ranking on the same data - overlap disclosed) and never uses LN-10 policy correctness as SRL evidence."
+    },
+    "P13-T17": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/manuscripts/p13/main.md",
+        "research_v3/manuscripts/p13/limitations.md"
+      ],
+      "note": "Manuscript skeleton with all numbers sourced from runs/p13 only; construct-validity guard passes by construction (limitations.md states proxy-level claims only; any construct-level edit makes the runner fail via enforce_proxy_guard). Central limitation 'clicks != SRL' written up alongside withdrawal circularity, deadline confounding and forum-proxy weakness."
+    },
+    "P13-T18": {
+      "status": "PARTIAL",
+      "evidence": [
+        "research_v3/manuscripts/p13/main.md#appendices",
+        "research_artifacts_v3/runs/p13/experiment_card.json"
+      ],
+      "note": "Reproducibility staged: command, seed 20261115, method/split/dependency hashes in experiment_card.json (status PASS); deterministic rerun enforced by tests. Independent external reviewer reproduction from a clean clone has NOT been executed (requires an external human reviewer)."
+    },
+    "P13-T19": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p13/main.md#10-ethics"
+      ],
+      "note": "Human-only: ethics/human annotation/license approval. OULAD is a public CC BY 4.0 dataset used per provider terms; any future instrument-based quantification of the construct (survey/reflection logs) requires real consent and ethics signoff - cannot be simulated."
+    },
+    "P13-T20": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/experiments/p13/run_matrix.yaml#blocked_cells"
+      ],
+      "note": "Human-only: novelty and nearest-work signoff by the research lead. Agent surfaced the dated comparator BLOCKED card and the P06 overlap disclosure but must not certify novelty."
+    },
+    "P13-T21": {
+      "status": "BLOCKED",
+      "evidence": [
+        "research_v3/manuscripts/p13/main.md#10-ethics"
+      ],
+      "note": "Human-only: coauthor/venue/submission signoff (target per spec: Tạp chí Khoa học và Giáo dục - ĐH Sư phạm Huế; CFP/rank verification outstanding). No submission claims made."
+    }
+  },
+  "summary": {
+    "done_engineering": 16,
+    "partial": 1,
+    "blocked_human_only": 3,
+    "blocked_data": 1,
+    "note": "Executed on real OULAD clickstream (CC BY 4.0, hash-verified). HONEST NULL: C2 phase-structured SRL proxies did NOT beat C0 raw click count (delta AUC -0.0080 group / -0.0190 time; H0_primary NOT rejected, published per prereg). Construct-validity guard stands: all features are proxies (clickstream features are behavioural proxies, not a construct measure), so any task asserting construct-level quantification stays BLOCKED; no construct-level quantity is reported. Release status: engineering pass with published null; no construct-level or causal claim anywhere."
+  }
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "arm": "PROPOSED",
+    "baseline": 0.11044998140572704,
+    "is_null_or_negative": true,
+    "k": 25,
+    "note": "Reported as a null/negative result; not tuned toward a positive claim.",
+    "observed": 0.11007809594644849,
+    "p_value": 1.0,
+    "vs": "C1"
+  },
+  {
+    "arm": "PROPOSED",
+    "baseline": 0.05355150613611008,
+    "is_null_or_negative": true,
+    "k": 25,
+    "note": "Reported as a null/negative result; not tuned toward a positive claim.",
+    "observed": 0.11007809594644849,
+    "p_value": 1.0,
+    "vs": "C0"
+  },
+  {
+    "arm": "PROPOSED",
+    "baseline": 0.18817404239494237,
+    "is_null_or_negative": true,
+    "k": 50,
+    "note": "Reported as a null/negative result; not tuned toward a positive claim.",
+    "observed": 0.18817404239494237,
+    "p_value": 1.0,
+    "vs": "C1"
+  },
+  {
+    "arm": "PROPOSED",
+    "baseline": 0.11416883599851246,
+    "is_null_or_negative": true,
+    "k": 50,
+    "note": "Reported as a null/negative result; not tuned toward a positive claim.",
+    "observed": 0.18817404239494237,
+    "p_value": 1.0,
+    "vs": "C0"
+  },
+  {
+    "arm": "PROPOSED",
+    "baseline": 0.2993677947192265,
+    "is_null_or_negative": true,
+    "k": 100,
+    "note": "Reported as a null/negative result; not tuned toward a positive claim.",
+    "observed": 0.2993677947192265,
+    "p_value": 1.0,
+    "vs": "C1"
+  },
+  {
+    "arm": "PROPOSED",
+    "baseline": 0.21866865005578282,
+    "is_null_or_negative": true,
+    "k": 100,
+    "note": "Reported as a null/negative result; not tuned toward a positive claim.",
+    "observed": 0.2993677947192265,
+    "p_value": 1.0,
+    "vs": "C0"
+  }
+]

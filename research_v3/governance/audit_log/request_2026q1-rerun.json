@@ -1,0 +1,24 @@
+{
+  "schema": "research_v3.external_audit_request/v1",
+  "task_id": "V3-G19",
+  "request_id": "2026q1-rerun",
+  "created_at_utc": "2026-11-15T11:33:55Z",
+  "source_commit": "4e5a792e16250106b9d0a577849e864ab7007c92",
+  "release_paths": [
+    "research_artifacts_v3/release"
+  ],
+  "methods_to_rerun": [
+    "v3_c1_classical"
+  ],
+  "seed_policy": "5 independent seeds for stochastic; byte-identical for deterministic",
+  "verification_commands": [
+    "python -m pytest -q tests/research_v3",
+    "python -m research_v3.scripts.audit_repo --strict",
+    "python -m research_v3.scripts.validate_contracts",
+    "python -m research_v3.scripts.replicate --runs-root research_artifacts_v3/runs --kind <kind>"
+  ],
+  "blind_protocol": "The auditor receives sealed predictions and gold WITHOUT method identities; identities are revealed only after verdicts are filed.",
+  "status": "REQUESTED",
+  "human_review_pending": true,
+  "note": "BLOCKED until a human auditor returns review_2026q1-rerun.json with a signed verdict. The scaffold cannot and will not simulate that review."
+}

@@ -1,0 +1,153 @@
+{
+  "paper_id": "P02",
+  "updated_at": "2026-11-15",
+  "updated_by": "P02 code agent",
+  "tasks": {
+    "P02-T01": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p02/METHOD.md",
+        "research_v3/experiments/p02/pre_registration.yaml"
+      ],
+      "note": "RQ/estimand/H0 frozen pre-implementation (METHOD.md section 1 + prereg RQ P02-RQ1); H0 declared the expected null at synthetic scale and published as such."
+    },
+    "P02-T02": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/experiments/p02/pre_registration.yaml"],
+      "note": "External data gate BLOCKED: MOOCCubeX/Junyi/CausalEdu have no approved rights cards (absent from research_v3/datasets/registry.yaml); prereg external_data.status=BLOCKED and claim_boundary frozen synthetic-only; no unlicensed files ingested."
+    },
+    "P02-T03": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p02/problems.py",
+        "tests/research_v3/method/test_p02_problems.py"
+      ],
+      "note": "Typed PlanningProblem (dwell costs, outcomes, asymmetric travel, gates) with sha256-sensitive payload; decision taxonomy find_valid_route/cost_exceeded/no_feasible_route/abstain; tests pass."
+    },
+    "P02-T04": {
+      "status": "DONE_ENGINEERING",
+      "evidence": ["research_artifacts_v3/runs/p02/manifest.json"],
+      "note": "No external raw data exists to ingest (gate BLOCKED, T02); provenance = deterministic generator (seed 20261115, byte-identical regeneration test-enforced) + SHA256 manifest over instances/predictions/study_metric."
+    },
+    "P02-T05": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p02/splits.yaml",
+        "research_v3/methods/p02/METHOD.md",
+        "tests/research_v3/method/test_p02_generator.py"
+      ],
+      "note": "Group split by family_id (topology + density) via research_v3.eval.splitters.group_split; test_family_group_split_no_leakage passes; oracle is evaluator-side only (never imported by solvers)."
+    },
+    "P02-T06": {
+      "status": "DONE_ENGINEERING",
+      "evidence": ["research_artifacts_v3/runs/p02/study_metric.json"],
+      "note": "Per-cell distributions recorded for all 1620 certified instances (decision_counts, oracle_feasible, feasibility per solver x family x regime) before scoring claims; missingness/shift semantics not applicable to synthetic certified instances."
+    },
+    "P02-T07": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p02/solvers.py",
+        "research_artifacts_v3/runs/p02/study_metric.json"
+      ],
+      "note": "C1 exact branch-and-bound and C2 independent exact Dijkstra-with-state (labelled reimplementation, not a published library) run on the identical certified instance set."
+    },
+    "P02-T08": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p02/METHOD.md",
+        "research_v3/manuscripts/p02/main.md"
+      ],
+      "note": "Task is 'closest published implementation OR honest BLOCKED card': card delivered — OR-Tools/PuLP unavailable in environment (recorded in study_metric.environment), intended CP-SAT comparator not installed; C2 shipped as independent exact reimplementation and labelled as such everywhere."
+    },
+    "P02-T09": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p02/solvers.py",
+        "research_v3/methods/p02/METHOD.md",
+        "tests/research_v3/method/test_p02_solvers.py"
+      ],
+      "note": "C1/C2/proposed/A3 with honesty ladder (no 'optimal' without proof; timeout never relabelled infeasible); exact solvers hold false_infeasibility=0 (study_metric.exact_solver_false_infeasibility_must_be_zero all 0); 52 tests pass."
+    },
+    "P02-T10": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "tests/research_v3/method/test_p02_optimality_gap.py",
+        "research_artifacts_v3/runs/p02/study_metric.json"
+      ],
+      "note": "A3 alternative-blind mutation reproduces the legacy false-infeasibility family (819/1620 instances; test_a3_mutation_reproduces_false_infeasibility_on_alternatives); counterexamples: A/B alternative providers, asymmetric travel, infeasible instance families; inadmissible-heuristic negative result documented in METHOD.md section 3."
+    },
+    "P02-T11": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/experiments/p02/pre_registration.yaml",
+        "research_artifacts_v3/runs/p02/manifest.json"
+      ],
+      "note": "No learned parameters (deterministic solvers); seed 20261115 and instances_per_cell 30 frozen in prereg and recorded in manifest; environment + wall_seconds recorded in study_metric; nothing tuned on test."
+    },
+    "P02-T12": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_artifacts_v3/runs/p02/manifest.json",
+        "research_artifacts_v3/runs/p02/predictions.jsonl"
+      ],
+      "note": "Full preregistered matrix executed from one deterministic run: 1620 instances (6 families x 3 regimes x 3 densities x 30) x 5 solvers, SHA256 manifest, per-cell predictions; prereg froze the study as synthetic-only (external_data BLOCKED) so the registered matrix IS the synthetic benchmark; external-data extension remains blocked (P02-T02)."
+    },
+    "P02-T13": {
+      "status": "DONE_ENGINEERING",
+      "evidence": ["research_artifacts_v3/runs/p02/study_metric.json"],
+      "note": "All failure strata reported: per-regime breakdown incl. cost_exceeded stratum, per-family analysis with zero-feasibility families (unreachable_bridge, blocked_access), invalid_routes empty for every solver."
+    },
+    "P02-T14": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p02/eval_stats.py",
+        "research_artifacts_v3/runs/p02/study_metric.json"
+      ],
+      "note": "Wilcoxon signed-rank + family-cluster bootstrap (2000 resamples) + Holm across the 2-contrast confirmatory family (eval_stats.py reuses vetted research_v2 modules); proposed-vs-C1 null reported verbatim (Holm-adj p=1.0)."
+    },
+    "P02-T15": {
+      "status": "DONE_ENGINEERING",
+      "evidence": [
+        "research_v3/methods/p02/benchmark.py",
+        "research_artifacts_v3/runs/p02/manifest.json"
+      ],
+      "note": "Source-to-table: benchmark CLI writes instances/predictions/study_metric + SHA256 manifest; byte-identical deterministic regeneration test-enforced; no hand-entered metrics; independent external replication deferred to P02-T18."
+    },
+    "P02-T16": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p02/main.md"],
+      "note": "Negative results and threats-to-validity recorded in the manuscript and LN-01/LN-02/LN-06 asset-overlap rows exist in research_v3/governance/claims/claims_ledger.csv, but no dedicated P02 falsification-review/collision-audit artifact exists (cf. P03 failure_review.md); research-lead review outstanding."
+    },
+    "P02-T17": {
+      "status": "ENGINEERING_PASS",
+      "evidence": ["research_v3/manuscripts/p02/main.md"],
+      "note": "Manuscript skeleton at SKELETON_CODE_READY: methods/limitations/appendix drafted, numeric cells templated as {{CELL:...}} for the render pipeline (not yet rendered), figures not built."
+    },
+    "P02-T18": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p02/main.md"],
+      "note": "Rerun command published in appendix (python -m research_v3.methods.p02.benchmark ...); independent external reviewer reproduction from a clean clone requires a human reviewer."
+    },
+    "P02-T19": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p02/main.md"],
+      "note": "Human-only: ethics/human-annotation/license approvals require documented actual signatures; none exist and none may be simulated."
+    },
+    "P02-T20": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p02/main.md"],
+      "note": "Human-only: novelty/nearest-work signoff by the research lead; agent surfaced related-work and BLOCKED card but must not certify novelty."
+    },
+    "P02-T21": {
+      "status": "BLOCKED",
+      "evidence": ["research_v3/manuscripts/p02/main.md"],
+      "note": "Human-only: coauthor/venue/rights signoff; EC-TEL fit and rank verification pending; no submission claims made."
+    }
+  },
+  "summary": {
+    "done_engineering": 14,
+    "engineering_pass": 1,
+    "blocked": 6,
+    "note": "P02 executed as a certified synthetic planning benchmark per its frozen prereg (external data gate BLOCKED). All exact-solver invariants hold on the executed matrix; manuscript is a skeleton with render-pending cells; T16/T18 and human-only T19-T21 remain blocked."
+  }
+}

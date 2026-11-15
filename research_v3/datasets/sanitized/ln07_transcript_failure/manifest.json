@@ -1,0 +1,41 @@
+{
+  "family": "ln07_transcript_failure",
+  "files": [
+    {
+      "path": "/home/clue/Documents/luuniensuki-lms/research_v3/datasets/sanitized/ln07_transcript_failure/seed11.jsonl",
+      "seed": 11,
+      "sha256": "b052b7a82385033caf3ffe3572c1ca797c969cc946749d8abd9a474928c7b0da"
+    },
+    {
+      "path": "/home/clue/Documents/luuniensuki-lms/research_v3/datasets/sanitized/ln07_transcript_failure/seed23.jsonl",
+      "seed": 23,
+      "sha256": "87b5f8473633560e23a29e9c380d9b07cd31431cc5e9f2bdbf5fa8ad77a9e88c"
+    },
+    {
+      "path": "/home/clue/Documents/luuniensuki-lms/research_v3/datasets/sanitized/ln07_transcript_failure/seed37.jsonl",
+      "seed": 37,
+      "sha256": "2a04d376aa59be1b5e12c596942a786ae12b64bc153cb9b29660e74f1168b3e4"
+    }
+  ],
+  "label_counts": {
+    "choose_accessible_audio_text": 18,
+    "choose_feasible_modality": 36,
+    "reject_audio_equivalence": 18
+  },
+  "n_cases_per_seed": 24,
+  "n_cases_total": 72,
+  "oracle_labels": [
+    "choose_accessible_audio_text",
+    "choose_accessible_fallback",
+    "choose_feasible_modality",
+    "reject_audio_equivalence"
+  ],
+  "provenance": "V3-authored sanitized synthetic stress suite; frozen V2 T3 untouched",
+  "schema": "research_v3.sanitized_dataset/v1",
+  "suite_sha256": "76ac3139c5dcc1d7a0e1a60b3b90cb7233e818cd1e0814186b01c57ec13660a9",
+  "task_ids": [
+    "V3-G15",
+    "V3-G16",
+    "V3-G17"
+  ]
+}

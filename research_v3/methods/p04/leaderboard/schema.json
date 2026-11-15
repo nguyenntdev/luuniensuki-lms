@@ -1,0 +1,28 @@
+{
+  "fields": {
+    "accuracy": "mean correct over n_scored; None when denominator empty",
+    "annotation_gap_rows": "n_not_applicable - n_no_activity (genuine unknown-category rows)",
+    "auc": "rank AUC over n_scored; None when a class absent",
+    "auc_ci95": "learner-cluster bootstrap 95% CI (1000 resamples, seed 42)",
+    "auc_degradation_vs_baseline": "same-predictor S0 in-domain AUC minus this cell AUC",
+    "coverage": "n_scored / n_total",
+    "dataset_id": "rights-approved dataset identifier",
+    "denominators": "n_total/n_scored/n_abstain/n_not_applicable/n_no_activity; n_scored = n_total - n_not_applicable - n_abstain",
+    "ece": "expected calibration error over scored cases (10 equal-width bins)",
+    "mapping_coverage": "1 - n_not_applicable / n_total",
+    "predictor": "registered predictor name (C0_majority, C1_logistic_regression, ...)",
+    "scenario": "frozen scenario name from protocols/pre_registration.yaml",
+    "small_n_warning": "true when n_scored < 100; such cells are exploratory",
+    "status": "MEASURED | BLOCKED_FIT_FAILURE",
+    "stratum": "S0 reference | S1 partial mappings | S2 unknown categories | S3 domain shift | S4 cold start | A1-A4 ablations",
+    "worst_group": "lowest-accuracy demographic group with n >= 20"
+  },
+  "rules": [
+    "ABSTAIN is never scored as 0; it is reported in n_abstain and coverage",
+    "NOT_APPLICABLE cases are excluded and reported; never imputed",
+    "empty denominator yields None, never a fabricated number",
+    "all cells carry measured provenance from runs/p04/reference_eval/leaderboard.json"
+  ],
+  "schema_version": "p04-leaderboard-1.0",
+  "unit": "one row per (predictor, stratum, scenario) cell"
+}

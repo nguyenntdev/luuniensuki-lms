@@ -1,0 +1,38 @@
+{
+  "gate": "MANDATORY_INDEPENDENCE_GATE",
+  "paper_id": "P04",
+  "decided_at": "2026-11-15",
+  "decided_by": "P04 code agent (deterministic protocol check; human signoff P04-T20 still required)",
+  "decision": "PROCEED",
+  "comparison_basis": {
+    "p01_primary_hypothesis": "A selective risk-calibrated transfer GATE (method) avoids negative transfer when the target platform has sparse learners and only partially aligned skills; H0: selective mapping will not improve worst-group calibrated error over the strongest KT baseline.",
+    "p01_primary_outcome_table": "Target-domain AUC / AUPRC / NLL / ECE / Brier / negative-transfer frequency / coverage-risk area / worst-decile AUC for ONE proposed transfer method vs its baseline matrix (DKT/SAKT/AKT/pooled KT/source-only/target-only), on ASSISTments/Junyi/EdNet-style transfer pairs. The compared unit is the proposed METHOD.",
+    "p04_primary_hypothesis": "A portable, frozen, shift-aware BENCHMARK PROTOCOL (mapping-noise injectors over a verified ontology bridge, with NOT_APPLICABLE and ABSTAIN output classes) reveals systematic, reproducible failure modes of a POPULATION of predictors under incomplete/ambiguous skill mappings; H0: no reliable new failure mode beyond known cross-domain splits, or the benchmark cannot be released lawfully.",
+    "p04_primary_outcome_table": "Per-stratum degradation matrix: for each locked shift stratum (S1 partial mappings, S2 unknown target categories, S3 domain shift, S4 cold-start, plus A1-A4 true-removal ablations), report [AUC_delta, ECE, worst-group deterioration, coverage, rank stability] for EVERY submitted predictor, with bootstrap CIs. The compared unit is the EVALUATION PROTOCOL, not any single model.",
+    "overlap_of_sample": "Both papers MAY reuse OULAD and UCI student-performance; but P01's estimand conditions on its transfer gate's decisions while P04's estimand is the stratum-conditional degradation curve of arbitrary predictors. Sample overlap alone is not a primary-outcome collision under the deduplication protocol.",
+    "overlap_of_rq": "P01 asks 'does my method transfer safely'; P04 asks 'does the evaluation protocol expose failures that single-split evaluation hides'. Different estimands, different principal tables, different nulls."
+  },
+  "collision_check": {
+    "same_primary_hypothesis_as_p01": false,
+    "same_primary_outcome_table_as_p01": false,
+    "salami_slicing_risk": "P04 could degenerate into re-reporting P01's benchmark if its tables only scored P01's own gate. Guard: P04 evaluates a fixed reference population (C0 majority, C1 logistic regression, plus oracle/heuristic/random mapping controls) and publishes the leaderboard schema; P01's gate may later SUBMIT to the P04 leaderboard as one entry among many, but no P04 primary cell is computed from a P01-specific method.",
+    "other_paper_collisions_checked": [
+      "P02 (path planning): disjoint outcome (planner regret), no collision.",
+      "P03 (scaffolding): disjoint outcome (tutor hints), no collision.",
+      "P05 (forgetting KT): shares KT metrics but hypothesis is temporal retention, not mapping-shift robustness; primary tables differ.",
+      "P08 (gamification): flagged conditional like P04; disjoint outcome domain (badge integrity), no collision."
+    ]
+  },
+  "novelty_conditions_self_imposed": [
+    "The protocol (splits, strata, injectors, metrics, denominators) is frozen in a versioned pre-registration before any test scoring; benchmark authors cannot tune on frozen test partitions.",
+    "At least one REAL dataset (OULAD 32,593 rows, provenance+license captured) backs every scenario family; no oracle/synthetic stratum contributes to the primary external score.",
+    "Reference baselines (C0 majority, C1 logistic regression) produce HONEST measured numbers, never illustrative placeholders; results may be null and will be reported as such.",
+    "NOT_APPLICABLE and ABSTAIN are first-class protocol outputs distinct from negative predictions, with explicit scoring rules."
+  ],
+  "null_if_not_supported": "If the frozen strata show no reliable degradation pattern beyond known cross-domain splits (i.e. bootstrap CIs of AUC_delta include 0 across all strata and rank stability is perfect), P04 must publish the negative result and the benchmark as its contribution, NOT claim a new failure mode.",
+  "consequences": {
+    "PROCEED": "Implement benchmark harness + protocol + reference evaluation under tasks P04-T02..P04-T18. P04-T19/T20/T21 remain BLOCKED (human-only).",
+    "revisit_trigger": "If P01's primary outcome table is later extended to publish a reusable multi-model leaderboard with the same strata/estimand, P04 must re-run this gate and may be downgraded to MERGE_INTO_P01."
+  },
+  "decision_justification": "P04's contribution is a benchmark-protocol artifact (frozen shift strata + ontology bridge + scoring contract + leaderboard), whereas P01's contribution is a transfer METHOD judged on standard metrics. The primary outcome tables differ structurally: P01's table has rows=baselines, columns=target metrics for its gate; P04's table has rows=shift strata x ablations, columns=(degradation, ECE, worst-group, coverage, rank stability) for every predictor in a population. Because the deduplication protocol (LN_TO_P_MAPPING.md rule 2/3) forbids sharing 'the same primary hypothesis plus primary outcome table' - which these do not share - and because P04 releases a reusable artifact P01 does not, P04 qualifies as a genuinely distinct conditional project. PROCEED, conditional on the artifact being real (licensed data, measured numbers, frozen protocol)."
+}

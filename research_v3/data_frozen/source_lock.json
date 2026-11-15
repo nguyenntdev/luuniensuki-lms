@@ -1,0 +1,2074 @@
+{
+  "dirty_paths": [
+    "github/workflows/research-v2.yml",
+    ".github/workflows/research-v3.yml",
+    ".gitignore",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/00_START_HERE/PACKAGE_MANIFEST.json",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/00_START_HERE/README.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/01_AUDIT/GITHUB_BASELINE_AND_GAPS.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/01_AUDIT/HIGH_PRIORITY_AUDIT_FINDINGS.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/01_AUDIT/LN_TO_P_MAPPING.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/02_ARCHITECTURE/RESEARCH_V3_ARCHITECTURE.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/03_DATA/DATA_ACQUISITION_AND_LICENSES.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/04_METHODOLOGY/ETHICS_AND_INTEGRITY.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/04_METHODOLOGY/NOVELTY_AND_LITERATURE.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/04_METHODOLOGY/SCIENTIFIC_EVALUATION.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P01_Risk_Controlled_Knowledge_Transfer_under_Partial_Skill_Align.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P02_Constraint_Aware_Learning_Path_Planning_with_Alternative_Act.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P03_Evidence_Calibrated_Pedagogical_Scaffolding_for_AI_Tutors.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P04_CurriculumShiftBench_Evaluation_under_Incomplete_Skill_Mappi.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P05_Temporal_Forgetting_Aware_Knowledge_Tracing_and_Review_Sched.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P06_Budget_Constrained_Teacher_Intervention_Prioritization.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P07_Resource_Aware_Multimodal_Learning_Object_Selection.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P08_Evidence_Grounded_Mastery_Gamification.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P09_Provenance_Aware_Interactive_Cultural_Heritage_Exploration.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P10_Thi_t_k_ti_n_tr_nh_h_c_li_u_s_xo_n_c_li_n_th_ng_l_p_10_12_tr.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P11_X_y_d_ng_v_ki_m_nh_rubric_nh_gi_n_ng_l_c_suy_lu_n_l_ch_s_tro.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P12_Th_m_nh_ngu_n_t_li_u_v_h_th_ng_h_a_b_ng_ch_ng_l_ch_s_ph_c_v_.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P13_Ph_n_t_ch_h_nh_vi_t_i_u_ch_nh_h_c_t_p_trong_m_i_tr_ng_h_c_tr.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P14_Thi_t_k_v_nh_gi_h_c_li_u_di_s_n_a_ph_ng_th_c_theo_Universal_.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/06_TASK_TRACKER/PORTFOLIO.json",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/06_TASK_TRACKER/STATUS_AND_DEPENDENCY_POLICY.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/06_TASK_TRACKER/V3_TASK_REGISTER.csv",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/06_TASK_TRACKER/V3_TASK_REGISTER.json",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/07_AGENTS/10_AGENT_EXECUTION_PLAN.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/07_AGENTS/GOAL_FOR_CODEAGENT.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/08_RELEASE/COMMANDS_AND_CI_SPEC.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/08_RELEASE/RELEASE_GATES.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/09_REFERENCE/ANNOTATION_CARD_TEMPLATE.md",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/09_REFERENCE/CLAIMS_LEDGER_TEMPLATE.csv",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/09_REFERENCE/DATASET_REGISTRY_TEMPLATE.yaml",
+    "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/09_REFERENCE/LITERATURE_MATRIX_TEMPLATE.csv",
+    "artifacts/implementation/W02/W02_A10_162_publication_audit_cli.json",
+    "research_artifacts_v2/release/BENCHMARK_APPENDIX.md",
+    "research_artifacts_v2/runs/LN-01/T3/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-01/T3/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-02/T3/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-03/T3/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a1/seed11/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a1/seed23/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a1/seed37/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a2/seed11/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a2/seed23/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a2/seed37/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a3/seed11/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a3/seed23/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a3/seed37/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_b0/seed11/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_b0/seed23/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_b0/seed37/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_c1/seed11/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_c1/seed23/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_c1/seed37/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/proposed/seed11/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/proposed/seed23/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-04/T3/proposed/seed37/metrics.json",
+    "research_artifacts_v2/runs/LN-04/T3/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-05/T3/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-06/T3/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-07/T3/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-08/T3/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-09/T3/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/ablations_a1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/ablations_a1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/ablations_a1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/ablations_a2/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/ablations_a2/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/ablations_a2/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/ablations_a3/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/ablations_a3/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/ablations_a3/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/baselines_b0/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/baselines_b0/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/baselines_b0/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/baselines_c1/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/baselines_c1/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/baselines_c1/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/proposed/seed11/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/proposed/seed23/run_manifest.json",
+    "research_artifacts_v2/runs/LN-10/T3S/proposed/seed37/run_manifest.json",
+    "research_artifacts_v2/runs/run_index.json",
+    "research_artifacts_v3/release/SCIENTIFIC_READINESS.md",
+    "research_artifacts_v3/release/p10_progress.json",
+    "research_artifacts_v3/release/progress.json",
+    "research_artifacts_v3/runs/p01/G/calibration_C1_regularized_logistic.json",
+    "research_artifacts_v3/runs/p01/G/calibration_proposed_rc_stg.json",
+    "research_artifacts_v3/runs/p01/G/experiment_card.json",
+    "research_artifacts_v3/runs/p01/G/features/vocabulary.json",
+    "research_artifacts_v3/runs/p01/G/metrics_A1_no_gate.json",
+    "research_artifacts_v3/runs/p01/G/metrics_A2_no_fail_gate.json",
+    "research_artifacts_v3/runs/p01/G/metrics_A3_no_abstention.json",
+    "research_artifacts_v3/runs/p01/G/metrics_A4_random_gate.json",
+    "research_artifacts_v3/runs/p01/G/metrics_A5_shuffled_thresholds.json",
+    "research_artifacts_v3/runs/p01/G/metrics_C0_majority_sanity.json",
+    "research_artifacts_v3/runs/p01/G/metrics_C1_regularized_logistic.json",
+    "research_artifacts_v3/runs/p01/G/metrics_proposed_rc_stg.json",
+    "research_artifacts_v3/runs/p01/G/null_result.json",
+    "research_artifacts_v3/runs/p01/G/predictions_A1_no_gate.jsonl",
+    "research_artifacts_v3/runs/p01/G/predictions_A2_no_fail_gate.jsonl",
+    "research_artifacts_v3/runs/p01/G/predictions_A3_no_abstention.jsonl",
+    "research_artifacts_v3/runs/p01/G/predictions_A4_random_gate.jsonl",
+    "research_artifacts_v3/runs/p01/G/predictions_A5_shuffled_thresholds.jsonl",
+    "research_artifacts_v3/runs/p01/G/predictions_C0_majority_sanity.jsonl",
+    "research_artifacts_v3/runs/p01/G/predictions_C1_regularized_logistic.jsonl",
+    "research_artifacts_v3/runs/p01/G/predictions_proposed_rc_stg.jsonl",
+    "research_artifacts_v3/runs/p01/G/robustness_C1_regularized_logistic.json",
+    "research_artifacts_v3/runs/p01/G/robustness_proposed_rc_stg.json",
+    "research_artifacts_v3/runs/p01/G/sealed_gold.jsonl",
+    "research_artifacts_v3/runs/p01/G/splits_manifest.json",
+    "research_artifacts_v3/runs/p01/G/statistical_tests.json",
+    "research_artifacts_v3/runs/p01/T/calibration_C1_regularized_logistic.json",
+    "research_artifacts_v3/runs/p01/T/calibration_proposed_rc_stg.json",
+    "research_artifacts_v3/runs/p01/T/experiment_card.json",
+    "research_artifacts_v3/runs/p01/T/features/vocabulary.json",
+    "research_artifacts_v3/runs/p01/T/metrics_A1_no_gate.json",
+    "research_artifacts_v3/runs/p01/T/metrics_A2_no_fail_gate.json",
+    "research_artifacts_v3/runs/p01/T/metrics_A3_no_abstention.json",
+    "research_artifacts_v3/runs/p01/T/metrics_A4_random_gate.json",
+    "research_artifacts_v3/runs/p01/T/metrics_A5_shuffled_thresholds.json",
+    "research_artifacts_v3/runs/p01/T/metrics_C0_majority_sanity.json",
+    "research_artifacts_v3/runs/p01/T/metrics_C1_regularized_logistic.json",
+    "research_artifacts_v3/runs/p01/T/metrics_proposed_rc_stg.json",
+    "research_artifacts_v3/runs/p01/T/null_result.json",
+    "research_artifacts_v3/runs/p01/T/predictions_A1_no_gate.jsonl",
+    "research_artifacts_v3/runs/p01/T/predictions_A2_no_fail_gate.jsonl",
+    "research_artifacts_v3/runs/p01/T/predictions_A3_no_abstention.jsonl",
+    "research_artifacts_v3/runs/p01/T/predictions_A4_random_gate.jsonl",
+    "research_artifacts_v3/runs/p01/T/predictions_A5_shuffled_thresholds.jsonl",
+    "research_artifacts_v3/runs/p01/T/predictions_C0_majority_sanity.jsonl",
+    "research_artifacts_v3/runs/p01/T/predictions_C1_regularized_logistic.jsonl",
+    "research_artifacts_v3/runs/p01/T/predictions_proposed_rc_stg.jsonl",
+    "research_artifacts_v3/runs/p01/T/robustness_C1_regularized_logistic.json",
+    "research_artifacts_v3/runs/p01/T/robustness_proposed_rc_stg.json",
+    "research_artifacts_v3/runs/p01/T/sealed_gold.jsonl",
+    "research_artifacts_v3/runs/p01/T/splits_manifest.json",
+    "research_artifacts_v3/runs/p01/T/statistical_tests.json",
+    "research_artifacts_v3/runs/p01/hyperparameter_search.json",
+    "research_artifacts_v3/runs/p01/status.json",
+    "research_artifacts_v3/runs/p02/instances.jsonl",
+    "research_artifacts_v3/runs/p02/manifest.json",
+    "research_artifacts_v3/runs/p02/predictions.jsonl",
+    "research_artifacts_v3/runs/p02/study_metric.json",
+    "research_artifacts_v3/runs/p03/manifests/manifest_v1.json",
+    "research_artifacts_v3/runs/p03/reports/decisions_v1.json",
+    "research_artifacts_v3/runs/p03/reports/paired_stats_v1.json",
+    "research_artifacts_v3/runs/p03/reports/sealed_labels_v1.json",
+    "research_artifacts_v3/runs/p03/reports/summaries_v1.json",
+    "research_artifacts_v3/runs/p04/independence_decision.json",
+    "research_artifacts_v3/runs/p04/reference_eval/experiment_card.json",
+    "research_artifacts_v3/runs/p04/reference_eval/leaderboard.json",
+    "research_artifacts_v3/runs/p04/rights/raw_manifest.json",
+    "research_artifacts_v3/runs/p04/status/p04_status.json",
+    "research_artifacts_v3/runs/p05/ablations.json",
+    "research_artifacts_v3/runs/p05/attempts_manifest.json",
+    "research_artifacts_v3/runs/p05/experiment_card.json",
+    "research_artifacts_v3/runs/p05/run_manifest.json",
+    "research_artifacts_v3/runs/p05/scheduling.json",
+    "research_artifacts_v3/runs/p05/statistics.json",
+    "research_artifacts_v3/runs/p05/strata.json",
+    "research_artifacts_v3/runs/p06/ablations.json",
+    "research_artifacts_v3/runs/p06/dataset_card.json",
+    "research_artifacts_v3/runs/p06/evidence_cards.json",
+    "research_artifacts_v3/runs/p06/experiment_card.json",
+    "research_artifacts_v3/runs/p06/noncausal_attestation.json",
+    "research_artifacts_v3/runs/p06/null_results.json",
+    "research_artifacts_v3/runs/p06/paired_tests.json",
+    "research_artifacts_v3/runs/p06/rerun_check.json",
+    "research_artifacts_v3/runs/p06/results.json",
+    "research_artifacts_v3/runs/p06/run_meta.json",
+    "research_artifacts_v3/runs/p06/split_manifest.json",
+    "research_artifacts_v3/runs/p06/summary.json",
+    "research_artifacts_v3/runs/p07/BLOCKED_TASKS.md",
+    "research_artifacts_v3/runs/p07/p07-wave1/SHA256SUMS.txt",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/external_smithsonian_fsg__A1_no_affordance_coverage.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/external_smithsonian_fsg__A2_no_device_constraints.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/external_smithsonian_fsg__A5_no_rights_filtering.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/external_smithsonian_fsg__b05_random_eligible.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/external_smithsonian_fsg__c0_url_present.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/external_smithsonian_fsg__c1_static_image_fallback.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/external_smithsonian_fsg__proposed.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/stress_synthetic__A1_no_affordance_coverage.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/stress_synthetic__A2_no_device_constraints.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/stress_synthetic__A5_no_rights_filtering.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/stress_synthetic__b05_random_eligible.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/stress_synthetic__c0_url_present.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/stress_synthetic__c1_static_image_fallback.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/predictions/stress_synthetic__proposed.jsonl",
+    "research_artifacts_v3/runs/p07/p07-wave1/results.json",
+    "research_artifacts_v3/runs/p08/evaluation_manifest.json",
+    "research_artifacts_v3/runs/p08/evaluation_results.json",
+    "research_artifacts_v3/runs/p08/independence_decision.json",
+    "research_artifacts_v3/runs/p08/task_status.json",
+    "research_artifacts_v3/runs/p09/audit/README.md",
+    "research_artifacts_v3/runs/p09/audit/audit_sample.json",
+    "research_artifacts_v3/runs/p09/corpus/claims.jsonl",
+    "research_artifacts_v3/runs/p09/corpus/corpus_manifest.json",
+    "research_artifacts_v3/runs/p09/corpus/discovery_response.json",
+    "research_artifacts_v3/runs/p09/corpus/query.sparql",
+    "research_artifacts_v3/runs/p09/eval/counterexamples.json",
+    "research_artifacts_v3/runs/p09/eval/decisions_c0_surface_everything.jsonl",
+    "research_artifacts_v3/runs/p09/eval/decisions_c1_keyword_match.jsonl",
+    "research_artifacts_v3/runs/p09/eval/decisions_proposed.jsonl",
+    "research_artifacts_v3/runs/p09/eval/metrics.json",
+    "research_artifacts_v3/runs/p09/eval/verification_outcomes.json",
+    "research_artifacts_v3/runs/p09/manifest.json",
+    "research_artifacts_v3/runs/p10/p10_run_20261115T112619Z.json",
+    "research_artifacts_v3/runs/p10/p10_run_20261115T112719Z.json",
+    "research_artifacts_v3/runs/p11/status_manifest.json",
+    "research_artifacts_v3/runs/p12/conflict_log.md",
+    "research_artifacts_v3/runs/p12/dataset_cards_snapshot.yaml",
+    "research_artifacts_v3/runs/p12/ingest_manifest.json",
+    "research_artifacts_v3/runs/p12/prereg_snapshot.yaml",
+    "research_artifacts_v3/runs/p12/progress.json",
+    "research_artifacts_v3/runs/p12/run_c0/manifest.json",
+    "research_artifacts_v3/runs/p12/run_c1/manifest.json",
+    "research_artifacts_v3/runs/p12/run_proposed/ledger.jsonl",
+    "research_artifacts_v3/runs/p12/run_proposed/manifest.json",
+    "research_artifacts_v3/runs/p12/summary.json",
+    "research_artifacts_v3/runs/p12/wikidata_probe.json",
+    "research_artifacts_v3/runs/p13/FINDINGS.md",
+    "research_artifacts_v3/runs/p13/experiment_card.json",
+    "research_artifacts_v3/runs/p13/metrics_full.json",
+    "research_artifacts_v3/runs/p13/summary.json",
+    "research_artifacts_v3/runs/p14/ablation_results.json",
+    "research_artifacts_v3/runs/p14/audit_report.json",
+    "research_artifacts_v3/runs/p14/audit_report.sha256",
+    "research_artifacts_v3/runs/p14/baseline_results.json",
+    "research_artifacts_v3/runs/p14/claims_ledger.json",
+    "research_artifacts_v3/runs/p14/experiment_card.json",
+    "research_artifacts_v3/runs/p14/metrics_summary.json",
+    "research_artifacts_v3/runs/p14/overlap_decision.json",
+    "research_artifacts_v3/runs/p14/prereg_snapshot.json",
+    "research_artifacts_v3/runs/p14/run_manifest.sha256",
+    "research_v2/reports/G0_repo_audit.json",
+    "research_v2/scripts/run_matrix.py",
+    "research_v3/README.md",
+    "research_v3/__init__.py",
+    "research_v3/annotations/tasks/p11_annotation_pack/ANNOTATION_CARD.md",
+    "research_v3/annotations/tasks/p11_annotation_pack/CODEBOOK.md",
+    "research_v3/annotations/tasks/p11_annotation_pack/README.md",
+    "research_v3/annotations/tasks/p11_annotation_pack/adjudication_log_template.csv",
+    "research_v3/annotations/tasks/p11_annotation_pack/adjudication_protocol.md",
+    "research_v3/annotations/tasks/p11_annotation_pack/assignment_template.csv",
+    "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC01_zero_evidence.json",
+    "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC02_asserted_only.json",
+    "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC03_described_cited.json",
+    "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC04_full_chain.json",
+    "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC05_fabricated_citation.json",
+    "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC06_refutation_handled.json",
+    "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/build_cases.py",
+    "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/expected_levels.csv",
+    "research_v3/annotations/tasks/p11_annotation_pack/make_wide_matrix.py",
+    "research_v3/annotations/tasks/p11_annotation_pack/ratings_template.csv",
+    "research_v3/baselines/__init__.py",
+    "research_v3/baselines/adapters/__init__.py",
+    "research_v3/baselines/registry/__init__.py",
+    "research_v3/baselines/registry/registry.yaml",
+    "research_v3/baselines/verification/__init__.py",
+    "research_v3/baselines/verification/verify_baselines.py",
+    "research_v3/config/papers/paper_datasets.yaml",
+    "research_v3/contracts/__init__.py",
+    "research_v3/contracts/cards.py",
+    "research_v3/data_frozen/source_lock.json",
+    "research_v3/data_frozen/source_lock_20261115T133004Z.json",
+    "research_v3/datasets/__init__.py",
+    "research_v3/datasets/adapters/__init__.py",
+    "research_v3/datasets/adapters/oulad.py",
+    "research_v3/datasets/fetchers/__init__.py",
+    "research_v3/datasets/fetchers/fetch.py",
+    "research_v3/datasets/registry.py",
+    "research_v3/datasets/registry.yaml",
+    "research_v3/datasets/registry/p03.yaml",
+    "research_v3/datasets/sanitized/__init__.py",
+    "research_v3/datasets/sanitized/generate_stress.py",
+    "research_v3/datasets/sanitized/ln06_external_solver_parity/manifest.json",
+    "research_v3/datasets/sanitized/ln06_external_solver_parity/seed11.jsonl",
+    "research_v3/datasets/sanitized/ln06_external_solver_parity/seed23.jsonl",
+    "research_v3/datasets/sanitized/ln06_external_solver_parity/seed37.jsonl",
+    "research_v3/datasets/sanitized/ln07_transcript_failure/manifest.json",
+    "research_v3/datasets/sanitized/ln07_transcript_failure/seed11.jsonl",
+    "research_v3/datasets/sanitized/ln07_transcript_failure/seed23.jsonl",
+    "research_v3/datasets/sanitized/ln07_transcript_failure/seed37.jsonl",
+    "research_v3/datasets/sanitized/ln09_small_cohort/manifest.json",
+    "research_v3/datasets/sanitized/ln09_small_cohort/seed11.jsonl",
+    "research_v3/datasets/sanitized/ln09_small_cohort/seed23.jsonl",
+    "research_v3/datasets/sanitized/ln09_small_cohort/seed37.jsonl",
+    "research_v3/eval/__init__.py",
+    "research_v3/eval/calibration.py",
+    "research_v3/eval/leakage.py",
+    "research_v3/eval/splitters.py",
+    "research_v3/eval/statistics.py",
+    "research_v3/experiments/p01/__init__.py",
+    "research_v3/experiments/p01/hyperparameter_sweep.py",
+    "research_v3/experiments/p01/preregistration.yaml",
+    "research_v3/experiments/p01/run_matrix.yaml",
+    "research_v3/experiments/p01/run_p01.py",
+    "research_v3/experiments/p01/splits.yaml",
+    "research_v3/experiments/p02/pre_registration.yaml",
+    "research_v3/experiments/p02/run_matrix.yaml",
+    "research_v3/experiments/p02/splits.yaml",
+    "research_v3/experiments/p03/pre_registration.yaml",
+    "research_v3/experiments/p03/run_matrix.py",
+    "research_v3/experiments/p05/blocked_cards.yaml",
+    "research_v3/experiments/p05/dataset_cards.yaml",
+    "research_v3/experiments/p05/pre_registration.yaml",
+    "research_v3/experiments/p06/__init__.py",
+    "research_v3/experiments/p06/pre_registration.yaml",
+    "research_v3/experiments/p06/run_experiment.py",
+    "research_v3/experiments/p06/run_matrix.yaml",
+    "research_v3/experiments/p07/__init__.py",
+    "research_v3/experiments/p07/matrix.yaml",
+    "research_v3/experiments/p07/prereg.yaml",
+    "research_v3/experiments/p07/run_matrix.py",
+    "research_v3/experiments/p08/PROBES.md",
+    "research_v3/experiments/p08/pre_registration.yaml",
+    "research_v3/experiments/p09/__init__.py",
+    "research_v3/experiments/p09/baseline_cards.yaml",
+    "research_v3/experiments/p09/matrix.yaml",
+    "research_v3/experiments/p09/pre_registration.yaml",
+    "research_v3/experiments/p09/run_p09.py",
+    "research_v3/experiments/p10/closest_published_blocker.yaml",
+    "research_v3/experiments/p10/pre_registration.yaml",
+    "research_v3/experiments/p10/run_matrix.yaml",
+    "research_v3/experiments/p11/__init__.py",
+    "research_v3/experiments/p11/p11_status.py",
+    "research_v3/experiments/p12/__init__.py",
+    "research_v3/experiments/p13/dataset_provenance.yaml",
+    "research_v3/experiments/p13/pre_registration.yaml",
+    "research_v3/experiments/p13/run_matrix.yaml",
+    "research_v3/experiments/p14/P14_accessibility_test_plan.md",
+    "research_v3/experiments/p14/pre_registration.yaml",
+    "research_v3/experiments/p14/run_experiment.py",
+    "research_v3/governance/G20_HUMAN_CLEARANCE.md",
+    "research_v3/governance/audit_log/request_2026q1-rerun.json",
+    "research_v3/governance/claims/claims_ledger.csv",
+    "research_v3/manuscripts/p01/main.tex",
+    "research_v3/manuscripts/p02/main.md",
+    "research_v3/manuscripts/p03/failure_review.md",
+    "research_v3/manuscripts/p03/main.md",
+    "research_v3/manuscripts/p04/MANUSCRIPT.md",
+    "research_v3/manuscripts/p06/main.tex",
+    "research_v3/manuscripts/p06/manuscript.md",
+    "research_v3/manuscripts/p06/tables/ablations.md",
+    "research_v3/manuscripts/p06/tables/main_results.md",
+    "research_v3/manuscripts/p06/tables/paired_tests.md",
+    "research_v3/manuscripts/p06/tables/render_tables.py",
+    "research_v3/manuscripts/p07/DATA_STATUS.md",
+    "research_v3/manuscripts/p07/FAILURE_AND_COLLISION_REVIEW.md",
+    "research_v3/manuscripts/p07/MANUSCRIPT_SKELETON.md",
+    "research_v3/manuscripts/p07/METHOD.md",
+    "research_v3/manuscripts/p08/MANUSCRIPT.md",
+    "research_v3/manuscripts/p09/MANUSCRIPT.md",
+    "research_v3/manuscripts/p10/EXPERT_FORM.md",
+    "research_v3/manuscripts/p10/MANUSCRIPT.md",
+    "research_v3/manuscripts/p10/TASK_LEDGER.yaml",
+    "research_v3/manuscripts/p11/MANUSCRIPT.md",
+    "research_v3/manuscripts/p12/MANUSCRIPT.md",
+    "research_v3/manuscripts/p13/limitations.md",
+    "research_v3/manuscripts/p13/main.md",
+    "research_v3/manuscripts/p14/MANUSCRIPT.md",
+    "research_v3/methods/__init__.py",
+    "research_v3/methods/p01/METHOD.md",
+    "research_v3/methods/p01/__init__.py",
+    "research_v3/methods/p01/features.py",
+    "research_v3/methods/p01/metrics.py",
+    "research_v3/methods/p01/models.py",
+    "research_v3/methods/p01/pipeline.py",
+    "research_v3/methods/p01/types.py",
+    "research_v3/methods/p02/METHOD.md",
+    "research_v3/methods/p02/__init__.py",
+    "research_v3/methods/p02/benchmark.py",
+    "research_v3/methods/p02/eval_stats.py",
+    "research_v3/methods/p02/generator.py",
+    "research_v3/methods/p02/metrics.py",
+    "research_v3/methods/p02/oracle.py",
+    "research_v3/methods/p02/problems.py",
+    "research_v3/methods/p02/solvers.py",
+    "research_v3/methods/p03/METHOD.md",
+    "research_v3/methods/p03/__init__.py",
+    "research_v3/methods/p03/baselines.py",
+    "research_v3/methods/p03/dataset.py",
+    "research_v3/methods/p03/literature_matrix.csv",
+    "research_v3/methods/p03/metrics.py",
+    "research_v3/methods/p03/policy.py",
+    "research_v3/methods/p03/types.py",
+    "research_v3/methods/p04/METHOD.md",
+    "research_v3/methods/p04/__init__.py",
+    "research_v3/methods/p04/baselines.py",
+    "research_v3/methods/p04/bench.py",
+    "research_v3/methods/p04/bridge.py",
+    "research_v3/methods/p04/datasheets/P04_datasheet.md",
+    "research_v3/methods/p04/leaderboard/schema.json",
+    "research_v3/methods/p04/protocols/p04_splits.json",
+    "research_v3/methods/p04/protocols/pre_registration.yaml",
+    "research_v3/methods/p04/rights.py",
+    "research_v3/methods/p04/run_reference_eval.py",
+    "research_v3/methods/p04/scenarios.py",
+    "research_v3/methods/p04/strata.py",
+    "research_v3/methods/p05/METHOD.md",
+    "research_v3/methods/p05/__init__.py",
+    "research_v3/methods/p05/metrics_p05.py",
+    "research_v3/methods/p05/models.py",
+    "research_v3/methods/p05/run_p05_matrix.py",
+    "research_v3/methods/p05/temporal_data.py",
+    "research_v3/methods/p06/METHOD.md",
+    "research_v3/methods/p06/__init__.py",
+    "research_v3/methods/p06/ablations.md",
+    "research_v3/methods/p06/metrics.py",
+    "research_v3/methods/p06/noncausal_claims.md",
+    "research_v3/methods/p06/risk_model.py",
+    "research_v3/methods/p06/selection.py",
+    "research_v3/methods/p07/__init__.py",
+    "research_v3/methods/p07/ablations.py",
+    "research_v3/methods/p07/affordances.py",
+    "research_v3/methods/p07/baselines.py",
+    "research_v3/methods/p07/data/smithsonian_fsg_external.jsonl",
+    "research_v3/methods/p07/external.py",
+    "research_v3/methods/p07/metrics.py",
+    "research_v3/methods/p07/runner.py",
+    "research_v3/methods/p07/selector.py",
+    "research_v3/methods/p07/synthetic_generator.py",
+    "research_v3/methods/p08/METHOD.md",
+    "research_v3/methods/p08/__init__.py",
+    "research_v3/methods/p08/attacks.py",
+    "research_v3/methods/p08/attestation.py",
+    "research_v3/methods/p08/defender.py",
+    "research_v3/methods/p08/fixtures.py",
+    "research_v3/methods/p08/metrics.py",
+    "research_v3/methods/p08/runner.py",
+    "research_v3/methods/p08/types.py",
+    "research_v3/methods/p09/METHOD.md",
+    "research_v3/methods/p09/__init__.py",
+    "research_v3/methods/p09/baselines.py",
+    "research_v3/methods/p09/corpus.py",
+    "research_v3/methods/p09/metrics.py",
+    "research_v3/methods/p09/policy.py",
+    "research_v3/methods/p09/provenance.py",
+    "research_v3/methods/p10/METHOD.md",
+    "research_v3/methods/p10/__init__.py",
+    "research_v3/methods/p10/ablations.py",
+    "research_v3/methods/p10/anchors.py",
+    "research_v3/methods/p10/cli.py",
+    "research_v3/methods/p10/corpus.py",
+    "research_v3/methods/p10/experiment.py",
+    "research_v3/methods/p10/provenance.py",
+    "research_v3/methods/p10/registry.py",
+    "research_v3/methods/p10/spiral_builder.py",
+    "research_v3/methods/p11/METHOD.md",
+    "research_v3/methods/p11/__init__.py",
+    "research_v3/methods/p11/pre_registration.yaml",
+    "research_v3/methods/p11/reliability.py",
+    "research_v3/methods/p11/rubric.py",
+    "research_v3/methods/p12/METHOD.md",
+    "research_v3/methods/p12/P12_double_review.md",
+    "research_v3/methods/p12/__init__.py",
+    "research_v3/methods/p12/audit_cli.py",
+    "research_v3/methods/p12/baselines.py",
+    "research_v3/methods/p12/corpus.py",
+    "research_v3/methods/p12/dataset_cards.yaml",
+    "research_v3/methods/p12/ledger.py",
+    "research_v3/methods/p12/pre_registration.yaml",
+    "research_v3/methods/p12/wikidata_probe.py",
+    "research_v3/methods/p13/__init__.py",
+    "research_v3/methods/p13/analysis.py",
+    "research_v3/methods/p13/construct_validity.py",
+    "research_v3/methods/p13/run_p13.py",
+    "research_v3/methods/p13/splits.py",
+    "research_v3/methods/p13/srl_features.py",
+    "research_v3/methods/p13/srl_operationalisation.md",
+    "research_v3/methods/p13/srl_operationalisation.yaml",
+    "research_v3/methods/p14/METHOD.md",
+    "research_v3/methods/p14/__init__.py",
+    "research_v3/methods/p14/audit.py",
+    "research_v3/methods/p14/baselines.py",
+    "research_v3/methods/p14/claims_guard.py",
+    "research_v3/methods/p14/cli_audit.py",
+    "research_v3/methods/p14/metrics.py",
+    "research_v3/methods/p14/rights.py",
+    "research_v3/methods/p14/rubric.py",
+    "research_v3/methods/p14/schema.py",
+    "research_v3/methods/p14/synthetic.py",
+    "research_v3/methods/p14/udl/__init__.py",
+    "research_v3/methods/p14/udl/task_affordance_rubric.yaml",
+    "research_v3/scripts/__init__.py",
+    "research_v3/scripts/_paths.py",
+    "research_v3/scripts/annotations.py",
+    "research_v3/scripts/audit_repo.py",
+    "research_v3/scripts/claims.py",
+    "research_v3/scripts/cross_paper_dedup.py",
+    "research_v3/scripts/cross_verify_claims.py",
+    "research_v3/scripts/ethics.py",
+    "research_v3/scripts/evaluate.py",
+    "research_v3/scripts/external_audit.py",
+    "research_v3/scripts/label_mismatch_audit.py",
+    "research_v3/scripts/render.py",
+    "research_v3/scripts/replicate.py",
+    "research_v3/scripts/stress_parity.py",
+    "research_v3/scripts/train.py",
+    "research_v3/scripts/validate_contracts.py",
+    "research_v3/scripts/validate_splits.py",
+    "research_v3/scripts/verify_licenses.py",
+    "tests/research_v3/baseline/__init__.py",
+    "tests/research_v3/contracts/__init__.py",
+    "tests/research_v3/contracts/test_v3_contracts.py",
+    "tests/research_v3/data/__init__.py",
+    "tests/research_v3/evaluation/__init__.py",
+    "tests/research_v3/integration/__init__.py",
+    "tests/research_v3/integration/test_audit_repo.py",
+    "tests/research_v3/integration/test_g19_g23.py",
+    "tests/research_v3/integration/test_governance_gates.py",
+    "tests/research_v3/integration/test_matrix_selection.py",
+    "tests/research_v3/method/conftest.py",
+    "tests/research_v3/method/p08/__init__.py",
+    "tests/research_v3/method/p08/conftest.py",
+    "tests/research_v3/method/p08/test_p08_campaign.py",
+    "tests/research_v3/method/p08/test_p08_integrity.py",
+    "tests/research_v3/method/p08/test_p08_velocity_determinism.py",
+    "tests/research_v3/method/p09_helpers.py",
+    "tests/research_v3/method/test_p01_method.py",
+    "tests/research_v3/method/test_p02_generator.py",
+    "tests/research_v3/method/test_p02_optimality_gap.py",
+    "tests/research_v3/method/test_p02_problems.py",
+    "tests/research_v3/method/test_p02_solvers.py",
+    "tests/research_v3/method/test_p03_eval.py",
+    "tests/research_v3/method/test_p03_policy.py",
+    "tests/research_v3/method/test_p04_protocol.py",
+    "tests/research_v3/method/test_p05_calibration.py",
+    "tests/research_v3/method/test_p05_leakage.py",
+    "tests/research_v3/method/test_p05_models.py",
+    "tests/research_v3/method/test_p06_metrics.py",
+    "tests/research_v3/method/test_p06_pipeline_oulad.py",
+    "tests/research_v3/method/test_p06_selection.py",
+    "tests/research_v3/method/test_p07_evaluation.py",
+    "tests/research_v3/method/test_p07_external_smithsonian.py",
+    "tests/research_v3/method/test_p07_selector.py",
+    "tests/research_v3/method/test_p07_stress_strata.py",
+    "tests/research_v3/method/test_p09_corpus_eval.py",
+    "tests/research_v3/method/test_p09_provenance_gate.py",
+    "tests/research_v3/method/test_p09_rights_and_integrity.py",
+    "tests/research_v3/method/test_p10_ablations.py",
+    "tests/research_v3/method/test_p10_builders.py",
+    "tests/research_v3/method/test_p10_experiment.py",
+    "tests/research_v3/method/test_p10_invariants.py",
+    "tests/research_v3/method/test_p10_provenance.py",
+    "tests/research_v3/method/test_p11_annotation_pack.py",
+    "tests/research_v3/method/test_p11_prereg_and_status.py",
+    "tests/research_v3/method/test_p11_reliability.py",
+    "tests/research_v3/method/test_p11_rubric.py",
+    "tests/research_v3/method/test_p12_chain_contradictions.py",
+    "tests/research_v3/method/test_p12_corpus_audit.py",
+    "tests/research_v3/method/test_p12_helpers.py",
+    "tests/research_v3/method/test_p12_validator.py",
+    "tests/research_v3/method/test_p13_calibration_stats.py",
+    "tests/research_v3/method/test_p13_construct_guard.py",
+    "tests/research_v3/method/test_p13_corpus_guard.py",
+    "tests/research_v3/method/test_p13_determinism.py",
+    "tests/research_v3/method/test_p13_splits_leakage.py",
+    "tests/research_v3/method/test_p14_audit_engine.py",
+    "tests/research_v3/method/test_p14_provenance_cli.py",
+    "tests/research_v3/method/test_p14_rubric_schema.py",
+    "tests/research_v3/privacy/__init__.py",
+    "tests/research_v3/scientific/__init__.py",
+    "tests/research_v3/scientific/test_g04_g05_g06.py",
+    "tests/research_v3/scientific/test_g07_g10.py",
+    "tests/research_v3/scientific/test_g13_g14_g18.py",
+    "tests/research_v3/scientific/test_stress_parity.py",
+    "research_artifacts_v3/release/NEXT_RESEARCH_WORK.md",
+    "research_artifacts_v3/runs/p02/task_status.json",
+    "research_artifacts_v3/runs/p03/task_status.json",
+    "research_artifacts_v3/runs/p04/task_status.json",
+    "research_artifacts_v3/runs/p05/task_status.json",
+    "research_artifacts_v3/runs/p06/task_status.json",
+    "research_artifacts_v3/runs/p07/task_status.json",
+    "research_artifacts_v3/runs/p09/task_status.json",
+    "research_artifacts_v3/runs/p10/task_status.json",
+    "research_artifacts_v3/runs/p13/task_status.json",
+    "research_artifacts_v3/runs/p14/task_status.json",
+    "research_v3/REPRODUCE.md",
+    "research_v3/eval/result_integrity.py",
+    "research_v3/scripts/progress_report.py",
+    "research_v3/scripts/result_integrity.py",
+    "tests/research_v3/scientific/test_result_integrity.py"
+  ],
+  "fail_closed": {
+    "allow_dirty_used": true,
+    "strict_pin_enforced": true
+  },
+  "generated_at_utc": "2026-11-15T17:59:34Z",
+  "git_head_observed": "4e5a792e16250106b9d0a577849e864ab7007c92",
+  "hash_standard": "sha256(sort_keys,compact,utf8) via research_v2.contracts.canonical_hash",
+  "head_matches_pinned": true,
+  "historic_prior_audit": {
+    "note": "Read-only reference. The prior V2 audit file was NOT modified; its observed SHA is copied verbatim as history, never regenerated.",
+    "observed_sha_recorded": "4e5a792e16250106b9d0a577849e864ab7007c92",
+    "path": "research_v2/reports/G0_repo_audit.json",
+    "pinned_sha_recorded": "abcfab201d47db4cf89edf4b769c645438522d3a",
+    "status": "HISTORIC"
+  },
+  "inventory": [
+    {
+      "path": "research_v3/README.md",
+      "sha256": "5d5c4743e08da3cad9d4dde66f67af02e4fea20de63a39bb651e793ca125b748"
+    },
+    {
+      "path": "research_v3/REPRODUCE.md",
+      "sha256": "77d87dc1f367d7640d6a380a733417c607599fd3487c726613077e24d04a032b"
+    },
+    {
+      "path": "research_v3/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/ANNOTATION_CARD.md",
+      "sha256": "6b9556f86ee0053af2cc392a5a7de7527a53152315307fa938bb6b29be339fb8"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/CODEBOOK.md",
+      "sha256": "1b4bfbd06b7ff15471eeb4179829362d77b9c1f9c0ce564b9459afff74d6c041"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/README.md",
+      "sha256": "947578c0334c552e09e2b6e97db8803d739afb48b39802f820b6cead699456b4"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/adjudication_protocol.md",
+      "sha256": "a3d973f1d092185fab4508aca59b861afa20672b8423b7fe540c60b1cfd7d4d7"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC01_zero_evidence.json",
+      "sha256": "c21ca5e3835830de5feb594d648da32d229e49cdf059ffb12999c82074b1c1a9"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC02_asserted_only.json",
+      "sha256": "05ac5728ac0e5e33af9386c7643a42e071bd08dc5bb0de94b9dcab47dc7bb5db"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC03_described_cited.json",
+      "sha256": "812227d2ac81f38c633f29f0c3f6f37eecba6ada8336fc82099a0ea094035c87"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC04_full_chain.json",
+      "sha256": "6176959fafc542d7fcfa03572dd8ab4374717b99124170aab540380cd8fd8adf"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC05_fabricated_citation.json",
+      "sha256": "f259c73001d6cfd9e7548c250721609bc4f2c3e0ff80a173c9f7c8692ba804bf"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/CC06_refutation_handled.json",
+      "sha256": "59b774078d8a3d6ad88b624c6abb4b423726d5b234f32d5143c0c1965567fb45"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/constructed_cases/build_cases.py",
+      "sha256": "cee00056912d3cf5dfd261105adc7acddf8f772558bc73537be5d41034e646fa"
+    },
+    {
+      "path": "research_v3/annotations/tasks/p11_annotation_pack/make_wide_matrix.py",
+      "sha256": "21f849ee41fefb883516154a65c1a237b642fcf67b1dedc920928119c0c9d95a"
+    },
+    {
+      "path": "research_v3/baselines/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/baselines/adapters/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/baselines/registry/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/baselines/registry/registry.yaml",
+      "sha256": "03b0da2a239a4b2b4aa63b56f5bf17ca59b2fd6703aa2b0ac283bd8fa721f240"
+    },
+    {
+      "path": "research_v3/baselines/verification/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/baselines/verification/verify_baselines.py",
+      "sha256": "fbda8b9d4e35c121ed3c746f6421063816cd0d81c909b9529858637dce45848d"
+    },
+    {
+      "path": "research_v3/config/papers/paper_datasets.yaml",
+      "sha256": "94844361dfdfb7b8e169ea28c1453626b488c66e692d912f3903f9b7569f52bd"
+    },
+    {
+      "path": "research_v3/config/split_protocols/P06.json",
+      "sha256": "f9f71545d761a2f20e021cb6e2f41899051130b711b8a4247e37e724baa72ca9"
+    },
+    {
+      "path": "research_v3/config/split_protocols/P13.json",
+      "sha256": "91c7f3047aa963571d36571b8ed3f5e9a53614ff5139166a8dcaee8b62fe73ed"
+    },
+    {
+      "path": "research_v3/contracts/__init__.py",
+      "sha256": "e8bcec6bb072cc3b94231707bc479e8a2eb5a613894f20eeb7a259defc691ace"
+    },
+    {
+      "path": "research_v3/contracts/cards.py",
+      "sha256": "bff8d7123d08cf864734d7baf175a73f214799a39052c66a8136f2151a84227f"
+    },
+    {
+      "path": "research_v3/data_frozen/source_lock.json",
+      "sha256": "7aea459f8a37ba904053b4a125de7133e6964fa07bec6f68bcd773b3fc49cb9b"
+    },
+    {
+      "path": "research_v3/data_frozen/source_lock_20261115T133004Z.json",
+      "sha256": "1398d82bb29e25fc6525f7c7cd8ce84c0b9294038fc3dc7cf4d77a2e966cdd29"
+    },
+    {
+      "path": "research_v3/datasets/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/datasets/adapters/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/datasets/adapters/oulad.py",
+      "sha256": "4cfcb6e388378780204fa3f6becc0c43988cd0ff54c3a1a69ee34f34cf6eafce"
+    },
+    {
+      "path": "research_v3/datasets/fetchers/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/datasets/fetchers/fetch.py",
+      "sha256": "13f6a85e54aab9b24e8b41bed0eaedc350ac72df37b719da16f7081bcf403903"
+    },
+    {
+      "path": "research_v3/datasets/registry/p03.yaml",
+      "sha256": "9ecf21a8abaefc8e366d5d8f2b79e94c407338e7004113549f9210ed7b2acbaf"
+    },
+    {
+      "path": "research_v3/datasets/registry.py",
+      "sha256": "2c140114102cfa1bc66ea0c9f7712684be0b8814570bd630295cba870cad3d3e"
+    },
+    {
+      "path": "research_v3/datasets/registry.yaml",
+      "sha256": "82c876c114a651b42a03a16d50fc009eee76dba52d1bffe5afbdab85d48fce53"
+    },
+    {
+      "path": "research_v3/datasets/sanitized/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/datasets/sanitized/generate_stress.py",
+      "sha256": "a8f49f4255c41b6e9fbf4ab548dccfac50e85568ed128059f9af58b45ed15edc"
+    },
+    {
+      "path": "research_v3/datasets/sanitized/ln06_external_solver_parity/manifest.json",
+      "sha256": "e2af84bf1f595666d3322f5e30919254ccf24f40cc69345acc69dcd50b871cba"
+    },
+    {
+      "path": "research_v3/datasets/sanitized/ln07_transcript_failure/manifest.json",
+      "sha256": "06362ae765d23423cd7ed8e2fcdc6eab1af7318c4ef1c3502ac7382c2bf924cc"
+    },
+    {
+      "path": "research_v3/datasets/sanitized/ln09_small_cohort/manifest.json",
+      "sha256": "903b43d911b724798eaa5778ba58a0c4de2ed89271ec23adb8ab90c38e700d45"
+    },
+    {
+      "path": "research_v3/eval/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/eval/calibration.py",
+      "sha256": "77b4021c9f53583d6ba5e86837372a55132b00473f0290c4f7914ef071289b6a"
+    },
+    {
+      "path": "research_v3/eval/leakage.py",
+      "sha256": "fd6ee1a6401e71a24d95acec8e2b617b4f882c087ed3adf7fc3c964560ed6756"
+    },
+    {
+      "path": "research_v3/eval/result_integrity.py",
+      "sha256": "b9faba6e95615369819d48af61bb11cff88dd538166a2ea9ae58e17a422b6485"
+    },
+    {
+      "path": "research_v3/eval/splitters.py",
+      "sha256": "c59a3483499efb4c0925c90e17953c13d291bca9e7095323c586551044876c8b"
+    },
+    {
+      "path": "research_v3/eval/statistics.py",
+      "sha256": "e5fe69b532bb978b472d7200f7be15182e4e196858fd16a4b54177db43f2122b"
+    },
+    {
+      "path": "research_v3/experiments/p01/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/experiments/p01/hyperparameter_sweep.py",
+      "sha256": "6a7461fe6ec670e22b7f3eff7451d5796e28de8542553714f5158956aabb0e56"
+    },
+    {
+      "path": "research_v3/experiments/p01/preregistration.yaml",
+      "sha256": "a2a9efa82779a481dfad5be83ba2b7499016af46cddf3b34b947699bbf3e4ecf"
+    },
+    {
+      "path": "research_v3/experiments/p01/run_matrix.yaml",
+      "sha256": "d3c531c016ab4f845b6a68ae7b706b877bab6f1de044f32d014853f33014f5b5"
+    },
+    {
+      "path": "research_v3/experiments/p01/run_p01.py",
+      "sha256": "6ebf29ec05b3b8aaedc3e165a762612ebb5e628bd6a7d5bb0954b7f6c0fddf71"
+    },
+    {
+      "path": "research_v3/experiments/p01/splits.yaml",
+      "sha256": "3a546d7a37f1068033b576fe6ef0a4d5709907d25a47d9054557cfad3a415ec4"
+    },
+    {
+      "path": "research_v3/experiments/p02/pre_registration.yaml",
+      "sha256": "8a3fae56d9f8574b6bfa08b8a830d6e62da9c9349d2c0f71bf7c665e4d13fa10"
+    },
+    {
+      "path": "research_v3/experiments/p02/run_matrix.yaml",
+      "sha256": "751f8a5f338112ac7c7a1ba83590d04c7cdf5e505d215833ee3016814fe56d19"
+    },
+    {
+      "path": "research_v3/experiments/p02/splits.yaml",
+      "sha256": "1c004524d1937ab331f5fd7ec05bd802fc1d7ec32a5d96744e4f804b8448236e"
+    },
+    {
+      "path": "research_v3/experiments/p03/pre_registration.yaml",
+      "sha256": "526c4a77ab3799186efed26313d3b8088398c9190d3402fccfa797264491fe50"
+    },
+    {
+      "path": "research_v3/experiments/p03/run_matrix.py",
+      "sha256": "e5cc34e2236cc10506e414ee24b3f343aa3957e4488a000aff77439c50e1b8c2"
+    },
+    {
+      "path": "research_v3/experiments/p05/blocked_cards.yaml",
+      "sha256": "139fd5405bceb4f1df8932ee13cff3fa6244588ade7e838836b24e5d6d42be1d"
+    },
+    {
+      "path": "research_v3/experiments/p05/dataset_cards.yaml",
+      "sha256": "d7f64d24185afe2b6ec5a7c0e04993befbb1c99f6ae8305e0799521540976ef9"
+    },
+    {
+      "path": "research_v3/experiments/p05/pre_registration.yaml",
+      "sha256": "6b5caffaa5dabdb4c0ee5573aa37373784dcfcbfb15cdf8973ab02e347ab7650"
+    },
+    {
+      "path": "research_v3/experiments/p06/__init__.py",
+      "sha256": "dbf14c4de613dfbc7442fd6fdefffb24bd53df79a9f858749b1b41d5c48bf52f"
+    },
+    {
+      "path": "research_v3/experiments/p06/pre_registration.yaml",
+      "sha256": "1e543052dd600a40b22a27aefc770bbc91e99344015e71b5c33c9ddc021f8a50"
+    },
+    {
+      "path": "research_v3/experiments/p06/run_experiment.py",
+      "sha256": "9497e10be83755bebbdd379b2e16fad3c02bd03ae2c5da5f2d65f631e44e64da"
+    },
+    {
+      "path": "research_v3/experiments/p06/run_matrix.yaml",
+      "sha256": "c0bbdebf071753e1ac3a3ecb1738ffbabbed9c8caff677b5ad6a6360430133d3"
+    },
+    {
+      "path": "research_v3/experiments/p07/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/experiments/p07/matrix.yaml",
+      "sha256": "975f4be11abadea7730da2cf157350ad9e4686960f5da4a663474d7882eb0283"
+    },
+    {
+      "path": "research_v3/experiments/p07/prereg.yaml",
+      "sha256": "8cad000aad495433a97341863afc6784dc305b51354346136a080863d0a1518d"
+    },
+    {
+      "path": "research_v3/experiments/p07/run_matrix.py",
+      "sha256": "4e98858732c7ef89e1a1f9c2c5dde23713ef21914cb86ef45b6851b5f8b78390"
+    },
+    {
+      "path": "research_v3/experiments/p08/PROBES.md",
+      "sha256": "e715b9593a8f63fde8a203ef997d61040613437d61b8536296ed43965f060501"
+    },
+    {
+      "path": "research_v3/experiments/p08/pre_registration.yaml",
+      "sha256": "99f54204782c16a2b2ec05c2c738c6b2e7a284b51dd25ef89c35732c25dcde31"
+    },
+    {
+      "path": "research_v3/experiments/p09/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/experiments/p09/baseline_cards.yaml",
+      "sha256": "51d78bd9330e7e60b90e1e59ad0b09fe6584fc04a63f707cb91a349e23070373"
+    },
+    {
+      "path": "research_v3/experiments/p09/matrix.yaml",
+      "sha256": "4aec123dbbc7260800774f84a11b03aa8f72a8ff7624707068b8821d581bc06b"
+    },
+    {
+      "path": "research_v3/experiments/p09/pre_registration.yaml",
+      "sha256": "91a0f74364673a2157da32eaf92b40c14634762369b2f9291ae363f9239a6e54"
+    },
+    {
+      "path": "research_v3/experiments/p09/run_p09.py",
+      "sha256": "dd20212e5f6379a41f4217fbcdb49bb91a8a8d82f94d7ade60ac2132aee90da4"
+    },
+    {
+      "path": "research_v3/experiments/p10/closest_published_blocker.yaml",
+      "sha256": "d5bbef3c9879138bf210dc3c0362086ecc54cc7bacf6109b1be6b46550024fc3"
+    },
+    {
+      "path": "research_v3/experiments/p10/pre_registration.yaml",
+      "sha256": "4ecb73d9440230b12985cbb972c5d37c30d624d89165aee078c612391c8a236a"
+    },
+    {
+      "path": "research_v3/experiments/p10/run_matrix.yaml",
+      "sha256": "cb5106072650504089e8de56adc50460c7ce44bbd9de17ba760e05debb920997"
+    },
+    {
+      "path": "research_v3/experiments/p11/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/experiments/p11/p11_status.py",
+      "sha256": "c4b3f452e88b3f36b15fa2296285c90a902e2ecabd7fadabe84a602fb1c28dee"
+    },
+    {
+      "path": "research_v3/experiments/p12/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/experiments/p13/dataset_provenance.yaml",
+      "sha256": "86bed9bbaeb326d5f0fb0b47a15834d4705d3387f74d36a7c58b4f8a967d307b"
+    },
+    {
+      "path": "research_v3/experiments/p13/pre_registration.yaml",
+      "sha256": "a6320f35769c56b90889d248899b232b614c8003b662796da9e7b5d1e514c72e"
+    },
+    {
+      "path": "research_v3/experiments/p13/run_matrix.yaml",
+      "sha256": "c86330e25da12710fbccc02c44fcf1e286242ee53593abe67fd02b54b5282b08"
+    },
+    {
+      "path": "research_v3/experiments/p14/P14_accessibility_test_plan.md",
+      "sha256": "c294dda9c9957da1ec6c0b22e00bada0bcba00c936c4c69f72aa51689886b2a1"
+    },
+    {
+      "path": "research_v3/experiments/p14/pre_registration.yaml",
+      "sha256": "a42e973da3be787162f67f3220fedb9e3155c329836726e3138570e3bf68df3f"
+    },
+    {
+      "path": "research_v3/experiments/p14/run_experiment.py",
+      "sha256": "492549af929e41987947a72fe3fb3e4186bdb8934bc3ead6c7658979582c321d"
+    },
+    {
+      "path": "research_v3/governance/G20_HUMAN_CLEARANCE.md",
+      "sha256": "ba1b87ce4c096342eacab24a78b3b5713d38652cc65e48bf14b23bdbd3a90555"
+    },
+    {
+      "path": "research_v3/governance/audit_log/request_2026q1-rerun.json",
+      "sha256": "ecc84b83873f73d573533219d3a77e50c43e245ed865935fd21fd31e0e858a55"
+    },
+    {
+      "path": "research_v3/manuscripts/p02/main.md",
+      "sha256": "b7bfa6da5b2f4f8cab5091fe01384fd9633ce4bd37b897fd37e12284b2884412"
+    },
+    {
+      "path": "research_v3/manuscripts/p03/failure_review.md",
+      "sha256": "0cd180dc26e2133f1248003323ff6cdb6bd7306e127c7b2dde73005908ce7bc9"
+    },
+    {
+      "path": "research_v3/manuscripts/p03/main.md",
+      "sha256": "b204e14c6da8872b32ebeb77dafe92935d9001c7f59c1b3b0457c31c17c7c3dc"
+    },
+    {
+      "path": "research_v3/manuscripts/p04/MANUSCRIPT.md",
+      "sha256": "eea4a68ae9724f892d50958a527f0ffa902219ca7a349f40aecf3c6386e14a75"
+    },
+    {
+      "path": "research_v3/manuscripts/p06/manuscript.md",
+      "sha256": "6fa1503aed7414327d6faf8008b6c101aad81faf259211bc8a69d2e1adcdf808"
+    },
+    {
+      "path": "research_v3/manuscripts/p06/tables/ablations.md",
+      "sha256": "e2925774fcc5f423a242182b79b40d496573fe7a8b40f83ad89a5f172351e6c0"
+    },
+    {
+      "path": "research_v3/manuscripts/p06/tables/main_results.md",
+      "sha256": "3a832494f400e4c602180738148825c80c316b2fdebaa0a8c616229b1500d7e8"
+    },
+    {
+      "path": "research_v3/manuscripts/p06/tables/paired_tests.md",
+      "sha256": "65213950466f4cb03769e98916c29ffc8a5fc1bde2c8bb73b8af427ae2c3574e"
+    },
+    {
+      "path": "research_v3/manuscripts/p06/tables/render_tables.py",
+      "sha256": "3d5e906a8cf7cd1b612ac0ecace8e161316a47ea6d9a8b0ea83e6320bf44d717"
+    },
+    {
+      "path": "research_v3/manuscripts/p07/DATA_STATUS.md",
+      "sha256": "246378eff8abccfc04da3ce507643e77038104365d6e71c306f2b5a3529f4aa3"
+    },
+    {
+      "path": "research_v3/manuscripts/p07/FAILURE_AND_COLLISION_REVIEW.md",
+      "sha256": "2cca0b793d5adfdce3b7257b3a84ee555cecec9a3a2778dfa2dffec221f3f607"
+    },
+    {
+      "path": "research_v3/manuscripts/p07/MANUSCRIPT_SKELETON.md",
+      "sha256": "68d7972c2d1cf25288b2802510b4af507453eb9bd22edd8578e10daab27eb590"
+    },
+    {
+      "path": "research_v3/manuscripts/p07/METHOD.md",
+      "sha256": "b8eed3d511090b3f62ecab3c9ac4082942edf5ec53c09fdf41c9f01b36ca138c"
+    },
+    {
+      "path": "research_v3/manuscripts/p08/MANUSCRIPT.md",
+      "sha256": "7164ffd8422ed7d0a1e9c5984f6ef6a16f9ce2483df3d449e87d25843b543555"
+    },
+    {
+      "path": "research_v3/manuscripts/p09/MANUSCRIPT.md",
+      "sha256": "a01d7e22d6cf33d47af35dd1e31a6c33cd5e7693b70d4ac9abb3e465908d6dd4"
+    },
+    {
+      "path": "research_v3/manuscripts/p10/EXPERT_FORM.md",
+      "sha256": "5ec694280538bffbd9b71ea964ec2da43945c248f644722b600e79a3403ef7dd"
+    },
+    {
+      "path": "research_v3/manuscripts/p10/MANUSCRIPT.md",
+      "sha256": "cce781e000d4aa3709c7e0d3732130601a79ede4a6f9eaa4a90ebd91dbbf9e9c"
+    },
+    {
+      "path": "research_v3/manuscripts/p10/TASK_LEDGER.yaml",
+      "sha256": "b5bcac5304b4b71b952d806c0dc4e558c3b901f3d6e85e721703c3427c86a9b8"
+    },
+    {
+      "path": "research_v3/manuscripts/p11/MANUSCRIPT.md",
+      "sha256": "63ef9278ba46fdb16254bf7e576804af042034e059a3acbafd37eb57609bc033"
+    },
+    {
+      "path": "research_v3/manuscripts/p12/MANUSCRIPT.md",
+      "sha256": "9a5ba14bd698506bfcdfab3d0f08d538e246b6cf0c57a2272385c78e0afeb85e"
+    },
+    {
+      "path": "research_v3/manuscripts/p13/limitations.md",
+      "sha256": "7090f3da4801cc60222b060647608e585213e6acc9125a92700db989426a51dc"
+    },
+    {
+      "path": "research_v3/manuscripts/p13/main.md",
+      "sha256": "f5232cbbb181eb0f1a1cfeccdbe88b55ca65f3be9b0cadea619582f6354ccae0"
+    },
+    {
+      "path": "research_v3/manuscripts/p14/MANUSCRIPT.md",
+      "sha256": "939231902531c0779512625e94a1fba2cf8a1aa26c788e6e2018169faa159af5"
+    },
+    {
+      "path": "research_v3/methods/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/methods/p01/METHOD.md",
+      "sha256": "5454b4251f31cea0cdc30bb44bcb0ca7102ebd080b49d1242bd96a3cf49549e6"
+    },
+    {
+      "path": "research_v3/methods/p01/__init__.py",
+      "sha256": "f9fd7a5aea6a23d85e35ce80c1046af0969a7fecab23111c65f0e74f5aa6706f"
+    },
+    {
+      "path": "research_v3/methods/p01/features.py",
+      "sha256": "1c22747d223789c266a49d4a49d29bdfdd556108e8a8444a69cdee90fb6316a6"
+    },
+    {
+      "path": "research_v3/methods/p01/metrics.py",
+      "sha256": "fa76303cff65491ef8c4bec37a793699c11c130c8d89a9d9e33ef77e44d795eb"
+    },
+    {
+      "path": "research_v3/methods/p01/models.py",
+      "sha256": "a9dc2dcb00c62ff6eaa15ce6c887d2317877bf5ea8cebeb984844f8b40843df0"
+    },
+    {
+      "path": "research_v3/methods/p01/pipeline.py",
+      "sha256": "15a3948c418557c9422235aca00030ec5f9cc94f185c1d38ec09e1f3288f0a06"
+    },
+    {
+      "path": "research_v3/methods/p01/types.py",
+      "sha256": "7aec3fba9da392722df67eb9c5ee601d4de2df3dda1863d469fe2cc4cbd74ab9"
+    },
+    {
+      "path": "research_v3/methods/p02/METHOD.md",
+      "sha256": "02643f784358793c1eb9f63795a7e0fb3926acaf7bfc98eb52093017d6c58b0a"
+    },
+    {
+      "path": "research_v3/methods/p02/__init__.py",
+      "sha256": "adf998a63cfb9268ca06916485dbb68d2f7d7a99c18456786ebe0b4b9b1934bb"
+    },
+    {
+      "path": "research_v3/methods/p02/benchmark.py",
+      "sha256": "40f1b0210402570a595baa465ff8da8692e8cd776f7f4bf3fda640ea932ce37f"
+    },
+    {
+      "path": "research_v3/methods/p02/eval_stats.py",
+      "sha256": "38e040e26919e8449acbde7fdfc4e81349cd4cc6778d6381e8a1681365c76d1e"
+    },
+    {
+      "path": "research_v3/methods/p02/generator.py",
+      "sha256": "af9063d4ac27da1dd0a14bd379ac0b4714220a007e8cd06fb4e70c547f687e40"
+    },
+    {
+      "path": "research_v3/methods/p02/metrics.py",
+      "sha256": "2cdc71c511ba2aa377f106dadbed3c4d24164df1c4d5945a780c312c84e76791"
+    },
+    {
+      "path": "research_v3/methods/p02/oracle.py",
+      "sha256": "690d5227816c103cbca4add8ae01fdafa02a589f7a424273828471e922980443"
+    },
+    {
+      "path": "research_v3/methods/p02/problems.py",
+      "sha256": "971613f59630e587de60bff3e1081dd9c1ed3b2c0aff834d32f19e861dc011ac"
+    },
+    {
+      "path": "research_v3/methods/p02/solvers.py",
+      "sha256": "a318b5c7f865af7929d3d18f26dad27ecee51ef11614a5119dddb6cd970c8519"
+    },
+    {
+      "path": "research_v3/methods/p03/METHOD.md",
+      "sha256": "24a078f60cd73e79d4af88c3514c743c99d70668f3d92d7773fef554ae538296"
+    },
+    {
+      "path": "research_v3/methods/p03/__init__.py",
+      "sha256": "da5042ec186123f39cb6850ba95f160e9dfd0b248c0102394c1714006360c6bd"
+    },
+    {
+      "path": "research_v3/methods/p03/baselines.py",
+      "sha256": "2a0233e75a9b9a82e78b1e48466dc4bfeeee81895d26e6a1e290b4673cf53749"
+    },
+    {
+      "path": "research_v3/methods/p03/dataset.py",
+      "sha256": "cb407bd6441af673029ae672d06081596a929fa9c452118457b125dfbd4532c8"
+    },
+    {
+      "path": "research_v3/methods/p03/metrics.py",
+      "sha256": "aabe5b62c04c057b1a8bc3b14822d6cdec94539b532939085646d36cc0d976fb"
+    },
+    {
+      "path": "research_v3/methods/p03/policy.py",
+      "sha256": "d9a2f56e0bdc33ba53682f5091e2cef691a9f6283bd3264e24c453a25e28d483"
+    },
+    {
+      "path": "research_v3/methods/p03/types.py",
+      "sha256": "ec067344c4bcddd9ec42ac3f71df0babe58936863290c1d5431849472ffe4b12"
+    },
+    {
+      "path": "research_v3/methods/p04/METHOD.md",
+      "sha256": "3edb94d1893f3ca2e6ec2a596e34db3d6d7ba91d854e6b4155b03b526f9f4a5c"
+    },
+    {
+      "path": "research_v3/methods/p04/__init__.py",
+      "sha256": "f137a4d7161bfe16c3f8853e189302da9f805c7598de9c62a68e67493b8d3eda"
+    },
+    {
+      "path": "research_v3/methods/p04/baselines.py",
+      "sha256": "eaf54283f426d89e95f5274e1eba8ac697bddc7e5ae9fdad31426e09639be97d"
+    },
+    {
+      "path": "research_v3/methods/p04/bench.py",
+      "sha256": "0d2b7aa4783b6a51ec616e72049fd6c3387b2e5771a30b5d44b4f63e4fdea6c4"
+    },
+    {
+      "path": "research_v3/methods/p04/bridge.py",
+      "sha256": "e2b7852a0611078e71ea02623619d7731dddb2d3ee526dffbf11f9400b4d480f"
+    },
+    {
+      "path": "research_v3/methods/p04/datasheets/P04_datasheet.md",
+      "sha256": "632c64e8ae83f594c6b3fc5daa1dafb82a3ecc77858be3aa8bda68c17c6f11ef"
+    },
+    {
+      "path": "research_v3/methods/p04/leaderboard/schema.json",
+      "sha256": "75db094742ea406aaadccfb2475ba395dc58102d80199d73fc7cba115661a293"
+    },
+    {
+      "path": "research_v3/methods/p04/protocols/p04_splits.json",
+      "sha256": "918449e8faf4e6747dfb2666b70597c90bd6bc94ebe12a4d44a4f6c65c07a557"
+    },
+    {
+      "path": "research_v3/methods/p04/protocols/pre_registration.yaml",
+      "sha256": "b77703f1e867f24d4c3716d0c43dac7800ba7781b989ef5bc52ac08f94b196e9"
+    },
+    {
+      "path": "research_v3/methods/p04/rights.py",
+      "sha256": "01c72d0b9675bfce69a4001e5aa6e16ae8035139c830733073d479f7724d8690"
+    },
+    {
+      "path": "research_v3/methods/p04/run_reference_eval.py",
+      "sha256": "02d4c7fc6eaedb6f3e9d5f435f6292ceee8867a4bc0b46991450645d14be89a0"
+    },
+    {
+      "path": "research_v3/methods/p04/scenarios.py",
+      "sha256": "ab60064fb6eb91bb9a69aa17c3cb479fba54ded7106ec66c6af774943161710b"
+    },
+    {
+      "path": "research_v3/methods/p04/strata.py",
+      "sha256": "62963cfd54f81405d95f71439ea1deca12f8d02321595316f51cf7931d9ae399"
+    },
+    {
+      "path": "research_v3/methods/p05/METHOD.md",
+      "sha256": "2a84d4403e5b5b55432b1909f17b8b1410d2d7a5a85810d526c64c56e37bbc1a"
+    },
+    {
+      "path": "research_v3/methods/p05/__init__.py",
+      "sha256": "f7b8f866dd0653802c5143c3e15fe751a03c532f9ca37c05f099f1fc9136263e"
+    },
+    {
+      "path": "research_v3/methods/p05/metrics_p05.py",
+      "sha256": "091286732984acddc2886777db104b39443a57a6a48c1d81dad4b7b09cb7724d"
+    },
+    {
+      "path": "research_v3/methods/p05/models.py",
+      "sha256": "4956bb00107340c9e19a46c42001063b7efeeeb1f644bac7f8eb793daf1d0baf"
+    },
+    {
+      "path": "research_v3/methods/p05/run_p05_matrix.py",
+      "sha256": "895694bf867dffd0be5d1179509abff13f729fddea3f9c8e9facd3631a0860b5"
+    },
+    {
+      "path": "research_v3/methods/p05/temporal_data.py",
+      "sha256": "cdb8dd3d6cfca7dd84cdf7668fc9bde3ecce2a2fa681c5ba24e7448286f2e6a4"
+    },
+    {
+      "path": "research_v3/methods/p06/METHOD.md",
+      "sha256": "1c2b5049db7a51c32c865901caaf2668a247522adcf1119b93b26efde7a85833"
+    },
+    {
+      "path": "research_v3/methods/p06/__init__.py",
+      "sha256": "9d034159ab5bb75846ce6d904bb4651b25985e1c09a816cf583791b0322f4648"
+    },
+    {
+      "path": "research_v3/methods/p06/ablations.md",
+      "sha256": "724d3db4b295a9bdd97855ed3cf9cf5668997a7899d30eed3bc489f52b29ac6d"
+    },
+    {
+      "path": "research_v3/methods/p06/metrics.py",
+      "sha256": "b51758838de7c105bee081b717cb4458843c9f15f6dda978815fe502b54bfd7f"
+    },
+    {
+      "path": "research_v3/methods/p06/noncausal_claims.md",
+      "sha256": "bdd12457c9299cec5d58a94db7bc3a27d06ea38ea7e9c40991d561a0e732eb4e"
+    },
+    {
+      "path": "research_v3/methods/p06/risk_model.py",
+      "sha256": "bdb73906cb66d8cbf34201cf6337bac9c69f17e17759c39cd32351c85c1ebc5e"
+    },
+    {
+      "path": "research_v3/methods/p06/selection.py",
+      "sha256": "368f4a885d012887194f3c2a63dce226af064e2265737410e671a67cc6937887"
+    },
+    {
+      "path": "research_v3/methods/p07/__init__.py",
+      "sha256": "124fff442f73e9f093b996049fefe3a4e3b3c7efcb8ab7b12d2fb8248b9c630c"
+    },
+    {
+      "path": "research_v3/methods/p07/ablations.py",
+      "sha256": "126963e6cb899f9aed2c37328cde4ffb9f10ee6c16b285820d2d0be841afa283"
+    },
+    {
+      "path": "research_v3/methods/p07/affordances.py",
+      "sha256": "523b0b3bacb3165fbe355d4d69068002e946fa8853bbb1e036a0d66f3ca59792"
+    },
+    {
+      "path": "research_v3/methods/p07/baselines.py",
+      "sha256": "968bd8c724f6de469e204e970f63959a5d0296fddf1f0377128ba7d43cbb6c6b"
+    },
+    {
+      "path": "research_v3/methods/p07/external.py",
+      "sha256": "8098a81473df2dcbbc9ef22b1ed18940383131ff8dac4683c14c91dcafc75504"
+    },
+    {
+      "path": "research_v3/methods/p07/metrics.py",
+      "sha256": "a142845539033a9ee718309a23c8dbf197a2c6926153063876a420815e97b0e9"
+    },
+    {
+      "path": "research_v3/methods/p07/runner.py",
+      "sha256": "7beab7dbcb5aa851792f40adbad9111c899177808dd257aaed5b92e6a6c4feaf"
+    },
+    {
+      "path": "research_v3/methods/p07/selector.py",
+      "sha256": "d01ee8ff5520dc5638e13b5eb53cc5a6041a9aa9f06ec83b8cee351040d90245"
+    },
+    {
+      "path": "research_v3/methods/p07/synthetic_generator.py",
+      "sha256": "f3b80881ae0844816c1ce38b4b22e1a615887be32ad46fb85c8c5f9bf1572a47"
+    },
+    {
+      "path": "research_v3/methods/p08/METHOD.md",
+      "sha256": "6c047cb03494d4b875c8e1597acf6e125181aa4653d8a42a43904a0076a33372"
+    },
+    {
+      "path": "research_v3/methods/p08/__init__.py",
+      "sha256": "b089b953f338a53b6bd71e9e5fe607a03dc3c0fb8059e039629c7b588d949166"
+    },
+    {
+      "path": "research_v3/methods/p08/attacks.py",
+      "sha256": "d967480a4a4e4f6fd0e198971a6ed9a7f49e19983481f5a145b53db3d62e60e0"
+    },
+    {
+      "path": "research_v3/methods/p08/attestation.py",
+      "sha256": "c32764a172fe0019f3993bb6034a0f4871bcdda26f20a8fa7a49a37406c0f117"
+    },
+    {
+      "path": "research_v3/methods/p08/defender.py",
+      "sha256": "618b74b150a6728d6d0bb471429c5c81d2c797fd719370570a3d884a0ca8a3e2"
+    },
+    {
+      "path": "research_v3/methods/p08/fixtures.py",
+      "sha256": "076b5ef8e8aa60b42f3d4b5aaa788bc69950f7bdaba4d905fef31d347950964a"
+    },
+    {
+      "path": "research_v3/methods/p08/metrics.py",
+      "sha256": "74b38a68e928a9c5260ceeb6362e8b6912aef273ed324fe708631b72e9c79b95"
+    },
+    {
+      "path": "research_v3/methods/p08/runner.py",
+      "sha256": "779a25570f0e45274bf263358f1963d9efe9c13a936e66fc1f3388635acde283"
+    },
+    {
+      "path": "research_v3/methods/p08/types.py",
+      "sha256": "7a912dec135b3a7d3cdfce514aa25660f85292f1137fe53ed938fd35d0c3cc84"
+    },
+    {
+      "path": "research_v3/methods/p09/METHOD.md",
+      "sha256": "c7a8fed8a676d9f0659bcf16649fe9cf7dfa40815de4d490ab3e55892a12a8bb"
+    },
+    {
+      "path": "research_v3/methods/p09/__init__.py",
+      "sha256": "e9d1ea85db22119cceb3d5c545675e69ded74d4d02ff2246fe9a51a757b12d7b"
+    },
+    {
+      "path": "research_v3/methods/p09/baselines.py",
+      "sha256": "2ee7586405904723a0a92afe8992dc180d1786af22779d679a812f1bad85010f"
+    },
+    {
+      "path": "research_v3/methods/p09/corpus.py",
+      "sha256": "f37b9c0576b0f09a79872132818762565b403352fe5db0457a0570a8f14709de"
+    },
+    {
+      "path": "research_v3/methods/p09/metrics.py",
+      "sha256": "cc901893fad0887acb286ef0bdfcdb59b99557b2b489b58b37d235321f61e663"
+    },
+    {
+      "path": "research_v3/methods/p09/policy.py",
+      "sha256": "216c1501e82dac1162963b07be01dcb179b06d59273a373a9331e05638ccc32d"
+    },
+    {
+      "path": "research_v3/methods/p09/provenance.py",
+      "sha256": "042322e806a8a71f53521274b8720a1f4308989ed595979f31898b546eae1c56"
+    },
+    {
+      "path": "research_v3/methods/p10/METHOD.md",
+      "sha256": "397603864e5505078b6a32fe792f3689df8f99394ec85a2775c0057129c7ea3f"
+    },
+    {
+      "path": "research_v3/methods/p10/__init__.py",
+      "sha256": "4919f8dd114c87dc94e717b6f02e1b7b7c698dadfd07f8ea420d652fda64ce37"
+    },
+    {
+      "path": "research_v3/methods/p10/ablations.py",
+      "sha256": "9899fabd4f0e98b96951267ddc5e0b8cd341a09632f4e7f5e17e77208e1125cd"
+    },
+    {
+      "path": "research_v3/methods/p10/anchors.py",
+      "sha256": "8ea1d40ddc91c893152da1cbca603c58c36a21ae3978c87d11b2e1e7bec062a6"
+    },
+    {
+      "path": "research_v3/methods/p10/cli.py",
+      "sha256": "84edb7ef62fd6ae9a1941fff79ee3962304b5bf66964303f1916f6e6da2f3373"
+    },
+    {
+      "path": "research_v3/methods/p10/corpus.py",
+      "sha256": "29fd2ee81354eedd3740a86125304e42db5ac045d428effe9eef97999d464bb4"
+    },
+    {
+      "path": "research_v3/methods/p10/experiment.py",
+      "sha256": "3beb3d2dc22770f05274e3b99c19c29dd268ff5cb2ce36bffa930db1918f3340"
+    },
+    {
+      "path": "research_v3/methods/p10/provenance.py",
+      "sha256": "5c51889bffacd73e01b17493003738f01ee2f886c5e38c8bffa81b7b96dbbd0d"
+    },
+    {
+      "path": "research_v3/methods/p10/registry.py",
+      "sha256": "ed85e20bf35971c6999c82534f184cd1fe70cf7fb0aff1887059743e41f199a7"
+    },
+    {
+      "path": "research_v3/methods/p10/spiral_builder.py",
+      "sha256": "4557e82493bf0d26489e545128b99c528c1404494adef3bb775e1d8ac498cf15"
+    },
+    {
+      "path": "research_v3/methods/p11/METHOD.md",
+      "sha256": "2febf2f76d09bb7bdaa967b412b971660a3b21df51565d878b249947037df356"
+    },
+    {
+      "path": "research_v3/methods/p11/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/methods/p11/pre_registration.yaml",
+      "sha256": "27b7800efb2a55739f42e902f752f3b83a48df7df3af69da248f9ad3eca816ed"
+    },
+    {
+      "path": "research_v3/methods/p11/reliability.py",
+      "sha256": "f438c8a202b0a4eb7fdffc36c03f8dfc1408a52a8cea02c675e25bdfdf5c8457"
+    },
+    {
+      "path": "research_v3/methods/p11/rubric.py",
+      "sha256": "3a073da581dafbecd634e2ee2d161442dfa41b39cd43752d3ce4b223927c79cc"
+    },
+    {
+      "path": "research_v3/methods/p12/METHOD.md",
+      "sha256": "b9e97272092702b7ef6ddd49e35d36c6a2908aab12dc7b36f6d849433731456b"
+    },
+    {
+      "path": "research_v3/methods/p12/P12_double_review.md",
+      "sha256": "6f5e189789655ccfa284cf9305afd9da5e7c0dc75ed550249c2cb8a9684b873d"
+    },
+    {
+      "path": "research_v3/methods/p12/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/methods/p12/audit_cli.py",
+      "sha256": "824deaf622093957d25d26804e106a55aaab9608eb9cac7044ce7a86c6a060ca"
+    },
+    {
+      "path": "research_v3/methods/p12/baselines.py",
+      "sha256": "7cf4107ec64883214a94cf0c9ecac1ef3d69fa3934be9f6f6c5a70636fd39c38"
+    },
+    {
+      "path": "research_v3/methods/p12/corpus.py",
+      "sha256": "18a446e1a843950726334086e62863ccd0c3ba5a2722a0f771f3adf3e40edf92"
+    },
+    {
+      "path": "research_v3/methods/p12/dataset_cards.yaml",
+      "sha256": "16d88df0d1e69f1f8a46bf7859bd8261d7f4376d32ada86a45a3fe271181a70b"
+    },
+    {
+      "path": "research_v3/methods/p12/ledger.py",
+      "sha256": "89ae595de39abe6d41a2c23ad189b2a8a42d77f6118c5760bd67251285679172"
+    },
+    {
+      "path": "research_v3/methods/p12/pre_registration.yaml",
+      "sha256": "396d143880676146ff7e4dc89a83ce8f0d151215be38b4e194fc9ca5e1509f80"
+    },
+    {
+      "path": "research_v3/methods/p12/wikidata_probe.py",
+      "sha256": "8e1e1b12f6da22b958eaca9ba15c2c585c197424685b4d16ee625caeefe15fab"
+    },
+    {
+      "path": "research_v3/methods/p13/__init__.py",
+      "sha256": "92fd8b9a1b4c06ba80ee4a01e1c7f517403408a71c68b3043999eb14869bf731"
+    },
+    {
+      "path": "research_v3/methods/p13/analysis.py",
+      "sha256": "c6750b1c939c99e7ea34cf8d23f1a338648ac62415c4b53647faddfbbe62c4c5"
+    },
+    {
+      "path": "research_v3/methods/p13/construct_validity.py",
+      "sha256": "8647da399b785c28015444fe46827bd0cb8a9297fc5555a92afe7862442bf5cf"
+    },
+    {
+      "path": "research_v3/methods/p13/run_p13.py",
+      "sha256": "a56a91ce55ad484c5394f0773cc7b5a5df53875e57650c079b10c5b565d24b1f"
+    },
+    {
+      "path": "research_v3/methods/p13/splits.py",
+      "sha256": "72f5335a01609b0b217b219de9abc0b0f5bd6dc330fe11d4dc242e01dd2a345d"
+    },
+    {
+      "path": "research_v3/methods/p13/srl_features.py",
+      "sha256": "b306caf21c56e93bd16e4799d74bc86694fb4a7e2feed6c4aa616cdad676f305"
+    },
+    {
+      "path": "research_v3/methods/p13/srl_operationalisation.md",
+      "sha256": "c0563a51be6b0fdbed071e3e18c80c56970937e14a4e2e527ff104349e52fdb5"
+    },
+    {
+      "path": "research_v3/methods/p13/srl_operationalisation.yaml",
+      "sha256": "da0ef273fb609ae855907b532e75d36c10e20cb623c2be70df18bf1ebeb0045e"
+    },
+    {
+      "path": "research_v3/methods/p14/METHOD.md",
+      "sha256": "342781cada3e1c40decd14e52679fa84d5650f58ae630c71c5775196248fc058"
+    },
+    {
+      "path": "research_v3/methods/p14/__init__.py",
+      "sha256": "20c2e598ef3716c3dd59c173e842fefcc7ff57e8dfbba676f862be449a0a7145"
+    },
+    {
+      "path": "research_v3/methods/p14/audit.py",
+      "sha256": "e351817d273474c1856d93809e8e4d5a591e0bc0d77c8b20d3ebf8d568da89db"
+    },
+    {
+      "path": "research_v3/methods/p14/baselines.py",
+      "sha256": "2b67281685444c6b821d9c19421a86623b2be41398ecb0f8d995f7381edfff99"
+    },
+    {
+      "path": "research_v3/methods/p14/claims_guard.py",
+      "sha256": "38dddc9848cdb501382524a19f4c9578833407a73602fa6ddf11c408273d196c"
+    },
+    {
+      "path": "research_v3/methods/p14/cli_audit.py",
+      "sha256": "af51da697a850ce02e48cdb900d981454ffacbfeb83ee73dd0ac4842339503c6"
+    },
+    {
+      "path": "research_v3/methods/p14/metrics.py",
+      "sha256": "ada131225f8e2890b55f9c77961a2e338f720047745e777216648056b834b9a6"
+    },
+    {
+      "path": "research_v3/methods/p14/rights.py",
+      "sha256": "490500cfecbd46ea556e43fb0f1d3b477bde85aca103a63594eb1bd8246a0098"
+    },
+    {
+      "path": "research_v3/methods/p14/rubric.py",
+      "sha256": "2a18462526e0d3a02d1f2550b1f47f94216738f745f33e0132f4276e665d898e"
+    },
+    {
+      "path": "research_v3/methods/p14/schema.py",
+      "sha256": "e6e7f64ecf75f15e8c90e13e6ad2edd35868140eacbe97ff1a9ae83fb2fc62b2"
+    },
+    {
+      "path": "research_v3/methods/p14/synthetic.py",
+      "sha256": "ec8a073a4eab25fac7869635713b936489a74e2f60a07708b968214227bfa9ff"
+    },
+    {
+      "path": "research_v3/methods/p14/udl/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/methods/p14/udl/task_affordance_rubric.yaml",
+      "sha256": "75d6bf263efe2e1973753fb28e28726c80613f02d380ebcebeac6584c82ca309"
+    },
+    {
+      "path": "research_v3/scripts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research_v3/scripts/_paths.py",
+      "sha256": "24c3351e36ef6c2254917f5c97cb767a55c98ee6840558f37e60ad62c9e02e04"
+    },
+    {
+      "path": "research_v3/scripts/annotations.py",
+      "sha256": "b343550e548ffe668f533407caa13fb8931dda4f9b1863068f7324e837c04d27"
+    },
+    {
+      "path": "research_v3/scripts/audit_repo.py",
+      "sha256": "03c7af1cfbb1c6b96530d38e391ae53cb70bf96600da218b117e4afacf585f8a"
+    },
+    {
+      "path": "research_v3/scripts/claims.py",
+      "sha256": "09db5598c425d9a61dd7d05dc99dcf67c8e9d79aad625fdd5200667754d1bf4f"
+    },
+    {
+      "path": "research_v3/scripts/cross_paper_dedup.py",
+      "sha256": "75ec6174acadf3fd5ee5ab78b6aed6e25ac4295279fb7fc2b19a93a54e4370ef"
+    },
+    {
+      "path": "research_v3/scripts/cross_verify_claims.py",
+      "sha256": "c8be5c548595dcc1cd199d037e8857b39154b480bfe1ae7fc5720dde47e31524"
+    },
+    {
+      "path": "research_v3/scripts/ethics.py",
+      "sha256": "7cb787edd69bf1db983b1a7bfbb2c0549656642451483a2a83366af6116caa22"
+    },
+    {
+      "path": "research_v3/scripts/evaluate.py",
+      "sha256": "1d0ac750103f1afd135f8f8589179172ddbebb46ef7b0206928582b17a728a36"
+    },
+    {
+      "path": "research_v3/scripts/external_audit.py",
+      "sha256": "5ad60b6fd7b8ebf00689f8501834a1069e2f54e5dd05ecbd36193cc6ef774e67"
+    },
+    {
+      "path": "research_v3/scripts/label_mismatch_audit.py",
+      "sha256": "2601c921961d64a31660a28b4ddaff47757b54e2c5d55545e3ed03137d1ec3c7"
+    },
+    {
+      "path": "research_v3/scripts/progress_report.py",
+      "sha256": "cbd8305ae50f0ac9bc20d9deb5f64fbbfae1ba5a662bfcb8e01c3306beda4445"
+    },
+    {
+      "path": "research_v3/scripts/render.py",
+      "sha256": "ce8062faed4faeebed4569360180f1b783a214237b1e2a802433097999eb884d"
+    },
+    {
+      "path": "research_v3/scripts/replicate.py",
+      "sha256": "99508eb1be6a0aa68d830dfb33a2c96985b5d17ce9f20210a5ead15bd9cfbc4f"
+    },
+    {
+      "path": "research_v3/scripts/result_integrity.py",
+      "sha256": "522707fbdd1f97647c719866faf4cb4dd19edb7cd4231046845a6a170813aeac"
+    },
+    {
+      "path": "research_v3/scripts/stress_parity.py",
+      "sha256": "692c50159958a295e341fb9d8fbcbd7be76a8635365266cdf23a61969ea51fcb"
+    },
+    {
+      "path": "research_v3/scripts/train.py",
+      "sha256": "2ad84b3db685040414c72de233ce5c6553a1902db6127be6d0fae307fb3e4701"
+    },
+    {
+      "path": "research_v3/scripts/validate_contracts.py",
+      "sha256": "d1bd2d0c11d9eb2f0cd347bcc4caac1980b099bd55a4ed05cf614a8a86bcfec8"
+    },
+    {
+      "path": "research_v3/scripts/validate_splits.py",
+      "sha256": "c956550df0b3b624b8fc45cc5e5fbd7b385886d141b959e6c4d5ef530b4cd1a8"
+    },
+    {
+      "path": "research_v3/scripts/verify_licenses.py",
+      "sha256": "7e477f73d68c15ffef7cd15a849438ab7033ffa70f9eb12e55e88a3fff211e7c"
+    },
+    {
+      "path": "tests/research_v3/baseline/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/research_v3/contracts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/research_v3/contracts/test_v3_contracts.py",
+      "sha256": "7461a4a4c475566d1b36e17fea85a48d7b5832a6daf2faf97d5e67184eaab92d"
+    },
+    {
+      "path": "tests/research_v3/data/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/research_v3/evaluation/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/research_v3/integration/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/research_v3/integration/test_audit_repo.py",
+      "sha256": "1ebaada96fb5019481d7e61eb65a6f4dc920f3c5b357cda419fe6b2796a2187e"
+    },
+    {
+      "path": "tests/research_v3/integration/test_g19_g23.py",
+      "sha256": "6adaab88b889aef7ec3abde3eadda687b51f9ba5d1d77ab015b88c536161e9f3"
+    },
+    {
+      "path": "tests/research_v3/integration/test_governance_gates.py",
+      "sha256": "f5ae3c0c0b401cb90d46e339613fec46fdd13c5ba559c50554b0fe23bc6cea23"
+    },
+    {
+      "path": "tests/research_v3/integration/test_matrix_selection.py",
+      "sha256": "6f57e620628e5f0b042852020eedc4e2b82e2e9b3a4280dd5fdf57a1d03ed6cd"
+    },
+    {
+      "path": "tests/research_v3/method/conftest.py",
+      "sha256": "6b81cc883d0d6b5395d037c803cd271b91003799789e38ac5f233e01e46149a6"
+    },
+    {
+      "path": "tests/research_v3/method/p08/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/research_v3/method/p08/conftest.py",
+      "sha256": "2958379fc4fb647cd6d22b0bdddf4674e2304e283b9efaebc55ca26ee413b83c"
+    },
+    {
+      "path": "tests/research_v3/method/p08/test_p08_campaign.py",
+      "sha256": "1e20593de7d99c24b71cd8793911e61e3569f8603fdf230b2a6b9f08a82b3b72"
+    },
+    {
+      "path": "tests/research_v3/method/p08/test_p08_integrity.py",
+      "sha256": "013b7cec61656e1b5348ad2a8e976b133005f2c67597ee25bf3ac094c6a95869"
+    },
+    {
+      "path": "tests/research_v3/method/p08/test_p08_velocity_determinism.py",
+      "sha256": "599a03f87fb593669dbc55769ac36aeffebc8cd648257bf36eaf9a3a55009094"
+    },
+    {
+      "path": "tests/research_v3/method/p09_helpers.py",
+      "sha256": "10a92679f8515e49539d98acd3f696eb5794ad757f861357ea1483a5d9228a58"
+    },
+    {
+      "path": "tests/research_v3/method/test_p01_method.py",
+      "sha256": "037cf981b1b659033e87bed0eb193e039b34242a707cc6122f40100ab6eacf86"
+    },
+    {
+      "path": "tests/research_v3/method/test_p02_generator.py",
+      "sha256": "272766884eae908be47ce67f053e65a2680ab00c6136a532693a49799c7492ba"
+    },
+    {
+      "path": "tests/research_v3/method/test_p02_optimality_gap.py",
+      "sha256": "c14904cec28e81daef2431169f6e90da8ff5d4b0627047074a7c55c6c86cc16c"
+    },
+    {
+      "path": "tests/research_v3/method/test_p02_problems.py",
+      "sha256": "2eab20e1b29cfae5d87fc5482a8b4d7f2cce68c72a92f4d0d0ba0ddbdc30525f"
+    },
+    {
+      "path": "tests/research_v3/method/test_p02_solvers.py",
+      "sha256": "c7ee6eba47d5a3fce18577f854368782e2edc4e7b35e4335c2e7f818406d57cf"
+    },
+    {
+      "path": "tests/research_v3/method/test_p03_eval.py",
+      "sha256": "0066fb71414a9054d36be5b3de7b11dbb8eab1814ca6d34e2fe0d466c8334a4c"
+    },
+    {
+      "path": "tests/research_v3/method/test_p03_policy.py",
+      "sha256": "7e80dc6950a6939ac5241d24c548c3f8a56049646d5e9848626295386179720a"
+    },
+    {
+      "path": "tests/research_v3/method/test_p04_protocol.py",
+      "sha256": "29a7c8b47c9df3bb9fc1d600d6ae4cff66029b41b11ab1084f57ec527148b8ac"
+    },
+    {
+      "path": "tests/research_v3/method/test_p05_calibration.py",
+      "sha256": "d2943d23c8a9e9cf5e1b80cce2587f22267c4bf9df8e1671f9ff8311e328fc41"
+    },
+    {
+      "path": "tests/research_v3/method/test_p05_leakage.py",
+      "sha256": "74c6243b5836c35bd01185386289741e03f833ec7e1d9e56866f1f25e93b327e"
+    },
+    {
+      "path": "tests/research_v3/method/test_p05_models.py",
+      "sha256": "498a94d2074791bf39cca0c90779d29a8367ffee376dfad6482748bda5c4bb07"
+    },
+    {
+      "path": "tests/research_v3/method/test_p06_metrics.py",
+      "sha256": "a58fa6273e57397ebc58f612f781a45f06a4b1914972c76f3738ce32e94a7c62"
+    },
+    {
+      "path": "tests/research_v3/method/test_p06_pipeline_oulad.py",
+      "sha256": "980b030226bfd57c7458490a2f7c673a58e517113fcb697f8726c6e457625158"
+    },
+    {
+      "path": "tests/research_v3/method/test_p06_selection.py",
+      "sha256": "a7463db7597ff1722e66da293ee13ce5000e83a8c874a5a4e074546421c6dd67"
+    },
+    {
+      "path": "tests/research_v3/method/test_p07_evaluation.py",
+      "sha256": "c97691aa93265e3a4590ae048d03c6ab20fb491653c907b8d2006f6ffa1fdbe0"
+    },
+    {
+      "path": "tests/research_v3/method/test_p07_external_smithsonian.py",
+      "sha256": "0f4b5edd76757e152149c5b07ce3fc5563f4a83295d96fb8a0f8f1cf24ec67d0"
+    },
+    {
+      "path": "tests/research_v3/method/test_p07_selector.py",
+      "sha256": "883f83892e8dbae581d0663b7caa222f580d9fb9e60954e69c707e332086bc36"
+    },
+    {
+      "path": "tests/research_v3/method/test_p07_stress_strata.py",
+      "sha256": "dd2e27f1a1e1469b43b3f5520ef1be0785bf3d42a094b9a151e2806b1b3c4676"
+    },
+    {
+      "path": "tests/research_v3/method/test_p09_corpus_eval.py",
+      "sha256": "f4239484715248edd3d9b1ecfe4a65f22e9393ff7c28aa9ced74810c23c4183b"
+    },
+    {
+      "path": "tests/research_v3/method/test_p09_provenance_gate.py",
+      "sha256": "5493c24e64fd178e0e862eb92851814ec0cfa7977a26eac42909ba00aca63c4d"
+    },
+    {
+      "path": "tests/research_v3/method/test_p09_rights_and_integrity.py",
+      "sha256": "1a63f66b54dd11d2918bf04ad6baa199fad26c12e83868f963b0e050115b1b28"
+    },
+    {
+      "path": "tests/research_v3/method/test_p10_ablations.py",
+      "sha256": "fdcbf73ef03b9c8c6e098a9e75c85bfc97e7cfb85dcfe636a4dc9477fe800662"
+    },
+    {
+      "path": "tests/research_v3/method/test_p10_builders.py",
+      "sha256": "32ec39df7a2d4cdf33197ec777fb8b7a03263849993dd40ee8dfe05b134f3d6a"
+    },
+    {
+      "path": "tests/research_v3/method/test_p10_experiment.py",
+      "sha256": "bac61668378c9db7fe6dce2337487ac8c57281063c2391dba90ede6056c040fb"
+    },
+    {
+      "path": "tests/research_v3/method/test_p10_invariants.py",
+      "sha256": "f4696efa4356d58b11bbf624f0ae177babad1846d1c445f6a46eefed868ace04"
+    },
+    {
+      "path": "tests/research_v3/method/test_p10_provenance.py",
+      "sha256": "cb54c26894e13a1dd9e345d5817f1c9057fbd864a7717a4319756225e20ef72b"
+    },
+    {
+      "path": "tests/research_v3/method/test_p11_annotation_pack.py",
+      "sha256": "ee72a147122b7dcf0f2c953d33e6d9bbdfa6db5ed6b5268c743d4af89c600213"
+    },
+    {
+      "path": "tests/research_v3/method/test_p11_prereg_and_status.py",
+      "sha256": "a7bdc86a1ffecac6c584111366a936ee8ca3f59727d1d05ecd237fa1cb66bc0c"
+    },
+    {
+      "path": "tests/research_v3/method/test_p11_reliability.py",
+      "sha256": "64b15615f537835b06f6f51ef07afc555a2f16e8f28808caa23b0a0283496777"
+    },
+    {
+      "path": "tests/research_v3/method/test_p11_rubric.py",
+      "sha256": "c459d9ea673291c16ac7a0bff05cc8de44e0a13c22323c49f2c7eac838b37a6c"
+    },
+    {
+      "path": "tests/research_v3/method/test_p12_chain_contradictions.py",
+      "sha256": "63d7a4c24ad6e72f9ed95bd97e505c911d39c5910865217b7c37bc500e87f5ee"
+    },
+    {
+      "path": "tests/research_v3/method/test_p12_corpus_audit.py",
+      "sha256": "a601e51250b0e282f6a1d7824ab0bdda404ee79679608857e905e507c9e2030d"
+    },
+    {
+      "path": "tests/research_v3/method/test_p12_helpers.py",
+      "sha256": "83f41d584278287fe43dc0b8b218e3d65731db71ec21ef3feb927b99f5d924b2"
+    },
+    {
+      "path": "tests/research_v3/method/test_p12_validator.py",
+      "sha256": "370aaae52f5efa6094f2d03f14c007cba4cffae7f10f008f5333695588c65577"
+    },
+    {
+      "path": "tests/research_v3/method/test_p13_calibration_stats.py",
+      "sha256": "982a7663fcdccbddb57151d9965260394d3e2c1de1bdf2a76f6d4abdb6a555b3"
+    },
+    {
+      "path": "tests/research_v3/method/test_p13_construct_guard.py",
+      "sha256": "95a7b46426dacf5e9b780b86485c9436ca4f1064c57af905e6a5e08d5acebf7e"
+    },
+    {
+      "path": "tests/research_v3/method/test_p13_corpus_guard.py",
+      "sha256": "dbbd74499ddcc17460a5b8b3bd7816901a3df48e71bdc1c7ec0733ef8cf04ee6"
+    },
+    {
+      "path": "tests/research_v3/method/test_p13_determinism.py",
+      "sha256": "d9ca2677bc15e14aa55607a0df51bfbc059d6d82112f756353cfa484b480dde0"
+    },
+    {
+      "path": "tests/research_v3/method/test_p13_splits_leakage.py",
+      "sha256": "b24bf90da438249258e5a89e2b3c2acd6b53f3f0e8100b5cddfa5128f46abe4c"
+    },
+    {
+      "path": "tests/research_v3/method/test_p14_audit_engine.py",
+      "sha256": "16ee3541258d08cd88c057bdd3718f376006daec6364cae869989beee8a8dc76"
+    },
+    {
+      "path": "tests/research_v3/method/test_p14_provenance_cli.py",
+      "sha256": "39574af8784dfc66775866320ca38dea7916ea1d3607119a2dd3821c771072d8"
+    },
+    {
+      "path": "tests/research_v3/method/test_p14_rubric_schema.py",
+      "sha256": "864152fc8c73a71198f0b87e044db7ee9ba7911e7477a9e534c4a56e0ce1160e"
+    },
+    {
+      "path": "tests/research_v3/privacy/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/research_v3/scientific/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/research_v3/scientific/test_g04_g05_g06.py",
+      "sha256": "9b5f7316ac9d1440bdca5b10f1112ad8f56ed31a80870d9240c23d4e8db74f1c"
+    },
+    {
+      "path": "tests/research_v3/scientific/test_g07_g10.py",
+      "sha256": "72901d4cab48c0af92575d889b8365120fd942962275f3fb5cff6f0e4968489c"
+    },
+    {
+      "path": "tests/research_v3/scientific/test_g13_g14_g18.py",
+      "sha256": "85358573f9486d1061ece3b3a6239e825b6ac6378d87cc133e342f0a0b744b18"
+    },
+    {
+      "path": "tests/research_v3/scientific/test_result_integrity.py",
+      "sha256": "4bea220a97d8dea037b40b760460d014128761d9d2c03142e63ba50705399814"
+    },
+    {
+      "path": "tests/research_v3/scientific/test_stress_parity.py",
+      "sha256": "df4e0e1f5f775b8636bae85c95d8985b744fc4de34ad94569156682eec783c4f"
+    }
+  ],
+  "inventory_scope": [
+    "research_v3",
+    "tests/research_v3"
+  ],
+  "inventory_sha256": "e40269d69bbe2fe9e10d1bc9460e8adc3570eaafc672916c7c73775823ab5918",
+  "n_inventory_files": 320,
+  "python_version": "3.12.3",
+  "schema": "research_v3.source_lock/v1",
+  "source_sha_pinned": "4e5a792e16250106b9d0a577849e864ab7007c92",
+  "task_ids": [
+    "V3-G00",
+    "V3-G11"
+  ],
+  "working_tree_dirty": true
+}

@@ -1,0 +1,2974 @@
+{
+  "artifacts_sha256": {
+    "instances.jsonl": "678d24d46d97f6c3982bdc4adc47686109f7488f2846d60305af1f5cc9ff85be",
+    "predictions.jsonl": "68235454da9e6b3ac25e2bed9183d92c9957300b939017978d2d5bee0c32d0cb"
+  },
+  "c2_label": "independent exact search (reimplementation); not a published library",
+  "cells": {
+    "a3_alternative_blind": {
+      "abstains": 0,
+      "decision_counts": {
+        "cost_exceeded": 450,
+        "find_valid_route": 90,
+        "no_feasible_route": 1080
+      },
+      "exact_match": 653,
+      "exact_match_rate": 0.4030864197530864,
+      "false_feasible": 0,
+      "false_infeasibility": 819,
+      "feasibility_rate": 0.05555555555555555,
+      "feasible_found": 90,
+      "gap_inf_count": 819,
+      "gap_n": 90,
+      "mean_relative_gap": 0.28047900289618877,
+      "n_instances": 1620,
+      "optimal_status": 0,
+      "oracle_feasible": 909,
+      "solver_id": "a3_alternative_blind",
+      "status_counts": {
+        "heuristic": 1620
+      },
+      "timeout_status": 0,
+      "wall_ms_p95": 2.186,
+      "wall_ms_total": 462.182
+    },
+    "c0_greedy": {
+      "abstains": 0,
+      "decision_counts": {
+        "cost_exceeded": 191,
+        "find_valid_route": 349,
+        "no_feasible_route": 1080
+      },
+      "exact_match": 855,
+      "exact_match_rate": 0.5277777777777778,
+      "false_feasible": 0,
+      "false_infeasibility": 560,
+      "feasibility_rate": 0.2154320987654321,
+      "feasible_found": 349,
+      "gap_inf_count": 560,
+      "gap_n": 349,
+      "mean_relative_gap": 0.1339370026306432,
+      "n_instances": 1620,
+      "optimal_status": 0,
+      "oracle_feasible": 909,
+      "solver_id": "c0_greedy",
+      "status_counts": {
+        "heuristic": 1620
+      },
+      "timeout_status": 0,
+      "wall_ms_p95": 0.059,
+      "wall_ms_total": 40.138
+    },
+    "c1_branch_and_bound": {
+      "abstains": 0,
+      "decision_counts": {
+        "cost_exceeded": 122,
+        "find_valid_route": 909,
+        "no_feasible_route": 589
+      },
+      "exact_match": 1620,
+      "exact_match_rate": 1.0,
+      "false_feasible": 0,
+      "false_infeasibility": 0,
+      "feasibility_rate": 0.5611111111111111,
+      "feasible_found": 909,
+      "gap_inf_count": 0,
+      "gap_n": 909,
+      "mean_relative_gap": 0.0,
+      "n_instances": 1620,
+      "optimal_status": 1620,
+      "oracle_feasible": 909,
+      "solver_id": "c1_branch_and_bound",
+      "status_counts": {
+        "optimal": 1620
+      },
+      "timeout_status": 0,
+      "wall_ms_p95": 0.451,
+      "wall_ms_total": 200.444
+    },
+    "c2_dijkstra_state": {
+      "abstains": 0,
+      "decision_counts": {
+        "cost_exceeded": 122,
+        "find_valid_route": 909,
+        "no_feasible_route": 589
+      },
+      "exact_match": 1620,
+      "exact_match_rate": 1.0,
+      "false_feasible": 0,
+      "false_infeasibility": 0,
+      "feasibility_rate": 0.5611111111111111,
+      "feasible_found": 909,
+      "gap_inf_count": 0,
+      "gap_n": 909,
+      "mean_relative_gap": 0.0,
+      "n_instances": 1620,
+      "optimal_status": 1620,
+      "oracle_feasible": 909,
+      "solver_id": "c2_dijkstra_state",
+      "status_counts": {
+        "optimal": 1620
+      },
+      "timeout_status": 0,
+      "wall_ms_p95": 2.029,
+      "wall_ms_total": 1050.607
+    },
+    "p02_proposed": {
+      "abstains": 0,
+      "decision_counts": {
+        "cost_exceeded": 122,
+        "find_valid_route": 909,
+        "no_feasible_route": 589
+      },
+      "exact_match": 1620,
+      "exact_match_rate": 1.0,
+      "false_feasible": 0,
+      "false_infeasibility": 0,
+      "feasibility_rate": 0.5611111111111111,
+      "feasible_found": 909,
+      "gap_inf_count": 0,
+      "gap_n": 909,
+      "mean_relative_gap": 0.0,
+      "n_instances": 1620,
+      "optimal_status": 1620,
+      "oracle_feasible": 909,
+      "solver_id": "p02_proposed",
+      "status_counts": {
+        "optimal": 1620
+      },
+      "timeout_status": 0,
+      "wall_ms_p95": 1.228,
+      "wall_ms_total": 728.166
+    }
+  },
+  "confirmatory_family": [
+    "p02_proposed_vs_c1_branch_and_bound",
+    "p02_proposed_vs_c0_greedy"
+  ],
+  "environment": {
+    "c2_note": "ortools/pulp unavailable in this environment; C2 is an independent exact reimplementation (Dijkstra-with-state), labelled as such.",
+    "ortools_available": false,
+    "platform": "Linux-6.17.0-20-generic-x86_64-with-glibc2.39",
+    "python": "3.12.3"
+  },
+  "exact_solver_false_infeasibility_must_be_zero": {
+    "c1_branch_and_bound": 0,
+    "c2_dijkstra_state": 0,
+    "p02_proposed": 0
+  },
+  "families": [
+    "chain",
+    "alternative_pair",
+    "dense_cover",
+    "unreachable_bridge",
+    "mixed_lattice",
+    "blocked_access"
+  ],
+  "instances_per_cell": 30,
+  "invalid_routes": {
+    "a3_alternative_blind": [],
+    "c0_greedy": [],
+    "c1_branch_and_bound": [],
+    "c2_dijkstra_state": [],
+    "p02_proposed": []
+  },
+  "n_instances": 1620,
+  "paired_statistics": {
+    "holm_adjusted_p_confirmatory": {
+      "p02_proposed_vs_c0_greedy": 1.3944900448272217e-25,
+      "p02_proposed_vs_c1_branch_and_bound": 1.0
+    },
+    "p02_proposed_vs_c0_greedy": {
+      "a": "p02_proposed",
+      "b": "c0_greedy",
+      "cliffs_delta": -1.0,
+      "cluster_bootstrap": {
+        "ci_95": [
+          -21.597701149425287,
+          -2.396713615023474
+        ],
+        "mean": -9.051575931232092,
+        "method": "cluster_bootstrap_paired",
+        "n_groups": 6,
+        "n_units": 349,
+        "resamples": 2000
+      },
+      "mean_diff": -9.051575931232092,
+      "n": 349,
+      "note": "cost(a) - cost(b) on commonly feasible instances; positive means a is more expensive",
+      "wilcoxon": {
+        "p_value": 6.972450224136108e-26,
+        "statistic": 0.0
+      }
+    },
+    "p02_proposed_vs_c1_branch_and_bound": {
+      "a": "p02_proposed",
+      "b": "c1_branch_and_bound",
+      "cliffs_delta": 0.0,
+      "cluster_bootstrap": {
+        "ci_95": [
+          0.0,
+          0.0
+        ],
+        "mean": 0.0,
+        "method": "cluster_bootstrap_paired",
+        "n_groups": 12,
+        "n_units": 909,
+        "resamples": 2000
+      },
+      "mean_diff": 0.0,
+      "n": 909,
+      "note": "cost(a) - cost(b) on commonly feasible instances; positive means a is more expensive",
+      "wilcoxon": {
+        "note": "all paired differences identical; no evidence of a difference",
+        "p_value": 1.0,
+        "statistic": null
+      }
+    }
+  },
+  "paper_id": "P02",
+  "per_family": {
+    "a3_alternative_blind": {
+      "alternative_pair|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 60,
+          "find_valid_route": 30
+        },
+        "exact_match": 13,
+        "exact_match_rate": 0.14444444444444443,
+        "false_feasible": 0,
+        "false_infeasibility": 47,
+        "feasibility_rate": 0.3333333333333333,
+        "feasible_found": 30,
+        "gap_inf_count": 47,
+        "gap_n": 30,
+        "mean_relative_gap": 0.2804790028961888,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 77,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.116,
+        "wall_ms_total": 6.477
+      },
+      "alternative_pair|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 60,
+          "find_valid_route": 30
+        },
+        "exact_match": 13,
+        "exact_match_rate": 0.14444444444444443,
+        "false_feasible": 0,
+        "false_infeasibility": 47,
+        "feasibility_rate": 0.3333333333333333,
+        "feasible_found": 30,
+        "gap_inf_count": 47,
+        "gap_n": 30,
+        "mean_relative_gap": 0.2804790028961888,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 77,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.125,
+        "wall_ms_total": 6.498
+      },
+      "alternative_pair|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 60,
+          "find_valid_route": 30
+        },
+        "exact_match": 13,
+        "exact_match_rate": 0.14444444444444443,
+        "false_feasible": 0,
+        "false_infeasibility": 47,
+        "feasibility_rate": 0.3333333333333333,
+        "feasible_found": 30,
+        "gap_inf_count": 47,
+        "gap_n": 30,
+        "mean_relative_gap": 0.2804790028961888,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 77,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.134,
+        "wall_ms_total": 6.769
+      },
+      "blocked_access|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.024,
+        "wall_ms_total": 0.827
+      },
+      "blocked_access|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.021,
+        "wall_ms_total": 1.395
+      },
+      "blocked_access|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.012,
+        "wall_ms_total": 0.748
+      },
+      "chain|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 0,
+        "exact_match_rate": 0.0,
+        "false_feasible": 0,
+        "false_infeasibility": 78,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 78,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 78,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.03,
+        "wall_ms_total": 1.352
+      },
+      "chain|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 0,
+        "exact_match_rate": 0.0,
+        "false_feasible": 0,
+        "false_infeasibility": 78,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 78,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 78,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.033,
+        "wall_ms_total": 1.506
+      },
+      "chain|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 0,
+        "exact_match_rate": 0.0,
+        "false_feasible": 0,
+        "false_infeasibility": 80,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 80,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 80,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.033,
+        "wall_ms_total": 1.612
+      },
+      "dense_cover|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 90
+        },
+        "exact_match": 9,
+        "exact_match_rate": 0.1,
+        "false_feasible": 0,
+        "false_infeasibility": 81,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 81,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 81,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 2.479,
+        "wall_ms_total": 113.309
+      },
+      "dense_cover|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 90
+        },
+        "exact_match": 8,
+        "exact_match_rate": 0.08888888888888889,
+        "false_feasible": 0,
+        "false_infeasibility": 82,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 82,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 82,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 6.461,
+        "wall_ms_total": 143.409
+      },
+      "dense_cover|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 90
+        },
+        "exact_match": 8,
+        "exact_match_rate": 0.08888888888888889,
+        "false_feasible": 0,
+        "false_infeasibility": 82,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 82,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 82,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 6.627,
+        "wall_ms_total": 171.259
+      },
+      "mixed_lattice|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 0,
+        "exact_match_rate": 0.0,
+        "false_feasible": 0,
+        "false_infeasibility": 81,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 81,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 81,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.032,
+        "wall_ms_total": 1.469
+      },
+      "mixed_lattice|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 8,
+        "exact_match_rate": 0.08888888888888889,
+        "false_feasible": 0,
+        "false_infeasibility": 74,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 74,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 74,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.02,
+        "wall_ms_total": 1.565
+      },
+      "mixed_lattice|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 41,
+        "exact_match_rate": 0.45555555555555555,
+        "false_feasible": 0,
+        "false_infeasibility": 42,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 42,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 42,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.033,
+        "wall_ms_total": 1.499
+      },
+      "unreachable_bridge|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.015,
+        "wall_ms_total": 0.864
+      },
+      "unreachable_bridge|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.014,
+        "wall_ms_total": 0.834
+      },
+      "unreachable_bridge|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.024,
+        "wall_ms_total": 0.791
+      }
+    },
+    "c0_greedy": {
+      "alternative_pair|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 15,
+          "find_valid_route": 75
+        },
+        "exact_match": 76,
+        "exact_match_rate": 0.8444444444444444,
+        "false_feasible": 0,
+        "false_infeasibility": 2,
+        "feasibility_rate": 0.8333333333333334,
+        "feasible_found": 75,
+        "gap_inf_count": 2,
+        "gap_n": 75,
+        "mean_relative_gap": 0.00592291258434009,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 77,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.073,
+        "wall_ms_total": 3.972
+      },
+      "alternative_pair|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 15,
+          "find_valid_route": 75
+        },
+        "exact_match": 76,
+        "exact_match_rate": 0.8444444444444444,
+        "false_feasible": 0,
+        "false_infeasibility": 2,
+        "feasibility_rate": 0.8333333333333334,
+        "feasible_found": 75,
+        "gap_inf_count": 2,
+        "gap_n": 75,
+        "mean_relative_gap": 0.00592291258434009,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 77,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.058,
+        "wall_ms_total": 3.889
+      },
+      "alternative_pair|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 15,
+          "find_valid_route": 75
+        },
+        "exact_match": 76,
+        "exact_match_rate": 0.8444444444444444,
+        "false_feasible": 0,
+        "false_infeasibility": 2,
+        "feasibility_rate": 0.8333333333333334,
+        "feasible_found": 75,
+        "gap_inf_count": 2,
+        "gap_n": 75,
+        "mean_relative_gap": 0.00592291258434009,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 77,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.066,
+        "wall_ms_total": 4.006
+      },
+      "blocked_access|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.014,
+        "wall_ms_total": 0.743
+      },
+      "blocked_access|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.021,
+        "wall_ms_total": 0.794
+      },
+      "blocked_access|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.022,
+        "wall_ms_total": 0.825
+      },
+      "chain|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 0,
+        "exact_match_rate": 0.0,
+        "false_feasible": 0,
+        "false_infeasibility": 78,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 78,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 78,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.029,
+        "wall_ms_total": 1.263
+      },
+      "chain|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 0,
+        "exact_match_rate": 0.0,
+        "false_feasible": 0,
+        "false_infeasibility": 78,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 78,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 78,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.018,
+        "wall_ms_total": 1.246
+      },
+      "chain|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 0,
+        "exact_match_rate": 0.0,
+        "false_feasible": 0,
+        "false_infeasibility": 80,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 80,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 80,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.033,
+        "wall_ms_total": 1.628
+      },
+      "dense_cover|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 57,
+          "find_valid_route": 33
+        },
+        "exact_match": 12,
+        "exact_match_rate": 0.13333333333333333,
+        "false_feasible": 0,
+        "false_infeasibility": 48,
+        "feasibility_rate": 0.36666666666666664,
+        "feasible_found": 33,
+        "gap_inf_count": 48,
+        "gap_n": 33,
+        "mean_relative_gap": 0.6146444653121823,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 81,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.065,
+        "wall_ms_total": 3.849
+      },
+      "dense_cover|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 50,
+          "find_valid_route": 40
+        },
+        "exact_match": 12,
+        "exact_match_rate": 0.13333333333333333,
+        "false_feasible": 0,
+        "false_infeasibility": 42,
+        "feasibility_rate": 0.4444444444444444,
+        "feasible_found": 40,
+        "gap_inf_count": 42,
+        "gap_n": 40,
+        "mean_relative_gap": 0.3739049461066675,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 82,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.095,
+        "wall_ms_total": 5.635
+      },
+      "dense_cover|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 39,
+          "find_valid_route": 51
+        },
+        "exact_match": 14,
+        "exact_match_rate": 0.15555555555555556,
+        "false_feasible": 0,
+        "false_infeasibility": 31,
+        "feasibility_rate": 0.5666666666666667,
+        "feasible_found": 51,
+        "gap_inf_count": 31,
+        "gap_n": 51,
+        "mean_relative_gap": 0.19944888994214244,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 82,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.075,
+        "wall_ms_total": 4.648
+      },
+      "mixed_lattice|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 0,
+        "exact_match_rate": 0.0,
+        "false_feasible": 0,
+        "false_infeasibility": 81,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 81,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 81,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.033,
+        "wall_ms_total": 1.612
+      },
+      "mixed_lattice|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 8,
+        "exact_match_rate": 0.08888888888888889,
+        "false_feasible": 0,
+        "false_infeasibility": 74,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 74,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 74,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.036,
+        "wall_ms_total": 1.914
+      },
+      "mixed_lattice|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 41,
+        "exact_match_rate": 0.45555555555555555,
+        "false_feasible": 0,
+        "false_infeasibility": 42,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 42,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 42,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.048,
+        "wall_ms_total": 1.937
+      },
+      "unreachable_bridge|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.011,
+        "wall_ms_total": 0.68
+      },
+      "unreachable_bridge|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.01,
+        "wall_ms_total": 0.674
+      },
+      "unreachable_bridge|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 0,
+        "oracle_feasible": 0,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.015,
+        "wall_ms_total": 0.823
+      }
+    },
+    "c1_branch_and_bound": {
+      "alternative_pair|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 13,
+          "find_valid_route": 77
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8555555555555555,
+        "feasible_found": 77,
+        "gap_inf_count": 0,
+        "gap_n": 77,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 77,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.232,
+        "wall_ms_total": 9.249
+      },
+      "alternative_pair|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 13,
+          "find_valid_route": 77
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8555555555555555,
+        "feasible_found": 77,
+        "gap_inf_count": 0,
+        "gap_n": 77,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 77,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.208,
+        "wall_ms_total": 9.486
+      },
+      "alternative_pair|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 13,
+          "find_valid_route": 77
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8555555555555555,
+        "feasible_found": 77,
+        "gap_inf_count": 0,
+        "gap_n": 77,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 77,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.183,
+        "wall_ms_total": 8.902
+      },
+      "blocked_access|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.009,
+        "wall_ms_total": 0.596
+      },
+      "blocked_access|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.008,
+        "wall_ms_total": 0.583
+      },
+      "blocked_access|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.022,
+        "wall_ms_total": 0.778
+      },
+      "chain|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 12,
+          "find_valid_route": 78
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8666666666666667,
+        "feasible_found": 78,
+        "gap_inf_count": 0,
+        "gap_n": 78,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 78,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.113,
+        "wall_ms_total": 6.115
+      },
+      "chain|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 12,
+          "find_valid_route": 78
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8666666666666667,
+        "feasible_found": 78,
+        "gap_inf_count": 0,
+        "gap_n": 78,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 78,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.355,
+        "wall_ms_total": 14.08
+      },
+      "chain|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 10,
+          "find_valid_route": 80
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8888888888888888,
+        "feasible_found": 80,
+        "gap_inf_count": 0,
+        "gap_n": 80,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 80,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.504,
+        "wall_ms_total": 20.67
+      },
+      "dense_cover|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 9,
+          "find_valid_route": 81
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9,
+        "feasible_found": 81,
+        "gap_inf_count": 0,
+        "gap_n": 81,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 81,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.658,
+        "wall_ms_total": 26.632
+      },
+      "dense_cover|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 8,
+          "find_valid_route": 82
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9111111111111111,
+        "feasible_found": 82,
+        "gap_inf_count": 0,
+        "gap_n": 82,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 82,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.663,
+        "wall_ms_total": 26.847
+      },
+      "dense_cover|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 8,
+          "find_valid_route": 82
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9111111111111111,
+        "feasible_found": 82,
+        "gap_inf_count": 0,
+        "gap_n": 82,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 82,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.679,
+        "wall_ms_total": 30.828
+      },
+      "mixed_lattice|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 9,
+          "find_valid_route": 81
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9,
+        "feasible_found": 81,
+        "gap_inf_count": 0,
+        "gap_n": 81,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 81,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.193,
+        "wall_ms_total": 10.655
+      },
+      "mixed_lattice|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 8,
+          "find_valid_route": 74,
+          "no_feasible_route": 8
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8222222222222222,
+        "feasible_found": 74,
+        "gap_inf_count": 0,
+        "gap_n": 74,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 74,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.423,
+        "wall_ms_total": 18.18
+      },
+      "mixed_lattice|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 7,
+          "find_valid_route": 42,
+          "no_feasible_route": 41
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.4666666666666667,
+        "feasible_found": 42,
+        "gap_inf_count": 0,
+        "gap_n": 42,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 42,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.451,
+        "wall_ms_total": 15.089
+      },
+      "unreachable_bridge|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.012,
+        "wall_ms_total": 0.663
+      },
+      "unreachable_bridge|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.008,
+        "wall_ms_total": 0.516
+      },
+      "unreachable_bridge|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.02,
+        "wall_ms_total": 0.576
+      }
+    },
+    "c2_dijkstra_state": {
+      "alternative_pair|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 13,
+          "find_valid_route": 77
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8555555555555555,
+        "feasible_found": 77,
+        "gap_inf_count": 0,
+        "gap_n": 77,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 77,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.113,
+        "wall_ms_total": 5.371
+      },
+      "alternative_pair|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 13,
+          "find_valid_route": 77
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8555555555555555,
+        "feasible_found": 77,
+        "gap_inf_count": 0,
+        "gap_n": 77,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 77,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.091,
+        "wall_ms_total": 5.203
+      },
+      "alternative_pair|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 13,
+          "find_valid_route": 77
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8555555555555555,
+        "feasible_found": 77,
+        "gap_inf_count": 0,
+        "gap_n": 77,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 77,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.103,
+        "wall_ms_total": 5.773
+      },
+      "blocked_access|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.015,
+        "wall_ms_total": 0.564
+      },
+      "blocked_access|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.007,
+        "wall_ms_total": 0.464
+      },
+      "blocked_access|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.007,
+        "wall_ms_total": 0.482
+      },
+      "chain|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 12,
+          "find_valid_route": 78
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8666666666666667,
+        "feasible_found": 78,
+        "gap_inf_count": 0,
+        "gap_n": 78,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 78,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.107,
+        "wall_ms_total": 5.654
+      },
+      "chain|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 12,
+          "find_valid_route": 78
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8666666666666667,
+        "feasible_found": 78,
+        "gap_inf_count": 0,
+        "gap_n": 78,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 78,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.45,
+        "wall_ms_total": 14.877
+      },
+      "chain|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 10,
+          "find_valid_route": 80
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8888888888888888,
+        "feasible_found": 80,
+        "gap_inf_count": 0,
+        "gap_n": 80,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 80,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 1.005,
+        "wall_ms_total": 36.125
+      },
+      "dense_cover|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 9,
+          "find_valid_route": 81
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9,
+        "feasible_found": 81,
+        "gap_inf_count": 0,
+        "gap_n": 81,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 81,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 1.686,
+        "wall_ms_total": 53.622
+      },
+      "dense_cover|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 8,
+          "find_valid_route": 82
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9111111111111111,
+        "feasible_found": 82,
+        "gap_inf_count": 0,
+        "gap_n": 82,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 82,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 10.634,
+        "wall_ms_total": 342.713
+      },
+      "dense_cover|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 8,
+          "find_valid_route": 82
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9111111111111111,
+        "feasible_found": 82,
+        "gap_inf_count": 0,
+        "gap_n": 82,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 82,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 10.993,
+        "wall_ms_total": 462.017
+      },
+      "mixed_lattice|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 9,
+          "find_valid_route": 81
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9,
+        "feasible_found": 81,
+        "gap_inf_count": 0,
+        "gap_n": 81,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 81,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.156,
+        "wall_ms_total": 11.049
+      },
+      "mixed_lattice|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 8,
+          "find_valid_route": 74,
+          "no_feasible_route": 8
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8222222222222222,
+        "feasible_found": 74,
+        "gap_inf_count": 0,
+        "gap_n": 74,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 74,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.955,
+        "wall_ms_total": 36.131
+      },
+      "mixed_lattice|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 7,
+          "find_valid_route": 42,
+          "no_feasible_route": 41
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.4666666666666667,
+        "feasible_found": 42,
+        "gap_inf_count": 0,
+        "gap_n": 42,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 42,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 1.953,
+        "wall_ms_total": 68.957
+      },
+      "unreachable_bridge|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.008,
+        "wall_ms_total": 0.564
+      },
+      "unreachable_bridge|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.007,
+        "wall_ms_total": 0.53
+      },
+      "unreachable_bridge|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.007,
+        "wall_ms_total": 0.511
+      }
+    },
+    "p02_proposed": {
+      "alternative_pair|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 13,
+          "find_valid_route": 77
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8555555555555555,
+        "feasible_found": 77,
+        "gap_inf_count": 0,
+        "gap_n": 77,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 77,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.137,
+        "wall_ms_total": 8.274
+      },
+      "alternative_pair|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 13,
+          "find_valid_route": 77
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8555555555555555,
+        "feasible_found": 77,
+        "gap_inf_count": 0,
+        "gap_n": 77,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 77,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.143,
+        "wall_ms_total": 8.513
+      },
+      "alternative_pair|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 13,
+          "find_valid_route": 77
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8555555555555555,
+        "feasible_found": 77,
+        "gap_inf_count": 0,
+        "gap_n": 77,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 77,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.139,
+        "wall_ms_total": 8.576
+      },
+      "blocked_access|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.01,
+        "wall_ms_total": 0.618
+      },
+      "blocked_access|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.009,
+        "wall_ms_total": 0.525
+      },
+      "blocked_access|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.008,
+        "wall_ms_total": 0.534
+      },
+      "chain|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 12,
+          "find_valid_route": 78
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8666666666666667,
+        "feasible_found": 78,
+        "gap_inf_count": 0,
+        "gap_n": 78,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 78,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.127,
+        "wall_ms_total": 6.664
+      },
+      "chain|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 12,
+          "find_valid_route": 78
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8666666666666667,
+        "feasible_found": 78,
+        "gap_inf_count": 0,
+        "gap_n": 78,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 78,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.388,
+        "wall_ms_total": 13.896
+      },
+      "chain|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 10,
+          "find_valid_route": 80
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8888888888888888,
+        "feasible_found": 80,
+        "gap_inf_count": 0,
+        "gap_n": 80,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 80,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.593,
+        "wall_ms_total": 26.221
+      },
+      "dense_cover|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 9,
+          "find_valid_route": 81
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9,
+        "feasible_found": 81,
+        "gap_inf_count": 0,
+        "gap_n": 81,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 81,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 1.335,
+        "wall_ms_total": 44.686
+      },
+      "dense_cover|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 8,
+          "find_valid_route": 82
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9111111111111111,
+        "feasible_found": 82,
+        "gap_inf_count": 0,
+        "gap_n": 82,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 82,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 8.217,
+        "wall_ms_total": 213.232
+      },
+      "dense_cover|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 8,
+          "find_valid_route": 82
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9111111111111111,
+        "feasible_found": 82,
+        "gap_inf_count": 0,
+        "gap_n": 82,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 82,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 8.669,
+        "wall_ms_total": 303.605
+      },
+      "mixed_lattice|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 9,
+          "find_valid_route": 81
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.9,
+        "feasible_found": 81,
+        "gap_inf_count": 0,
+        "gap_n": 81,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 81,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.19,
+        "wall_ms_total": 13.805
+      },
+      "mixed_lattice|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 8,
+          "find_valid_route": 74,
+          "no_feasible_route": 8
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.8222222222222222,
+        "feasible_found": 74,
+        "gap_inf_count": 0,
+        "gap_n": 74,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 74,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.823,
+        "wall_ms_total": 33.955
+      },
+      "mixed_lattice|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 7,
+          "find_valid_route": 42,
+          "no_feasible_route": 41
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.4666666666666667,
+        "feasible_found": 42,
+        "gap_inf_count": 0,
+        "gap_n": 42,
+        "mean_relative_gap": 0.0,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 42,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 1.186,
+        "wall_ms_total": 43.499
+      },
+      "unreachable_bridge|d0.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.024,
+        "wall_ms_total": 0.686
+      },
+      "unreachable_bridge|d0.5": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.006,
+        "wall_ms_total": 0.455
+      },
+      "unreachable_bridge|d1.0": {
+        "abstains": 0,
+        "decision_counts": {
+          "no_feasible_route": 90
+        },
+        "exact_match": 90,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 0,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 90,
+        "optimal_status": 90,
+        "oracle_feasible": 0,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 90
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.006,
+        "wall_ms_total": 0.425
+      }
+    }
+  },
+  "per_regime": {
+    "a3_alternative_blind": {
+      "loose": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 90,
+          "find_valid_route": 90,
+          "no_feasible_route": 360
+        },
+        "exact_match": 200,
+        "exact_match_rate": 0.37037037037037035,
+        "false_feasible": 0,
+        "false_infeasibility": 250,
+        "feasibility_rate": 0.16666666666666666,
+        "feasible_found": 90,
+        "gap_inf_count": 250,
+        "gap_n": 90,
+        "mean_relative_gap": 0.28047900289618877,
+        "n_instances": 540,
+        "optimal_status": 0,
+        "oracle_feasible": 340,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 2.16,
+        "wall_ms_total": 154.809
+      },
+      "mid": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 180,
+          "no_feasible_route": 360
+        },
+        "exact_match": 191,
+        "exact_match_rate": 0.3537037037037037,
+        "false_feasible": 0,
+        "false_infeasibility": 349,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 349,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 540,
+        "optimal_status": 0,
+        "oracle_feasible": 349,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 2.304,
+        "wall_ms_total": 163.685
+      },
+      "tight": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 180,
+          "no_feasible_route": 360
+        },
+        "exact_match": 262,
+        "exact_match_rate": 0.48518518518518516,
+        "false_feasible": 0,
+        "false_infeasibility": 220,
+        "feasibility_rate": 0.0,
+        "feasible_found": 0,
+        "gap_inf_count": 220,
+        "gap_n": 0,
+        "mean_relative_gap": null,
+        "n_instances": 540,
+        "optimal_status": 0,
+        "oracle_feasible": 220,
+        "solver_id": "a3_alternative_blind",
+        "status_counts": {
+          "heuristic": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 2.065,
+        "wall_ms_total": 143.688
+      }
+    },
+    "c0_greedy": {
+      "loose": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 3,
+          "find_valid_route": 177,
+          "no_feasible_route": 360
+        },
+        "exact_match": 277,
+        "exact_match_rate": 0.512962962962963,
+        "false_feasible": 0,
+        "false_infeasibility": 163,
+        "feasibility_rate": 0.3277777777777778,
+        "feasible_found": 177,
+        "gap_inf_count": 163,
+        "gap_n": 177,
+        "mean_relative_gap": 0.24247817771800018,
+        "n_instances": 540,
+        "optimal_status": 0,
+        "oracle_feasible": 340,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.064,
+        "wall_ms_total": 14.407
+      },
+      "mid": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 58,
+          "find_valid_route": 122,
+          "no_feasible_route": 360
+        },
+        "exact_match": 270,
+        "exact_match_rate": 0.5,
+        "false_feasible": 0,
+        "false_infeasibility": 227,
+        "feasibility_rate": 0.22592592592592592,
+        "feasible_found": 122,
+        "gap_inf_count": 227,
+        "gap_n": 122,
+        "mean_relative_gap": 0.030675428885880433,
+        "n_instances": 540,
+        "optimal_status": 0,
+        "oracle_feasible": 349,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.055,
+        "wall_ms_total": 12.705
+      },
+      "tight": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 130,
+          "find_valid_route": 50,
+          "no_feasible_route": 360
+        },
+        "exact_match": 308,
+        "exact_match_rate": 0.5703703703703704,
+        "false_feasible": 0,
+        "false_infeasibility": 170,
+        "feasibility_rate": 0.09259259259259259,
+        "feasible_found": 50,
+        "gap_inf_count": 170,
+        "gap_n": 50,
+        "mean_relative_gap": 0.0016594827586206896,
+        "n_instances": 540,
+        "optimal_status": 0,
+        "oracle_feasible": 220,
+        "solver_id": "c0_greedy",
+        "status_counts": {
+          "heuristic": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.057,
+        "wall_ms_total": 13.025
+      }
+    },
+    "c1_branch_and_bound": {
+      "loose": {
+        "abstains": 0,
+        "decision_counts": {
+          "find_valid_route": 340,
+          "no_feasible_route": 200
+        },
+        "exact_match": 540,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.6296296296296297,
+        "feasible_found": 340,
+        "gap_inf_count": 0,
+        "gap_n": 340,
+        "mean_relative_gap": 0.0,
+        "n_instances": 540,
+        "optimal_status": 540,
+        "oracle_feasible": 340,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.458,
+        "wall_ms_total": 64.365
+      },
+      "mid": {
+        "abstains": 0,
+        "decision_counts": {
+          "find_valid_route": 349,
+          "no_feasible_route": 191
+        },
+        "exact_match": 540,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.6462962962962963,
+        "feasible_found": 349,
+        "gap_inf_count": 0,
+        "gap_n": 349,
+        "mean_relative_gap": 0.0,
+        "n_instances": 540,
+        "optimal_status": 540,
+        "oracle_feasible": 349,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.448,
+        "wall_ms_total": 67.863
+      },
+      "tight": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 122,
+          "find_valid_route": 220,
+          "no_feasible_route": 198
+        },
+        "exact_match": 540,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.4074074074074074,
+        "feasible_found": 220,
+        "gap_inf_count": 0,
+        "gap_n": 220,
+        "mean_relative_gap": 0.0,
+        "n_instances": 540,
+        "optimal_status": 540,
+        "oracle_feasible": 220,
+        "solver_id": "c1_branch_and_bound",
+        "status_counts": {
+          "optimal": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 0.427,
+        "wall_ms_total": 68.216
+      }
+    },
+    "c2_dijkstra_state": {
+      "loose": {
+        "abstains": 0,
+        "decision_counts": {
+          "find_valid_route": 340,
+          "no_feasible_route": 200
+        },
+        "exact_match": 540,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.6296296296296297,
+        "feasible_found": 340,
+        "gap_inf_count": 0,
+        "gap_n": 340,
+        "mean_relative_gap": 0.0,
+        "n_instances": 540,
+        "optimal_status": 540,
+        "oracle_feasible": 340,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 1.734,
+        "wall_ms_total": 324.576
+      },
+      "mid": {
+        "abstains": 0,
+        "decision_counts": {
+          "find_valid_route": 349,
+          "no_feasible_route": 191
+        },
+        "exact_match": 540,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.6462962962962963,
+        "feasible_found": 349,
+        "gap_inf_count": 0,
+        "gap_n": 349,
+        "mean_relative_gap": 0.0,
+        "n_instances": 540,
+        "optimal_status": 540,
+        "oracle_feasible": 349,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 1.918,
+        "wall_ms_total": 350.674
+      },
+      "tight": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 122,
+          "find_valid_route": 220,
+          "no_feasible_route": 198
+        },
+        "exact_match": 540,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.4074074074074074,
+        "feasible_found": 220,
+        "gap_inf_count": 0,
+        "gap_n": 220,
+        "mean_relative_gap": 0.0,
+        "n_instances": 540,
+        "optimal_status": 540,
+        "oracle_feasible": 220,
+        "solver_id": "c2_dijkstra_state",
+        "status_counts": {
+          "optimal": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 2.41,
+        "wall_ms_total": 375.357
+      }
+    },
+    "p02_proposed": {
+      "loose": {
+        "abstains": 0,
+        "decision_counts": {
+          "find_valid_route": 340,
+          "no_feasible_route": 200
+        },
+        "exact_match": 540,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.6296296296296297,
+        "feasible_found": 340,
+        "gap_inf_count": 0,
+        "gap_n": 340,
+        "mean_relative_gap": 0.0,
+        "n_instances": 540,
+        "optimal_status": 540,
+        "oracle_feasible": 340,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 1.097,
+        "wall_ms_total": 205.064
+      },
+      "mid": {
+        "abstains": 0,
+        "decision_counts": {
+          "find_valid_route": 349,
+          "no_feasible_route": 191
+        },
+        "exact_match": 540,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.6462962962962963,
+        "feasible_found": 349,
+        "gap_inf_count": 0,
+        "gap_n": 349,
+        "mean_relative_gap": 0.0,
+        "n_instances": 540,
+        "optimal_status": 540,
+        "oracle_feasible": 349,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 1.232,
+        "wall_ms_total": 280.887
+      },
+      "tight": {
+        "abstains": 0,
+        "decision_counts": {
+          "cost_exceeded": 122,
+          "find_valid_route": 220,
+          "no_feasible_route": 198
+        },
+        "exact_match": 540,
+        "exact_match_rate": 1.0,
+        "false_feasible": 0,
+        "false_infeasibility": 0,
+        "feasibility_rate": 0.4074074074074074,
+        "feasible_found": 220,
+        "gap_inf_count": 0,
+        "gap_n": 220,
+        "mean_relative_gap": 0.0,
+        "n_instances": 540,
+        "optimal_status": 540,
+        "oracle_feasible": 220,
+        "solver_id": "p02_proposed",
+        "status_counts": {
+          "optimal": 540
+        },
+        "timeout_status": 0,
+        "wall_ms_p95": 1.38,
+        "wall_ms_total": 242.216
+      }
+    }
+  },
+  "regimes": [
+    "tight",
+    "mid",
+    "loose"
+  ],
+  "seed": 20261115,
+  "solver_descriptions": {
+    "a3_alternative_blind": "A3 ablation: alternative-blind all-providers selection (legacy false-infeasibility mutation).",
+    "c0_greedy": "C0 sanity: greedy first-feasible (cheapest covering pick).",
+    "c1_branch_and_bound": "C1 serious classical: exact branch-and-bound over the joint dwell+travel objective (our reimplementation, no external library).",
+    "c2_dijkstra_state": "C2 independent exact search (reimplementation): Dijkstra-with-state over (acquired, chosen, last); NOT a published library.",
+    "p02_proposed": "Proposed: constraint-aware A* planner with accessibility and source-authenticity gates and honest status reporting."
+  },
+  "solvers": [
+    "c0_greedy",
+    "c1_branch_and_bound",
+    "c2_dijkstra_state",
+    "p02_proposed",
+    "a3_alternative_blind"
+  ],
+  "study": "Constraint-Aware Learning Path Planning with Alternative Activities",
+  "wall_seconds": 44.834
+}

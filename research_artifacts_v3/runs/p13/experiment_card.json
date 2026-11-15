@@ -1,0 +1,24 @@
+{
+ "paper_id": "P13",
+ "rq_id": "RQ1",
+ "train_dataset_ids": [
+  "oulad-2013-2014"
+ ],
+ "holdout_dataset_ids": [
+  "oulad-2013-2014:2014J"
+ ],
+ "method_commit_sha": "4e5a792e16250106b9d0a577849e864ab7007c92",
+ "method_hash": "edde4825caeee05d5f01a7adc09c42070316ab7e4a4e2eeefb2b71033d7eaa25",
+ "baseline_version": "C0/C1/logreg-sklearn-1.8.0",
+ "split_hash": "d9bc0a17161fc12b1889452519cc3f3d1fdbcbf4617e66d614e8dc54252f1f71",
+ "feature_cutoff": "day0-60",
+ "prereg_sha256": "9696e295fc85e9b1fcbb4119b5ef4273a4a4b34237c28bc1f45bd1e51e94f827",
+ "hyperparameter_budget": "fixed C=1.0, no search (preregistered)",
+ "seed": 20261115,
+ "hardware": "x86_64 cpus=88",
+ "wall_time_seconds": 309.4,
+ "dependency_lock_sha256": "2eb3c0974553e2f9b00de1bb8c89562cd62360f77a19dc21dc1d2fd2bd11d825",
+ "output_path": "/home/clue/Documents/luuniensuki-lms/research_artifacts_v3/runs/p13",
+ "protocol_deviations": [],
+ "status": "PASS"
+}

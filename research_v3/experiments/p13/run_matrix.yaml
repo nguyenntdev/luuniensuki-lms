@@ -1,0 +1,97 @@
+# P13 run matrix — every cell = one preregistered run
+# Statuses are updated by the runner (research_artifacts_v3/runs/p13/).
+schema_version: "1.0"
+paper_id: P13
+prereg: research_v3/experiments/p13/pre_registration.yaml
+dataset: oulad-2013-2014        # APPROVED card, registry.yaml
+feature_window:
+  start_day: 0
+  end_day: 60
+splits:
+  - id: group
+    protocol: group_split
+    key: id_student
+    fractions: [0.70, 0.10, 0.10, 0.10]
+  - id: time
+    protocol: time_split
+    key: code_presentation
+    test: 2014J
+matrix:
+  - run_id: E02_C0_group
+    condition: C0
+    split: group
+    role: sanity_baseline
+    status: EXECUTED
+  - run_id: E02_C0_time
+    condition: C0
+    split: time
+    role: sanity_baseline
+    status: EXECUTED
+  - run_id: E03_C1_group
+    condition: C1
+    split: group
+    role: matched_classical
+    status: EXECUTED
+  - run_id: E03_C1_time
+    condition: C1
+    split: time
+    role: matched_classical
+    status: EXECUTED
+  - run_id: E05_C2_group
+    condition: C2
+    split: group
+    role: proposed
+    status: EXECUTED
+  - run_id: E05_C2_time
+    condition: C2
+    split: time
+    role: proposed
+    status: EXECUTED
+  - run_id: E06_A1_no_forethought
+    condition: A1_no_forethought
+    split: both
+    status: EXECUTED
+  - run_id: E06_A2_no_temporal_order
+    condition: A2_no_temporal_order
+    split: both
+    status: EXECUTED
+  - run_id: E06_A3_no_help_seeking
+    condition: A3_no_help_seeking
+    split: both
+    status: EXECUTED
+  - run_id: E06_A4_no_effort
+    condition: A4_no_effort
+    split: both
+    status: EXECUTED
+  - run_id: E07_group_contrasts
+    condition: descriptive
+    split: all_rows
+    status: EXECUTED
+  - run_id: E07_subgroups
+    condition: robustness
+    split: group_test
+    status: EXECUTED
+  - run_id: E07_presentation_profile
+    condition: descriptive
+    split: all_rows
+    status: EXECUTED
+  - run_id: E09_paired_auc
+    condition: statistics
+    split: both
+    status: EXECUTED
+blocked_cells:
+  - run_id: E04_C2_published
+    condition: closest published implementation
+    status: BLOCKED
+    reason: >
+      No published SRL-proxy implementation discloses code+license compatible
+      with an exact re-run on OULAD under the same cutoff protocol (checked
+      Nov 2026; strongest candidates — Jovanovic et al. 2017 indicator set,
+      Kizilcec et al. 2013 engagement patterns — published without reusable
+      code and were reimplemented as C2/A-ablations instead). Disclosed per
+      spec section 4 as a dated BLOCKED rationale, not silently skipped.
+  - run_id: E11_secondary_replication
+    status: BLOCKED
+    reason: >
+      Single external dataset (OULAD). External generalization marked
+      UNVERIFIED per prereg claim_rules; no second domain claimed.

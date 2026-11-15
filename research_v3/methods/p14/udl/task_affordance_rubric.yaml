@@ -1,0 +1,78 @@
+# P14 UDL task-affordance rubric (versioned; change requires new rubric_version)
+# Frameworks: udl-representation, udl-engagement, udl-action (CAST UDL 3.0
+# principles, https://udlguidelines.cast.org ) and wcag22 (W3C WCAG 2.2 AA,
+# https://www.w3.org/TR/WCAG22/ ). Fixed constraints only; no learned weights.
+rubric_version: p14-udl-rubric-1.0.0
+criteria:
+  # ---------- UDL Principle 1: Multiple Means of Representation ----------
+  - criterion_id: udl-rep-alt-text
+    framework: udl-representation
+    description: Every informative image has a text alternative expressing its content (UDL 1.1 / WCAG 1.1.1).
+    applies_to: [image, model3d]
+    critical: true
+  - criterion_id: udl-rep-transcript
+    framework: udl-representation
+    description: Audio and video content offers an equivalent text transcript (UDL 1.1).
+    applies_to: [audio, video]
+    critical: true
+  - criterion_id: udl-rep-captions
+    framework: udl-representation
+    description: Prerecorded video provides synchronized captions (WCAG 1.2.2).
+    applies_to: [video]
+    critical: true
+  - criterion_id: udl-rep-multi-modal
+    framework: udl-representation
+    description: Key content is available in more than one modality (e.g. visual + textual), so no single channel is mandatory (UDL 1.x).
+    applies_to: [all]
+    critical: true
+  - criterion_id: udl-rep-inscription-source
+    framework: udl-representation
+    description: Visual heritage content carries a labelled inscription or source context so learners can verify provenance (UDL 3.x guidance, heritage adaptation).
+    applies_to: [image, video, model3d]
+    critical: false
+
+  # ---------- UDL Principle 2: Multiple Means of Engagement ----------
+  - criterion_id: udl-eng-low-bandwidth
+    framework: udl-engagement
+    description: A low-bandwidth variant exists that preserves task feasibility offline/slow networks (UDL 7.x, resource variability).
+    applies_to: [all]
+    critical: true
+  - criterion_id: udl-eng-goal-transparency
+    framework: udl-engagement
+    description: The object states its learning goal so learners can self-regulate engagement (UDL 8.1).
+    applies_to: [all]
+    critical: false
+  - criterion_id: udl-eng-reduced-motion
+    framework: udl-engagement
+    description: Motion or auto-playing media respects reduced-motion preferences and never traps attention (UDL 7.3 / WCAG 2.2.2).
+    applies_to: [video, model3d]
+    critical: true
+
+  # ---------- UDL Principle 3: Multiple Means of Action & Expression ----------
+  - criterion_id: udl-action-keyboard
+    framework: udl-action
+    description: All interactive functionality is operable by keyboard alone with no trap (WCAG 2.1.1 / 2.1.2).
+    applies_to: [model3d, video]
+    critical: true
+  - criterion_id: udl-action-alternative-response
+    framework: udl-action
+    description: At least one non-drag, non-pointer response format exists for assessment prompts (UDL 5.x).
+    applies_to: [all]
+    critical: true
+
+  # ---------- WCAG 2.2 AA affordances ----------
+  - criterion_id: wcag-contrast
+    framework: wcag22
+    description: Text and essential graphics meet WCAG 2.2 AA contrast ratios (1.4.3 / 1.4.11).
+    applies_to: [all]
+    critical: true
+  - criterion_id: wcag-focus-visible
+    framework: wcag22
+    description: Keyboard focus indicators are visible on interactive assets (2.4.7).
+    applies_to: [model3d, video]
+    critical: true
+  - criterion_id: wcag-text-alternative
+    framework: wcag22
+    description: Non-text content has a programmatically determinable text alternative (1.1.1).
+    applies_to: [image, audio, video, model3d]
+    critical: true

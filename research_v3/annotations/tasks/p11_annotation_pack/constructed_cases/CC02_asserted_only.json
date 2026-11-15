@@ -1,0 +1,35 @@
+{
+  "response_id": "CC02_asserted_only",
+  "label": "CONSTRUCTED_NOT_HUMAN",
+  "evidence": [
+    {
+      "evidence_id": "e1",
+      "source_type": "other",
+      "provenance": "asserted",
+      "is_authentic": false,
+      "locator": null,
+      "text": "Có rất nhiều văn bia ở Văn Miếu."
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "c1",
+      "text": "Văn bia cho thấy các kỳ thi diễn ra thường xuyên.",
+      "is_causal": false,
+      "inference_type": "descriptive"
+    }
+  ],
+  "links": [],
+  "scorer_output": {
+    "scores": {
+      "S1_sourcing": 1,
+      "S2_corroboration": 1,
+      "S3_contextualization": 1,
+      "S4_argumentation": 1
+    },
+    "overall": 1.0,
+    "caps_applied": [
+      "S2_corroboration: single_evidence_cap_S2"
+    ]
+  }
+}

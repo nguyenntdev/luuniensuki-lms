@@ -1,0 +1,358 @@
+{
+  "ablation_notes": {
+    "A1": {
+      "component_census": {
+        "edge_connected_components": 9,
+        "isolated_objects": 82
+      }
+    },
+    "A2": {
+      "progression_strict_ascent_rate": 0.7473684210526316
+    },
+    "A3": {
+      "invented_anchor_accepted": true
+    },
+    "A4": {
+      "playlist_grade_inversions": 51
+    }
+  },
+  "anchor_registry": {
+    "documented": 3,
+    "needs_expert_review": 27,
+    "total_anchors": 30
+  },
+  "corpus": {
+    "is_ai_generated_fraction": 1.0,
+    "n_edges": 95,
+    "n_objects": 162,
+    "n_urns": 9
+  },
+  "designs": [
+    {
+      "certificate": {
+        "acyclic": true,
+        "anchors_resolved": true,
+        "bloom_ascent_ok": false,
+        "bloom_leap_edges": [],
+        "grade_monotone": false,
+        "reason_codes": [
+          "grade_order_reversed: playlist descends across grade boundary"
+        ],
+        "valid": false
+      },
+      "design_id": "C0_linear_playlist",
+      "notes": {
+        "bloom_leap_edges": 0,
+        "documented_anchor_objects": 91,
+        "n_objects": 162,
+        "needs_expert_review_anchor_objects": 71
+      },
+      "valid": false
+    },
+    {
+      "certificate": {
+        "acyclic": true,
+        "anchors_resolved": true,
+        "bloom_ascent_ok": false,
+        "bloom_leap_edges": [],
+        "grade_monotone": true,
+        "reason_codes": [
+          "valid_spiral_sequence"
+        ],
+        "valid": false
+      },
+      "design_id": "C1_topological_no_bloom",
+      "notes": {
+        "bloom_leap_edges": 0,
+        "documented_anchor_objects": 91,
+        "n_objects": 162,
+        "needs_expert_review_anchor_objects": 71
+      },
+      "valid": false
+    },
+    {
+      "certificate": {
+        "acyclic": true,
+        "anchors_resolved": true,
+        "bloom_ascent_ok": true,
+        "bloom_leap_edges": [],
+        "grade_monotone": true,
+        "reason_codes": [
+          "valid_spiral_sequence"
+        ],
+        "valid": true
+      },
+      "design_id": "proposed_spiral_dag",
+      "notes": {
+        "bloom_leap_edges": 0,
+        "documented_anchor_objects": 91,
+        "n_bridge_edges": 24,
+        "n_objects": 162,
+        "n_progression_edges": 71,
+        "needs_expert_review_anchor_objects": 71
+      },
+      "valid": true
+    },
+    {
+      "certificate": {
+        "acyclic": true,
+        "anchors_resolved": true,
+        "bloom_ascent_ok": true,
+        "bloom_leap_edges": [],
+        "grade_monotone": true,
+        "reason_codes": [
+          "valid_spiral_sequence"
+        ],
+        "valid": true
+      },
+      "design_id": "A1_no_layer_bridge",
+      "notes": {
+        "bloom_leap_edges": 0,
+        "component_census": {
+          "edge_connected_components": 9,
+          "isolated_objects": 82
+        },
+        "documented_anchor_objects": 91,
+        "n_objects": 162,
+        "needs_expert_review_anchor_objects": 71
+      },
+      "valid": true
+    },
+    {
+      "certificate": {
+        "acyclic": true,
+        "anchors_resolved": true,
+        "bloom_ascent_ok": false,
+        "bloom_leap_edges": [],
+        "grade_monotone": true,
+        "reason_codes": [
+          "valid_spiral_sequence"
+        ],
+        "valid": false
+      },
+      "design_id": "A2_no_bloom_ascent",
+      "notes": {
+        "bloom_leap_edges": 0,
+        "documented_anchor_objects": 91,
+        "n_objects": 162,
+        "needs_expert_review_anchor_objects": 71,
+        "progression_strict_ascent_rate": 0.7473684210526316
+      },
+      "valid": false
+    },
+    {
+      "certificate": {
+        "acyclic": true,
+        "anchors_resolved": true,
+        "bloom_ascent_ok": true,
+        "bloom_leap_edges": [],
+        "grade_monotone": true,
+        "reason_codes": [
+          "valid_spiral_sequence"
+        ],
+        "valid": true
+      },
+      "design_id": "A3_no_provenance_gate",
+      "notes": {
+        "bloom_leap_edges": 0,
+        "documented_anchor_objects": 0,
+        "invented_anchor_accepted": true,
+        "n_objects": 163,
+        "needs_expert_review_anchor_objects": 0
+      },
+      "valid": true
+    },
+    {
+      "certificate": {
+        "acyclic": true,
+        "anchors_resolved": true,
+        "bloom_ascent_ok": false,
+        "bloom_leap_edges": [],
+        "grade_monotone": false,
+        "reason_codes": [
+          "random_playlist_seed_42: 51 grade inversions"
+        ],
+        "valid": false
+      },
+      "design_id": "A4_random_order(seed=42)",
+      "notes": {
+        "bloom_leap_edges": 0,
+        "documented_anchor_objects": 91,
+        "n_objects": 162,
+        "needs_expert_review_anchor_objects": 71,
+        "playlist_grade_inversions": 51
+      },
+      "valid": false
+    }
+  ],
+  "engine": "research_v3.methods.p10 (pure deterministic builders; A4 seeded)",
+  "hardware": "CPU only (no GPU used; constraint checks are O(V+E))",
+  "honesty_notes": [
+    "Validity certificates are software gates, NOT pedagogical endorsement.",
+    "Every GDPT-2018 competency-code pairing beyond the certain documented set is flagged needs_expert_review (27 of 30 anchors).",
+    "No expert rating, CVI, or rubric score exists in this payload; such claims are BLOCKED pending real teachers (P10-T19/T20/T21).",
+    "All 162 motif descriptions are AI-generated repo content; only object identities are used; no archival permission claimed."
+  ],
+  "hypothesis_h0": "Chuỗi xoắn ốc không có ưu thế nhất quán theo rubric so với chuỗi chuẩn do giáo viên xây dựng — requires real teacher raters (BLOCKED, P10-T19)",
+  "metrics": {
+    "M1_sequence_validity_rate": {
+      "clopper_pearson_ci_95": [
+        0.008403758659612636,
+        0.9057006759497539
+      ],
+      "n": 3,
+      "successes": 1,
+      "wilson_ci_95": [
+        0.06149194472039621,
+        0.7923403991979522
+      ]
+    },
+    "M2_anchor_coverage_rate": {
+      "clopper_pearson_ci_95": [
+        0.4817042707634625,
+        0.6394523026321011
+      ],
+      "n": 162,
+      "successes": 91,
+      "wilson_ci_95": [
+        0.4847694672103846,
+        0.6358276388583928
+      ]
+    },
+    "M3_needs_expert_review_rate": {
+      "clopper_pearson_ci_95": [
+        0.36054769736789893,
+        0.5182957292365376
+      ],
+      "n": 162,
+      "successes": 71,
+      "wilson_ci_95": [
+        0.36417236114160734,
+        0.5152305327896155
+      ]
+    },
+    "M4_bloom_leap_rate": {
+      "clopper_pearson_ci_95": [
+        0.0,
+        0.0506294079544037
+      ],
+      "n": 71,
+      "successes": 0,
+      "wilson_ci_95": [
+        0.0,
+        0.05132795219689034
+      ]
+    }
+  },
+  "paper_id": "P10",
+  "payload_sha256": "0e3096af4a906d77545af0b70bd08f8bc86a17011aa67045b53d1ac0ca779d41",
+  "preregistered_primary_metric": "M1_sequence_validity_rate",
+  "provenance": {
+    "citations": {
+      "backend_competency_catalog": "Repo backend/services/curriculum_competency.py STANDARD_GDPT_COMPETENCIES (VN_GDPT_2018; V5-T095), soát lại bởi chuyên gia trước khi tuyên bố 'documented'",
+      "cv5512": "Công văn 5512/BGDĐT-GDTrH (2020), Giáo dục địa phương cấp THPT — dẫn theo data/imperial/curriculum_units_gdpt2018_hue.json (sha256 ghi trong data card P10)",
+      "tt32_2018": "Chương trình Giáo dục Phổ thông 2018 — Lịch sử, ban hành kèm Thông tư 32/2018/TT-BGDĐT (Bộ Giáo dục và Đào tạo, 26/12/2018)"
+    },
+    "manifest_sha256": "3143ba8fc429daee5c4e840d250933b55dbd1cc4d2a510cb293312136bf04e79",
+    "n_sources": 11,
+    "paper_id": "P10",
+    "rights_positions": {
+      "cuu_dinh_motifs": "object identities (id/name/category) referenced READ-ONLY from repo data; descriptions flagged is_ai_generated=true (162/162); NO archival or media permission claimed; hue-heritage-corpus dataset card remains BLOCKED in research_v3/datasets/registry.yaml",
+      "gdpt_2018_document": "public ministerial document (Thông tư 32/2018/TT-BGDĐT); encodable, citable; specific competency codes beyond the certain set are marked needs_expert_review",
+      "redistribution": "no corpus bytes are copied into research_v3 or artifacts; hashes only"
+    },
+    "sources": [
+      {
+        "bytes": 71017,
+        "path": "data/05_Data_CaoDinh.json",
+        "rights_note": "repo-documented motif inventory (AGENTS.md: 9 urns / 162 motifs); AI-generated descriptions flagged; no archival permission claimed; object identities referenced read-only",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "d8d23eec2700048056e7fb63664bd18115ed53a4f2b81660921501ec06ca6236",
+        "source_id": "motifs:05_Data_CaoDinh.json"
+      },
+      {
+        "bytes": 58333,
+        "path": "data/06_Data_NhanDinh.json",
+        "rights_note": "repo-documented motif inventory (AGENTS.md: 9 urns / 162 motifs); AI-generated descriptions flagged; no archival permission claimed; object identities referenced read-only",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "f53a7ad162763f8ac05dbacd1723d3f4ca8d8ebabc1d59f8230354d343c92fc4",
+        "source_id": "motifs:06_Data_NhanDinh.json"
+      },
+      {
+        "bytes": 56256,
+        "path": "data/07_Data_ChuongDinh.json",
+        "rights_note": "repo-documented motif inventory (AGENTS.md: 9 urns / 162 motifs); AI-generated descriptions flagged; no archival permission claimed; object identities referenced read-only",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "d73284c1e21a237e8de7703da9e252d76a51b9a224b995da734100068f5d37b1",
+        "source_id": "motifs:07_Data_ChuongDinh.json"
+      },
+      {
+        "bytes": 53937,
+        "path": "data/08_Data_AnhDinh.json",
+        "rights_note": "repo-documented motif inventory (AGENTS.md: 9 urns / 162 motifs); AI-generated descriptions flagged; no archival permission claimed; object identities referenced read-only",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "54aee55e00c5f65435e08565dfaed1ed818ea73a4c48c316400d9a21d4bce5c9",
+        "source_id": "motifs:08_Data_AnhDinh.json"
+      },
+      {
+        "bytes": 49682,
+        "path": "data/09_Data_NghiDinh.json",
+        "rights_note": "repo-documented motif inventory (AGENTS.md: 9 urns / 162 motifs); AI-generated descriptions flagged; no archival permission claimed; object identities referenced read-only",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "4af53b6b46172925d7bf20d83ef2e2608b185af5b22990cf8f948d9dbcc40b9e",
+        "source_id": "motifs:09_Data_NghiDinh.json"
+      },
+      {
+        "bytes": 48195,
+        "path": "data/10_Data_ThuanDinh.json",
+        "rights_note": "repo-documented motif inventory (AGENTS.md: 9 urns / 162 motifs); AI-generated descriptions flagged; no archival permission claimed; object identities referenced read-only",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "c562c8c2a4cd6238673071c23e102e3f857c2d0f772f3d7e1c087fea40d1645b",
+        "source_id": "motifs:10_Data_ThuanDinh.json"
+      },
+      {
+        "bytes": 47163,
+        "path": "data/11_Data_TuyenDinh.json",
+        "rights_note": "repo-documented motif inventory (AGENTS.md: 9 urns / 162 motifs); AI-generated descriptions flagged; no archival permission claimed; object identities referenced read-only",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "641c3e3c0b72ec7a58a759f1ede920bb5d998def9ba95e7d5d2c81306541b8bd",
+        "source_id": "motifs:11_Data_TuyenDinh.json"
+      },
+      {
+        "bytes": 45871,
+        "path": "data/12_Data_DuDinh.json",
+        "rights_note": "repo-documented motif inventory (AGENTS.md: 9 urns / 162 motifs); AI-generated descriptions flagged; no archival permission claimed; object identities referenced read-only",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "78c00da2d13d858c3110af920c844ad9ad00dad86053ea4420ea1938c8b34763",
+        "source_id": "motifs:12_Data_DuDinh.json"
+      },
+      {
+        "bytes": 47243,
+        "path": "data/13_Data_HuyenDinh.json",
+        "rights_note": "repo-documented motif inventory (AGENTS.md: 9 urns / 162 motifs); AI-generated descriptions flagged; no archival permission claimed; object identities referenced read-only",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "560147ea2b3734cf68ee073fca7f9d55f7160d55d0a5881ec09a11c72fbddde1",
+        "source_id": "motifs:13_Data_HuyenDinh.json"
+      },
+      {
+        "bytes": 30920,
+        "path": "data/imperial/curriculum_units_gdpt2018_hue.json",
+        "rights_note": "repo-local GDPT-2018-aligned catalog citing Thông tư 32/2018/TT-BGDĐT and Công văn 5512/BGDĐT-GDTrH; used to justify 'documented' anchors",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "73a931e67473dfc2d6814ee0b339fc5bb0e3073d556743d5de51e38a24ea27e6",
+        "source_id": "curriculum:gdpt2018_hue_catalog"
+      },
+      {
+        "bytes": 33286,
+        "path": "backend/services/curriculum_competency.py",
+        "rights_note": "VN_GDPT_2018 standard competency catalog (V5-T095) referenced for the four history competencies; expert re-check still required",
+        "rights_status": "APPROVED_FOR_REFERENCE",
+        "sha256": "cf6905eda04b6813f7b5954c00ed38d8f898ea1d84ec6850d1146b1f4b6c4b53",
+        "source_id": "curriculum:backend_competency_catalog"
+      }
+    ],
+    "spec": "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/05_PAPERS/P10_*.md"
+  },
+  "seed": 42,
+  "wall_time_seconds_unhashed": 0.015439
+}

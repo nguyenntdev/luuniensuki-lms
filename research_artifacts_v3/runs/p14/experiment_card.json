@@ -1,0 +1,21 @@
+{
+  "baseline_version": "C0_has_image;C1_wcag_checklist_only",
+  "card_sha256": "ba9cda227a7854844d2f1ef02a0882689c98a79d83985799352f01d898c0fb42",
+  "dependency_lock_sha256": "3d2fcbd7c24cd3994103f945589f86ceadeea641b9ea09b1c29822b183a6bd2e",
+  "feature_cutoff": "not_applicable_audit",
+  "hardware": "cpu",
+  "holdout_dataset_ids": [],
+  "hyperparameter_budget": "none (fixed rules, no tuning)",
+  "method_commit_sha": "workspace",
+  "method_hash": "342781cada3e1c40decd14e52679fa84d5650f58ae630c71c5775196248fc058",
+  "output_path": "research_artifacts_v3/runs/p14/audit_report.json",
+  "paper_id": "P14",
+  "prereg_sha256": "e65093adf72a5cf8ed4ba27f514f23708c37483fd3bfb7820bff1b834cfed7e8",
+  "protocol_deviations": "external media BLOCKED -> synthetic manifest; human arm BLOCKED -> audit-only run",
+  "rq_id": "RQ-audit",
+  "seed": 0,
+  "split_hash": "7adeca616dbf0290c23079cae2e160818bb914296b8ecc4ce3c1a704bc6a3e75",
+  "status": "PARTIAL",
+  "train_dataset_ids": [],
+  "wall_time_seconds": 0.0
+}

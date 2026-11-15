@@ -1,0 +1,65 @@
+{
+  "c0_surface_everything": {
+    "abstention_rate": 0.0,
+    "citation_grounding_rate": 0.11764705882352941,
+    "method_id": "c0_surface_everything",
+    "n_claims": 51,
+    "n_grounded_surfaced": 6,
+    "n_rejected_invalid": 0,
+    "n_surfaced": 51,
+    "n_unsupported_surfaced": 45,
+    "unsupported_ci95": {
+      "clopper_pearson_ci_95": [
+        0.7613239527359255,
+        0.9555798581436852
+      ],
+      "wilson_ci_95": [
+        0.7661915568567753,
+        0.9449492632208182
+      ]
+    },
+    "unsupported_claim_surfacing_rate": 0.8823529411764706
+  },
+  "c1_keyword_match": {
+    "abstention_rate": 0.09803921568627451,
+    "citation_grounding_rate": 0.11764705882352941,
+    "method_id": "c1_keyword_match",
+    "n_claims": 51,
+    "n_grounded_surfaced": 6,
+    "n_rejected_invalid": 0,
+    "n_surfaced": 46,
+    "n_unsupported_surfaced": 40,
+    "unsupported_ci95": {
+      "clopper_pearson_ci_95": [
+        0.6467859364904807,
+        0.8871094002502565
+      ],
+      "wilson_ci_95": [
+        0.6537364041400255,
+        0.8750606159176724
+      ]
+    },
+    "unsupported_claim_surfacing_rate": 0.7843137254901961
+  },
+  "proposed": {
+    "abstention_rate": 0.8823529411764706,
+    "citation_grounding_rate": 0.11764705882352941,
+    "method_id": "proposed",
+    "n_claims": 51,
+    "n_grounded_surfaced": 6,
+    "n_rejected_invalid": 0,
+    "n_surfaced": 6,
+    "n_unsupported_surfaced": 0,
+    "unsupported_ci95": {
+      "clopper_pearson_ci_95": [
+        0.0,
+        0.06977703074953864
+      ],
+      "wilson_ci_95": [
+        0.0,
+        0.07004661989853143
+      ]
+    },
+    "unsupported_claim_surfacing_rate": 0.0
+  }
+}

@@ -1,0 +1,715 @@
+{
+  "bridge": {
+    "coverage": 1.0,
+    "n_edges": 14,
+    "ontology_version": "cso-p04-1.0",
+    "unknown_sources": []
+  },
+  "external_generalization": "UNVERIFIED beyond OULAD + UCI student-performance",
+  "leaderboard": [
+    {
+      "accuracy": 0.509769,
+      "annotation_gap_rows": 0,
+      "auc": 0.5,
+      "auc_ci95": [
+        0.5,
+        0.5
+      ],
+      "coverage": 1.0,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.041247,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_bootstrap_groups": 2943,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 3327,
+      "n_total": 3327,
+      "predictor": "C0_majority",
+      "scenario": "in_domain_reference",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S0",
+      "worst_group": {
+        "accuracy": 0.375,
+        "group": "gender=M/age=55<=",
+        "n": 24
+      }
+    },
+    {
+      "accuracy": 0.719567,
+      "annotation_gap_rows": 0,
+      "auc": 0.808485,
+      "auc_ci95": [
+        0.793783,
+        0.823358
+      ],
+      "coverage": 1.0,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.064988,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_bootstrap_groups": 2943,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 3327,
+      "n_total": 3327,
+      "predictor": "C1_logistic_regression",
+      "scenario": "in_domain_reference",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S0",
+      "worst_group": {
+        "accuracy": 0.672821,
+        "group": "gender=F/age=0-35",
+        "n": 975
+      }
+    },
+    {
+      "accuracy": 0.416411,
+      "accuracy_degradation_vs_baseline": 0.093358,
+      "annotation_gap_rows": 613,
+      "auc": 0.5,
+      "auc_ci95": [
+        0.5,
+        0.5
+      ],
+      "auc_degradation_vs_baseline": 0.0,
+      "coverage": 0.685002,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.052111,
+      "mapping_coverage": 0.685002,
+      "n_abstain": 0,
+      "n_no_activity": 435,
+      "n_not_applicable": 1048,
+      "n_scored": 2279,
+      "n_total": 3327,
+      "predictor": "C0_majority",
+      "scenario": "partial_mapping_20pct",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S1",
+      "worst_group": {
+        "accuracy": 0.310241,
+        "group": "gender=F/age=35-55",
+        "n": 332
+      }
+    },
+    {
+      "accuracy": 0.673102,
+      "accuracy_degradation_vs_baseline": 0.046465,
+      "annotation_gap_rows": 613,
+      "auc": 0.760892,
+      "auc_ci95": [
+        0.739975,
+        0.781326
+      ],
+      "auc_degradation_vs_baseline": 0.047593,
+      "coverage": 0.685002,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.088548,
+      "mapping_coverage": 0.685002,
+      "n_abstain": 0,
+      "n_no_activity": 435,
+      "n_not_applicable": 1048,
+      "n_scored": 2279,
+      "n_total": 3327,
+      "predictor": "C1_logistic_regression",
+      "scenario": "partial_mapping_20pct",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S1",
+      "worst_group": {
+        "accuracy": 0.612587,
+        "group": "gender=F/age=0-35",
+        "n": 715
+      }
+    },
+    {
+      "accuracy": 0.413606,
+      "accuracy_degradation_vs_baseline": 0.096163,
+      "annotation_gap_rows": 1231,
+      "auc": 0.5,
+      "auc_ci95": [
+        0.5,
+        0.5
+      ],
+      "auc_degradation_vs_baseline": 0.0,
+      "coverage": 0.499249,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.054916,
+      "mapping_coverage": 0.499249,
+      "n_abstain": 0,
+      "n_no_activity": 435,
+      "n_not_applicable": 1666,
+      "n_scored": 1661,
+      "n_total": 3327,
+      "predictor": "C0_majority",
+      "scenario": "partial_mapping_50pct",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S1",
+      "worst_group": {
+        "accuracy": 0.349794,
+        "group": "gender=F/age=35-55",
+        "n": 243
+      }
+    },
+    {
+      "accuracy": 0.705599,
+      "accuracy_degradation_vs_baseline": 0.013968,
+      "annotation_gap_rows": 1231,
+      "auc": 0.765536,
+      "auc_ci95": [
+        0.740732,
+        0.787282
+      ],
+      "auc_degradation_vs_baseline": 0.042949,
+      "coverage": 0.499249,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.050125,
+      "mapping_coverage": 0.499249,
+      "n_abstain": 0,
+      "n_no_activity": 435,
+      "n_not_applicable": 1666,
+      "n_scored": 1661,
+      "n_total": 3327,
+      "predictor": "C1_logistic_regression",
+      "scenario": "partial_mapping_50pct",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S1",
+      "worst_group": {
+        "accuracy": 0.650113,
+        "group": "gender=F/age=0-35",
+        "n": 443
+      }
+    },
+    {
+      "accuracy": null,
+      "annotation_gap_rows": 2892,
+      "auc": null,
+      "auc_ci95": null,
+      "coverage": 0.0,
+      "dataset_id": "oulad-2013-2014",
+      "ece": null,
+      "mapping_coverage": 0.0,
+      "n_abstain": 0,
+      "n_no_activity": 435,
+      "n_not_applicable": 3327,
+      "n_scored": 0,
+      "n_total": 3327,
+      "predictor": "C0_majority",
+      "scenario": "partial_mapping_80pct",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": true,
+      "status": "MEASURED",
+      "stratum": "S1",
+      "worst_group": null
+    },
+    {
+      "accuracy": null,
+      "annotation_gap_rows": 2892,
+      "auc": null,
+      "auc_ci95": null,
+      "coverage": 0.0,
+      "dataset_id": "oulad-2013-2014",
+      "ece": null,
+      "mapping_coverage": 0.0,
+      "n_abstain": 0,
+      "n_no_activity": 435,
+      "n_not_applicable": 3327,
+      "n_scored": 0,
+      "n_total": 3327,
+      "predictor": "C1_logistic_regression",
+      "scenario": "partial_mapping_80pct",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": true,
+      "status": "MEASURED",
+      "stratum": "S1",
+      "worst_group": null
+    },
+    {
+      "accuracy": 0.381838,
+      "accuracy_degradation_vs_baseline": 0.127931,
+      "annotation_audit": {
+        "affected_test_rows": 31,
+        "mapping_coverage_expected": 0.967196,
+        "test_categories_total": [
+          "forumng",
+          "homepage",
+          "oucontent",
+          "quiz",
+          "resource",
+          "subpage",
+          "url"
+        ],
+        "test_rows": 945,
+        "train_annotation_courses_basis": 4912,
+        "unknown_in_test": [
+          "quiz"
+        ]
+      },
+      "annotation_gap_rows": 31,
+      "auc": 0.5,
+      "auc_degradation_vs_baseline": 0.0,
+      "coverage": 0.826401,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.060752,
+      "mapping_coverage": 0.826401,
+      "n_abstain": 0,
+      "n_no_activity": 161,
+      "n_not_applicable": 192,
+      "n_scored": 914,
+      "n_total": 1106,
+      "predictor": "C0_majority",
+      "scenario": "annotation_budget_train_AAA_DDD_test_BBB_EEE",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S2",
+      "worst_group": {
+        "accuracy": 0.335196,
+        "group": "gender=F/age=35-55",
+        "n": 179
+      }
+    },
+    {
+      "accuracy": 0.549234,
+      "accuracy_degradation_vs_baseline": 0.170333,
+      "annotation_audit": {
+        "affected_test_rows": 31,
+        "mapping_coverage_expected": 0.967196,
+        "test_categories_total": [
+          "forumng",
+          "homepage",
+          "oucontent",
+          "quiz",
+          "resource",
+          "subpage",
+          "url"
+        ],
+        "test_rows": 945,
+        "train_annotation_courses_basis": 4912,
+        "unknown_in_test": [
+          "quiz"
+        ]
+      },
+      "annotation_gap_rows": 31,
+      "auc": 0.727809,
+      "auc_degradation_vs_baseline": 0.080676,
+      "coverage": 0.826401,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.24619,
+      "mapping_coverage": 0.826401,
+      "n_abstain": 0,
+      "n_no_activity": 161,
+      "n_not_applicable": 192,
+      "n_scored": 914,
+      "n_total": 1106,
+      "predictor": "C1_logistic_regression",
+      "scenario": "annotation_budget_train_AAA_DDD_test_BBB_EEE",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S2",
+      "worst_group": {
+        "accuracy": 0.458101,
+        "group": "gender=F/age=35-55",
+        "n": 179
+      }
+    },
+    {
+      "accuracy": 0.53761,
+      "accuracy_degradation_vs_baseline": -0.027841,
+      "annotation_gap_rows": 0,
+      "auc": 0.5,
+      "auc_ci95": [
+        0.5,
+        0.5
+      ],
+      "auc_degradation_vs_baseline": 0.0,
+      "coverage": 1.0,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.051987,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 19064,
+      "n_total": 19064,
+      "predictor": "C0_majority",
+      "scenario": "presentation_shift_train_2013_test_2014",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S3",
+      "worst_group": {
+        "accuracy": 0.408696,
+        "group": "gender=M/age=55<=",
+        "n": 115
+      }
+    },
+    {
+      "accuracy": 0.71218,
+      "accuracy_degradation_vs_baseline": 0.007387,
+      "annotation_gap_rows": 0,
+      "auc": 0.792101,
+      "auc_ci95": [
+        0.785934,
+        0.798905
+      ],
+      "auc_degradation_vs_baseline": 0.016384,
+      "coverage": 1.0,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.049378,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 19064,
+      "n_total": 19064,
+      "predictor": "C1_logistic_regression",
+      "scenario": "presentation_shift_train_2013_test_2014",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S3",
+      "worst_group": {
+        "accuracy": 0.686074,
+        "group": "gender=F/age=0-35",
+        "n": 5565
+      }
+    },
+    {
+      "accuracy": 0.49864,
+      "accuracy_degradation_vs_baseline": 0.011129,
+      "annotation_gap_rows": 0,
+      "auc": 0.5,
+      "auc_ci95": [
+        0.5,
+        0.5
+      ],
+      "auc_degradation_vs_baseline": 0.0,
+      "coverage": 1.0,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.042642,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 10296,
+      "n_total": 10296,
+      "predictor": "C0_majority",
+      "scenario": "course_shift_train_AAA_EEE_test_FFF_GGG",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S3",
+      "worst_group": {
+        "accuracy": 0.357143,
+        "group": "gender=M/age=55<=",
+        "n": 28
+      }
+    },
+    {
+      "accuracy": 0.680361,
+      "accuracy_degradation_vs_baseline": 0.039206,
+      "annotation_gap_rows": 0,
+      "auc": 0.757891,
+      "auc_ci95": [
+        0.749014,
+        0.766789
+      ],
+      "auc_degradation_vs_baseline": 0.050594,
+      "coverage": 1.0,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.078453,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 10296,
+      "n_total": 10296,
+      "predictor": "C1_logistic_regression",
+      "scenario": "course_shift_train_AAA_EEE_test_FFF_GGG",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S3",
+      "worst_group": {
+        "accuracy": 0.546521,
+        "group": "gender=F/age=35-55",
+        "n": 1193
+      }
+    },
+    {
+      "accuracy": 0.981609,
+      "accuracy_degradation_vs_baseline": -0.47184,
+      "annotation_gap_rows": 0,
+      "auc": 0.5,
+      "auc_degradation_vs_baseline": 0.0,
+      "coverage": 1.0,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.513087,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 435,
+      "n_total": 435,
+      "predictor": "C0_majority",
+      "scenario": "cold_start_zero_early_clicks",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S4",
+      "worst_group": {
+        "accuracy": 0.956522,
+        "group": "gender=F/age=35-55",
+        "n": 69
+      }
+    },
+    {
+      "accuracy": 0.97931,
+      "accuracy_degradation_vs_baseline": -0.259743,
+      "annotation_gap_rows": 0,
+      "auc": 0.650029,
+      "auc_degradation_vs_baseline": 0.158456,
+      "coverage": 1.0,
+      "dataset_id": "oulad-2013-2014",
+      "ece": 0.192709,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 435,
+      "n_total": 435,
+      "predictor": "C1_logistic_regression",
+      "scenario": "cold_start_zero_early_clicks",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S4",
+      "worst_group": {
+        "accuracy": 0.942029,
+        "group": "gender=F/age=35-55",
+        "n": 69
+      }
+    },
+    {
+      "accuracy": 0.881356,
+      "annotation_gap_rows": 0,
+      "auc": 0.5,
+      "coverage": 1.0,
+      "dataset_id": "uci-student-performance-2014",
+      "ece": 0.041271,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 59,
+      "n_total": 59,
+      "predictor": "C0_majority",
+      "scenario": "uci_in_domain_reference",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": true,
+      "status": "MEASURED",
+      "stratum": "S0",
+      "worst_group": {
+        "accuracy": 0.826087,
+        "group": "gender=NA/age=M",
+        "n": 23
+      }
+    },
+    {
+      "accuracy": 0.898305,
+      "annotation_gap_rows": 0,
+      "auc": 0.840659,
+      "coverage": 1.0,
+      "dataset_id": "uci-student-performance-2014",
+      "ece": 0.055033,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 59,
+      "n_total": 59,
+      "predictor": "C1_logistic_regression",
+      "scenario": "uci_in_domain_reference",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": true,
+      "status": "MEASURED",
+      "stratum": "S0",
+      "worst_group": {
+        "accuracy": 0.869565,
+        "group": "gender=NA/age=M",
+        "n": 23
+      }
+    },
+    {
+      "accuracy": 0.845917,
+      "accuracy_degradation_vs_baseline": 0.035439,
+      "annotation_gap_rows": 0,
+      "auc": 0.5,
+      "auc_degradation_vs_baseline": 0.0,
+      "coverage": 1.0,
+      "dataset_id": "uci-student-performance-2014",
+      "ece": 0.206382,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 649,
+      "n_total": 649,
+      "predictor": "C0_majority",
+      "scenario": "subject_shift_train_mat_test_por",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S3",
+      "worst_group": {
+        "accuracy": 0.81203,
+        "group": "gender=NA/age=M",
+        "n": 266
+      }
+    },
+    {
+      "accuracy": 0.736518,
+      "accuracy_degradation_vs_baseline": 0.161787,
+      "annotation_gap_rows": 0,
+      "auc": 0.745355,
+      "auc_degradation_vs_baseline": 0.095304,
+      "coverage": 1.0,
+      "dataset_id": "uci-student-performance-2014",
+      "ece": 0.256211,
+      "mapping_coverage": 1.0,
+      "n_abstain": 0,
+      "n_no_activity": 0,
+      "n_not_applicable": 0,
+      "n_scored": 649,
+      "n_total": 649,
+      "predictor": "C1_logistic_regression",
+      "scenario": "subject_shift_train_mat_test_por",
+      "schema_version": "p04-leaderboard-1.0",
+      "small_n_warning": false,
+      "status": "MEASURED",
+      "stratum": "S3",
+      "worst_group": {
+        "accuracy": 0.70235,
+        "group": "gender=NA/age=F",
+        "n": 383
+      }
+    }
+  ],
+  "n_oulad_rows": 32593,
+  "n_uci_rows": 1044,
+  "null_assessment": {
+    "h0_stands": false,
+    "note": "A failure counts as reliable only when the shifted AUC bootstrap CI excludes the same predictor's in-domain AUC.",
+    "reliable_failures": [
+      {
+        "degradation": 0.047593,
+        "scenario": "partial_mapping_20pct",
+        "shifted_auc_ci95": [
+          0.739975,
+          0.781326
+        ]
+      },
+      {
+        "degradation": 0.042949,
+        "scenario": "partial_mapping_50pct",
+        "shifted_auc_ci95": [
+          0.740732,
+          0.787282
+        ]
+      },
+      {
+        "degradation": 0.016384,
+        "scenario": "presentation_shift_train_2013_test_2014",
+        "shifted_auc_ci95": [
+          0.785934,
+          0.798905
+        ]
+      },
+      {
+        "degradation": 0.050594,
+        "scenario": "course_shift_train_AAA_EEE_test_FFF_GGG",
+        "shifted_auc_ci95": [
+          0.749014,
+          0.766789
+        ]
+      }
+    ]
+  },
+  "prereg_sha256": "b77703f1e867f24d4c3716d0c43dac7800ba7781b989ef5bc52ac08f94b196e9",
+  "protocol": "CurriculumShiftBench reference evaluation (frozen prereg v1.0)",
+  "splits": {
+    "oulad_group": {
+      "hash": "56fe250659c7286964cdcb28b8c232e546e455926b97fd520c8432f961bf015b",
+      "sizes": {
+        "calibration": 3286,
+        "dev": 3202,
+        "test": 3327,
+        "train": 22778
+      }
+    },
+    "oulad_time": {
+      "hash": "76216c5054fa42396f91750496c8c2022a961d4a87fb40af65301f8ea3176988",
+      "sizes": {
+        "calibration": 3324,
+        "dev": 3226,
+        "test": 3228,
+        "train": 22815
+      }
+    },
+    "uci_group": {
+      "hash": "3bf80a2348c6c1b4ab06d46e2894f55b0d440a2db1a82b1c1f03feb72152195f",
+      "sizes": {
+        "calibration": 102,
+        "dev": 105,
+        "test": 110,
+        "train": 727
+      }
+    }
+  },
+  "strata_report": {
+    "rank_stability_mean_kendall_tau": 1.0,
+    "rankings_by_stratum": {
+      "S0": [
+        "C1_logistic_regression",
+        "C1_logistic_regression",
+        "C0_majority",
+        "C0_majority"
+      ],
+      "S1": [
+        "C1_logistic_regression",
+        "C1_logistic_regression",
+        "C0_majority",
+        "C0_majority"
+      ],
+      "S2": [
+        "C1_logistic_regression",
+        "C0_majority"
+      ],
+      "S3": [
+        "C1_logistic_regression",
+        "C1_logistic_regression",
+        "C1_logistic_regression",
+        "C0_majority",
+        "C0_majority",
+        "C0_majority"
+      ],
+      "S4": [
+        "C1_logistic_regression",
+        "C0_majority"
+      ]
+    }
+  }
+}

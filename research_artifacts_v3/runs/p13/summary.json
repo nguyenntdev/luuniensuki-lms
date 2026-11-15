@@ -1,0 +1,68 @@
+{
+ "headline": {
+  "group_split": {
+   "C0_auc": 0.7149858227537839,
+   "C1_auc": 0.7356520538504573,
+   "C2_auc": 0.7069812293737581,
+   "C2_vs_C0_delta_auc": -0.008004593380025793,
+   "C2_vs_C0_ci95": [
+    -0.025342013878104287,
+    0.006277889420492154
+   ]
+  },
+  "time_split": {
+   "C0_auc": 0.7199549375479661,
+   "C1_auc": 0.7423808951656637,
+   "C2_auc": 0.7009955305581445,
+   "C2_vs_C0_delta_auc": -0.01895940698982168,
+   "C2_vs_C0_ci95": [
+    -0.029635148280617245,
+    -0.0042273183631776476
+   ]
+  }
+ },
+ "h0_primary_verdict": {
+  "group:C2_vs_C0": {
+   "delta_auc": -0.008004593380025793,
+   "ci_95": [
+    -0.025342013878104287,
+    0.006277889420492154
+   ],
+   "prereg_threshold": 0.02,
+   "rejected": false
+  },
+  "group:C2_vs_C1": {
+   "delta_auc": -0.02867082447669922,
+   "ci_95": [
+    -0.04189610461668873,
+    -0.015313267254464835
+   ],
+   "prereg_threshold": 0.02,
+   "rejected": false
+  },
+  "time:C2_vs_C0": {
+   "delta_auc": -0.01895940698982168,
+   "ci_95": [
+    -0.029635148280617245,
+    -0.0042273183631776476
+   ],
+   "prereg_threshold": 0.02,
+   "rejected": false
+  },
+  "time:C2_vs_C1": {
+   "delta_auc": -0.04138536460751929,
+   "ci_95": [
+    -0.057995502880342636,
+    -0.026085670001559525
+   ],
+   "prereg_threshold": 0.02,
+   "rejected": false
+  },
+  "verdict_text": "H0_primary NOT rejected: C2 phase-structured SRL proxies do not beat C0 raw click count by the preregistered 0.02 AUC margin (delta=-0.0080, CI95 [-0.0253, 0.0063]). Per the preregistration this null result is published: SRL proxy structure adds no classification value beyond generic activity volume in this setup."
+ },
+ "construct_validity": {
+  "flag": "proxy_only",
+  "measured_construct": null,
+  "statement": "All SRL features are behavioural proxies (construct_validity: proxy_only) derived from OULAD clickstream; SRL itself was not measured and no causal claim is made."
+ }
+}

@@ -1,0 +1,62 @@
+# P14 preregistration (frozen before the audit run below)
+
+paper_id: P14
+prereg_id: P14-PREREG-001
+frozen_at: '2026-11-15'
+study_type: audit_only_no_human_data
+status: ACTIVE_NO_HUMAN_ARM
+
+research_question: >
+  How do task equivalence and accessibility of multimodal learning objects change
+  when a UDL rubric with user evaluation is applied? (Human-evaluation arm is
+  BLOCKED pending ethics; this prereg covers only the algorithmic audit arm.)
+
+estimand: >-
+  Frozen estimand for this run (no human data available): the audit-based
+  estimand is the accessibility conformance rate — the proportion of applicable
+  (PASS/FAIL) object x criterion audits that PASS, over a frozen manifest, under
+  rubric p14-udl-rubric-1.0.0 (methods/p14/METHOD.md §1, frozen before results).
+
+hypotheses:
+  H0: >
+    The UDL workflow does not improve task completion and accessibility after
+    controlling for content. NOT TESTABLE in this run (no human participants);
+    must be published as not rejected if the human arm never runs.
+  H1_audit_descriptive: >
+    The full UDL+WCAG audit yields a strictly lower object pass-rate than C0 and
+    C1 baselines on a manifest containing known failure families (a system
+    characterisation, not a benefit claim).
+
+primary_metric:
+  name: accessibility_conformance_rate
+  unit: object_x_criterion_audit
+  direction: descriptive_only
+  denominator_rule: PASS+FAIL only; NOT_APPLICABLE excluded; ABSTAIN reported separately
+
+secondary_metrics:
+  - udl_principle_coverage_per_framework
+  - missing_affordance_count
+  - remediation_list_length
+
+comparison_family:
+  - C0_has_image
+  - C1_wcag_checklist_only
+  - proposed_full_udl_wcag
+multiplicity: descriptive_run_no_confirmatory_tests
+paired_test: mcnemar_exact_on_object_verdicts_verdict_only
+
+data:
+  manifest: synthetic_manifest (p14-synthetic-manifest-1.0.0, deterministic)
+  external_media: BLOCKED (Smithsonian 403 / Europeana 401 without API key, verified 2026-11-15)
+  hue_imagery: EXCLUDED (unlicensed)
+  split: not_applicable_audit_has_no_train_test_split
+  leakage_audit: audit_rows run on manifest rows; manifest is inputs only
+
+exclusions: []
+analysis_script: research_v3/experiments/p14/run_experiment.py
+claims_gate: research_v3/methods/p14/claims_guard.py (benefit claims rejected without human data)
+
+deviations_allowed: false  # any change requires a new prereg id, never silent edits
+
+# Deterministic audit; run_experiment.py records seed=0 in the run manifest.
+seeds: [0]

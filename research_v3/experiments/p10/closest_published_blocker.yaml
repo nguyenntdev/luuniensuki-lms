@@ -1,0 +1,30 @@
+# P10 closest-published-comparator BLOCKED card (P10-T08; honest, dated)
+blocked_at: "2026-11-15"
+comparator_role: C2 closest published current comparator
+search_note: >-
+  Per 04_METHODOLOGY/NOVELTY_AND_LITERATURE.md, P10 requires at least the 5
+  closest full texts screened; final nearest-work certification belongs to the
+  research lead (P10-T20, human-only) and is NOT claimed here.
+candidate_comparators:
+  - name: Bruner spiral curriculum (foundational)
+    reference: "Bruner, J. S. (1960). The Process of Education. Harvard University Press."
+    code_available: false
+    status: THEORY_ONLY — foundational concept, no implementation to run
+  - name: LN-01 spiral progression planner (internal V2 predecessor)
+    reference: "research_v2/methods/ln01 (repo-local, frozen baseline 6debec2)"
+    code_available: true
+    status: >-
+      REUSED_CONCEPTUALLY, not run as C2: LN-01 gates per-case synthetic graphs
+      in a decision-task framing, while P10 builds a curriculum design artifact
+      over 162 documented objects with layers/bridges and a provenance-carrying
+      anchor registry. Divergence documented in research_v3/methods/p10/METHOD.md §5.
+      Running LN-01 as C2 would require conforming its frozen T3 gold (immutable
+      sha256) to P10's corpus — out of contract; disclosed instead of forced.
+  - name: Vietnamese GDPT-2018 teacher lesson-plan repositories (B01 giáo án phổ biến)
+    code_available: false
+    status: BLOCKED — requires real teacher-authored sequences and permissions (P10-T19)
+conclusion: >-
+  No runnable C2 with code + license + task fit identified as of this date.
+  Claim framing is therefore bounded: this paper reports DESIGN-GATE evidence
+  (machine-checkable invariants) and explicitly does NOT claim superiority
+  over any published method. H0 disclosure rule (packet §1) applies unchanged.

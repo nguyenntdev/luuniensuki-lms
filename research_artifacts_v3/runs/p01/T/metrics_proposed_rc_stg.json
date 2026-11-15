@@ -1,0 +1,90 @@
+{
+  "accuracy": 0.20910780669144982,
+  "clopper_pearson_ci_95": [
+    0.1951924218227368,
+    0.2235521949750435
+  ],
+  "confusion": {
+    "Distinction->ABSTAIN": 148,
+    "Distinction->Fail": 4,
+    "Distinction->Pass": 249,
+    "Fail->ABSTAIN": 508,
+    "Fail->Fail": 19,
+    "Fail->Pass": 60,
+    "Fail->Withdrawn": 9,
+    "Pass->ABSTAIN": 741,
+    "Pass->Distinction": 1,
+    "Pass->Fail": 14,
+    "Pass->Pass": 466,
+    "Pass->Withdrawn": 2,
+    "Withdrawn->ABSTAIN": 664,
+    "Withdrawn->Fail": 95,
+    "Withdrawn->Pass": 58,
+    "Withdrawn->Withdrawn": 190
+  },
+  "coverage": 0.36152416356877326,
+  "macro_f1": 0.20496358963839575,
+  "model_id": "proposed_rc_stg",
+  "n": 3228,
+  "n_abstained": 2061,
+  "n_correct": 675,
+  "per_class_recall": {
+    "Distinction": {
+      "clopper_pearson_ci_95": [
+        0.0,
+        0.009157017437212957
+      ],
+      "correct": 0,
+      "n": 401,
+      "recall": 0.0,
+      "wilson_ci_95": [
+        0.0,
+        0.009488797989920104
+      ]
+    },
+    "Fail": {
+      "clopper_pearson_ci_95": [
+        0.019300285552550794,
+        0.04933695095517182
+      ],
+      "correct": 19,
+      "n": 596,
+      "recall": 0.031879194630872486,
+      "wilson_ci_95": [
+        0.02050221290931458,
+        0.0492519833127266
+      ]
+    },
+    "Pass": {
+      "clopper_pearson_ci_95": [
+        0.35342255790168287,
+        0.40858993213424355
+      ],
+      "correct": 466,
+      "n": 1224,
+      "recall": 0.380718954248366,
+      "wilson_ci_95": [
+        0.35392999410251713,
+        0.4082542863660237
+      ]
+    },
+    "Withdrawn": {
+      "clopper_pearson_ci_95": [
+        0.1649556462175502,
+        0.21423801423146746
+      ],
+      "correct": 190,
+      "n": 1007,
+      "recall": 0.18867924528301888,
+      "wilson_ci_95": [
+        0.165714032785857,
+        0.21401065645325051
+      ]
+    }
+  },
+  "predictions_sha256": "d2c6dd0ef7eef139b196f7ebeeb8bd288f859576a0b545c60777b716636a4cb5",
+  "wilson_ci_95": [
+    0.19542869904831042,
+    0.2234784398293231
+  ]
+}

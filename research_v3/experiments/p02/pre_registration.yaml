@@ -1,0 +1,67 @@
+# P02 pre-registration (synthetic planning benchmark; external data BLOCKED)
+paper_id: P02
+study: Constraint-Aware Learning Path Planning with Alternative Activities
+rq_id: P02-RQ1
+status: PREREGISTERED_SYNTHETIC_ONLY
+claim_boundary: >
+  Synthetic decision-task benchmark only. No external dataset claims; no
+  student-learning claims; no SOTA claim against a published library solver
+  (ortools/pulp unavailable in this environment; C2 is an independent exact
+  reimplementation and is labelled as such).
+
+primary_endpoint:
+  name: exact_match_with_zero_false_infeasibility
+  unit: one instance (paired per solver)
+  decision_rule: >
+    Exact match (decision AND cost equal to the certified oracle optimum) is
+    the primary observable; false infeasibility on oracle-feasible instances
+    must be 0 for every solver labelled exact (c1_branch_and_bound,
+    c2_dijkstra_state, p02_proposed).
+
+confirmatory_contrasts:
+  - id: p02_proposed_vs_c1_branch_and_bound
+    test: wilcoxon_signed_rank
+    unit: instance-level cost difference on commonly feasible instances
+    alpha: 0.05
+  - id: p02_proposed_vs_c0_greedy
+    test: wilcoxon_signed_rank
+    unit: instance-level cost difference on commonly feasible instances
+    alpha: 0.05
+multiplicity: holm within the confirmatory family (2 contrasts)
+ci: cluster bootstrap (by family_id) on paired cost differences, 95%
+
+secondary_metrics:
+  - feasibility_rate
+  - false_infeasibility_count
+  - mean_relative_optimality_gap
+  - wall_ms_p95
+  - timeout_or_abstain_count
+
+splits:
+  protocol: group
+  group_key: family_id            # topology family + alternative density
+  tool: research_v3.eval.splitters.group_split
+  fractions: [0.70, 0.10, 0.10, 0.10]
+  leakage_checks: [assert_no_leakage, audit_rows]
+
+matrix:
+  families: [chain, alternative_pair, dense_cover, unreachable_bridge, mixed_lattice, blocked_access]
+  regimes: [tight, mid, loose]
+  alt_densities: [0.0, 0.5, 1.0]
+  instances_per_cell: 30
+  total_instances: 1620
+  seed: 20261115
+
+falsification_expectations:
+  - A3 alternative-blind must reproduce false infeasibility on alternative_pair.
+  - C0 must show positive mean gap; a C0 win indicates a generator bug.
+  - On synthetic scale, proposed == C1 quality is the expected null (H0).
+  - False infeasibility for exact solvers must be exactly 0.
+
+honesty_rules:
+  - every solver row carries its status; timeouts are never relabelled
+  - no fabricated optima; ground truth only from the independent oracle
+  - negative results (including heuristic losing optimality) reported verbatim
+external_data:
+  status: BLOCKED
+  reason: dataset rights cards (MOOCCubeX/Junyi/CausalEdu) not approved; P02-T02..T06 pending

@@ -1,0 +1,2830 @@
+{
+  "generated_at_utc": "2026-11-15T18:18:25Z",
+  "source_sha": "4e5a792e16250106b9d0a577849e864ab7007c92",
+  "task_register": "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/06_TASK_TRACKER/V3_TASK_REGISTER.csv",
+  "task_register_sha256": "ca6d86b57f832e76533663ed02229804ffc553dea4eb102b914f12888f710202",
+  "rule": "DONE requires machine-readable per-task evidence: a completed status in the paper's task ledger (DONE/DONE_ENGINEERING/ENGINEERING_PASS/EVIDENCE_VERIFIED/CODE_READY), all listed evidence paths existing on disk, and a non-empty research_artifacts_v3/runs/pXX directory. Human-only tasks are always BLOCKED. Tasks without a task-granular ledger stay BLOCKED (paper-level artifacts do not prove per-task completion).",
+  "total_tasks": 318,
+  "non_human_tasks": 274,
+  "human_only_tasks": 44,
+  "by_status": {
+    "DONE": 218,
+    "BLOCKED": 100
+  },
+  "by_status_non_human": {
+    "DONE": 218,
+    "BLOCKED": 56
+  },
+  "ledger_errors": {},
+  "violations": [],
+  "papers": [
+    {
+      "paper_id": "P01",
+      "run_dir": "research_artifacts_v3/runs/p01/",
+      "run_files": 54,
+      "has_artifacts": true,
+      "done": 18,
+      "blocked": 3,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p01/status.json"
+    },
+    {
+      "paper_id": "P02",
+      "run_dir": "research_artifacts_v3/runs/p02/",
+      "run_files": 5,
+      "has_artifacts": true,
+      "done": 15,
+      "blocked": 6,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p02/task_status.json"
+    },
+    {
+      "paper_id": "P03",
+      "run_dir": "research_artifacts_v3/runs/p03/",
+      "run_files": 9,
+      "has_artifacts": true,
+      "done": 17,
+      "blocked": 4,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p03/task_status.json"
+    },
+    {
+      "paper_id": "P04",
+      "run_dir": "research_artifacts_v3/runs/p04/",
+      "run_files": 6,
+      "has_artifacts": true,
+      "done": 9,
+      "blocked": 12,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p04/status/p04_status.json"
+    },
+    {
+      "paper_id": "P05",
+      "run_dir": "research_artifacts_v3/runs/p05/",
+      "run_files": 11,
+      "has_artifacts": true,
+      "done": 14,
+      "blocked": 7,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p05/task_status.json"
+    },
+    {
+      "paper_id": "P06",
+      "run_dir": "research_artifacts_v3/runs/p06/",
+      "run_files": 13,
+      "has_artifacts": true,
+      "done": 17,
+      "blocked": 4,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p06/task_status.json"
+    },
+    {
+      "paper_id": "P07",
+      "run_dir": "research_artifacts_v3/runs/p07/",
+      "run_files": 18,
+      "has_artifacts": true,
+      "done": 15,
+      "blocked": 6,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p07/task_status.json"
+    },
+    {
+      "paper_id": "P08",
+      "run_dir": "research_artifacts_v3/runs/p08/",
+      "run_files": 4,
+      "has_artifacts": true,
+      "done": 15,
+      "blocked": 6,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p08/task_status.json"
+    },
+    {
+      "paper_id": "P09",
+      "run_dir": "research_artifacts_v3/runs/p09/",
+      "run_files": 37,
+      "has_artifacts": true,
+      "done": 13,
+      "blocked": 8,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p09/task_status.json"
+    },
+    {
+      "paper_id": "P10",
+      "run_dir": "research_artifacts_v3/runs/p10/",
+      "run_files": 3,
+      "has_artifacts": true,
+      "done": 17,
+      "blocked": 4,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p10/task_status.json"
+    },
+    {
+      "paper_id": "P11",
+      "run_dir": "research_artifacts_v3/runs/p11/",
+      "run_files": 1,
+      "has_artifacts": true,
+      "done": 7,
+      "blocked": 14,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p11/status_manifest.json"
+    },
+    {
+      "paper_id": "P12",
+      "run_dir": "research_artifacts_v3/runs/p12/",
+      "run_files": 11,
+      "has_artifacts": true,
+      "done": 11,
+      "blocked": 10,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p12/progress.json"
+    },
+    {
+      "paper_id": "P13",
+      "run_dir": "research_artifacts_v3/runs/p13/",
+      "run_files": 6,
+      "has_artifacts": true,
+      "done": 16,
+      "blocked": 5,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p13/task_status.json"
+    },
+    {
+      "paper_id": "P14",
+      "run_dir": "research_artifacts_v3/runs/p14/",
+      "run_files": 11,
+      "has_artifacts": true,
+      "done": 13,
+      "blocked": 8,
+      "human_only": 3,
+      "ledger": "research_artifacts_v3/runs/p14/task_status.json"
+    }
+  ],
+  "global_tasks": [
+    {
+      "task_id": "V3-G00",
+      "status": "DONE",
+      "reason": "artifact exists: source hash lock"
+    },
+    {
+      "task_id": "V3-G01",
+      "status": "DONE",
+      "reason": "artifact exists: claims ledger"
+    },
+    {
+      "task_id": "V3-G02",
+      "status": "DONE",
+      "reason": "artifact exists: dataset registry"
+    },
+    {
+      "task_id": "V3-G03",
+      "status": "DONE",
+      "reason": "artifact exists: contract cards"
+    },
+    {
+      "task_id": "V3-G04",
+      "status": "DONE",
+      "reason": "artifact exists: group/time splitters"
+    },
+    {
+      "task_id": "V3-G05",
+      "status": "DONE",
+      "reason": "artifact exists: baseline verification"
+    },
+    {
+      "task_id": "V3-G06",
+      "status": "DONE",
+      "reason": "artifact exists: replication guard"
+    },
+    {
+      "task_id": "V3-G07",
+      "status": "DONE",
+      "reason": "artifact exists: statistics module"
+    },
+    {
+      "task_id": "V3-G08",
+      "status": "DONE",
+      "reason": "artifact exists: annotation tasks dir"
+    },
+    {
+      "task_id": "V3-G09",
+      "status": "BLOCKED",
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "V3-G10",
+      "status": "DONE",
+      "reason": "artifact exists: render pipeline"
+    },
+    {
+      "task_id": "V3-G11",
+      "status": "DONE",
+      "reason": "artifact exists: refreshed source lock"
+    },
+    {
+      "task_id": "V3-G12",
+      "status": "DONE",
+      "reason": "artifact exists: CI workflow"
+    },
+    {
+      "task_id": "V3-G13",
+      "status": "DONE",
+      "reason": "artifact exists: stochastic/deterministic guard"
+    },
+    {
+      "task_id": "V3-G14",
+      "status": "DONE",
+      "reason": "artifact exists: label mismatch audit"
+    },
+    {
+      "task_id": "V3-G15",
+      "status": "DONE",
+      "reason": "artifact exists: LN-06 solver parity"
+    },
+    {
+      "task_id": "V3-G16",
+      "status": "DONE",
+      "reason": "artifact exists: LN-07 scored stress"
+    },
+    {
+      "task_id": "V3-G17",
+      "status": "DONE",
+      "reason": "artifact exists: LN-09 small-cohort stress"
+    },
+    {
+      "task_id": "V3-G18",
+      "status": "DONE",
+      "reason": "artifact exists: cross-paper dedup"
+    },
+    {
+      "task_id": "V3-G19",
+      "status": "BLOCKED",
+      "reason": "external double-blind rerun not executed; only the request artifact is staged (research_artifacts_v3/runs/p08/request_2026q1-rerun.json)"
+    },
+    {
+      "task_id": "V3-G20",
+      "status": "BLOCKED",
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "V3-G21",
+      "status": "DONE",
+      "reason": "artifact exists: matrix selection tests"
+    },
+    {
+      "task_id": "V3-G22",
+      "status": "DONE",
+      "reason": "artifact exists: benchmark appendix"
+    },
+    {
+      "task_id": "V3-G23",
+      "status": "DONE",
+      "reason": "artifact exists: tier cross-verification"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "V3-G00",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: source hash lock"
+    },
+    {
+      "task_id": "V3-G01",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: claims ledger"
+    },
+    {
+      "task_id": "V3-G02",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: dataset registry"
+    },
+    {
+      "task_id": "V3-G03",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: contract cards"
+    },
+    {
+      "task_id": "V3-G04",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: group/time splitters"
+    },
+    {
+      "task_id": "V3-G05",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: baseline verification"
+    },
+    {
+      "task_id": "V3-G06",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: replication guard"
+    },
+    {
+      "task_id": "V3-G07",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: statistics module"
+    },
+    {
+      "task_id": "V3-G08",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: annotation tasks dir"
+    },
+    {
+      "task_id": "V3-G09",
+      "paper_id": "GLOBAL",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "V3-G10",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: render pipeline"
+    },
+    {
+      "task_id": "V3-G11",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: refreshed source lock"
+    },
+    {
+      "task_id": "V3-G12",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: CI workflow"
+    },
+    {
+      "task_id": "V3-G13",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: stochastic/deterministic guard"
+    },
+    {
+      "task_id": "V3-G14",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: label mismatch audit"
+    },
+    {
+      "task_id": "V3-G15",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: LN-06 solver parity"
+    },
+    {
+      "task_id": "V3-G16",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: LN-07 scored stress"
+    },
+    {
+      "task_id": "V3-G17",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: LN-09 small-cohort stress"
+    },
+    {
+      "task_id": "V3-G18",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: cross-paper dedup"
+    },
+    {
+      "task_id": "V3-G19",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "external double-blind rerun not executed; only the request artifact is staged (research_artifacts_v3/runs/p08/request_2026q1-rerun.json)"
+    },
+    {
+      "task_id": "V3-G20",
+      "paper_id": "GLOBAL",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P01-T01",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T02",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T03",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T04",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T05",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T06",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T07",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T08",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T09",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T10",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T11",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T12",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T13",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T14",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T15",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T16",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T17",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T18",
+      "paper_id": "P01",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P01-T19",
+      "paper_id": "P01",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P01-T20",
+      "paper_id": "P01",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P01-T21",
+      "paper_id": "P01",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P02-T01",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T02",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P02-T03",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T04",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T05",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T06",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T07",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T08",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T09",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T10",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T11",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T12",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T13",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T14",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T15",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T16",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P02-T17",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "ENGINEERING_PASS",
+      "reason": "ledger status ENGINEERING_PASS + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P02-T18",
+      "paper_id": "P02",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P02-T19",
+      "paper_id": "P02",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P02-T20",
+      "paper_id": "P02",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P02-T21",
+      "paper_id": "P02",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P03-T01",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T02",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T03",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T04",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T05",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T06",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T07",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T08",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T09",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T10",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T11",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T12",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T13",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T14",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T15",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T16",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T17",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "ENGINEERING_PASS",
+      "reason": "ledger status ENGINEERING_PASS + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P03-T18",
+      "paper_id": "P03",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P03-T19",
+      "paper_id": "P03",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P03-T20",
+      "paper_id": "P03",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P03-T21",
+      "paper_id": "P03",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P04-T01",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "EVIDENCE_VERIFIED",
+      "reason": "ledger status EVIDENCE_VERIFIED + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P04-T02",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "EVIDENCE_VERIFIED",
+      "reason": "ledger status EVIDENCE_VERIFIED + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P04-T03",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "EVIDENCE_VERIFIED",
+      "reason": "ledger status EVIDENCE_VERIFIED + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P04-T04",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "EVIDENCE_VERIFIED",
+      "reason": "ledger status EVIDENCE_VERIFIED + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P04-T05",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "EVIDENCE_VERIFIED",
+      "reason": "ledger status EVIDENCE_VERIFIED + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P04-T06",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "EVIDENCE_VERIFIED",
+      "reason": "ledger status EVIDENCE_VERIFIED + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P04-T07",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "EVIDENCE_VERIFIED",
+      "reason": "ledger status EVIDENCE_VERIFIED + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P04-T08",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "TODO",
+      "reason": "ledger status: TODO"
+    },
+    {
+      "task_id": "P04-T09",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "EVIDENCE_VERIFIED",
+      "reason": "ledger status EVIDENCE_VERIFIED + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P04-T10",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "TODO",
+      "reason": "ledger status: TODO"
+    },
+    {
+      "task_id": "P04-T11",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P04-T12",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P04-T13",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P04-T14",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P04-T15",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "EVIDENCE_VERIFIED",
+      "reason": "ledger status EVIDENCE_VERIFIED + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P04-T16",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "TODO",
+      "reason": "ledger status: TODO"
+    },
+    {
+      "task_id": "P04-T17",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P04-T18",
+      "paper_id": "P04",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "TODO",
+      "reason": "ledger status: TODO"
+    },
+    {
+      "task_id": "P04-T19",
+      "paper_id": "P04",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P04-T20",
+      "paper_id": "P04",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P04-T21",
+      "paper_id": "P04",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P05-T01",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T02",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T03",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T04",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T05",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T06",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T07",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T08",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P05-T09",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T10",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T11",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T12",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T13",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T14",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T15",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P05-T16",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P05-T17",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P05-T18",
+      "paper_id": "P05",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P05-T19",
+      "paper_id": "P05",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P05-T20",
+      "paper_id": "P05",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P05-T21",
+      "paper_id": "P05",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P06-T01",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T02",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T03",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T04",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T05",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T06",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T07",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T08",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T09",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T10",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T11",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T12",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T13",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T14",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T15",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T16",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T17",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P06-T18",
+      "paper_id": "P06",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P06-T19",
+      "paper_id": "P06",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P06-T20",
+      "paper_id": "P06",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P06-T21",
+      "paper_id": "P06",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P07-T01",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T02",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P07-T03",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T04",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T05",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T06",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T07",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P07-T08",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T09",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T10",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T11",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T12",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T13",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T14",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T15",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T16",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T17",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P07-T18",
+      "paper_id": "P07",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P07-T19",
+      "paper_id": "P07",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P07-T20",
+      "paper_id": "P07",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P07-T21",
+      "paper_id": "P07",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P08-T01",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T02",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P08-T03",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T04",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T05",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T06",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T07",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T08",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P08-T09",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T10",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T11",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T12",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T13",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T14",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T15",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T16",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T17",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE",
+      "reason": "ledger status DONE + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P08-T18",
+      "paper_id": "P08",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PENDING",
+      "reason": "ledger status: PENDING"
+    },
+    {
+      "task_id": "P08-T19",
+      "paper_id": "P08",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P08-T20",
+      "paper_id": "P08",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P08-T21",
+      "paper_id": "P08",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P09-T01",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T02",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T03",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T04",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T05",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T06",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T07",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T08",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P09-T09",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T10",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P09-T11",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T12",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T13",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P09-T14",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T15",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T16",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P09-T17",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P09-T18",
+      "paper_id": "P09",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P09-T19",
+      "paper_id": "P09",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P09-T20",
+      "paper_id": "P09",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P09-T21",
+      "paper_id": "P09",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P10-T01",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T02",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T03",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T04",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T05",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T06",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T07",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T08",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P10-T09",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T10",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T11",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T12",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T13",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T14",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T15",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T16",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T17",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T18",
+      "paper_id": "P10",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P10-T19",
+      "paper_id": "P10",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P10-T20",
+      "paper_id": "P10",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P10-T21",
+      "paper_id": "P10",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P11-T01",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "ENGINEERING_PASS",
+      "reason": "ledger status ENGINEERING_PASS + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P11-T02",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P11-T03",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "ENGINEERING_PASS",
+      "reason": "ledger status ENGINEERING_PASS + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P11-T04",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P11-T05",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P11-T06",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P11-T07",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "ENGINEERING_PASS",
+      "reason": "ledger status ENGINEERING_PASS + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P11-T08",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P11-T09",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "ENGINEERING_PASS",
+      "reason": "ledger status ENGINEERING_PASS + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P11-T10",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "ENGINEERING_PASS",
+      "reason": "ledger status ENGINEERING_PASS + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P11-T11",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P11-T12",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P11-T13",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P11-T14",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P11-T15",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P11-T16",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "ENGINEERING_PASS",
+      "reason": "ledger status ENGINEERING_PASS + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P11-T17",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "ENGINEERING_PASS",
+      "reason": "ledger status ENGINEERING_PASS + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P11-T18",
+      "paper_id": "P11",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P11-T19",
+      "paper_id": "P11",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P11-T20",
+      "paper_id": "P11",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P11-T21",
+      "paper_id": "P11",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P12-T01",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T02",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T03",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T04",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T05",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "NOT_APPLICABLE_NO_LEARNED_PARAMETERS",
+      "reason": "ledger status: NOT_APPLICABLE_NO_LEARNED_PARAMETERS"
+    },
+    {
+      "task_id": "P12-T06",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T07",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T08",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T09",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T10",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P12-T11",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "NOT_APPLICABLE",
+      "reason": "ledger status: NOT_APPLICABLE"
+    },
+    {
+      "task_id": "P12-T12",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T13",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P12-T14",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P12-T15",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T16",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P12-T17",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P12-T18",
+      "paper_id": "P12",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P12-T19",
+      "paper_id": "P12",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P12-T20",
+      "paper_id": "P12",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P12-T21",
+      "paper_id": "P12",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P13-T01",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T02",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T03",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T04",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T05",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T06",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T07",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T08",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P13-T09",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T10",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T11",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T12",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T13",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T14",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T15",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T16",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T17",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P13-T18",
+      "paper_id": "P13",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P13-T19",
+      "paper_id": "P13",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P13-T20",
+      "paper_id": "P13",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P13-T21",
+      "paper_id": "P13",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P14-T01",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T02",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P14-T03",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T04",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T05",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T06",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T07",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T08",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "BLOCKED",
+      "reason": "ledger status: BLOCKED"
+    },
+    {
+      "task_id": "P14-T09",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T10",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T11",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T12",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P14-T13",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P14-T14",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T15",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T16",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T17",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
+    },
+    {
+      "task_id": "P14-T18",
+      "paper_id": "P14",
+      "human_only": false,
+      "status": "BLOCKED",
+      "ledger_status": "PARTIAL",
+      "reason": "ledger status: PARTIAL"
+    },
+    {
+      "task_id": "P14-T19",
+      "paper_id": "P14",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P14-T20",
+      "paper_id": "P14",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "P14-T21",
+      "paper_id": "P14",
+      "human_only": true,
+      "status": "BLOCKED",
+      "ledger_status": null,
+      "reason": "human-only: ethics/novelty/venue signoff cannot be produced by code"
+    },
+    {
+      "task_id": "V3-G21",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: matrix selection tests"
+    },
+    {
+      "task_id": "V3-G22",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: benchmark appendix"
+    },
+    {
+      "task_id": "V3-G23",
+      "paper_id": "GLOBAL",
+      "human_only": false,
+      "status": "DONE",
+      "ledger_status": null,
+      "reason": "artifact exists: tier cross-verification"
+    }
+  ]
+}
