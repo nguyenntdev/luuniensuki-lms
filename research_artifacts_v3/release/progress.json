@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-11-15T18:18:25Z",
-  "source_sha": "4e5a792e16250106b9d0a577849e864ab7007c92",
+  "generated_at_utc": "2026-11-20T09:46:49Z",
+  "source_sha": "331c581f540ba4a6d41618b49222a0f56fdf0042",
   "task_register": "LUU_NIEN_RESEARCH_V3_14_PAPERS_SPEC_20261115/06_TASK_TRACKER/V3_TASK_REGISTER.csv",
   "task_register_sha256": "ca6d86b57f832e76533663ed02229804ffc553dea4eb102b914f12888f710202",
   "rule": "DONE requires machine-readable per-task evidence: a completed status in the paper's task ledger (DONE/DONE_ENGINEERING/ENGINEERING_PASS/EVIDENCE_VERIFIED/CODE_READY), all listed evidence paths existing on disk, and a non-empty research_artifacts_v3/runs/pXX directory. Human-only tasks are always BLOCKED. Tasks without a task-granular ledger stay BLOCKED (paper-level artifacts do not prove per-task completion).",
@@ -8,12 +8,12 @@
   "non_human_tasks": 274,
   "human_only_tasks": 44,
   "by_status": {
-    "DONE": 218,
-    "BLOCKED": 100
+    "DONE": 219,
+    "BLOCKED": 99
   },
   "by_status_non_human": {
-    "DONE": 218,
-    "BLOCKED": 56
+    "DONE": 219,
+    "BLOCKED": 55
   },
   "ledger_errors": {},
   "violations": [],
@@ -63,8 +63,8 @@
       "run_dir": "research_artifacts_v3/runs/p05/",
       "run_files": 11,
       "has_artifacts": true,
-      "done": 14,
-      "blocked": 7,
+      "done": 15,
+      "blocked": 6,
       "human_only": 3,
       "ledger": "research_artifacts_v3/runs/p05/task_status.json"
     },
@@ -1254,9 +1254,9 @@
       "task_id": "P05-T17",
       "paper_id": "P05",
       "human_only": false,
-      "status": "BLOCKED",
-      "ledger_status": "BLOCKED",
-      "reason": "ledger status: BLOCKED"
+      "status": "DONE",
+      "ledger_status": "DONE_ENGINEERING",
+      "reason": "ledger status DONE_ENGINEERING + evidence on disk + non-empty run dir"
     },
     {
       "task_id": "P05-T18",

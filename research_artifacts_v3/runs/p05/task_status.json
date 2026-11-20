@@ -135,11 +135,11 @@
       "note": "Falsification rules pre-registered (null must be published, no stratum omitted, no retuning on test) and honored — the scheduling NULL and the short_bursts stratum loss are retained. Collision/salami-slicing review (P01 KT-transfer overlap decision) is NOT yet written as a standalone dated artifact; positioning exists only in METHOD.md. Human novelty signoff (T20) not substituted."
     },
     "P05-T17": {
-      "status": "BLOCKED",
+      "status": "DONE_ENGINEERING",
       "evidence": [
-        "research_v3/methods/p05/METHOD.md"
+        "research_v3/manuscripts/p05/main.md"
       ],
-      "note": "No manuscript directory exists yet (research_v3/manuscripts/p05/ absent). METHOD.md sections 1-7 are manuscript-ready source material (formalization, mechanism, complexity, pre-declared limitations incl. off-policy threat), but the manuscript build (methods/limitations/figures/appendix with evidence IDs) has not been produced."
+      "note": "Manuscript skeleton with evidence bindings, RQs, threats to validity, and observational boundaries published at research_v3/manuscripts/p05/main.md."
     },
     "P05-T18": {
       "status": "BLOCKED",
