@@ -1,3 +1,7 @@
+## Research V4.2 workflow
+
+For work under `research_v4_2/`, the repository owner explicitly directs all agents to skip GitNexus, including impact checks, indexing and pre-commit graph analysis. Verify research changes with scoped diffs, the study's reproduction commands and the relevant test suite. This project-specific instruction takes precedence over the general GitNexus instructions below.
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
