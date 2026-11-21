@@ -96,3 +96,5 @@ python research_v4_2/external/accessibility/rule_coverage.py private_data/raw/ac
 ## Prediction on previously unscored rules
 
 After removing 13 overlapping test cases, the held-out comparison included 605 examples across 50 proposed ACT rules. A logistic model combining published engine outputs classified 430 examples correctly and detected 130 of 206 expected failures with 19 false alerts. Equal-rule accuracy was 67.03% versus 64.86% for the confusion-matrix naive Bayes baseline. Fusion won on seven rules, tied on 39 and lost on four. The Holm-adjusted sign-test p-value was 0.5488. The advantage in the point estimate did not establish superiority over every comparator. [Protocol](confirmatory/protocol.md) · [Paired results](confirmatory/result.json) · [Fixture predictions](confirmatory/predictions.csv)
+
+Pairwise engine interactions reduced equal-rule exact accuracy from 67.03% to 59.11% on the 605 previously evaluated W3C examples. The fitted main effects also changed, which affected fixtures where a pair term could never fire. [Paired evaluation and matched additive control](conditional_rules/README.md)

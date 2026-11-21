@@ -1,0 +1,2044 @@
+{
+  "peps": {
+    "cohort": "development",
+    "start": "15eefc09ad1222be48d4d9956716c1c8b2cb2d5b",
+    "end": "4434e728a7db24540d581f52e96570ca1230356e",
+    "resolved": 21,
+    "hard": 19,
+    "censored": 143,
+    "revisions": 16,
+    "files": 11,
+    "multi_label_revisions": 2,
+    "residual_collision_revisions": 6,
+    "anchored_assignment_changes": 1,
+    "metrics": {
+      "published_title": {
+        "correct": 17,
+        "equal_file_accuracy": 0.742424,
+        "hard_correct": 15
+      },
+      "published_content": {
+        "correct": 17,
+        "equal_file_accuracy": 0.757576,
+        "hard_correct": 16
+      },
+      "published_context": {
+        "correct": 16,
+        "equal_file_accuracy": 0.651515,
+        "hard_correct": 15
+      },
+      "published_combined": {
+        "correct": 19,
+        "equal_file_accuracy": 0.939394,
+        "hard_correct": 17
+      },
+      "published_no_title": {
+        "correct": 18,
+        "equal_file_accuracy": 0.848485,
+        "hard_correct": 17
+      },
+      "published_no_content": {
+        "correct": 19,
+        "equal_file_accuracy": 0.939394,
+        "hard_correct": 17
+      },
+      "published_no_context": {
+        "correct": 19,
+        "equal_file_accuracy": 0.878788,
+        "hard_correct": 17
+      },
+      "published_exact": {
+        "correct": 2,
+        "equal_file_accuracy": 0.121212,
+        "hard_correct": 0
+      },
+      "published_ordinal": {
+        "correct": 9,
+        "equal_file_accuracy": 0.242424,
+        "hard_correct": 9
+      },
+      "published_nearest": {
+        "correct": 17,
+        "equal_file_accuracy": 0.636364,
+        "hard_correct": 16
+      },
+      "published_interpolation": {
+        "correct": 17,
+        "equal_file_accuracy": 0.681818,
+        "hard_correct": 16
+      },
+      "published_title_body": {
+        "correct": 19,
+        "equal_file_accuracy": 0.878788,
+        "hard_correct": 17
+      },
+      "independent_full_content": {
+        "correct": 19,
+        "equal_file_accuracy": 0.878788,
+        "hard_correct": 17
+      },
+      "independent_text": {
+        "correct": 19,
+        "equal_file_accuracy": 0.939394,
+        "hard_correct": 17
+      },
+      "global_text": {
+        "correct": 19,
+        "equal_file_accuracy": 0.939394,
+        "hard_correct": 17
+      },
+      "independent_position": {
+        "correct": 20,
+        "equal_file_accuracy": 0.969697,
+        "hard_correct": 18
+      },
+      "global_position": {
+        "correct": 19,
+        "equal_file_accuracy": 0.939394,
+        "hard_correct": 17
+      },
+      "independent_locked": {
+        "correct": 19,
+        "equal_file_accuracy": 0.939394,
+        "hard_correct": 17
+      },
+      "global_locked": {
+        "correct": 19,
+        "equal_file_accuracy": 0.939394,
+        "hard_correct": 17
+      },
+      "independent_anchored": {
+        "correct": 20,
+        "equal_file_accuracy": 0.969697,
+        "hard_correct": 18
+      },
+      "global_anchored": {
+        "correct": 19,
+        "equal_file_accuracy": 0.939394,
+        "hard_correct": 17
+      },
+      "independent_locked_content": {
+        "correct": 17,
+        "equal_file_accuracy": 0.818182,
+        "hard_correct": 15
+      },
+      "global_locked_content": {
+        "correct": 17,
+        "equal_file_accuracy": 0.818182,
+        "hard_correct": 15
+      }
+    },
+    "predictions": [
+      {
+        "path": "pep-0622.rst",
+        "commit": "d3bcd15cd2d54342fd0d94610942f88aa6c88963",
+        "blobs": [
+          "7f6382d412745189c63c20bbfab2631041933a9b",
+          "d4aa4755f062366787b251b8e4fefed0cfe7f0be"
+        ],
+        "source_headings": 61,
+        "destination_headings": 61,
+        "anchors": 50,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 6,
+            "target": 6,
+            "hard": true,
+            "predictions": {
+              "published_title": 6,
+              "published_content": 6,
+              "published_context": 6,
+              "published_combined": 6,
+              "published_no_title": 6,
+              "published_no_content": 6,
+              "published_no_context": 6,
+              "published_exact": null,
+              "published_ordinal": 6,
+              "published_nearest": 6,
+              "published_interpolation": 6,
+              "published_title_body": 6,
+              "independent_full_content": 6,
+              "independent_text": 6,
+              "global_text": 6,
+              "independent_position": 6,
+              "global_position": 6,
+              "independent_locked": 6,
+              "global_locked": 6,
+              "independent_anchored": 6,
+              "global_anchored": 6,
+              "independent_locked_content": 6,
+              "global_locked_content": 6
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          },
+          {
+            "source": 8,
+            "target": 8,
+            "hard": true,
+            "predictions": {
+              "published_title": 8,
+              "published_content": 8,
+              "published_context": 8,
+              "published_combined": 8,
+              "published_no_title": 8,
+              "published_no_content": 8,
+              "published_no_context": 8,
+              "published_exact": null,
+              "published_ordinal": 8,
+              "published_nearest": 8,
+              "published_interpolation": 8,
+              "published_title_body": 8,
+              "independent_full_content": 8,
+              "independent_text": 8,
+              "global_text": 8,
+              "independent_position": 8,
+              "global_position": 8,
+              "independent_locked": 8,
+              "global_locked": 8,
+              "independent_anchored": 8,
+              "global_anchored": 8,
+              "independent_locked_content": 8,
+              "global_locked_content": 8
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.995198,
+            "body_score_at_top": 0.995198
+          },
+          {
+            "source": 9,
+            "target": 9,
+            "hard": true,
+            "predictions": {
+              "published_title": 9,
+              "published_content": 9,
+              "published_context": 9,
+              "published_combined": 9,
+              "published_no_title": 9,
+              "published_no_content": 9,
+              "published_no_context": 9,
+              "published_exact": null,
+              "published_ordinal": 9,
+              "published_nearest": 9,
+              "published_interpolation": 9,
+              "published_title_body": 9,
+              "independent_full_content": 9,
+              "independent_text": 9,
+              "global_text": 9,
+              "independent_position": 9,
+              "global_position": 9,
+              "independent_locked": 9,
+              "global_locked": 9,
+              "independent_anchored": 9,
+              "global_anchored": 9,
+              "independent_locked_content": 9,
+              "global_locked_content": 9
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          },
+          {
+            "source": 10,
+            "target": 10,
+            "hard": true,
+            "predictions": {
+              "published_title": 10,
+              "published_content": 10,
+              "published_context": 10,
+              "published_combined": 10,
+              "published_no_title": 10,
+              "published_no_content": 10,
+              "published_no_context": 10,
+              "published_exact": null,
+              "published_ordinal": 10,
+              "published_nearest": 10,
+              "published_interpolation": 10,
+              "published_title_body": 10,
+              "independent_full_content": 10,
+              "independent_text": 10,
+              "global_text": 10,
+              "independent_position": 10,
+              "global_position": 10,
+              "independent_locked": 10,
+              "global_locked": 10,
+              "independent_anchored": 10,
+              "global_anchored": 10,
+              "independent_locked_content": 10,
+              "global_locked_content": 10
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          },
+          {
+            "source": 11,
+            "target": 11,
+            "hard": true,
+            "predictions": {
+              "published_title": 11,
+              "published_content": 11,
+              "published_context": 11,
+              "published_combined": 11,
+              "published_no_title": 11,
+              "published_no_content": 11,
+              "published_no_context": 11,
+              "published_exact": null,
+              "published_ordinal": 11,
+              "published_nearest": 11,
+              "published_interpolation": 11,
+              "published_title_body": 11,
+              "independent_full_content": 11,
+              "independent_text": 11,
+              "global_text": 11,
+              "independent_position": 11,
+              "global_position": 11,
+              "independent_locked": 11,
+              "global_locked": 11,
+              "independent_anchored": 11,
+              "global_anchored": 11,
+              "independent_locked_content": 11,
+              "global_locked_content": 11
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ],
+        "forced_gold_objective_gap": 0.0
+      },
+      {
+        "path": "pep-0622.rst",
+        "commit": "31d5ffe9ca2af4cfadf041073bc33f600137dd87",
+        "blobs": [
+          "e50e848a192cbdfb7eec947229f499697baf8675",
+          "29ad60611bb7049c3b812a960914e17b38431825"
+        ],
+        "source_headings": 61,
+        "destination_headings": 61,
+        "anchors": 55,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 55,
+            "target": 55,
+            "hard": true,
+            "predictions": {
+              "published_title": 55,
+              "published_content": 55,
+              "published_context": 55,
+              "published_combined": 55,
+              "published_no_title": 55,
+              "published_no_content": 55,
+              "published_no_context": 55,
+              "published_exact": null,
+              "published_ordinal": 55,
+              "published_nearest": 55,
+              "published_interpolation": 55,
+              "published_title_body": 55,
+              "independent_full_content": 55,
+              "independent_text": 55,
+              "global_text": 55,
+              "independent_position": 55,
+              "global_position": 55,
+              "independent_locked": 55,
+              "global_locked": 55,
+              "independent_anchored": 55,
+              "global_anchored": 55,
+              "independent_locked_content": 55,
+              "global_locked_content": 55
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.558448,
+            "body_score_at_top": 0.558448
+          }
+        ]
+      },
+      {
+        "path": "pep-0635.rst",
+        "commit": "1dc309632afa4bd5e6c98e267d3f1a76a8d307a1",
+        "blobs": [
+          "38e4e4c58b590d11313ab3bb1fc2540618fc0346",
+          "ca744baa2c91a4ff87f23ad0f7bc6bc0c79df864"
+        ],
+        "source_headings": 21,
+        "destination_headings": 22,
+        "anchors": 18,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 14,
+            "target": 15,
+            "hard": true,
+            "predictions": {
+              "published_title": 15,
+              "published_content": 15,
+              "published_context": 17,
+              "published_combined": 15,
+              "published_no_title": 15,
+              "published_no_content": 15,
+              "published_no_context": 15,
+              "published_exact": null,
+              "published_ordinal": 14,
+              "published_nearest": 13,
+              "published_interpolation": 14,
+              "published_title_body": 15,
+              "independent_full_content": 15,
+              "independent_text": 15,
+              "global_text": 15,
+              "independent_position": 15,
+              "global_position": 15,
+              "independent_locked": 15,
+              "global_locked": 15,
+              "independent_anchored": 15,
+              "global_anchored": 15,
+              "independent_locked_content": 15,
+              "global_locked_content": 15
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.999348,
+            "body_score_at_top": 0.999348
+          }
+        ]
+      },
+      {
+        "path": "pep-0675.rst",
+        "commit": "51c6246c7e18d7e7d5fc8188d9f3c3fc67b90463",
+        "blobs": [
+          "81e28889aefcb8e0ce1d1a721f4652bfaabf65b5",
+          "0b341d7603357909e8ecf257d820efd5411a4866"
+        ],
+        "source_headings": 30,
+        "destination_headings": 32,
+        "anchors": 25,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 24,
+            "target": 26,
+            "hard": true,
+            "predictions": {
+              "published_title": 26,
+              "published_content": 26,
+              "published_context": 26,
+              "published_combined": 26,
+              "published_no_title": 26,
+              "published_no_content": 26,
+              "published_no_context": 26,
+              "published_exact": null,
+              "published_ordinal": 24,
+              "published_nearest": 26,
+              "published_interpolation": 26,
+              "published_title_body": 26,
+              "independent_full_content": 26,
+              "independent_text": 26,
+              "global_text": 26,
+              "independent_position": 26,
+              "global_position": 26,
+              "independent_locked": 26,
+              "global_locked": 26,
+              "independent_anchored": 26,
+              "global_anchored": 26,
+              "independent_locked_content": 26,
+              "global_locked_content": 26
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.987735,
+            "body_score_at_top": 0.987735
+          }
+        ]
+      },
+      {
+        "path": "pep-0639.rst",
+        "commit": "d31806fe1e045e5fb2d92df38c510685f2595035",
+        "blobs": [
+          "39c9f6931394465df5bc1389f3acef4fe2467e07",
+          "183017a72321318849d7a34f914c526f875e50a8"
+        ],
+        "source_headings": 48,
+        "destination_headings": 47,
+        "anchors": 44,
+        "residual_collisions": {
+          "24": 2
+        },
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 24,
+            "target": 24,
+            "hard": true,
+            "predictions": {
+              "published_title": 27,
+              "published_content": 0,
+              "published_context": 24,
+              "published_combined": 24,
+              "published_no_title": 24,
+              "published_no_content": 24,
+              "published_no_context": 27,
+              "published_exact": null,
+              "published_ordinal": 24,
+              "published_nearest": 24,
+              "published_interpolation": 24,
+              "published_title_body": 27,
+              "independent_full_content": 0,
+              "independent_text": 24,
+              "global_text": 24,
+              "independent_position": 24,
+              "global_position": 24,
+              "independent_locked": 24,
+              "global_locked": 24,
+              "independent_anchored": 24,
+              "global_anchored": 24,
+              "independent_locked_content": null,
+              "global_locked_content": null
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 47,
+            "body_score_at_target": 0,
+            "body_score_at_top": 0
+          }
+        ]
+      },
+      {
+        "path": "peps/pep-0740.rst",
+        "commit": "72595af7b18306146ae88d644387efa22d5ad82b",
+        "blobs": [
+          "8fe92720733df41f57f0f8c76e2d15b01bea63f7",
+          "ea265854746b0025f1e747dd86ed8003fdf56ab5"
+        ],
+        "source_headings": 18,
+        "destination_headings": 24,
+        "anchors": 16,
+        "residual_collisions": {
+          "21": 2
+        },
+        "labeled_collisions": {
+          "published_content": {
+            "21": 2
+          },
+          "published_combined": {},
+          "independent_full_content": {
+            "21": 2
+          },
+          "independent_anchored": {
+            "21": 2
+          }
+        },
+        "rows": [
+          {
+            "source": 15,
+            "target": 21,
+            "hard": true,
+            "predictions": {
+              "published_title": 21,
+              "published_content": 21,
+              "published_context": 22,
+              "published_combined": 22,
+              "published_no_title": 22,
+              "published_no_content": 22,
+              "published_no_context": 21,
+              "published_exact": null,
+              "published_ordinal": 15,
+              "published_nearest": 21,
+              "published_interpolation": 21,
+              "published_title_body": 21,
+              "independent_full_content": 21,
+              "independent_text": 22,
+              "global_text": 22,
+              "independent_position": 21,
+              "global_position": 22,
+              "independent_locked": 22,
+              "global_locked": 22,
+              "independent_anchored": 21,
+              "global_anchored": 22,
+              "independent_locked_content": null,
+              "global_locked_content": null
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.204476,
+            "body_score_at_top": 0.204476
+          },
+          {
+            "source": 16,
+            "target": 22,
+            "hard": true,
+            "predictions": {
+              "published_title": 21,
+              "published_content": 21,
+              "published_context": 22,
+              "published_combined": 21,
+              "published_no_title": 21,
+              "published_no_content": 21,
+              "published_no_context": 21,
+              "published_exact": null,
+              "published_ordinal": 16,
+              "published_nearest": 22,
+              "published_interpolation": 22,
+              "published_title_body": 21,
+              "independent_full_content": 21,
+              "independent_text": 21,
+              "global_text": 21,
+              "independent_position": 21,
+              "global_position": 21,
+              "independent_locked": 21,
+              "global_locked": 21,
+              "independent_anchored": 21,
+              "global_anchored": 21,
+              "independent_locked_content": 21,
+              "global_locked_content": 21
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.050116,
+            "body_score_at_top": 0.943601
+          }
+        ],
+        "forced_gold_objective_gap": 0.0073534099,
+        "label_swap_witness": {
+          "observed": [
+            [
+              15,
+              21
+            ],
+            [
+              16,
+              22
+            ]
+          ],
+          "counterfactual": [
+            [
+              15,
+              22
+            ],
+            [
+              16,
+              21
+            ]
+          ]
+        }
+      },
+      {
+        "path": "peps/pep-0639.rst",
+        "commit": "0efd2570741ab48bf6ba3243bf62ea05d53445a3",
+        "blobs": [
+          "a3042fc64533d49f9c067f9b19911d292fbfd271",
+          "42a922b7e56955ef50d097d339e504db907e631a"
+        ],
+        "source_headings": 23,
+        "destination_headings": 25,
+        "anchors": 23,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 7,
+            "target": 9,
+            "hard": false,
+            "predictions": {
+              "published_title": 9,
+              "published_content": 0,
+              "published_context": 11,
+              "published_combined": 9,
+              "published_no_title": 11,
+              "published_no_content": 9,
+              "published_no_context": 9,
+              "published_exact": 9,
+              "published_ordinal": 7,
+              "published_nearest": 8,
+              "published_interpolation": 8,
+              "published_title_body": 9,
+              "independent_full_content": 9,
+              "independent_text": 9,
+              "global_text": 9,
+              "independent_position": 9,
+              "global_position": 9,
+              "independent_locked": 9,
+              "global_locked": 9,
+              "independent_anchored": 9,
+              "global_anchored": 9,
+              "independent_locked_content": 9,
+              "global_locked_content": 9
+            },
+            "source_locked_to": 9,
+            "target_locked_from": 7,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.909499,
+            "body_score_at_top": 0.909499
+          }
+        ]
+      },
+      {
+        "path": "peps/pep-0740.rst",
+        "commit": "67631c3428b67133a454031ba4f5e45a70e3601d",
+        "blobs": [
+          "ea265854746b0025f1e747dd86ed8003fdf56ab5",
+          "28871fc874c5c3a10ef4122b82af16ce437488d1"
+        ],
+        "source_headings": 24,
+        "destination_headings": 25,
+        "anchors": 22,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 12,
+            "target": 12,
+            "hard": true,
+            "predictions": {
+              "published_title": 12,
+              "published_content": 23,
+              "published_context": 12,
+              "published_combined": 12,
+              "published_no_title": 12,
+              "published_no_content": 12,
+              "published_no_context": 12,
+              "published_exact": null,
+              "published_ordinal": 12,
+              "published_nearest": 12,
+              "published_interpolation": 12,
+              "published_title_body": 12,
+              "independent_full_content": 12,
+              "independent_text": 12,
+              "global_text": 12,
+              "independent_position": 12,
+              "global_position": 12,
+              "independent_locked": 12,
+              "global_locked": 12,
+              "independent_anchored": 12,
+              "global_anchored": 12,
+              "independent_locked_content": 23,
+              "global_locked_content": 23
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.23941,
+            "body_score_at_top": 0.23941
+          }
+        ]
+      },
+      {
+        "path": "peps/pep-0770.rst",
+        "commit": "025487722a1906eede27cbd51d48f82c727cccbf",
+        "blobs": [
+          "55f4429aafad31367363803cbbcd6a04b4414253",
+          "12bac2905c2f79463bca3ba4561c7e9c55d230a9"
+        ],
+        "source_headings": 36,
+        "destination_headings": 33,
+        "anchors": 29,
+        "residual_collisions": {
+          "12": 4
+        },
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 13,
+            "target": 12,
+            "hard": true,
+            "predictions": {
+              "published_title": 16,
+              "published_content": 12,
+              "published_context": 13,
+              "published_combined": 12,
+              "published_no_title": 12,
+              "published_no_content": 12,
+              "published_no_context": 12,
+              "published_exact": null,
+              "published_ordinal": 13,
+              "published_nearest": 13,
+              "published_interpolation": 12,
+              "published_title_body": 12,
+              "independent_full_content": 12,
+              "independent_text": 12,
+              "global_text": 12,
+              "independent_position": 12,
+              "global_position": 12,
+              "independent_locked": 12,
+              "global_locked": 12,
+              "independent_anchored": 12,
+              "global_anchored": 12,
+              "independent_locked_content": 12,
+              "global_locked_content": 12
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.897594,
+            "body_score_at_top": 0.897594
+          }
+        ]
+      },
+      {
+        "path": "peps/pep-0788.rst",
+        "commit": "81424fc9f4534ef556b68595f679db5351f53b37",
+        "blobs": [
+          "0f5b58e1804139863ad35b3b2fa81a7fc1164c55",
+          "3c54811f514f5fa99db2db2f7f61f0ff686c7377"
+        ],
+        "source_headings": 27,
+        "destination_headings": 29,
+        "anchors": 15,
+        "residual_collisions": {
+          "10": 2,
+          "11": 2,
+          "13": 2
+        },
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 25,
+            "target": 27,
+            "hard": true,
+            "predictions": {
+              "published_title": 27,
+              "published_content": 27,
+              "published_context": 27,
+              "published_combined": 27,
+              "published_no_title": 27,
+              "published_no_content": 27,
+              "published_no_context": 27,
+              "published_exact": null,
+              "published_ordinal": 25,
+              "published_nearest": 27,
+              "published_interpolation": 27,
+              "published_title_body": 27,
+              "independent_full_content": 27,
+              "independent_text": 27,
+              "global_text": 27,
+              "independent_position": 27,
+              "global_position": 27,
+              "independent_locked": 27,
+              "global_locked": 27,
+              "independent_anchored": 27,
+              "global_anchored": 27,
+              "independent_locked_content": 27,
+              "global_locked_content": 27
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      },
+      {
+        "path": "peps/pep-0788.rst",
+        "commit": "89421e7db0b4b69f6cba18dfd274fa40239a823d",
+        "blobs": [
+          "55ffac8594e33fc4a489fc92ddeb4e895c833cfc",
+          "98b068b4f814d2d10abcb652ddb44db57cd950c4"
+        ],
+        "source_headings": 25,
+        "destination_headings": 28,
+        "anchors": 25,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 21,
+            "target": 24,
+            "hard": false,
+            "predictions": {
+              "published_title": 24,
+              "published_content": 24,
+              "published_context": 24,
+              "published_combined": 24,
+              "published_no_title": 24,
+              "published_no_content": 24,
+              "published_no_context": 24,
+              "published_exact": 24,
+              "published_ordinal": 21,
+              "published_nearest": 24,
+              "published_interpolation": 24,
+              "published_title_body": 24,
+              "independent_full_content": 24,
+              "independent_text": 24,
+              "global_text": 24,
+              "independent_position": 24,
+              "global_position": 24,
+              "independent_locked": 24,
+              "global_locked": 24,
+              "independent_anchored": 24,
+              "global_anchored": 24,
+              "independent_locked_content": 24,
+              "global_locked_content": 24
+            },
+            "source_locked_to": 24,
+            "target_locked_from": 21,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      },
+      {
+        "path": "peps/pep-0694.rst",
+        "commit": "9618d5b8ad371c28e0df687b1df1c91cecfbb61b",
+        "blobs": [
+          "0100d132c01d3b9661509bdc4eb85d1f6c97828a",
+          "da70efc7dbaba503b0b438a939f76625e9b540c1"
+        ],
+        "source_headings": 35,
+        "destination_headings": 39,
+        "anchors": 31,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 16,
+            "target": 17,
+            "hard": true,
+            "predictions": {
+              "published_title": 24,
+              "published_content": 17,
+              "published_context": 15,
+              "published_combined": 17,
+              "published_no_title": 17,
+              "published_no_content": 17,
+              "published_no_context": 17,
+              "published_exact": null,
+              "published_ordinal": 16,
+              "published_nearest": 17,
+              "published_interpolation": 18,
+              "published_title_body": 17,
+              "independent_full_content": 17,
+              "independent_text": 17,
+              "global_text": 17,
+              "independent_position": 17,
+              "global_position": 17,
+              "independent_locked": 17,
+              "global_locked": 17,
+              "independent_anchored": 17,
+              "global_anchored": 17,
+              "independent_locked_content": 17,
+              "global_locked_content": 17
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      },
+      {
+        "path": "peps/pep-0788.rst",
+        "commit": "4541e9e91fdc3b13bf03bb84ecb4f086b2551314",
+        "blobs": [
+          "b45e4f3324a5f1c0f6c953b9b628aa0843c8644c",
+          "d933316f97ff168f6f0efc41c2e66d5f765f7055"
+        ],
+        "source_headings": 31,
+        "destination_headings": 31,
+        "anchors": 30,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 27,
+            "target": 27,
+            "hard": true,
+            "predictions": {
+              "published_title": 27,
+              "published_content": 27,
+              "published_context": 27,
+              "published_combined": 27,
+              "published_no_title": 27,
+              "published_no_content": 27,
+              "published_no_context": 27,
+              "published_exact": null,
+              "published_ordinal": 27,
+              "published_nearest": 27,
+              "published_interpolation": 27,
+              "published_title_body": 27,
+              "independent_full_content": 27,
+              "independent_text": 27,
+              "global_text": 27,
+              "independent_position": 27,
+              "global_position": 27,
+              "independent_locked": 27,
+              "global_locked": 27,
+              "independent_anchored": 27,
+              "global_anchored": 27,
+              "independent_locked_content": 27,
+              "global_locked_content": 27
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      },
+      {
+        "path": "peps/pep-0694.rst",
+        "commit": "da7b68fc4b905039d4f6ba58713b16e7ed8b96e3",
+        "blobs": [
+          "2a9ac30bdbb8ace227a030cd6c4c002507887df7",
+          "df22ebcc12184ea7935bd5911130b6a840f6853f"
+        ],
+        "source_headings": 39,
+        "destination_headings": 57,
+        "anchors": 33,
+        "residual_collisions": {
+          "8": 2
+        },
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 28,
+            "target": 30,
+            "hard": true,
+            "predictions": {
+              "published_title": 30,
+              "published_content": 30,
+              "published_context": 30,
+              "published_combined": 30,
+              "published_no_title": 30,
+              "published_no_content": 30,
+              "published_no_context": 30,
+              "published_exact": null,
+              "published_ordinal": 28,
+              "published_nearest": 30,
+              "published_interpolation": 30,
+              "published_title_body": 30,
+              "independent_full_content": 30,
+              "independent_text": 30,
+              "global_text": 30,
+              "independent_position": 30,
+              "global_position": 30,
+              "independent_locked": 30,
+              "global_locked": 30,
+              "independent_anchored": 30,
+              "global_anchored": 30,
+              "independent_locked_content": 30,
+              "global_locked_content": 30
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      },
+      {
+        "path": "peps/pep-0842.rst",
+        "commit": "87d12a95c0c743c5818439a7642689a5dc063d4d",
+        "blobs": [
+          "4396efa85199bbdbbcf5f3e2ee908a5491bc0f6c",
+          "6f8c55cfb4ebd5806a62954d2b1c46619b7ba9ff"
+        ],
+        "source_headings": 28,
+        "destination_headings": 42,
+        "anchors": 20,
+        "residual_collisions": {
+          "16": 2
+        },
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 14,
+            "target": 21,
+            "hard": true,
+            "predictions": {
+              "published_title": 21,
+              "published_content": 21,
+              "published_context": 21,
+              "published_combined": 21,
+              "published_no_title": 21,
+              "published_no_content": 21,
+              "published_no_context": 21,
+              "published_exact": null,
+              "published_ordinal": 14,
+              "published_nearest": 21,
+              "published_interpolation": 21,
+              "published_title_body": 21,
+              "independent_full_content": 21,
+              "independent_text": 21,
+              "global_text": 21,
+              "independent_position": 21,
+              "global_position": 21,
+              "independent_locked": 21,
+              "global_locked": 21,
+              "independent_anchored": 21,
+              "global_anchored": 21,
+              "independent_locked_content": 21,
+              "global_locked_content": 21
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.985614,
+            "body_score_at_top": 0.985614
+          }
+        ]
+      },
+      {
+        "path": "peps/pep-0844.rst",
+        "commit": "28fdc96835aad2c0983dc379430d0ac4eec14deb",
+        "blobs": [
+          "6794a43751a824b32c23d6d9115381df64a9a9c0",
+          "18bcbbb55df49b9c7af5374cc0ba027419c5f142"
+        ],
+        "source_headings": 30,
+        "destination_headings": 33,
+        "anchors": 29,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 10,
+            "target": 11,
+            "hard": true,
+            "predictions": {
+              "published_title": 11,
+              "published_content": 11,
+              "published_context": 11,
+              "published_combined": 11,
+              "published_no_title": 11,
+              "published_no_content": 11,
+              "published_no_context": 11,
+              "published_exact": null,
+              "published_ordinal": 10,
+              "published_nearest": 10,
+              "published_interpolation": 10,
+              "published_title_body": 11,
+              "independent_full_content": 11,
+              "independent_text": 11,
+              "global_text": 11,
+              "independent_position": 11,
+              "global_position": 11,
+              "independent_locked": 11,
+              "global_locked": 11,
+              "independent_anchored": 11,
+              "global_anchored": 11,
+              "independent_locked_content": 11,
+              "global_locked_content": 11
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.904636,
+            "body_score_at_top": 0.904636
+          }
+        ]
+      }
+    ]
+  },
+  "sphinx": {
+    "cohort": "development",
+    "start": "953002e6261bdd9314ee0a3314aae19479a88c7e",
+    "end": "847ad0c991e21db9daa02fec09acbd456f353300",
+    "resolved": 13,
+    "hard": 9,
+    "censored": 25,
+    "revisions": 11,
+    "files": 9,
+    "multi_label_revisions": 1,
+    "residual_collision_revisions": 1,
+    "anchored_assignment_changes": 0,
+    "metrics": {
+      "published_title": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "published_content": {
+        "correct": 13,
+        "equal_file_accuracy": 1.0,
+        "hard_correct": 9
+      },
+      "published_context": {
+        "correct": 10,
+        "equal_file_accuracy": 0.814815,
+        "hard_correct": 6
+      },
+      "published_combined": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "published_no_title": {
+        "correct": 13,
+        "equal_file_accuracy": 1.0,
+        "hard_correct": 9
+      },
+      "published_no_content": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "published_no_context": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "published_exact": {
+        "correct": 4,
+        "equal_file_accuracy": 0.296296,
+        "hard_correct": 0
+      },
+      "published_ordinal": {
+        "correct": 9,
+        "equal_file_accuracy": 0.777778,
+        "hard_correct": 6
+      },
+      "published_nearest": {
+        "correct": 10,
+        "equal_file_accuracy": 0.814815,
+        "hard_correct": 6
+      },
+      "published_interpolation": {
+        "correct": 10,
+        "equal_file_accuracy": 0.814815,
+        "hard_correct": 6
+      },
+      "published_title_body": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "independent_full_content": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "independent_text": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "global_text": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "independent_position": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "global_position": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "independent_locked": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "global_locked": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "independent_anchored": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "global_anchored": {
+        "correct": 12,
+        "equal_file_accuracy": 0.888889,
+        "hard_correct": 8
+      },
+      "independent_locked_content": {
+        "correct": 13,
+        "equal_file_accuracy": 1.0,
+        "hard_correct": 9
+      },
+      "global_locked_content": {
+        "correct": 13,
+        "equal_file_accuracy": 1.0,
+        "hard_correct": 9
+      }
+    },
+    "predictions": [
+      {
+        "path": "doc/extdev/index.rst",
+        "commit": "670bcb743b718d7b3ced548c645aafe71d0310eb",
+        "blobs": [
+          "014a806e5d5040b001f10b508cea504950df20ab",
+          "8332315ff933403566b14ba76349eb14e0c5ec0f"
+        ],
+        "source_headings": 5,
+        "destination_headings": 5,
+        "anchors": 4,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 0,
+            "target": 0,
+            "hard": true,
+            "predictions": {
+              "published_title": 0,
+              "published_content": 0,
+              "published_context": 0,
+              "published_combined": 0,
+              "published_no_title": 0,
+              "published_no_content": 0,
+              "published_no_context": 0,
+              "published_exact": null,
+              "published_ordinal": 0,
+              "published_nearest": 0,
+              "published_interpolation": 0,
+              "published_title_body": 0,
+              "independent_full_content": 0,
+              "independent_text": 0,
+              "global_text": 0,
+              "independent_position": 0,
+              "global_position": 0,
+              "independent_locked": 0,
+              "global_locked": 0,
+              "independent_anchored": 0,
+              "global_anchored": 0,
+              "independent_locked_content": 0,
+              "global_locked_content": 0
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      },
+      {
+        "path": "doc/extdev/i18n.rst",
+        "commit": "b2069fb64f54877b5426189c1542aec20d36822f",
+        "blobs": [
+          "6b32b8b736afc0c2ce16fbe8a5b453ba900ee9bc",
+          "c5ffc84830663c681ffbd12e230488531f7ee03f"
+        ],
+        "source_headings": 2,
+        "destination_headings": 2,
+        "anchors": 1,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 1,
+            "target": 1,
+            "hard": false,
+            "predictions": {
+              "published_title": 1,
+              "published_content": 1,
+              "published_context": 1,
+              "published_combined": 1,
+              "published_no_title": 1,
+              "published_no_content": 1,
+              "published_no_context": 1,
+              "published_exact": 1,
+              "published_ordinal": 1,
+              "published_nearest": 1,
+              "published_interpolation": 1,
+              "published_title_body": 1,
+              "independent_full_content": 1,
+              "independent_text": 1,
+              "global_text": 1,
+              "independent_position": 1,
+              "global_position": 1,
+              "independent_locked": 1,
+              "global_locked": 1,
+              "independent_anchored": 1,
+              "global_anchored": 1,
+              "independent_locked_content": 1,
+              "global_locked_content": 1
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      },
+      {
+        "path": "doc/development/tutorials/index.rst",
+        "commit": "8f97fd276a0af0ad4f2bc9d42edb61e45af04e19",
+        "blobs": [
+          "a7eee48991f7c696eb1fbc016f4433a84a7fb535",
+          "a9c8368af39b11217d37a6071468ed43dc72bcab"
+        ],
+        "source_headings": 1,
+        "destination_headings": 1,
+        "anchors": 0,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 0,
+            "target": 0,
+            "hard": true,
+            "predictions": {
+              "published_title": 0,
+              "published_content": 0,
+              "published_context": 0,
+              "published_combined": 0,
+              "published_no_title": 0,
+              "published_no_content": 0,
+              "published_no_context": 0,
+              "published_exact": null,
+              "published_ordinal": 0,
+              "published_nearest": 0,
+              "published_interpolation": 0,
+              "published_title_body": 0,
+              "independent_full_content": 0,
+              "independent_text": 0,
+              "global_text": 0,
+              "independent_position": 0,
+              "global_position": 0,
+              "independent_locked": 0,
+              "global_locked": 0,
+              "independent_anchored": 0,
+              "global_anchored": 0,
+              "independent_locked_content": 0,
+              "global_locked_content": 0
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.339972,
+            "body_score_at_top": 0.339972
+          }
+        ]
+      },
+      {
+        "path": "doc/extdev/index.rst",
+        "commit": "8f97fd276a0af0ad4f2bc9d42edb61e45af04e19",
+        "blobs": [
+          "a451f80f91f98906cf88287a0588503dd429ba99",
+          "57162e6f3b950225db4428f4780ef16436949cf9"
+        ],
+        "source_headings": 5,
+        "destination_headings": 5,
+        "anchors": 4,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 0,
+            "target": 0,
+            "hard": true,
+            "predictions": {
+              "published_title": 0,
+              "published_content": 0,
+              "published_context": 0,
+              "published_combined": 0,
+              "published_no_title": 0,
+              "published_no_content": 0,
+              "published_no_context": 0,
+              "published_exact": null,
+              "published_ordinal": 0,
+              "published_nearest": 0,
+              "published_interpolation": 0,
+              "published_title_body": 0,
+              "independent_full_content": 0,
+              "independent_text": 0,
+              "global_text": 0,
+              "independent_position": 0,
+              "global_position": 0,
+              "independent_locked": 0,
+              "global_locked": 0,
+              "independent_anchored": 0,
+              "global_anchored": 0,
+              "independent_locked_content": 0,
+              "global_locked_content": 0
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      },
+      {
+        "path": "doc/usage/installation.rst",
+        "commit": "a53a758d40e8bbc5dafe41db37c20a73441b1e47",
+        "blobs": [
+          "13dc6a983c058cf7588ca81cbf1d3a7b0d51e1ae",
+          "7be688928c866405b9aa116bd7a55856fb05ae4f"
+        ],
+        "source_headings": 17,
+        "destination_headings": 10,
+        "anchors": 6,
+        "residual_collisions": {
+          "2": 2,
+          "8": 3
+        },
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 13,
+            "target": 1,
+            "hard": true,
+            "predictions": {
+              "published_title": 9,
+              "published_content": 1,
+              "published_context": 3,
+              "published_combined": 9,
+              "published_no_title": 1,
+              "published_no_content": 9,
+              "published_no_context": 9,
+              "published_exact": null,
+              "published_ordinal": 9,
+              "published_nearest": 5,
+              "published_interpolation": 7,
+              "published_title_body": 9,
+              "independent_full_content": 8,
+              "independent_text": 8,
+              "global_text": 8,
+              "independent_position": 8,
+              "global_position": 8,
+              "independent_locked": 8,
+              "global_locked": 8,
+              "independent_anchored": 8,
+              "global_anchored": 8,
+              "independent_locked_content": 1,
+              "global_locked_content": 1
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.388695,
+            "body_score_at_top": 0.594754
+          }
+        ]
+      },
+      {
+        "path": "doc/development/tutorials/autodoc_ext.rst",
+        "commit": "d130c2e710aa2b8e11216da4ce037295d49a4f15",
+        "blobs": [
+          "cfd23e7e694f55114061634eb0faed12e06af291",
+          "fb2a9176ee2483de143e10da10b13aa58905024e"
+        ],
+        "source_headings": 5,
+        "destination_headings": 6,
+        "anchors": 4,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 0,
+            "target": 0,
+            "hard": true,
+            "predictions": {
+              "published_title": 0,
+              "published_content": 0,
+              "published_context": 0,
+              "published_combined": 0,
+              "published_no_title": 0,
+              "published_no_content": 0,
+              "published_no_context": 0,
+              "published_exact": null,
+              "published_ordinal": 0,
+              "published_nearest": 0,
+              "published_interpolation": 0,
+              "published_title_body": 0,
+              "independent_full_content": 0,
+              "independent_text": 0,
+              "global_text": 0,
+              "independent_position": 0,
+              "global_position": 0,
+              "independent_locked": 0,
+              "global_locked": 0,
+              "independent_anchored": 0,
+              "global_anchored": 0,
+              "independent_locked_content": 0,
+              "global_locked_content": 0
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      },
+      {
+        "path": "doc/usage/configuration.rst",
+        "commit": "82edc3d3855e826fa6bc1592aead842b6f679d5b",
+        "blobs": [
+          "b283c2fb7d0b8f0da80bf217c985f2f185eb3d38",
+          "614db1a336a29d7c51dac5625f53b50f82a32996"
+        ],
+        "source_headings": 22,
+        "destination_headings": 38,
+        "anchors": 18,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 3,
+            "target": 7,
+            "hard": true,
+            "predictions": {
+              "published_title": 7,
+              "published_content": 7,
+              "published_context": 4,
+              "published_combined": 7,
+              "published_no_title": 7,
+              "published_no_content": 7,
+              "published_no_context": 7,
+              "published_exact": null,
+              "published_ordinal": 3,
+              "published_nearest": 4,
+              "published_interpolation": 8,
+              "published_title_body": 7,
+              "independent_full_content": 7,
+              "independent_text": 7,
+              "global_text": 7,
+              "independent_position": 7,
+              "global_position": 7,
+              "independent_locked": 7,
+              "global_locked": 7,
+              "independent_anchored": 7,
+              "global_anchored": 7,
+              "independent_locked_content": 7,
+              "global_locked_content": 7
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.932617,
+            "body_score_at_top": 0.932617
+          },
+          {
+            "source": 4,
+            "target": 9,
+            "hard": true,
+            "predictions": {
+              "published_title": 9,
+              "published_content": 9,
+              "published_context": 17,
+              "published_combined": 9,
+              "published_no_title": 9,
+              "published_no_content": 9,
+              "published_no_context": 9,
+              "published_exact": null,
+              "published_ordinal": 4,
+              "published_nearest": 16,
+              "published_interpolation": 12,
+              "published_title_body": 9,
+              "independent_full_content": 9,
+              "independent_text": 9,
+              "global_text": 9,
+              "independent_position": 9,
+              "global_position": 9,
+              "independent_locked": 9,
+              "global_locked": 9,
+              "independent_anchored": 9,
+              "global_anchored": 9,
+              "independent_locked_content": 9,
+              "global_locked_content": 9
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.87651,
+            "body_score_at_top": 0.87651
+          },
+          {
+            "source": 9,
+            "target": 21,
+            "hard": false,
+            "predictions": {
+              "published_title": 21,
+              "published_content": 21,
+              "published_context": 21,
+              "published_combined": 21,
+              "published_no_title": 21,
+              "published_no_content": 21,
+              "published_no_context": 21,
+              "published_exact": 21,
+              "published_ordinal": 9,
+              "published_nearest": 21,
+              "published_interpolation": 21,
+              "published_title_body": 21,
+              "independent_full_content": 21,
+              "independent_text": 21,
+              "global_text": 21,
+              "independent_position": 21,
+              "global_position": 21,
+              "independent_locked": 21,
+              "global_locked": 21,
+              "independent_anchored": 21,
+              "global_anchored": 21,
+              "independent_locked_content": 21,
+              "global_locked_content": 21
+            },
+            "source_locked_to": 21,
+            "target_locked_from": 9,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.933639,
+            "body_score_at_top": 0.933639
+          }
+        ],
+        "forced_gold_objective_gap": 0.0
+      },
+      {
+        "path": "doc/latex.rst",
+        "commit": "9943274033130d218e1d8f253cc6040cbffeec92",
+        "blobs": [
+          "5c9c503565b8d608a3a6ca2052f64b8e35a64cc2",
+          "c53e25fcf404f398dc2d95243a23035b269fc811"
+        ],
+        "source_headings": 9,
+        "destination_headings": 9,
+        "anchors": 8,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 6,
+            "target": 6,
+            "hard": true,
+            "predictions": {
+              "published_title": 6,
+              "published_content": 6,
+              "published_context": 6,
+              "published_combined": 6,
+              "published_no_title": 6,
+              "published_no_content": 6,
+              "published_no_context": 6,
+              "published_exact": null,
+              "published_ordinal": 6,
+              "published_nearest": 6,
+              "published_interpolation": 6,
+              "published_title_body": 6,
+              "independent_full_content": 6,
+              "independent_text": 6,
+              "global_text": 6,
+              "independent_position": 6,
+              "global_position": 6,
+              "independent_locked": 6,
+              "global_locked": 6,
+              "independent_anchored": 6,
+              "global_anchored": 6,
+              "independent_locked_content": 6,
+              "global_locked_content": 6
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.978144,
+            "body_score_at_top": 0.978144
+          }
+        ]
+      },
+      {
+        "path": "doc/extdev/index.rst",
+        "commit": "6cf3f9238efaa40d963adcd06ddaa29de368c156",
+        "blobs": [
+          "700eda592510e730841e035226eafae1092f8cfa",
+          "5160cd45e7281711de8646c1e546d7db7f1dbdfb"
+        ],
+        "source_headings": 5,
+        "destination_headings": 5,
+        "anchors": 5,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 2,
+            "target": 2,
+            "hard": false,
+            "predictions": {
+              "published_title": 2,
+              "published_content": 2,
+              "published_context": 2,
+              "published_combined": 2,
+              "published_no_title": 2,
+              "published_no_content": 2,
+              "published_no_context": 2,
+              "published_exact": 2,
+              "published_ordinal": 2,
+              "published_nearest": 2,
+              "published_interpolation": 2,
+              "published_title_body": 2,
+              "independent_full_content": 2,
+              "independent_text": 2,
+              "global_text": 2,
+              "independent_position": 2,
+              "global_position": 2,
+              "independent_locked": 2,
+              "global_locked": 2,
+              "independent_anchored": 2,
+              "global_anchored": 2,
+              "independent_locked_content": 2,
+              "global_locked_content": 2
+            },
+            "source_locked_to": 2,
+            "target_locked_from": 2,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      },
+      {
+        "path": "doc/index.rst",
+        "commit": "6cf3f9238efaa40d963adcd06ddaa29de368c156",
+        "blobs": [
+          "f1cde1fd5fc08e1f211d8141dc11b2531be08b5f",
+          "0946fbe98452a490e9b73291dfe363d1790c1fea"
+        ],
+        "source_headings": 5,
+        "destination_headings": 5,
+        "anchors": 4,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 2,
+            "target": 2,
+            "hard": true,
+            "predictions": {
+              "published_title": 2,
+              "published_content": 2,
+              "published_context": 2,
+              "published_combined": 2,
+              "published_no_title": 2,
+              "published_no_content": 2,
+              "published_no_context": 2,
+              "published_exact": null,
+              "published_ordinal": 2,
+              "published_nearest": 2,
+              "published_interpolation": 2,
+              "published_title_body": 2,
+              "independent_full_content": 2,
+              "independent_text": 2,
+              "global_text": 2,
+              "independent_position": 2,
+              "global_position": 2,
+              "independent_locked": 2,
+              "global_locked": 2,
+              "independent_anchored": 2,
+              "global_anchored": 2,
+              "independent_locked_content": 2,
+              "global_locked_content": 2
+            },
+            "source_locked_to": null,
+            "target_locked_from": null,
+            "body_top_ties": 1,
+            "body_score_at_target": 0.97832,
+            "body_score_at_top": 0.97832
+          }
+        ]
+      },
+      {
+        "path": "doc/usage/theming.rst",
+        "commit": "6cf3f9238efaa40d963adcd06ddaa29de368c156",
+        "blobs": [
+          "135c2f55ad4fb991d997b277d756a45d0d1c4fa2",
+          "a596acfe0eb490fcfba712027b035d836bb7d7c7"
+        ],
+        "source_headings": 6,
+        "destination_headings": 6,
+        "anchors": 6,
+        "residual_collisions": {},
+        "labeled_collisions": {
+          "published_content": {},
+          "published_combined": {},
+          "independent_full_content": {},
+          "independent_anchored": {}
+        },
+        "rows": [
+          {
+            "source": 0,
+            "target": 0,
+            "hard": false,
+            "predictions": {
+              "published_title": 0,
+              "published_content": 0,
+              "published_context": 0,
+              "published_combined": 0,
+              "published_no_title": 0,
+              "published_no_content": 0,
+              "published_no_context": 0,
+              "published_exact": 0,
+              "published_ordinal": 0,
+              "published_nearest": 0,
+              "published_interpolation": 0,
+              "published_title_body": 0,
+              "independent_full_content": 0,
+              "independent_text": 0,
+              "global_text": 0,
+              "independent_position": 0,
+              "global_position": 0,
+              "independent_locked": 0,
+              "global_locked": 0,
+              "independent_anchored": 0,
+              "global_anchored": 0,
+              "independent_locked_content": 0,
+              "global_locked_content": 0
+            },
+            "source_locked_to": 0,
+            "target_locked_from": 0,
+            "body_top_ties": 1,
+            "body_score_at_target": 1.0,
+            "body_score_at_top": 1.0
+          }
+        ]
+      }
+    ]
+  }
+}

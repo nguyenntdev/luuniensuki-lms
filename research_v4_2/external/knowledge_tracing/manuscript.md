@@ -47,3 +47,5 @@ node "$e/verify.mjs" "$r" "$e/run"
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=2 MKL_NUM_THREADS=1 python "$e/study.py" "$r" "$o"
 node "$e/verify.mjs" "$r" "$o"
 ```
+
+A cross-source analysis predefined history strata and scored the archived ASSIST and EdNet forecasts. Among learners’ next responses after at least 32 earlier answers, the incremental gain was .00014 nats for the ASSIST blend and −.00233 for the EdNet temporal predictor. Both simultaneous intervals include zero and both gains miss .015. The common endpoint supports a comparison across educational platforms; different features and separate fits prevent interpreting the difference as a frozen-model transfer effect. [All 98 contrasts and history verification](history_attribution/README.md)

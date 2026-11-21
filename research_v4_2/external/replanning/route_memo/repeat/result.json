@@ -1,0 +1,130 @@
+{
+  "original": {
+    "projection_sha256": "64d6fef445accd9acba63f4673b51886c9fdeb5c0afb54f190a46bb20cf5b264",
+    "queries": 512,
+    "scenarios": 48,
+    "event_destination_states": 18216,
+    "distinct_query_start_events": 504,
+    "arrival_worsened": 80,
+    "worsened_distinct_start_events_summed_over_batches": 79,
+    "unreachable": 9462,
+    "became_unreachable": 6,
+    "verified_witnesses": 98304,
+    "witness_legs": 886167,
+    "results": {
+      "indexed_csa": {
+        "setup_ms": 0.465984,
+        "p95_us": 119.875,
+        "geometric_us": 23.69498883115303,
+        "amortized_p95_us": 129.583,
+        "amortized_geometric_us": 34.501310560597105
+      },
+      "signature_only": {
+        "setup_ms": 0.690095,
+        "p95_us": 38.834,
+        "geometric_us": 19.63560787182163,
+        "amortized_p95_us": 53.21097916666666,
+        "amortized_geometric_us": 34.23377873211082
+      },
+      "signature_base_index": {
+        "setup_ms": 0.811002,
+        "p95_us": 34.384,
+        "geometric_us": 18.295933565414288,
+        "amortized_p95_us": 51.279875,
+        "amortized_geometric_us": 35.41451635520262
+      },
+      "memoized_rides": {
+        "setup_ms": 0.837438,
+        "p95_us": 31.387,
+        "geometric_us": 17.680131515164163,
+        "amortized_p95_us": 48.833625,
+        "amortized_geometric_us": 35.31437145152581
+      }
+    },
+    "relative_gains": {
+      "indexed_csa": {
+        "p95_us": 0.7381689259645464,
+        "geometric_us": 0.253845121381987,
+        "amortized_p95_us": 0.6231479052036146,
+        "amortized_geometric_us": -0.023566087134593516
+      },
+      "signature_only": {
+        "p95_us": 0.19176494824123191,
+        "geometric_us": 0.09958827704354911,
+        "amortized_p95_us": 0.08226411607566886,
+        "amortized_geometric_us": -0.03156510205522256
+      },
+      "signature_base_index": {
+        "p95_us": 0.08716263378315492,
+        "geometric_us": 0.033657864358132894,
+        "amortized_p95_us": 0.047703899434232255,
+        "amortized_geometric_us": 0.002827792498205417
+      }
+    },
+    "advance": false
+  },
+  "bursts": {
+    "projection_sha256": "8d750461630053ddf1a0d56856f6a52dda1a09061abaa5b3bed58cff599319e1",
+    "queries": 512,
+    "scenarios": 48,
+    "event_destination_states": 18216,
+    "distinct_query_start_events": 66,
+    "arrival_worsened": 80,
+    "worsened_distinct_start_events_summed_over_batches": 10,
+    "unreachable": 8832,
+    "became_unreachable": 0,
+    "verified_witnesses": 98304,
+    "witness_legs": 913896,
+    "results": {
+      "indexed_csa": {
+        "setup_ms": 0.422502,
+        "p95_us": 96.262,
+        "geometric_us": 19.373451216509686,
+        "amortized_p95_us": 105.064125,
+        "amortized_geometric_us": 29.080075841474184
+      },
+      "signature_only": {
+        "setup_ms": 0.616227,
+        "p95_us": 25.895,
+        "geometric_us": 18.18156743239406,
+        "amortized_p95_us": 38.7330625,
+        "amortized_geometric_us": 31.100634787357734
+      },
+      "signature_base_index": {
+        "setup_ms": 0.721419,
+        "p95_us": 18.831,
+        "geometric_us": 15.497950216008787,
+        "amortized_p95_us": 33.8605625,
+        "amortized_geometric_us": 30.575926495475372
+      },
+      "memoized_rides": {
+        "setup_ms": 0.854403,
+        "p95_us": 18.925,
+        "geometric_us": 15.242523059897199,
+        "amortized_p95_us": 36.7250625,
+        "amortized_geometric_us": 33.11017110039459
+      }
+    },
+    "relative_gains": {
+      "indexed_csa": {
+        "p95_us": 0.8034011344040224,
+        "geometric_us": 0.21322623989122746,
+        "amortized_p95_us": 0.6504509745833795,
+        "amortized_geometric_us": -0.1385861330242013
+      },
+      "signature_only": {
+        "p95_us": 0.26916393126086113,
+        "geometric_us": 0.1616496698332165,
+        "amortized_p95_us": 0.05184201481615358,
+        "amortized_geometric_us": -0.06461399668452183
+      },
+      "signature_base_index": {
+        "p95_us": -0.004991768891721149,
+        "geometric_us": 0.016481350923926885,
+        "amortized_p95_us": -0.08459694076257596,
+        "amortized_geometric_us": -0.082883657026525
+      }
+    },
+    "advance": false
+  }
+}

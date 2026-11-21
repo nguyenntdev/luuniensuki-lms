@@ -1,0 +1,49 @@
+features,model,lag_days,seats,unscored_prior_exits,capture_lower,capture_upper,uniform_expected,always_above_uniform
+Assessment,Logistic regression,0,857,0,291.0,291.0,113.45295353724025,True
+Assessment,Logistic regression,1,857,4,290.0,291.0,113.4,True
+Assessment,Logistic regression,7,857,39,280.0,291.0,112.93875653689716,True
+Assessment,Logistic regression,14,857,128,251.0,291.0,111.78260869565217,True
+Assessment,Logistic regression,30,857,320,199.0,291.0,109.36731937879811,True
+Assessment,Logistic regression,all,857,2684,0.0,291.0,86.3856,False
+Assessment,Random forest,0,857,0,288.0,288.0,113.45295353724025,True
+Assessment,Random forest,1,857,4,288.0,288.0,113.4,True
+Assessment,Random forest,7,857,39,279.0,288.0,112.93875653689716,True
+Assessment,Random forest,14,857,128,249.0,288.0,111.78260869565217,True
+Assessment,Random forest,30,857,320,199.0,288.0,109.36731937879811,True
+Assessment,Random forest,all,857,2684,0.0,288.0,86.3856,False
+Assessment,XGBoost,0,857,0,280.0,280.0,113.45295353724025,True
+Assessment,XGBoost,1,857,4,280.0,280.0,113.4,True
+Assessment,XGBoost,7,857,39,273.0,280.0,112.93875653689716,True
+Assessment,XGBoost,14,857,128,255.0,280.0,111.78260869565217,True
+Assessment,XGBoost,30,857,320,196.0,280.0,109.36731937879811,True
+Assessment,XGBoost,all,857,2684,0.0,280.0,86.3856,False
+Score-free,Logistic regression,0,857,0,246.0,246.0,113.45295353724025,True
+Score-free,Logistic regression,1,857,4,246.0,246.0,113.4,True
+Score-free,Logistic regression,7,857,39,242.0,246.0,112.93875653689716,True
+Score-free,Logistic regression,14,857,128,229.0,246.0,111.78260869565217,True
+Score-free,Logistic regression,30,857,320,191.0,246.0,109.36731937879811,True
+Score-free,Logistic regression,all,857,2684,0.0,246.0,86.3856,False
+Score-free,Random forest,0,857,0,245.0,245.0,113.45295353724025,True
+Score-free,Random forest,1,857,4,245.0,245.0,113.4,True
+Score-free,Random forest,7,857,39,234.0,245.0,112.93875653689716,True
+Score-free,Random forest,14,857,128,212.0,245.0,111.78260869565217,True
+Score-free,Random forest,30,857,320,170.0,245.0,109.36731937879811,True
+Score-free,Random forest,all,857,2684,0.0,245.0,86.3856,False
+Score-free,XGBoost,0,857,0,253.0,253.0,113.45295353724025,True
+Score-free,XGBoost,1,857,4,252.0,253.0,113.4,True
+Score-free,XGBoost,7,857,39,246.0,253.0,112.93875653689716,True
+Score-free,XGBoost,14,857,128,220.0,253.0,111.78260869565217,True
+Score-free,XGBoost,30,857,320,174.0,253.0,109.36731937879811,True
+Score-free,XGBoost,all,857,2684,0.0,253.0,86.3856,False
+Assessment + VLE,Logistic regression,0,857,0,288.0,288.0,113.45295353724025,True
+Assessment + VLE,Logistic regression,1,857,4,286.0,288.0,113.4,True
+Assessment + VLE,Logistic regression,7,857,39,278.0,288.0,112.93875653689716,True
+Assessment + VLE,Logistic regression,14,857,128,255.0,288.0,111.78260869565217,True
+Assessment + VLE,Logistic regression,30,857,320,202.0,288.0,109.36731937879811,True
+Assessment + VLE,Logistic regression,all,857,2684,0.0,288.0,86.3856,False
+Score-free + VLE,Logistic regression,0,857,0,261.0,261.0,113.45295353724025,True
+Score-free + VLE,Logistic regression,1,857,4,259.0,261.0,113.4,True
+Score-free + VLE,Logistic regression,7,857,39,252.0,261.0,112.93875653689716,True
+Score-free + VLE,Logistic regression,14,857,128,231.0,261.0,111.78260869565217,True
+Score-free + VLE,Logistic regression,30,857,320,181.0,261.0,109.36731937879811,True
+Score-free + VLE,Logistic regression,all,857,2684,0.0,261.0,86.3856,False

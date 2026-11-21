@@ -6,13 +6,15 @@ The current goal is ten distinct proposed methods, with at least three strong wi
 
 The [fourteen-paper spec crosswalk](SPEC_COVERAGE.md) maps every V3/V4.2 paper to the evidence for its original question and identifies the ML and federated-learning comparisons.
 
+The [contribution-by-contribution comparison](COMPETITION.md) identifies the closest published question, strongest executed control, practical margin and unit of external validation for each line.
+
 ## Manuscripts, results and readiness
 
 The assessment is specific to the contribution and track. A ranked venue appearing in the table is a target, and its rank refers to the conference edition in the [venue and prior-work assessment](VENUES.md). The table includes failed comparisons. Closely related analyses must justify separate contributions.
 
 | Manuscript | What the evidence supports | Publication assessment |
 |---|---|---|
-| [Withdrawal at the decision date](landmark/manuscript.md) | 63.75% of day-60 withdrawal AUC pairs involve an exited student. Their AUC is .953 versus .623 for pairs available for intervention. At 878 review seats CatBoost identified 285 actionable withdrawals with a current register and 47.73 in expectation without filtering. [Queue replay and three-term transfer](landmark/status_lag/README.md). | LAK short-paper candidate on the mechanism of the gap. One institution. A prior OULAD paper already compared eligibility definitions. |
+| [Withdrawal at the decision date](landmark/manuscript.md) | 63.75% of day-60 withdrawal AUC pairs involve an exited student. Their AUC is .953 versus .623 for pairs available for intervention. At 878 review seats CatBoost identified 285 actionable withdrawals with a current register and 47.73 in expectation without filtering. [Queue replay and three-term transfer](landmark/status_lag/README.md). | LAK/EDM measurement candidate. [Eight published forecasts](landmark/published_capacity/README.md) were replayed on their original roster. On an [independent MOOC trace](landmark/mooc_queue/README.md), only inactivity ranking reproduced the OULAD reversal; the target is an action flag. Formal university withdrawal is still observed at one institution. |
 | [Calibrated recall prediction](recall/manuscript.md) | CatBoost gained .00389 nats over author HLR in the primary test, missing the .005 margin. Follow-ups cover 9,134 additional learners. Gains depend on comparator choice. | AIED replication candidate. A scheduling or retention intervention claim lies outside the measured endpoint. |
 | [Cross-course dropout](dropout/manuscript.md) | Across 17 Portuguese programs the spline lost to CatBoost. On 10,228 eligible UK registrations, a locally refit spline had the lowest mean module loss in a different task. | LAK negative-result candidate. Both published baselines are part of the primary conclusion. |
 | [Selecting mathematics tutor responses](tutoring/manuscript.md) | Over 300 conversations the fixed tutor had 238 fully guiding responses, versus 198–209 for four refitted published graders. Two source tutors tied during selection with different transfer outcomes. | AIED benchmark note. The archived rating measures a single rubric dimension. |

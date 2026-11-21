@@ -62,3 +62,5 @@ python "$paper/evaluate.py" "$work/jan.csv" "$work/jun.csv" | diff - "$paper/jan
 python "$paper/field_group.py" "$work/jun.csv" "$work/oct.csv" | diff - "$paper/june_october_group.json"
 python "$paper/field_group.py" "$work/jan.csv" "$work/jun.csv" | diff - "$paper/january_june_group.json"
 ```
+
+On two independent documentation histories, requiring globally unique assignments recovered 19/21 PEP renames and 12/13 Sphinx renames. Independent decisions with the same score function recovered 20/21 and 12/13. These reference labels score section identity. Changes in a field or a heading alone cannot identify a change in what a citation supports. [Matched score and assignment audit](lineage/reciprocal/README.md)

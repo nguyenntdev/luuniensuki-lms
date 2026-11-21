@@ -9,9 +9,10 @@ from scipy.stats import norm
 from sklearn.metrics import log_loss, roc_auc_score
 
 run = Path(sys.argv[1])
+candidate = sys.argv[2] if len(sys.argv) > 2 else "adapted"
 frame = pd.read_csv(run / "predictions.csv.gz")
 methods = list(frame.columns[5:])
-assert frame.columns[4] == "y" and "adapted" in methods
+assert frame.columns[4] == "y" and candidate in methods
 groups = list(frame.groupby("code_module"))
 rows = []
 influences = {k: np.zeros(len(frame)) for k in methods}
@@ -42,11 +43,11 @@ cluster = pd.DataFrame(influences).groupby(frame.learner).sum()
 z = norm.isf(.025 / (len(methods)-1))
 contrasts = {}
 for name in methods:
-    if name == "adapted":
+    if name == candidate:
         continue
-    diff = cluster.adapted - cluster[name]
+    diff = cluster[candidate] - cluster[name]
     se = np.sqrt(np.square(diff).sum() * len(diff) / (len(diff)-1))
-    gain = macro.adapted - macro[name]
+    gain = macro[candidate] - macro[name]
     contrasts[name] = dict(auc_gain=gain, simultaneous_ci95=[gain-z*se,gain+z*se],
                            clears_margin=bool(gain >= .02 and gain-z*se>0))
 result=dict(registrations=len(frame), learners=len(cluster), clients=len(groups), macro_auc=macro.to_dict(),

@@ -1,0 +1,714 @@
+{
+  "source_sha256": "5e29679063c6e416c2ae741d94a8f2b8e996f21e7cbf278488687fb6cb1df15a",
+  "actions": 411749,
+  "learners": 7047,
+  "flags": 4066,
+  "flagged_learners": 4066,
+  "start": 0.0,
+  "end": 2572086.0,
+  "users_with_multiple_flags": 0,
+  "users_with_later_activity": 0,
+  "landmarks": {
+    "0.25": {
+      "time": 643021.5,
+      "seats": 306,
+      "seen": 3982,
+      "eligible": 3060,
+      "future_cases": 1219,
+      "queues": [
+        {
+          "lag": "0",
+          "method": "inactivity",
+          "roster": 3060,
+          "capture": 134.0,
+          "stale": 0.0,
+          "precision": 0.43790849673202614
+        },
+        {
+          "lag": "0",
+          "method": "few_actions",
+          "roster": 3060,
+          "capture": 160.632183908046,
+          "stale": 0.0,
+          "precision": 0.5249417774772744
+        },
+        {
+          "lag": "0",
+          "method": "recent_activity",
+          "roster": 3060,
+          "capture": 109.0,
+          "stale": 0.0,
+          "precision": 0.3562091503267974
+        },
+        {
+          "lag": "0",
+          "method": "many_actions",
+          "roster": 3060,
+          "capture": 85.57142857142857,
+          "stale": 0.0,
+          "precision": 0.2796451914098973
+        },
+        {
+          "lag": "0",
+          "method": "uniform",
+          "roster": 3060,
+          "capture": 121.9,
+          "stale": 0.0,
+          "precision": 0.39836601307189545
+        },
+        {
+          "lag": "1",
+          "method": "inactivity",
+          "roster": 3156,
+          "capture": 134.0,
+          "stale": 0.0,
+          "precision": 0.43790849673202614
+        },
+        {
+          "lag": "1",
+          "method": "few_actions",
+          "roster": 3156,
+          "capture": 159.94949494949495,
+          "stale": 1.2121212121212122,
+          "precision": 0.522710767808807
+        },
+        {
+          "lag": "1",
+          "method": "recent_activity",
+          "roster": 3156,
+          "capture": 93.0,
+          "stale": 29.0,
+          "precision": 0.30392156862745096
+        },
+        {
+          "lag": "1",
+          "method": "many_actions",
+          "roster": 3156,
+          "capture": 83.42857142857143,
+          "stale": 5.0,
+          "precision": 0.27264239028944914
+        },
+        {
+          "lag": "1",
+          "method": "uniform",
+          "roster": 3156,
+          "capture": 118.19201520912547,
+          "stale": 9.307984790874524,
+          "precision": 0.3862484157160963
+        },
+        {
+          "lag": "7",
+          "method": "inactivity",
+          "roster": 3982,
+          "capture": 64.0,
+          "stale": 139.0,
+          "precision": 0.20915032679738563
+        },
+        {
+          "lag": "7",
+          "method": "few_actions",
+          "roster": 3982,
+          "capture": 157.4257425742574,
+          "stale": 5.693069306930694,
+          "precision": 0.514463211026985
+        },
+        {
+          "lag": "7",
+          "method": "recent_activity",
+          "roster": 3982,
+          "capture": 93.0,
+          "stale": 29.0,
+          "precision": 0.30392156862745096
+        },
+        {
+          "lag": "7",
+          "method": "many_actions",
+          "roster": 3982,
+          "capture": 80.42857142857143,
+          "stale": 12.0,
+          "precision": 0.26283846872082167
+        },
+        {
+          "lag": "7",
+          "method": "uniform",
+          "roster": 3982,
+          "capture": 93.6750376695128,
+          "stale": 70.8518332496233,
+          "precision": 0.30612757408337515
+        },
+        {
+          "lag": "30",
+          "method": "inactivity",
+          "roster": 3982,
+          "capture": 64.0,
+          "stale": 139.0,
+          "precision": 0.20915032679738563
+        },
+        {
+          "lag": "30",
+          "method": "few_actions",
+          "roster": 3982,
+          "capture": 157.4257425742574,
+          "stale": 5.693069306930694,
+          "precision": 0.514463211026985
+        },
+        {
+          "lag": "30",
+          "method": "recent_activity",
+          "roster": 3982,
+          "capture": 93.0,
+          "stale": 29.0,
+          "precision": 0.30392156862745096
+        },
+        {
+          "lag": "30",
+          "method": "many_actions",
+          "roster": 3982,
+          "capture": 80.42857142857143,
+          "stale": 12.0,
+          "precision": 0.26283846872082167
+        },
+        {
+          "lag": "30",
+          "method": "uniform",
+          "roster": 3982,
+          "capture": 93.6750376695128,
+          "stale": 70.8518332496233,
+          "precision": 0.30612757408337515
+        },
+        {
+          "lag": "all",
+          "method": "inactivity",
+          "roster": 3982,
+          "capture": 64.0,
+          "stale": 139.0,
+          "precision": 0.20915032679738563
+        },
+        {
+          "lag": "all",
+          "method": "few_actions",
+          "roster": 3982,
+          "capture": 157.4257425742574,
+          "stale": 5.693069306930694,
+          "precision": 0.514463211026985
+        },
+        {
+          "lag": "all",
+          "method": "recent_activity",
+          "roster": 3982,
+          "capture": 93.0,
+          "stale": 29.0,
+          "precision": 0.30392156862745096
+        },
+        {
+          "lag": "all",
+          "method": "many_actions",
+          "roster": 3982,
+          "capture": 80.42857142857143,
+          "stale": 12.0,
+          "precision": 0.26283846872082167
+        },
+        {
+          "lag": "all",
+          "method": "uniform",
+          "roster": 3982,
+          "capture": 93.6750376695128,
+          "stale": 70.8518332496233,
+          "precision": 0.30612757408337515
+        }
+      ]
+    },
+    "0.5": {
+      "time": 1286043.0,
+      "seats": 375,
+      "seen": 5763,
+      "eligible": 3755,
+      "future_cases": 1256,
+      "queues": [
+        {
+          "lag": "0",
+          "method": "inactivity",
+          "roster": 3755,
+          "capture": 196.0,
+          "stale": 0.0,
+          "precision": 0.5226666666666666
+        },
+        {
+          "lag": "0",
+          "method": "few_actions",
+          "roster": 3755,
+          "capture": 215.4090909090909,
+          "stale": 0.0,
+          "precision": 0.5744242424242424
+        },
+        {
+          "lag": "0",
+          "method": "recent_activity",
+          "roster": 3755,
+          "capture": 100.0,
+          "stale": 0.0,
+          "precision": 0.26666666666666666
+        },
+        {
+          "lag": "0",
+          "method": "many_actions",
+          "roster": 3755,
+          "capture": 61.27777777777778,
+          "stale": 0.0,
+          "precision": 0.16340740740740742
+        },
+        {
+          "lag": "0",
+          "method": "uniform",
+          "roster": 3755,
+          "capture": 125.43275632490013,
+          "stale": 0.0,
+          "precision": 0.3344873501997337
+        },
+        {
+          "lag": "1",
+          "method": "inactivity",
+          "roster": 3878,
+          "capture": 196.0,
+          "stale": 0.0,
+          "precision": 0.5226666666666666
+        },
+        {
+          "lag": "1",
+          "method": "few_actions",
+          "roster": 3878,
+          "capture": 203.86567164179104,
+          "stale": 20.850746268656717,
+          "precision": 0.5436417910447761
+        },
+        {
+          "lag": "1",
+          "method": "recent_activity",
+          "roster": 3878,
+          "capture": 97.0,
+          "stale": 27.0,
+          "precision": 0.25866666666666666
+        },
+        {
+          "lag": "1",
+          "method": "many_actions",
+          "roster": 3878,
+          "capture": 61.1578947368421,
+          "stale": 2.1578947368421053,
+          "precision": 0.16308771929824561
+        },
+        {
+          "lag": "1",
+          "method": "uniform",
+          "roster": 3878,
+          "capture": 121.45435791645177,
+          "stale": 11.894017534811757,
+          "precision": 0.32387828777720473
+        },
+        {
+          "lag": "7",
+          "method": "inactivity",
+          "roster": 4819,
+          "capture": 196.0,
+          "stale": 0.0,
+          "precision": 0.5226666666666666
+        },
+        {
+          "lag": "7",
+          "method": "few_actions",
+          "roster": 4819,
+          "capture": 157.67625899280574,
+          "stale": 107.94244604316546,
+          "precision": 0.4204700239808153
+        },
+        {
+          "lag": "7",
+          "method": "recent_activity",
+          "roster": 4819,
+          "capture": 97.0,
+          "stale": 27.0,
+          "precision": 0.25866666666666666
+        },
+        {
+          "lag": "7",
+          "method": "many_actions",
+          "roster": 4819,
+          "capture": 58.69230769230769,
+          "stale": 16.076923076923077,
+          "precision": 0.1565128205128205
+        },
+        {
+          "lag": "7",
+          "method": "uniform",
+          "roster": 4819,
+          "capture": 97.73811994189667,
+          "stale": 82.79726084249845,
+          "precision": 0.26063498651172445
+        },
+        {
+          "lag": "30",
+          "method": "inactivity",
+          "roster": 5763,
+          "capture": 51.0,
+          "stale": 274.0,
+          "precision": 0.136
+        },
+        {
+          "lag": "30",
+          "method": "few_actions",
+          "roster": 5763,
+          "capture": 135.92000000000002,
+          "stale": 148.98,
+          "precision": 0.36245333333333335
+        },
+        {
+          "lag": "30",
+          "method": "recent_activity",
+          "roster": 5763,
+          "capture": 97.0,
+          "stale": 27.0,
+          "precision": 0.25866666666666666
+        },
+        {
+          "lag": "30",
+          "method": "many_actions",
+          "roster": 5763,
+          "capture": 58.5,
+          "stale": 17.0,
+          "precision": 0.156
+        },
+        {
+          "lag": "30",
+          "method": "uniform",
+          "roster": 5763,
+          "capture": 81.72826652785008,
+          "stale": 130.66111400312337,
+          "precision": 0.21794204407426687
+        },
+        {
+          "lag": "all",
+          "method": "inactivity",
+          "roster": 5763,
+          "capture": 51.0,
+          "stale": 274.0,
+          "precision": 0.136
+        },
+        {
+          "lag": "all",
+          "method": "few_actions",
+          "roster": 5763,
+          "capture": 135.92000000000002,
+          "stale": 148.98,
+          "precision": 0.36245333333333335
+        },
+        {
+          "lag": "all",
+          "method": "recent_activity",
+          "roster": 5763,
+          "capture": 97.0,
+          "stale": 27.0,
+          "precision": 0.25866666666666666
+        },
+        {
+          "lag": "all",
+          "method": "many_actions",
+          "roster": 5763,
+          "capture": 58.5,
+          "stale": 17.0,
+          "precision": 0.156
+        },
+        {
+          "lag": "all",
+          "method": "uniform",
+          "roster": 5763,
+          "capture": 81.72826652785008,
+          "stale": 130.66111400312337,
+          "precision": 0.21794204407426687
+        }
+      ],
+      "vs_uniform": [
+        {
+          "lag": "0",
+          "method": "inactivity",
+          "gain": 0.18817931646693292,
+          "simultaneous_ci95": [
+            0.11877550767673987,
+            0.24937742214613925
+          ]
+        },
+        {
+          "lag": "0",
+          "method": "few_actions",
+          "gain": 0.2399368922245087,
+          "simultaneous_ci95": [
+            0.17773442790151678,
+            0.30244848251055295
+          ]
+        },
+        {
+          "lag": "0",
+          "method": "recent_activity",
+          "gain": -0.06782068353306703,
+          "simultaneous_ci95": [
+            -0.12359988360676359,
+            -0.0010038702561114205
+          ]
+        },
+        {
+          "lag": "0",
+          "method": "many_actions",
+          "gain": -0.17107994279232627,
+          "simultaneous_ci95": [
+            -0.2205287689795751,
+            -0.11946934021485375
+          ]
+        },
+        {
+          "lag": "all",
+          "method": "inactivity",
+          "gain": -0.08194204407426686,
+          "simultaneous_ci95": [
+            -0.127378188443519,
+            -0.033066219850772224
+          ]
+        },
+        {
+          "lag": "all",
+          "method": "few_actions",
+          "gain": 0.14451128925906648,
+          "simultaneous_ci95": [
+            0.07676371944029899,
+            0.21453634778894534
+          ]
+        },
+        {
+          "lag": "all",
+          "method": "recent_activity",
+          "gain": 0.040724622592399784,
+          "simultaneous_ci95": [
+            -0.02510802099600902,
+            0.09363037480478906
+          ]
+        },
+        {
+          "lag": "all",
+          "method": "many_actions",
+          "gain": -0.06194204407426687,
+          "simultaneous_ci95": [
+            -0.10874565136094108,
+            -0.009705797219330247
+          ]
+        }
+      ]
+    },
+    "0.75": {
+      "time": 1929064.5,
+      "seats": 355,
+      "seen": 6555,
+      "eligible": 3552,
+      "future_cases": 780,
+      "queues": [
+        {
+          "lag": "0",
+          "method": "inactivity",
+          "roster": 3552,
+          "capture": 141.0,
+          "stale": 0.0,
+          "precision": 0.3971830985915493
+        },
+        {
+          "lag": "0",
+          "method": "few_actions",
+          "roster": 3552,
+          "capture": 154.43589743589743,
+          "stale": 0.0,
+          "precision": 0.435030697002528
+        },
+        {
+          "lag": "0",
+          "method": "recent_activity",
+          "roster": 3552,
+          "capture": 67.0,
+          "stale": 0.0,
+          "precision": 0.18873239436619718
+        },
+        {
+          "lag": "0",
+          "method": "many_actions",
+          "roster": 3552,
+          "capture": 18.266666666666666,
+          "stale": 0.0,
+          "precision": 0.05145539906103286
+        },
+        {
+          "lag": "0",
+          "method": "uniform",
+          "roster": 3552,
+          "capture": 77.95608108108108,
+          "stale": 0.0,
+          "precision": 0.2195945945945946
+        },
+        {
+          "lag": "1",
+          "method": "inactivity",
+          "roster": 3693,
+          "capture": 141.0,
+          "stale": 0.0,
+          "precision": 0.3971830985915493
+        },
+        {
+          "lag": "1",
+          "method": "few_actions",
+          "roster": 3693,
+          "capture": 143.11111111111111,
+          "stale": 35.111111111111114,
+          "precision": 0.4031298904538341
+        },
+        {
+          "lag": "1",
+          "method": "recent_activity",
+          "roster": 3693,
+          "capture": 62.0,
+          "stale": 28.0,
+          "precision": 0.17464788732394365
+        },
+        {
+          "lag": "1",
+          "method": "many_actions",
+          "roster": 3693,
+          "capture": 18.2,
+          "stale": 1.0,
+          "precision": 0.05126760563380282
+        },
+        {
+          "lag": "1",
+          "method": "uniform",
+          "roster": 3693,
+          "capture": 74.97969130787976,
+          "stale": 13.554021121039804,
+          "precision": 0.21121039805036554
+        },
+        {
+          "lag": "7",
+          "method": "inactivity",
+          "roster": 4486,
+          "capture": 141.0,
+          "stale": 0.0,
+          "precision": 0.3971830985915493
+        },
+        {
+          "lag": "7",
+          "method": "few_actions",
+          "roster": 4486,
+          "capture": 101.38983050847457,
+          "stale": 154.16949152542372,
+          "precision": 0.2856051563619002
+        },
+        {
+          "lag": "7",
+          "method": "recent_activity",
+          "roster": 4486,
+          "capture": 62.0,
+          "stale": 28.0,
+          "precision": 0.17464788732394365
+        },
+        {
+          "lag": "7",
+          "method": "many_actions",
+          "roster": 4486,
+          "capture": 17.571428571428573,
+          "stale": 7.0,
+          "precision": 0.049496981891348095
+        },
+        {
+          "lag": "7",
+          "method": "uniform",
+          "roster": 4486,
+          "capture": 61.725367810967455,
+          "stale": 73.91217119928668,
+          "precision": 0.17387427552385198
+        },
+        {
+          "lag": "30",
+          "method": "inactivity",
+          "roster": 6555,
+          "capture": 15.0,
+          "stale": 318.0,
+          "precision": 0.04225352112676056
+        },
+        {
+          "lag": "30",
+          "method": "few_actions",
+          "roster": 6555,
+          "capture": 65.18823529411765,
+          "stale": 245.45098039215685,
+          "precision": 0.18362883181441592
+        },
+        {
+          "lag": "30",
+          "method": "recent_activity",
+          "roster": 6555,
+          "capture": 62.0,
+          "stale": 28.0,
+          "precision": 0.17464788732394365
+        },
+        {
+          "lag": "30",
+          "method": "many_actions",
+          "roster": 6555,
+          "capture": 17.571428571428573,
+          "stale": 7.0,
+          "precision": 0.049496981891348095
+        },
+        {
+          "lag": "30",
+          "method": "uniform",
+          "roster": 6555,
+          "capture": 42.24256292906178,
+          "stale": 162.63386727688786,
+          "precision": 0.11899313501144164
+        },
+        {
+          "lag": "all",
+          "method": "inactivity",
+          "roster": 6555,
+          "capture": 15.0,
+          "stale": 318.0,
+          "precision": 0.04225352112676056
+        },
+        {
+          "lag": "all",
+          "method": "few_actions",
+          "roster": 6555,
+          "capture": 65.18823529411765,
+          "stale": 245.45098039215685,
+          "precision": 0.18362883181441592
+        },
+        {
+          "lag": "all",
+          "method": "recent_activity",
+          "roster": 6555,
+          "capture": 62.0,
+          "stale": 28.0,
+          "precision": 0.17464788732394365
+        },
+        {
+          "lag": "all",
+          "method": "many_actions",
+          "roster": 6555,
+          "capture": 17.571428571428573,
+          "stale": 7.0,
+          "precision": 0.049496981891348095
+        },
+        {
+          "lag": "all",
+          "method": "uniform",
+          "roster": 6555,
+          "capture": 42.24256292906178,
+          "stale": 162.63386727688786,
+          "precision": 0.11899313501144164
+        }
+      ]
+    }
+  }
+}

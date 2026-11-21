@@ -1,0 +1,96 @@
+{
+  "oulad": {
+    "rows": 7524,
+    "clusters": 7238,
+    "local_cutoff": 0.6386246612745189,
+    "foreign_cutoff": 0.6058919986971902,
+    "policies": {
+      "local": {
+        "accepted": 552,
+        "coverage": 0.0733652312599681,
+        "argmax_errors": 202,
+        "argmax_risk": 0.36594202898550726,
+        "rerouted_errors": 202
+      },
+      "foreign": {
+        "accepted": 1012,
+        "coverage": 0.13450292397660818,
+        "argmax_errors": 393,
+        "argmax_risk": 0.3883399209486166,
+        "rerouted_errors": 393
+      },
+      "full": {
+        "accepted": 7524,
+        "coverage": 1.0,
+        "argmax_errors": 3720,
+        "argmax_risk": 0.4944178628389155,
+        "rerouted_errors": 3992
+      }
+    },
+    "moved": 460,
+    "moved_argmax_errors": 191,
+    "foreign_minus_local": {
+      "coverage": {
+        "difference": 0.06113769271664009,
+        "simultaneous_ci95": [
+          0.054023476128747874,
+          0.06880561628878067
+        ]
+      },
+      "argmax_risk": {
+        "difference": 0.022397891963109318,
+        "simultaneous_ci95": [
+          -0.011789746805438605,
+          0.05803570386348912
+        ]
+      }
+    }
+  },
+  "uci": {
+    "rows": 895,
+    "clusters": 895,
+    "local_cutoff": 0.6058919986971902,
+    "foreign_cutoff": 0.6386246612745189,
+    "policies": {
+      "local": {
+        "accepted": 159,
+        "coverage": 0.1776536312849162,
+        "argmax_errors": 48,
+        "argmax_risk": 0.3018867924528302,
+        "rerouted_errors": 48
+      },
+      "foreign": {
+        "accepted": 81,
+        "coverage": 0.09050279329608939,
+        "argmax_errors": 23,
+        "argmax_risk": 0.2839506172839506,
+        "rerouted_errors": 23
+      },
+      "full": {
+        "accepted": 895,
+        "coverage": 1.0,
+        "argmax_errors": 378,
+        "argmax_risk": 0.4223463687150838,
+        "rerouted_errors": 352
+      }
+    },
+    "moved": 78,
+    "moved_argmax_errors": 25,
+    "foreign_minus_local": {
+      "coverage": {
+        "difference": -0.08715083798882682,
+        "simultaneous_ci95": [
+          -0.11284916201117319,
+          -0.0659217877094972
+        ]
+      },
+      "argmax_risk": {
+        "difference": -0.017936175168879576,
+        "simultaneous_ci95": [
+          -0.11785346616853466,
+          0.07557462357273619
+        ]
+      }
+    }
+  }
+}

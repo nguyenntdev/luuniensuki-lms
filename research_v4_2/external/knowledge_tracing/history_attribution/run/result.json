@@ -1,0 +1,1020 @@
+{
+  "metric": "event-weighted natural-log loss",
+  "margin": 0.015,
+  "bootstrap_draws": 20000,
+  "simultaneous_family": 98,
+  "quantiles": [
+    0.00025510204081632655,
+    0.9997448979591836
+  ],
+  "assist2015": {
+    "candidate": "full_blend",
+    "closest_control": "short_blend",
+    "models": [
+      "full_blend",
+      "skill_mean",
+      "logistic",
+      "dkt",
+      "full",
+      "short",
+      "short_blend"
+    ],
+    "forecasts": 942480,
+    "scopes": {
+      "overall": {
+        "events": 134640,
+        "learners": 3818,
+        "correct": 98733,
+        "repeated_skill": 113676,
+        "nll": {
+          "full_blend": 0.5120808291186008,
+          "skill_mean": 0.5550662742812236,
+          "logistic": 0.524260756759906,
+          "dkt": 0.5148040627349073,
+          "full": 0.5165753066379359,
+          "short": 0.516998835858848,
+          "short_blend": 0.512217542432987
+        },
+        "strongest_control": "short_blend",
+        "contrasts": {
+          "skill_mean minus full_blend": {
+            "gain": 0.042985445162622815,
+            "simultaneous_ci": [
+              0.039190014265750604,
+              0.04696786845803649
+            ],
+            "clears_margin": true
+          },
+          "logistic minus full_blend": {
+            "gain": 0.012179927641305266,
+            "simultaneous_ci": [
+              0.010625721949513322,
+              0.013730509004432687
+            ],
+            "clears_margin": false
+          },
+          "dkt minus full_blend": {
+            "gain": 0.002723233616306553,
+            "simultaneous_ci": [
+              0.0018420659197076598,
+              0.00363715452340904
+            ],
+            "clears_margin": false
+          },
+          "full minus full_blend": {
+            "gain": 0.004494477519335183,
+            "simultaneous_ci": [
+              0.003627014102305531,
+              0.005344050271893575
+            ],
+            "clears_margin": false
+          },
+          "short minus full_blend": {
+            "gain": 0.004918006740247227,
+            "simultaneous_ci": [
+              0.003976421955957512,
+              0.005836658979181699
+            ],
+            "clears_margin": false
+          },
+          "short_blend minus full_blend": {
+            "gain": 0.00013671331438624978,
+            "simultaneous_ci": [
+              -0.00016338466792173746,
+              0.0004183467601332851
+            ],
+            "clears_margin": false
+          },
+          "short minus full": {
+            "gain": 0.0004235292209120445,
+            "simultaneous_ci": [
+              -0.00019865372585836367,
+              0.0010067746437577836
+            ],
+            "clears_margin": false
+          }
+        }
+      },
+      "1–16": {
+        "events": 47307,
+        "learners": 3818,
+        "correct": 35432,
+        "repeated_skill": 38828,
+        "nll": {
+          "full_blend": 0.5021211549561108,
+          "skill_mean": 0.5408030366039511,
+          "logistic": 0.5133006008378953,
+          "dkt": 0.5039079752294787,
+          "full": 0.505402050504096,
+          "short": 0.505491739680697,
+          "short_blend": 0.5021566150361308
+        },
+        "strongest_control": "short_blend",
+        "contrasts": {
+          "skill_mean minus full_blend": {
+            "gain": 0.038681881647840366,
+            "simultaneous_ci": [
+              0.03345988670651422,
+              0.04427641056815829
+            ],
+            "clears_margin": true
+          },
+          "logistic minus full_blend": {
+            "gain": 0.011179445881784544,
+            "simultaneous_ci": [
+              0.008792428321208082,
+              0.013643794636698963
+            ],
+            "clears_margin": false
+          },
+          "dkt minus full_blend": {
+            "gain": 0.0017868202733679617,
+            "simultaneous_ci": [
+              0.0006587916487566929,
+              0.0029366633582541
+            ],
+            "clears_margin": false
+          },
+          "full minus full_blend": {
+            "gain": 0.003280895547985274,
+            "simultaneous_ci": [
+              0.002151676319220651,
+              0.004394661362278906
+            ],
+            "clears_margin": false
+          },
+          "short minus full_blend": {
+            "gain": 0.0033705847245862897,
+            "simultaneous_ci": [
+              0.002120830617540835,
+              0.004656300878188968
+            ],
+            "clears_margin": false
+          },
+          "short_blend minus full_blend": {
+            "gain": 3.5460080020088824e-05,
+            "simultaneous_ci": [
+              -0.00034724819435022464,
+              0.0004164506851451623
+            ],
+            "clears_margin": false
+          },
+          "short minus full": {
+            "gain": 8.96891766010155e-05,
+            "simultaneous_ci": [
+              -0.0006773032691414172,
+              0.000842450757790262
+            ],
+            "clears_margin": false
+          }
+        }
+      },
+      "17–31": {
+        "events": 26513,
+        "learners": 2174,
+        "correct": 19698,
+        "repeated_skill": 21917,
+        "nll": {
+          "full_blend": 0.5017512889005011,
+          "skill_mean": 0.5489049627774399,
+          "logistic": 0.5152647896689427,
+          "dkt": 0.5031485299383052,
+          "full": 0.5076423072738651,
+          "short": 0.5083859486098183,
+          "short_blend": 0.5020636913628103
+        },
+        "strongest_control": "short_blend",
+        "contrasts": {
+          "skill_mean minus full_blend": {
+            "gain": 0.047153673876938806,
+            "simultaneous_ci": [
+              0.03982559918517759,
+              0.05458197689518764
+            ],
+            "clears_margin": true
+          },
+          "logistic minus full_blend": {
+            "gain": 0.0135135007684416,
+            "simultaneous_ci": [
+              0.010341651088527831,
+              0.016843417986871247
+            ],
+            "clears_margin": false
+          },
+          "dkt minus full_blend": {
+            "gain": 0.0013972410378040312,
+            "simultaneous_ci": [
+              -0.00041254392970895454,
+              0.0031453694470100894
+            ],
+            "clears_margin": false
+          },
+          "full minus full_blend": {
+            "gain": 0.005891018373363921,
+            "simultaneous_ci": [
+              0.004129286165781583,
+              0.007833344940202963
+            ],
+            "clears_margin": false
+          },
+          "short minus full_blend": {
+            "gain": 0.006634659709317203,
+            "simultaneous_ci": [
+              0.004429918432597931,
+              0.008690407766842764
+            ],
+            "clears_margin": false
+          },
+          "short_blend minus full_blend": {
+            "gain": 0.00031240246230912483,
+            "simultaneous_ci": [
+              -0.0002946017961159522,
+              0.0008487162481002387
+            ],
+            "clears_margin": false
+          },
+          "short minus full": {
+            "gain": 0.0007436413359532823,
+            "simultaneous_ci": [
+              -0.0004535212232477983,
+              0.0018406566342201538
+            ],
+            "clears_margin": false
+          }
+        }
+      },
+      "32+": {
+        "events": 60820,
+        "learners": 1388,
+        "correct": 43603,
+        "repeated_skill": 52931,
+        "nll": {
+          "full_blend": 0.5243305727129347,
+          "skill_mean": 0.5688463768247708,
+          "logistic": 0.5367073560970529,
+          "dkt": 0.5283602013842926,
+          "full": 0.5291602102890897,
+          "short": 0.5297038618130294,
+          "short_blend": 0.5244694553857439
+        },
+        "strongest_control": "short_blend",
+        "contrasts": {
+          "skill_mean minus full_blend": {
+            "gain": 0.04451580411183609,
+            "simultaneous_ci": [
+              0.03904653123259246,
+              0.05056409949979826
+            ],
+            "clears_margin": true
+          },
+          "logistic minus full_blend": {
+            "gain": 0.012376783384118184,
+            "simultaneous_ci": [
+              0.010102833749463518,
+              0.01481311969453591
+            ],
+            "clears_margin": false
+          },
+          "dkt minus full_blend": {
+            "gain": 0.004029628671357921,
+            "simultaneous_ci": [
+              0.0025434805810264105,
+              0.00553169994257591
+            ],
+            "clears_margin": false
+          },
+          "full minus full_blend": {
+            "gain": 0.004829637576154955,
+            "simultaneous_ci": [
+              0.003500876253823531,
+              0.0062059678685875905
+            ],
+            "clears_margin": false
+          },
+          "short minus full_blend": {
+            "gain": 0.005373289100094714,
+            "simultaneous_ci": [
+              0.00382022854730654,
+              0.006896324538447775
+            ],
+            "clears_margin": false
+          },
+          "short_blend minus full_blend": {
+            "gain": 0.00013888267280914857,
+            "simultaneous_ci": [
+              -0.00039126277551901914,
+              0.0006422616964363622
+            ],
+            "clears_margin": false
+          },
+          "short minus full": {
+            "gain": 0.0005436515239397588,
+            "simultaneous_ci": [
+              -0.0005825180808055542,
+              0.0015810371973206797
+            ],
+            "clears_margin": false
+          }
+        }
+      }
+    },
+    "long_minus_short_gain": {
+      "contrast": "short_blend minus full_blend",
+      "gain": 0.00010342259278905974,
+      "simultaneous_ci": [
+        -0.0005340271178620755,
+        0.0007114736107837687
+      ]
+    }
+  },
+  "ednet_kt1": {
+    "candidate": "blend_joint",
+    "closest_control": "blend_clock",
+    "models": [
+      "blend_joint",
+      "sakt",
+      "base",
+      "blend_base",
+      "clock",
+      "blend_clock",
+      "interference",
+      "blend_interference",
+      "joint",
+      "items",
+      "skill_only",
+      "rasch",
+      "difficulty",
+      "matched",
+      "ability",
+      "distractor",
+      "lag_control"
+    ],
+    "forecasts": 152677,
+    "scopes": {
+      "overall": {
+        "events": 8981,
+        "learners": 240,
+        "correct": 5274,
+        "repeated_skill": 3925,
+        "nll": {
+          "blend_joint": 0.5771830382750012,
+          "sakt": 0.6293180069084613,
+          "base": 0.5912745339410476,
+          "blend_base": 0.5912745339410476,
+          "clock": 0.5766285498424757,
+          "blend_clock": 0.5766285498424757,
+          "interference": 0.5895791156681248,
+          "blend_interference": 0.5895791156681248,
+          "joint": 0.5771830382750012,
+          "items": 0.6218097493656982,
+          "skill_only": 0.6291233221311573,
+          "rasch": 0.6124884097877031,
+          "difficulty": 0.6102852044506207,
+          "matched": 0.6010241910607447,
+          "ability": 0.6059614576584668,
+          "distractor": 0.576231055508019,
+          "lag_control": 0.577862016892423
+        },
+        "strongest_control": "distractor",
+        "contrasts": {
+          "sakt minus blend_joint": {
+            "gain": 0.05213496863346012,
+            "simultaneous_ci": [
+              0.029129267543448547,
+              0.08531418954618315
+            ],
+            "clears_margin": true
+          },
+          "base minus blend_joint": {
+            "gain": 0.014091495666046394,
+            "simultaneous_ci": [
+              0.0015923828373561356,
+              0.03303358437384679
+            ],
+            "clears_margin": false
+          },
+          "blend_base minus blend_joint": {
+            "gain": 0.014091495666046394,
+            "simultaneous_ci": [
+              0.0015923828373561356,
+              0.03303358437384679
+            ],
+            "clears_margin": false
+          },
+          "clock minus blend_joint": {
+            "gain": -0.0005544884325254795,
+            "simultaneous_ci": [
+              -0.0035701689346128015,
+              0.0024451462551453953
+            ],
+            "clears_margin": false
+          },
+          "blend_clock minus blend_joint": {
+            "gain": -0.0005544884325254795,
+            "simultaneous_ci": [
+              -0.0035701689346128015,
+              0.0024451462551453953
+            ],
+            "clears_margin": false
+          },
+          "interference minus blend_joint": {
+            "gain": 0.01239607739312365,
+            "simultaneous_ci": [
+              0.0019135703986423113,
+              0.02678502495062977
+            ],
+            "clears_margin": false
+          },
+          "blend_interference minus blend_joint": {
+            "gain": 0.01239607739312365,
+            "simultaneous_ci": [
+              0.0019135703986423113,
+              0.02678502495062977
+            ],
+            "clears_margin": false
+          },
+          "joint minus blend_joint": {
+            "gain": 0.0,
+            "simultaneous_ci": [
+              0.0,
+              0.0
+            ],
+            "clears_margin": false
+          },
+          "items minus blend_joint": {
+            "gain": 0.04462671109069705,
+            "simultaneous_ci": [
+              0.025600738982989393,
+              0.07222590160431576
+            ],
+            "clears_margin": true
+          },
+          "skill_only minus blend_joint": {
+            "gain": 0.05194028385615612,
+            "simultaneous_ci": [
+              0.031022347243856482,
+              0.08239943703851799
+            ],
+            "clears_margin": true
+          },
+          "rasch minus blend_joint": {
+            "gain": 0.035305371512701966,
+            "simultaneous_ci": [
+              0.015356645033434941,
+              0.06434176992694625
+            ],
+            "clears_margin": true
+          },
+          "difficulty minus blend_joint": {
+            "gain": 0.03310216617561956,
+            "simultaneous_ci": [
+              0.02074978392637111,
+              0.04565363327954648
+            ],
+            "clears_margin": true
+          },
+          "matched minus blend_joint": {
+            "gain": 0.023841152785743502,
+            "simultaneous_ci": [
+              0.01324282052285502,
+              0.03466998863964736
+            ],
+            "clears_margin": true
+          },
+          "ability minus blend_joint": {
+            "gain": 0.028778419383465592,
+            "simultaneous_ci": [
+              0.017063566840651384,
+              0.039238493385942506
+            ],
+            "clears_margin": true
+          },
+          "distractor minus blend_joint": {
+            "gain": -0.0009519827669821623,
+            "simultaneous_ci": [
+              -0.004554737730859019,
+              0.002424245781459164
+            ],
+            "clears_margin": false
+          },
+          "lag_control minus blend_joint": {
+            "gain": 0.0006789786174218326,
+            "simultaneous_ci": [
+              -0.00240485869718698,
+              0.0036688717318969343
+            ],
+            "clears_margin": false
+          },
+          "clock minus joint": {
+            "gain": -0.0005544884325254795,
+            "simultaneous_ci": [
+              -0.0035701689346128015,
+              0.0024451462551453953
+            ],
+            "clears_margin": false
+          }
+        }
+      },
+      "1–16": {
+        "events": 2579,
+        "learners": 240,
+        "correct": 1203,
+        "repeated_skill": 537,
+        "nll": {
+          "blend_joint": 0.6159779028848937,
+          "sakt": 0.6502135671573466,
+          "base": 0.6215760591539123,
+          "blend_base": 0.6215760591539123,
+          "clock": 0.6163535542788036,
+          "blend_clock": 0.6163535542788036,
+          "interference": 0.6219657498698016,
+          "blend_interference": 0.6219657498698016,
+          "joint": 0.6159779028848937,
+          "items": 0.6450222119272999,
+          "skill_only": 0.6435523428345514,
+          "rasch": 0.6373722328335047,
+          "difficulty": 0.6383500391139839,
+          "matched": 0.6322609662625744,
+          "ability": 0.6320553174707592,
+          "distractor": 0.6136077819347677,
+          "lag_control": 0.6161280836501862
+        },
+        "strongest_control": "distractor",
+        "contrasts": {
+          "sakt minus blend_joint": {
+            "gain": 0.03423566427245284,
+            "simultaneous_ci": [
+              0.014510933212016115,
+              0.05638554570972932
+            ],
+            "clears_margin": true
+          },
+          "base minus blend_joint": {
+            "gain": 0.005598156269018606,
+            "simultaneous_ci": [
+              -0.0033855788052725116,
+              0.014958057264524783
+            ],
+            "clears_margin": false
+          },
+          "blend_base minus blend_joint": {
+            "gain": 0.005598156269018606,
+            "simultaneous_ci": [
+              -0.0033855788052725116,
+              0.014958057264524783
+            ],
+            "clears_margin": false
+          },
+          "clock minus blend_joint": {
+            "gain": 0.00037565139390982605,
+            "simultaneous_ci": [
+              -0.00403662327610597,
+              0.004746636506392226
+            ],
+            "clears_margin": false
+          },
+          "blend_clock minus blend_joint": {
+            "gain": 0.00037565139390982605,
+            "simultaneous_ci": [
+              -0.00403662327610597,
+              0.004746636506392226
+            ],
+            "clears_margin": false
+          },
+          "interference minus blend_joint": {
+            "gain": 0.005987846984907841,
+            "simultaneous_ci": [
+              -0.002302591407090584,
+              0.014511493727589492
+            ],
+            "clears_margin": false
+          },
+          "blend_interference minus blend_joint": {
+            "gain": 0.005987846984907841,
+            "simultaneous_ci": [
+              -0.002302591407090584,
+              0.014511493727589492
+            ],
+            "clears_margin": false
+          },
+          "joint minus blend_joint": {
+            "gain": 0.0,
+            "simultaneous_ci": [
+              0.0,
+              0.0
+            ],
+            "clears_margin": false
+          },
+          "items minus blend_joint": {
+            "gain": 0.02904430904240618,
+            "simultaneous_ci": [
+              0.01008339990641648,
+              0.04976296145375935
+            ],
+            "clears_margin": true
+          },
+          "skill_only minus blend_joint": {
+            "gain": 0.027574439949657692,
+            "simultaneous_ci": [
+              0.008783568802018981,
+              0.047876589087043044
+            ],
+            "clears_margin": true
+          },
+          "rasch minus blend_joint": {
+            "gain": 0.021394329948611013,
+            "simultaneous_ci": [
+              0.00473113348134813,
+              0.042472359647736886
+            ],
+            "clears_margin": true
+          },
+          "difficulty minus blend_joint": {
+            "gain": 0.022372136229090178,
+            "simultaneous_ci": [
+              0.0021902014108938902,
+              0.043013431919554826
+            ],
+            "clears_margin": true
+          },
+          "matched minus blend_joint": {
+            "gain": 0.016283063377680707,
+            "simultaneous_ci": [
+              -0.000998854852653825,
+              0.03472320971102712
+            ],
+            "clears_margin": false
+          },
+          "ability minus blend_joint": {
+            "gain": 0.016077414585865424,
+            "simultaneous_ci": [
+              0.0003101401259778848,
+              0.033009293608667056
+            ],
+            "clears_margin": true
+          },
+          "distractor minus blend_joint": {
+            "gain": -0.002370120950126009,
+            "simultaneous_ci": [
+              -0.007726349248163394,
+              0.0030471529678920686
+            ],
+            "clears_margin": false
+          },
+          "lag_control minus blend_joint": {
+            "gain": 0.0001501807652924958,
+            "simultaneous_ci": [
+              -0.004847707634832429,
+              0.004974116899995969
+            ],
+            "clears_margin": false
+          },
+          "clock minus joint": {
+            "gain": 0.00037565139390982605,
+            "simultaneous_ci": [
+              -0.00403662327610597,
+              0.004746636506392226
+            ],
+            "clears_margin": false
+          }
+        }
+      },
+      "17–31": {
+        "events": 1387,
+        "learners": 110,
+        "correct": 705,
+        "repeated_skill": 258,
+        "nll": {
+          "blend_joint": 0.5929169046500675,
+          "sakt": 0.6353749854472026,
+          "base": 0.6097059123439619,
+          "blend_base": 0.6097059123439619,
+          "clock": 0.5970457360207764,
+          "blend_clock": 0.5970457360207764,
+          "interference": 0.6059291883824114,
+          "blend_interference": 0.6059291883824114,
+          "joint": 0.5929169046500675,
+          "items": 0.6217720407775846,
+          "skill_only": 0.6355931285578729,
+          "rasch": 0.618010020205468,
+          "difficulty": 0.6183684686082263,
+          "matched": 0.6180595657358922,
+          "ability": 0.6174681014205058,
+          "distractor": 0.5974214729310137,
+          "lag_control": 0.5981187716084959
+        },
+        "strongest_control": "joint",
+        "contrasts": {
+          "sakt minus blend_joint": {
+            "gain": 0.04245808079713509,
+            "simultaneous_ci": [
+              0.016971425527330414,
+              0.07108336197013392
+            ],
+            "clears_margin": true
+          },
+          "base minus blend_joint": {
+            "gain": 0.016789007693894353,
+            "simultaneous_ci": [
+              0.0033708598126389387,
+              0.03218266922825496
+            ],
+            "clears_margin": true
+          },
+          "blend_base minus blend_joint": {
+            "gain": 0.016789007693894353,
+            "simultaneous_ci": [
+              0.0033708598126389387,
+              0.03218266922825496
+            ],
+            "clears_margin": true
+          },
+          "clock minus blend_joint": {
+            "gain": 0.004128831370708852,
+            "simultaneous_ci": [
+              -0.003591172750672996,
+              0.012124528526646278
+            ],
+            "clears_margin": false
+          },
+          "blend_clock minus blend_joint": {
+            "gain": 0.004128831370708852,
+            "simultaneous_ci": [
+              -0.003591172750672996,
+              0.012124528526646278
+            ],
+            "clears_margin": false
+          },
+          "interference minus blend_joint": {
+            "gain": 0.013012283732343866,
+            "simultaneous_ci": [
+              0.0010139597667670284,
+              0.026631842282460485
+            ],
+            "clears_margin": false
+          },
+          "blend_interference minus blend_joint": {
+            "gain": 0.013012283732343866,
+            "simultaneous_ci": [
+              0.0010139597667670284,
+              0.026631842282460485
+            ],
+            "clears_margin": false
+          },
+          "joint minus blend_joint": {
+            "gain": 0.0,
+            "simultaneous_ci": [
+              0.0,
+              0.0
+            ],
+            "clears_margin": false
+          },
+          "items minus blend_joint": {
+            "gain": 0.02885513612751711,
+            "simultaneous_ci": [
+              0.005600751453283528,
+              0.05453927598828715
+            ],
+            "clears_margin": true
+          },
+          "skill_only minus blend_joint": {
+            "gain": 0.042676223907805344,
+            "simultaneous_ci": [
+              0.017993893399925773,
+              0.06880805826586843
+            ],
+            "clears_margin": true
+          },
+          "rasch minus blend_joint": {
+            "gain": 0.025093115555400503,
+            "simultaneous_ci": [
+              0.004531960867620804,
+              0.04625782753009887
+            ],
+            "clears_margin": true
+          },
+          "difficulty minus blend_joint": {
+            "gain": 0.02545156395815873,
+            "simultaneous_ci": [
+              0.002985930088188864,
+              0.05228412748158047
+            ],
+            "clears_margin": true
+          },
+          "matched minus blend_joint": {
+            "gain": 0.025142661085824636,
+            "simultaneous_ci": [
+              0.0052010632516379385,
+              0.04650040409708239
+            ],
+            "clears_margin": true
+          },
+          "ability minus blend_joint": {
+            "gain": 0.024551196770438266,
+            "simultaneous_ci": [
+              0.0014884041706888522,
+              0.04944729865472711
+            ],
+            "clears_margin": true
+          },
+          "distractor minus blend_joint": {
+            "gain": 0.004504568280946142,
+            "simultaneous_ci": [
+              -0.004119284759122497,
+              0.01300144138115175
+            ],
+            "clears_margin": false
+          },
+          "lag_control minus blend_joint": {
+            "gain": 0.005201866958428392,
+            "simultaneous_ci": [
+              -0.0031747903020162825,
+              0.013590912860872361
+            ],
+            "clears_margin": false
+          },
+          "clock minus joint": {
+            "gain": 0.004128831370708852,
+            "simultaneous_ci": [
+              -0.003591172750672996,
+              0.012124528526646278
+            ],
+            "clears_margin": false
+          }
+        }
+      },
+      "32+": {
+        "events": 5015,
+        "learners": 67,
+        "correct": 3366,
+        "repeated_skill": 3130,
+        "nll": {
+          "blend_joint": 0.5528809787553343,
+          "sakt": 0.6168971337050496,
+          "base": 0.5705941839173546,
+          "blend_base": 0.5705941839173546,
+          "clock": 0.5505528920816397,
+          "blend_clock": 0.5505528920816397,
+          "interference": 0.5684021105911876,
+          "blend_interference": 0.5684021105911876,
+          "joint": 0.5528809787553343,
+          "items": 0.6098830017815196,
+          "skill_only": 0.6199137377028607,
+          "rasch": 0.598164610528568,
+          "difficulty": 0.5936170696583154,
+          "matched": 0.5802489751245634,
+          "ability": 0.5893601058431426,
+          "distractor": 0.551149163898791,
+          "lag_control": 0.5525809989543443
+        },
+        "strongest_control": "clock",
+        "contrasts": {
+          "sakt minus blend_joint": {
+            "gain": 0.06401615494971535,
+            "simultaneous_ci": [
+              0.02751000605609121,
+              0.11944199282581126
+            ],
+            "clears_margin": true
+          },
+          "base minus blend_joint": {
+            "gain": 0.01771320516202035,
+            "simultaneous_ci": [
+              -0.0036774118225207163,
+              0.05275464618948536
+            ],
+            "clears_margin": false
+          },
+          "blend_base minus blend_joint": {
+            "gain": 0.01771320516202035,
+            "simultaneous_ci": [
+              -0.0036774118225207163,
+              0.05275464618948536
+            ],
+            "clears_margin": false
+          },
+          "clock minus blend_joint": {
+            "gain": -0.0023280866736945516,
+            "simultaneous_ci": [
+              -0.006609948404405549,
+              0.002361493083774543
+            ],
+            "clears_margin": false
+          },
+          "blend_clock minus blend_joint": {
+            "gain": -0.0023280866736945516,
+            "simultaneous_ci": [
+              -0.006609948404405549,
+              0.002361493083774543
+            ],
+            "clears_margin": false
+          },
+          "interference minus blend_joint": {
+            "gain": 0.015521131835853352,
+            "simultaneous_ci": [
+              -0.0027897110137166748,
+              0.042378784003007854
+            ],
+            "clears_margin": false
+          },
+          "blend_interference minus blend_joint": {
+            "gain": 0.015521131835853352,
+            "simultaneous_ci": [
+              -0.0027897110137166748,
+              0.042378784003007854
+            ],
+            "clears_margin": false
+          },
+          "joint minus blend_joint": {
+            "gain": 0.0,
+            "simultaneous_ci": [
+              0.0,
+              0.0
+            ],
+            "clears_margin": false
+          },
+          "items minus blend_joint": {
+            "gain": 0.05700202302618529,
+            "simultaneous_ci": [
+              0.02494319832977648,
+              0.10628984271457408
+            ],
+            "clears_margin": true
+          },
+          "skill_only minus blend_joint": {
+            "gain": 0.06703275894752647,
+            "simultaneous_ci": [
+              0.032697907494812745,
+              0.12006036896232317
+            ],
+            "clears_margin": true
+          },
+          "rasch minus blend_joint": {
+            "gain": 0.04528363177323369,
+            "simultaneous_ci": [
+              0.013940498443568462,
+              0.09445528572960755
+            ],
+            "clears_margin": true
+          },
+          "difficulty minus blend_joint": {
+            "gain": 0.04073609090298114,
+            "simultaneous_ci": [
+              0.024119513162330835,
+              0.06074365750031879
+            ],
+            "clears_margin": true
+          },
+          "matched minus blend_joint": {
+            "gain": 0.027367996369229153,
+            "simultaneous_ci": [
+              0.013189072115364546,
+              0.04195640723791336
+            ],
+            "clears_margin": true
+          },
+          "ability minus blend_joint": {
+            "gain": 0.036479127087808316,
+            "simultaneous_ci": [
+              0.02131851736070148,
+              0.05118295765278152
+            ],
+            "clears_margin": true
+          },
+          "distractor minus blend_joint": {
+            "gain": -0.001731814856543279,
+            "simultaneous_ci": [
+              -0.006520000292916558,
+              0.0037053013437988386
+            ],
+            "clears_margin": false
+          },
+          "lag_control minus blend_joint": {
+            "gain": -0.0002999798009899468,
+            "simultaneous_ci": [
+              -0.004873105400558719,
+              0.003920032100299335
+            ],
+            "clears_margin": false
+          },
+          "clock minus joint": {
+            "gain": -0.0023280866736945516,
+            "simultaneous_ci": [
+              -0.006609948404405549,
+              0.002361493083774543
+            ],
+            "clears_margin": false
+          }
+        }
+      }
+    },
+    "long_minus_short_gain": {
+      "contrast": "blend_clock minus blend_joint",
+      "gain": -0.0027037380676043776,
+      "simultaneous_ci": [
+        -0.008749437644821797,
+        0.003324276361983103
+      ]
+    }
+  }
+}

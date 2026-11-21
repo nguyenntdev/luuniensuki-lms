@@ -26,6 +26,14 @@ Regularized local adaptation gained .02899 AUC over FedAvg (simultaneous 95% int
 
 We independently rescored frozen probabilities using tie-aware ROC AUC. For each deletion we averaged the six retained module scores without refitting. Columns AAA through GGG in the accompanying table identify the omitted module. The neural half-transfer control led all twelve listed fits after every deletion (.63009–.65623). Weak ridge exceeded regularized adaptation after every deletion, although excluding GGG narrowed the difference to .00036. Newton exceeded FedAvg in all seven analyses but remained below weak ridge throughout. Schedule conditioning exceeded weak ridge only upon removing AAA (.64585 versus .64580). These descriptive perturbations assess dependence on the composition of the scoring cohort. Predicting a previously unseen training client would require a different experiment. [Complete deletion estimates](client_sensitivity/macro_auc.csv)
 
+## How much can choosing a mixture weight improve ranking?
+
+Selecting by earlier calibration AUC switched one of seven clients from half-transfer to local-only. The guard beat FedAvg by .04140 but trailed fixed half-transfer by .00250 on the reused development cohort. A post hoc calculation using all later outcomes places the maximum possible gain of any assignment of the five client weights at .00628. That is below the registered .02 gain even with hindsight. This bounds the benefit of this form of adaptation on the measured scores. [Protocol, all 32 controls and bound](rank_gate/README.md)
+
+## Frozen score transfer to an external learning platform
+
+We applied the source coefficients directly to four mapped activity features on an independent MOOC trace. At its midpoint 3,755 previously observed learners had no prior flag; 1,256 had a later flag. Distributed Newton reached .50087 AUC, compared with .65400 for FedAvg and .66516 for the average of the seven independent local fits. The Newton-minus-local difference was −.16430 with a simultaneous interval of −.21215 to −.11645. This tests out-of-source ranking under different observation windows and label definitions. No new institution participated in federated training. [All source models, decision rule and paired contrasts](frozen_transfer/README.md)
+
 ## Discussion and evidence gaps
 
 Faster optimization can recover a specified pooled objective while leaving substantial variation in module-specific ranking. A pooled likelihood weights registrations whereas the evaluation weights modules equally. The weak-ridge and neural controls show how limiting comparison to FedAvg and FedProx would change the scientific conclusion. Numerical parity establishes neither predictive equivalence across methods nor utility at a fixed advising capacity.

@@ -6,6 +6,8 @@
 
 Suppose a registrar can score a fraction of learners and refer the rest. Does a gate improve the labels issued at that capacity? Maximum class probability supplies a published, executable ranking baseline. A previous OULAD study considers selective prediction for withdrawal. Our contribution is an empirical audit of case selection and label changes for a released multiclass policy, including a future-presentation test. [Maximum-confidence baseline](https://openreview.net/forum?id=Hkg4TI9xl) · [OULAD withdrawal study](https://doi.org/10.1371/journal.pone.0352867)
 
+The closest OULAD studies also condition decisions on the active enrollment set and quantify top-budget alert workload. The label-switching analysis tests the effect of assigning a different class on exactly the same accepted IDs. [Three 2026 OULAD designs compared](../COMPETITION.md)
+
 Write A for the accepted cases, U for all eligible cases, g for the gate labels and b for logistic argmax labels. Gate accuracy on A minus baseline accuracy on U is exactly the sum of two differences:
 
 1. **Label effect** = accuracy(g, A) − accuracy(b, A). Replaying both labels on identical IDs isolates the contribution of rerouting.
@@ -33,6 +35,10 @@ We used registration attributes and clicks from days 0–60 inclusive. The relea
 ## Independent educational cohort
 
 The Portuguese higher-education dataset supplies three outcomes at the end of normal course duration, Dropout, Enrolled and Graduate. We retained all 4,424 records, hash-split by source row into 2,654 training, 875 calibration and 895 test students. We used four enrollment features (admission grade, previous qualification grade, age and application order), training-standardized logistic regression, and applied the same quantile and rerouting rules with Dropout as the target. Calibration cutoffs were 0.606 and 0.296. This analysis tests the rule on a different probability model and endpoint. The source has no student-level dates supporting temporal validation. [Dataset and attribution](https://doi.org/10.24432/C5MC89)
+
+## Transport of the acceptance threshold
+
+We exchanged the frozen acceptance cutoffs between countries while retaining each local classifier and its label rule. On OULAD the Portuguese cutoff increased acceptance from 552 to 1,012 of 7,524 registrations (+6.11 percentage points, simultaneous 95% interval 5.40 to 6.88). On the Portuguese cohort the UK cutoff reduced acceptance from 159 to 81 of 895 (−8.72 points, −11.28 to −6.59). Differences in accepted argmax error were +2.24 and −1.79 points, respectively; both intervals include zero. An imported cutoff materially changed automated workload on these archived cohorts. The countries, decision dates, labels and classifier dimensions differ, and the base models were fitted locally. Run the evaluator in the scientific Python environment and compare stdout to the saved JSON. [Protocol](threshold_transfer/protocol.md) · [Evaluator](threshold_transfer/evaluate.py) · [Paired results](threshold_transfer/results.json)
 
 ## Results
 

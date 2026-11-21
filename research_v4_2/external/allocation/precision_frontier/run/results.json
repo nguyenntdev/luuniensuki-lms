@@ -1,0 +1,616 @@
+{
+  "oulad": {
+    "train": 4265,
+    "excluded": {},
+    "learners": 6959,
+    "pools": 6,
+    "seats": 695,
+    "female_cases": 526,
+    "male_cases": 579,
+    "capture_floors": {
+      "logistic": 201,
+      "boosted": 169
+    },
+    "point_archive_sha256": "370c8799dc207c41c0308680f04df14f731eed8265ec203fd2effbb189434550",
+    "best_constrained_archived_policies": [
+      "logistic/pooled_greedy"
+    ],
+    "best_constrained_archived_recall": 0.18134715025906736,
+    "recall_target": "1943/9650",
+    "target_captures": {
+      "female": 106,
+      "male": 117
+    },
+    "archived_controls": {
+      "logistic/unrestricted": {
+        "female_captured": 140,
+        "male_captured": 67,
+        "worst_group_recall": 0.1157167530224525,
+        "precision": 0.29784172661870506,
+        "meets_original_floor": true,
+        "meets_boosted_floor": true
+      },
+      "logistic/fair": {
+        "female_captured": 140,
+        "male_captured": 67,
+        "worst_group_recall": 0.1157167530224525,
+        "precision": 0.29784172661870506,
+        "meets_original_floor": true,
+        "meets_boosted_floor": true
+      },
+      "logistic/quota": {
+        "female_captured": 105,
+        "male_captured": 103,
+        "worst_group_recall": 0.17789291882556132,
+        "precision": 0.2992805755395683,
+        "meets_original_floor": true,
+        "meets_boosted_floor": true
+      },
+      "logistic/threshold": {
+        "female_captured": 105,
+        "male_captured": 102,
+        "worst_group_recall": 0.17616580310880828,
+        "precision": 0.29784172661870506,
+        "meets_original_floor": true,
+        "meets_boosted_floor": true
+      },
+      "logistic/discount_dp": {
+        "female_captured": 140,
+        "male_captured": 67,
+        "worst_group_recall": 0.1157167530224525,
+        "precision": 0.29784172661870506,
+        "meets_original_floor": true,
+        "meets_boosted_floor": true
+      },
+      "logistic/robust": {
+        "female_captured": 105,
+        "male_captured": 102,
+        "worst_group_recall": 0.17616580310880828,
+        "precision": 0.29784172661870506,
+        "meets_original_floor": true,
+        "meets_boosted_floor": true
+      },
+      "logistic/pooled": {
+        "female_captured": 105,
+        "male_captured": 100,
+        "worst_group_recall": 0.17271157167530224,
+        "precision": 0.2949640287769784,
+        "meets_original_floor": true,
+        "meets_boosted_floor": true
+      },
+      "logistic/pooled_local_cap": {
+        "female_captured": 105,
+        "male_captured": 100,
+        "worst_group_recall": 0.17271157167530224,
+        "precision": 0.2949640287769784,
+        "meets_original_floor": true,
+        "meets_boosted_floor": true
+      },
+      "logistic/pooled_greedy": {
+        "female_captured": 100,
+        "male_captured": 105,
+        "worst_group_recall": 0.18134715025906736,
+        "precision": 0.2949640287769784,
+        "meets_original_floor": true,
+        "meets_boosted_floor": true
+      },
+      "boosted/unrestricted": {
+        "female_captured": 114,
+        "male_captured": 61,
+        "worst_group_recall": 0.10535405872193437,
+        "precision": 0.2517985611510791,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/fair": {
+        "female_captured": 114,
+        "male_captured": 61,
+        "worst_group_recall": 0.10535405872193437,
+        "precision": 0.2517985611510791,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/quota": {
+        "female_captured": 80,
+        "male_captured": 92,
+        "worst_group_recall": 0.1520912547528517,
+        "precision": 0.2474820143884892,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/threshold": {
+        "female_captured": 82,
+        "male_captured": 92,
+        "worst_group_recall": 0.155893536121673,
+        "precision": 0.2503597122302158,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/discount_dp": {
+        "female_captured": 114,
+        "male_captured": 61,
+        "worst_group_recall": 0.10535405872193437,
+        "precision": 0.2517985611510791,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/robust": {
+        "female_captured": 82,
+        "male_captured": 94,
+        "worst_group_recall": 0.155893536121673,
+        "precision": 0.25323741007194245,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/pooled": {
+        "female_captured": 84,
+        "male_captured": 89,
+        "worst_group_recall": 0.153713298791019,
+        "precision": 0.2489208633093525,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/pooled_local_cap": {
+        "female_captured": 84,
+        "male_captured": 89,
+        "worst_group_recall": 0.153713298791019,
+        "precision": 0.2489208633093525,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/pooled_greedy": {
+        "female_captured": 83,
+        "male_captured": 89,
+        "worst_group_recall": 0.153713298791019,
+        "precision": 0.2474820143884892,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      }
+    },
+    "bands": {
+      "0": {
+        "maximum_captures": 185,
+        "floors": {
+          "logistic": {
+            "worst_group_recall_ceiling": null,
+            "precision_only": {
+              "feasible": false,
+              "minimum_replacements": null
+            },
+            "precision_and_recall": {
+              "feasible": false,
+              "minimum_replacements": null
+            }
+          },
+          "boosted": {
+            "worst_group_recall_ceiling": 0.16234887737478412,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 0
+            },
+            "precision_and_recall": {
+              "feasible": false,
+              "minimum_replacements": null
+            }
+          }
+        }
+      },
+      "1": {
+        "maximum_captures": 186,
+        "floors": {
+          "logistic": {
+            "worst_group_recall_ceiling": null,
+            "precision_only": {
+              "feasible": false,
+              "minimum_replacements": null
+            },
+            "precision_and_recall": {
+              "feasible": false,
+              "minimum_replacements": null
+            }
+          },
+          "boosted": {
+            "worst_group_recall_ceiling": 0.1634980988593156,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 0
+            },
+            "precision_and_recall": {
+              "feasible": false,
+              "minimum_replacements": null
+            }
+          }
+        }
+      },
+      "5": {
+        "maximum_captures": 192,
+        "floors": {
+          "logistic": {
+            "worst_group_recall_ceiling": null,
+            "precision_only": {
+              "feasible": false,
+              "minimum_replacements": null
+            },
+            "precision_and_recall": {
+              "feasible": false,
+              "minimum_replacements": null
+            }
+          },
+          "boosted": {
+            "worst_group_recall_ceiling": 0.1692573402417962,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 0
+            },
+            "precision_and_recall": {
+              "feasible": false,
+              "minimum_replacements": null
+            }
+          }
+        }
+      },
+      "10": {
+        "maximum_captures": 204,
+        "floors": {
+          "logistic": {
+            "worst_group_recall_ceiling": 0.17443868739205526,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 20
+            },
+            "precision_and_recall": {
+              "feasible": false,
+              "minimum_replacements": null
+            }
+          },
+          "boosted": {
+            "worst_group_recall_ceiling": 0.17962003454231434,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 0
+            },
+            "precision_and_recall": {
+              "feasible": false,
+              "minimum_replacements": null
+            }
+          }
+        }
+      },
+      "unrestricted": {
+        "maximum_captures": 635,
+        "floors": {
+          "logistic": {
+            "worst_group_recall_ceiling": 0.5741444866920152,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 16
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 40
+            }
+          },
+          "boosted": {
+            "worst_group_recall_ceiling": 0.5741444866920152,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 0
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 40
+            }
+          }
+        }
+      }
+    }
+  },
+  "uci697": {
+    "train": 2653,
+    "excluded": {
+      "33": 4
+    },
+    "learners": 1767,
+    "pools": 16,
+    "seats": 168,
+    "female_cases": 283,
+    "male_cases": 260,
+    "capture_floors": {
+      "logistic": 104,
+      "boosted": 94
+    },
+    "point_archive_sha256": "1717e28111f227ff7351dca263334a371f71705543083943343e0dcc152c01b8",
+    "best_constrained_archived_policies": [
+      "boosted/quota"
+    ],
+    "best_constrained_archived_recall": 0.16153846153846155,
+    "recall_target": "59/325",
+    "target_captures": {
+      "female": 52,
+      "male": 48
+    },
+    "archived_controls": {
+      "logistic/unrestricted": {
+        "female_captured": 28,
+        "male_captured": 77,
+        "worst_group_recall": 0.0989399293286219,
+        "precision": 0.625,
+        "meets_original_floor": true,
+        "meets_boosted_floor": true
+      },
+      "logistic/fair": {
+        "female_captured": 35,
+        "male_captured": 62,
+        "worst_group_recall": 0.12367491166077739,
+        "precision": 0.5773809523809523,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "logistic/quota": {
+        "female_captured": 49,
+        "male_captured": 40,
+        "worst_group_recall": 0.15384615384615385,
+        "precision": 0.5297619047619048,
+        "meets_original_floor": false,
+        "meets_boosted_floor": false
+      },
+      "logistic/threshold": {
+        "female_captured": 39,
+        "male_captured": 55,
+        "worst_group_recall": 0.13780918727915195,
+        "precision": 0.5595238095238095,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "logistic/discount_dp": {
+        "female_captured": 35,
+        "male_captured": 62,
+        "worst_group_recall": 0.12367491166077739,
+        "precision": 0.5773809523809523,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "logistic/robust": {
+        "female_captured": 39,
+        "male_captured": 55,
+        "worst_group_recall": 0.13780918727915195,
+        "precision": 0.5595238095238095,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "logistic/pooled": {
+        "female_captured": 42,
+        "male_captured": 49,
+        "worst_group_recall": 0.14840989399293286,
+        "precision": 0.5416666666666666,
+        "meets_original_floor": false,
+        "meets_boosted_floor": false
+      },
+      "logistic/pooled_local_cap": {
+        "female_captured": 39,
+        "male_captured": 54,
+        "worst_group_recall": 0.13780918727915195,
+        "precision": 0.5535714285714286,
+        "meets_original_floor": false,
+        "meets_boosted_floor": false
+      },
+      "logistic/pooled_greedy": {
+        "female_captured": 42,
+        "male_captured": 52,
+        "worst_group_recall": 0.14840989399293286,
+        "precision": 0.5595238095238095,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/unrestricted": {
+        "female_captured": 29,
+        "male_captured": 66,
+        "worst_group_recall": 0.10247349823321555,
+        "precision": 0.5654761904761905,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/fair": {
+        "female_captured": 36,
+        "male_captured": 56,
+        "worst_group_recall": 0.127208480565371,
+        "precision": 0.5476190476190477,
+        "meets_original_floor": false,
+        "meets_boosted_floor": false
+      },
+      "boosted/quota": {
+        "female_captured": 49,
+        "male_captured": 42,
+        "worst_group_recall": 0.16153846153846155,
+        "precision": 0.5416666666666666,
+        "meets_original_floor": false,
+        "meets_boosted_floor": false
+      },
+      "boosted/threshold": {
+        "female_captured": 42,
+        "male_captured": 52,
+        "worst_group_recall": 0.14840989399293286,
+        "precision": 0.5595238095238095,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/discount_dp": {
+        "female_captured": 36,
+        "male_captured": 56,
+        "worst_group_recall": 0.127208480565371,
+        "precision": 0.5476190476190477,
+        "meets_original_floor": false,
+        "meets_boosted_floor": false
+      },
+      "boosted/robust": {
+        "female_captured": 42,
+        "male_captured": 52,
+        "worst_group_recall": 0.14840989399293286,
+        "precision": 0.5595238095238095,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/pooled": {
+        "female_captured": 45,
+        "male_captured": 49,
+        "worst_group_recall": 0.15901060070671377,
+        "precision": 0.5595238095238095,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/pooled_local_cap": {
+        "female_captured": 42,
+        "male_captured": 52,
+        "worst_group_recall": 0.14840989399293286,
+        "precision": 0.5595238095238095,
+        "meets_original_floor": false,
+        "meets_boosted_floor": true
+      },
+      "boosted/pooled_greedy": {
+        "female_captured": 44,
+        "male_captured": 49,
+        "worst_group_recall": 0.15547703180212014,
+        "precision": 0.5535714285714286,
+        "meets_original_floor": false,
+        "meets_boosted_floor": false
+      }
+    },
+    "bands": {
+      "0": {
+        "maximum_captures": 101,
+        "floors": {
+          "logistic": {
+            "worst_group_recall_ceiling": null,
+            "precision_only": {
+              "feasible": false,
+              "minimum_replacements": null
+            },
+            "precision_and_recall": {
+              "feasible": false,
+              "minimum_replacements": null
+            }
+          },
+          "boosted": {
+            "worst_group_recall_ceiling": 0.18461538461538463,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 0
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 0
+            }
+          }
+        }
+      },
+      "1": {
+        "maximum_captures": 108,
+        "floors": {
+          "logistic": {
+            "worst_group_recall_ceiling": 0.1978798586572438,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 3
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 3
+            }
+          },
+          "boosted": {
+            "worst_group_recall_ceiling": 0.1978798586572438,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 0
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 0
+            }
+          }
+        }
+      },
+      "5": {
+        "maximum_captures": 139,
+        "floors": {
+          "logistic": {
+            "worst_group_recall_ceiling": 0.254416961130742,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 3
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 3
+            }
+          },
+          "boosted": {
+            "worst_group_recall_ceiling": 0.254416961130742,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 0
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 0
+            }
+          }
+        }
+      },
+      "10": {
+        "maximum_captures": 147,
+        "floors": {
+          "logistic": {
+            "worst_group_recall_ceiling": 0.2692307692307692,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 3
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 3
+            }
+          },
+          "boosted": {
+            "worst_group_recall_ceiling": 0.2692307692307692,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 0
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 0
+            }
+          }
+        }
+      },
+      "unrestricted": {
+        "maximum_captures": 168,
+        "floors": {
+          "logistic": {
+            "worst_group_recall_ceiling": 0.3076923076923077,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 3
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 3
+            }
+          },
+          "boosted": {
+            "worst_group_recall_ceiling": 0.3076923076923077,
+            "precision_only": {
+              "feasible": true,
+              "minimum_replacements": 0
+            },
+            "precision_and_recall": {
+              "feasible": true,
+              "minimum_replacements": 0
+            }
+          }
+        }
+      }
+    }
+  }
+}
