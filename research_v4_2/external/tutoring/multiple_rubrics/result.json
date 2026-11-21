@@ -1,0 +1,251 @@
+{
+  "labels": {
+    "Mistake_Identification": {
+      "Yes": 1594,
+      "To some extent": 81,
+      "No": 125
+    },
+    "Mistake_Location": {
+      "Yes": 1259,
+      "To some extent": 169,
+      "No": 372
+    },
+    "Providing_Guidance": {
+      "Yes": 1141,
+      "To some extent": 391,
+      "No": 268
+    },
+    "Actionability": {
+      "Yes": 1034,
+      "To some extent": 305,
+      "No": 461
+    }
+  },
+  "eligible": 300,
+  "tutors": [
+    "GPT4",
+    "Gemini",
+    "Llama31405B",
+    "Llama318B",
+    "Mistral",
+    "Sonnet"
+  ],
+  "endpoints": [
+    "guidance",
+    "joint"
+  ],
+  "MathDial": {
+    "train": 37,
+    "test": 145,
+    "groups": 119,
+    "picks": [
+      "Gemini",
+      "Gemini"
+    ],
+    "totals": [
+      [
+        113,
+        71,
+        111,
+        61,
+        93,
+        89
+      ],
+      [
+        71,
+        58,
+        97,
+        36,
+        81,
+        79
+      ]
+    ],
+    "reversals": [
+      [
+        "GPT4",
+        "Llama31405B"
+      ],
+      [
+        "GPT4",
+        "Mistral"
+      ],
+      [
+        "GPT4",
+        "Sonnet"
+      ]
+    ],
+    "comparisons": {
+      "guidance_guidance_fixed": {
+        "rate": 0.4896551724137931,
+        "delta": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "guidance_joint_fixed": {
+        "rate": 0.4896551724137931,
+        "delta": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "guidance_uniform": {
+        "rate": 0.6183908045977011,
+        "delta": 0.12873563218390802,
+        "interval": [
+          0.06500990144607166,
+          0.1921317416869424
+        ]
+      },
+      "guidance_oracle": {
+        "rate": 0.9724137931034482,
+        "delta": 0.4827586206896552,
+        "interval": [
+          0.4,
+          0.5652173913043478
+        ]
+      },
+      "joint_guidance_fixed": {
+        "rate": 0.4,
+        "delta": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "joint_joint_fixed": {
+        "rate": 0.4,
+        "delta": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "joint_uniform": {
+        "rate": 0.4850574712643677,
+        "delta": 0.0850574712643678,
+        "interval": [
+          0.02013422818791945,
+          0.15000275938189842
+        ]
+      },
+      "joint_oracle": {
+        "rate": 0.9172413793103448,
+        "delta": 0.5172413793103449,
+        "interval": [
+          0.4391891891891892,
+          0.5945945945945946
+        ]
+      }
+    }
+  },
+  "Bridge": {
+    "train": 145,
+    "test": 37,
+    "groups": 27,
+    "picks": [
+      "GPT4",
+      "Llama31405B"
+    ],
+    "totals": [
+      [
+        26,
+        31,
+        30,
+        19,
+        23,
+        22
+      ],
+      [
+        6,
+        24,
+        19,
+        5,
+        10,
+        17
+      ]
+    ],
+    "reversals": [
+      [
+        "GPT4",
+        "Mistral"
+      ],
+      [
+        "GPT4",
+        "Sonnet"
+      ],
+      [
+        "Mistral",
+        "Sonnet"
+      ]
+    ],
+    "comparisons": {
+      "guidance_guidance_fixed": {
+        "rate": 0.7027027027027027,
+        "delta": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "guidance_joint_fixed": {
+        "rate": 0.8108108108108109,
+        "delta": 0.10810810810810811,
+        "interval": [
+          -0.08108108108108109,
+          0.25925925925925924
+        ]
+      },
+      "guidance_uniform": {
+        "rate": 0.6801801801801801,
+        "delta": -0.022522522522522515,
+        "interval": [
+          -0.14876126126126119,
+          0.06790123456790122
+        ]
+      },
+      "guidance_oracle": {
+        "rate": 1.0,
+        "delta": 0.2972972972972973,
+        "interval": [
+          0.14814814814814814,
+          0.43243243243243246
+        ]
+      },
+      "joint_guidance_fixed": {
+        "rate": 0.16216216216216217,
+        "delta": 0.0,
+        "interval": [
+          0.0,
+          0.0
+        ]
+      },
+      "joint_joint_fixed": {
+        "rate": 0.5135135135135135,
+        "delta": 0.35135135135135137,
+        "interval": [
+          0.1111111111111111,
+          0.5185185185185185
+        ]
+      },
+      "joint_uniform": {
+        "rate": 0.3648648648648648,
+        "delta": 0.20270270270270271,
+        "interval": [
+          0.03590674007340683,
+          0.3018018018018017
+        ]
+      },
+      "joint_oracle": {
+        "rate": 0.918918918918919,
+        "delta": 0.7567567567567568,
+        "interval": [
+          0.5555555555555556,
+          0.8771929824561403
+        ]
+      }
+    }
+  }
+}

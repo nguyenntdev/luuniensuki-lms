@@ -94,3 +94,5 @@ run "$d/term_requests/strata/extract.py" > "$t/strata.csv"
 cmp "$t/strata.csv" "$d/term_requests/strata/results.csv"
 run -m pytest tests/research_v4_2
 ```
+
+A development follow-up jointly bounded term enrollments and credit loads. Of 448 requests the existing screen rejected 229. The extra certificate rejected none of the remaining 219, including 23 subsequently proved infeasible by the matched solver. This limits the prospect of accelerating this sample through the additional bound. [Certificate derivation and controls](term_requests/certificates/README.md)

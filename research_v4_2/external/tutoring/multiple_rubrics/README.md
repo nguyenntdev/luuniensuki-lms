@@ -1,0 +1,7 @@
+# Does the criterion used to choose a tutor transfer across sources?
+
+All six candidate tutors had recorded responses on all four rubric dimensions for 300 conversations. Published source metadata linked 182 conversations to Bridge or MathDial. On 145 MathDial training cases, maximizing guidance alone selected GPT4. Requiring full marks for mistake identification, mistake location, guidance and actionability selected Llama31405B. On 37 Bridge cases the two tutors earned all four marks on 6 and 19 cases respectively. The 35.1 percentage-point difference had a paired 95% interval from 11.1 to 51.9 points across 27 opening-prompt clusters. Gemini earned all four marks on 24 Bridge cases. Its performance was unavailable when selecting a tutor on MathDial.
+
+In the reverse direction both criteria selected Gemini from Bridge. It met the four requirements on 58 of 145 MathDial cases. Changing the training criterion had zero effect in that direction. Selection used the alphabetic tie rule in the frozen protocol and intervals condition on the fitted choices. Results measure judgments on archived responses across sources within MRBench. [Protocol](protocol.md) · [All six tutors, label counts and comparisons](result.json)
+
+Retrieve the two pinned public files using the [parent instructions](../protocol.md). From this directory run `python evaluate.py /path/to/inputs | diff - result.json`. The script validates both digests before evaluating.
