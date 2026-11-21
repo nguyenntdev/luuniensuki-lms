@@ -1,0 +1,134 @@
+{
+  "onnxruntime": "1.23.2",
+  "scipy": "1.17.1",
+  "models": {
+    "bart-large-mnli": {
+      "dev": {
+        "n": 708,
+        "claims": 354,
+        "evidence_strings": 340,
+        "unbalanced_gold_claim_groups": 0,
+        "unbalanced_gold_evidence_groups": 0,
+        "three_way_correct": 11,
+        "methods": {
+          "independent": {
+            "status": "ok",
+            "correct": 482,
+            "complete_claims": 137,
+            "rescued": 0,
+            "regressed": 0
+          },
+          "claim_balance": {
+            "status": "optimal",
+            "correct": 590,
+            "complete_claims": 295,
+            "rescued": 158,
+            "regressed": 50
+          },
+          "joint_balance": {
+            "status": "optimal",
+            "correct": 640,
+            "complete_claims": 320,
+            "rescued": 187,
+            "regressed": 29
+          }
+        }
+      },
+      "test": {
+        "n": 712,
+        "claims": 355,
+        "evidence_strings": 341,
+        "unbalanced_gold_claim_groups": 0,
+        "unbalanced_gold_evidence_groups": 0,
+        "three_way_correct": 9,
+        "methods": {
+          "independent": {
+            "status": "ok",
+            "correct": 476,
+            "complete_claims": 129,
+            "rescued": 0,
+            "regressed": 0
+          },
+          "claim_balance": {
+            "status": "optimal",
+            "correct": 614,
+            "complete_claims": 306,
+            "rescued": 177,
+            "regressed": 39
+          },
+          "joint_balance": {
+            "status": "optimal",
+            "correct": 644,
+            "complete_claims": 321,
+            "rescued": 202,
+            "regressed": 34
+          }
+        }
+      }
+    },
+    "roberta-large-mnli": {
+      "dev": {
+        "n": 708,
+        "claims": 354,
+        "evidence_strings": 340,
+        "unbalanced_gold_claim_groups": 0,
+        "unbalanced_gold_evidence_groups": 0,
+        "three_way_correct": 547,
+        "methods": {
+          "independent": {
+            "status": "ok",
+            "correct": 634,
+            "complete_claims": 280,
+            "rescued": 0,
+            "regressed": 0
+          },
+          "claim_balance": {
+            "status": "optimal",
+            "correct": 696,
+            "complete_claims": 348,
+            "rescued": 68,
+            "regressed": 6
+          },
+          "joint_balance": {
+            "status": "optimal",
+            "correct": 704,
+            "complete_claims": 352,
+            "rescued": 72,
+            "regressed": 2
+          }
+        }
+      },
+      "test": {
+        "n": 712,
+        "claims": 355,
+        "evidence_strings": 341,
+        "unbalanced_gold_claim_groups": 0,
+        "unbalanced_gold_evidence_groups": 0,
+        "three_way_correct": 572,
+        "methods": {
+          "independent": {
+            "status": "ok",
+            "correct": 645,
+            "complete_claims": 290,
+            "rescued": 0,
+            "regressed": 0
+          },
+          "claim_balance": {
+            "status": "optimal",
+            "correct": 694,
+            "complete_claims": 346,
+            "rescued": 56,
+            "regressed": 7
+          },
+          "joint_balance": {
+            "status": "optimal",
+            "correct": 704,
+            "complete_claims": 351,
+            "rescued": 64,
+            "regressed": 5
+          }
+        }
+      }
+    }
+  }
+}

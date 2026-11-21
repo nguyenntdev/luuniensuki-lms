@@ -1,0 +1,122 @@
+[
+  {
+    "provider": "cleveland",
+    "repo": "ClevelandMuseumArt/openaccess",
+    "path": "data.csv",
+    "key": "id",
+    "cutoff": "2026-01-01",
+    "commit": "5d23322753bbd9ebf2b072207bebba8f4d46a54b",
+    "date": "2025-08-14T09:02:59Z",
+    "blob": "2fd7f75964f19e493f995d87db65c79b8a1af1f9"
+  },
+  {
+    "provider": "cleveland",
+    "repo": "ClevelandMuseumArt/openaccess",
+    "path": "data.csv",
+    "key": "id",
+    "cutoff": "2026-04-01",
+    "commit": "bc6ad1148e486ba7a969f3ea6e4920252276a52c",
+    "date": "2026-03-31T09:04:40Z",
+    "blob": "16a16903f145ddd1597358bebca6571b89008268"
+  },
+  {
+    "provider": "cleveland",
+    "repo": "ClevelandMuseumArt/openaccess",
+    "path": "data.csv",
+    "key": "id",
+    "cutoff": "2026-07-01",
+    "commit": "84a797a7887dd051e6ceb9a20030fc9b78cce238",
+    "date": "2026-06-30T09:03:39Z",
+    "blob": "78f0190e1cb324cf14e315cbe47cbc4fb894f1b2"
+  },
+  {
+    "provider": "cleveland",
+    "repo": "ClevelandMuseumArt/openaccess",
+    "path": "data.csv",
+    "key": "id",
+    "cutoff": "2026-10-01",
+    "commit": "70c83fa0aac1c001574523411e16c08fd5745c53",
+    "date": "2026-09-30T09:03:55Z",
+    "blob": "663b4f2685e888181a3063d7739cc5b91e576999"
+  },
+  {
+    "provider": "moma",
+    "repo": "MuseumofModernArt/collection",
+    "path": "Artworks.csv",
+    "key": "ObjectID",
+    "cutoff": "2026-01-01",
+    "commit": "e64a37df3107051043c4f0f2a0566792aaa0760b",
+    "date": "2025-12-30T08:48:23Z",
+    "blob": "42bc8a933e6bca23c18af956f7bb610462477732"
+  },
+  {
+    "provider": "moma",
+    "repo": "MuseumofModernArt/collection",
+    "path": "Artworks.csv",
+    "key": "ObjectID",
+    "cutoff": "2026-04-01",
+    "commit": "c9c30e08a78059c53136ed32d21533db42cb2d76",
+    "date": "2026-03-31T09:01:02Z",
+    "blob": "e98e69dfe20e8f623dcb7c070300505d8e43b5a4"
+  },
+  {
+    "provider": "moma",
+    "repo": "MuseumofModernArt/collection",
+    "path": "Artworks.csv",
+    "key": "ObjectID",
+    "cutoff": "2026-07-01",
+    "commit": "105f4c04f8f03563578c84bec68466e792b14ab5",
+    "date": "2026-06-30T09:05:52Z",
+    "blob": "21748e2e18f7f37feb3e15e35dee1a3475a8b151"
+  },
+  {
+    "provider": "moma",
+    "repo": "MuseumofModernArt/collection",
+    "path": "Artworks.csv",
+    "key": "ObjectID",
+    "cutoff": "2026-10-01",
+    "commit": "0d8f021936ae6b89424b5b65fe2e51e56c0e4cb3",
+    "date": "2026-09-29T08:59:28Z",
+    "blob": "5e4f29bffa4290a019370865391141a469044fdc"
+  },
+  {
+    "provider": "nga",
+    "repo": "NationalGalleryOfArt/opendata",
+    "path": "data/objects.csv",
+    "key": "objectid",
+    "cutoff": "2026-01-01",
+    "commit": "2e432d03965ff688274ad4f83e0a2e3b9d6c5d4b",
+    "date": "2025-12-31T11:00:37Z",
+    "blob": "288002da7b95ada635bb9c3d71334a8e3adffcf4"
+  },
+  {
+    "provider": "nga",
+    "repo": "NationalGalleryOfArt/opendata",
+    "path": "data/objects.csv",
+    "key": "objectid",
+    "cutoff": "2026-04-01",
+    "commit": "08bc72ca5fccf86ca4f3702f9db068a11a592509",
+    "date": "2026-03-05T11:00:47Z",
+    "blob": "14cd31f8751d6f06bf9f18f4b5a3e5e903e00bc2"
+  },
+  {
+    "provider": "nga",
+    "repo": "NationalGalleryOfArt/opendata",
+    "path": "data/objects.csv",
+    "key": "objectid",
+    "cutoff": "2026-07-01",
+    "commit": "baffa49876d721e430baeaf5cb759790ba938432",
+    "date": "2026-06-30T10:00:44Z",
+    "blob": "981810dd3c56ab7d7fc01497a6ddcd6cc2a1ab8f"
+  },
+  {
+    "provider": "nga",
+    "repo": "NationalGalleryOfArt/opendata",
+    "path": "data/objects.csv",
+    "key": "objectid",
+    "cutoff": "2026-10-01",
+    "commit": "8e95f283d66861da5a854f9530e92ff87e1eed95",
+    "date": "2026-09-30T10:00:47Z",
+    "blob": "59b0c3572193e41f35db2d0e8d061bf3ca15d8a1"
+  }
+]

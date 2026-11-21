@@ -58,12 +58,14 @@ jobs:
         # need raw OULAD/Smithsonian snapshots skip by design with an explicit
         # reason; this step re-checks the skip summary so a silent mass-skip
         # (e.g. a collection error) cannot masquerade as a green suite.
+        shell: bash
         run: |
+          set -euo pipefail
           python -m pytest -q -rs tests/research_v3 2>&1 | tee v3_pytest.log
           # Grep the recorded summary; a missing "passed" token fails the step
           # (collection crash or log truncation can never look like success).
           grep -Eq "[0-9]+ passed" v3_pytest.log
-          SKIPS=$(grep -oE "[0-9]+ skipped" v3_pytest.log | grep -oE "^[0-9]+" | tail -1)
+          SKIPS=$(awk '/[0-9]+ skipped/ {for (i=2;i<=NF;i++) if ($i ~ /^skipped/) n=$(i-1)} END {print n+0}' v3_pytest.log)
           echo "research_v3 skip count: ${SKIPS:-0}"
           if [ -z "${SKIPS:-}" ] || [ "${SKIPS:-0}" -eq 0 ]; then
             echo "no data-gated skips recorded"

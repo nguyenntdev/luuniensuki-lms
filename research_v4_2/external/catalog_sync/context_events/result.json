@@ -1,0 +1,138 @@
+[
+  {
+    "base_sha256": "1199312edf5d79f3a3e81ff752f8eee741fa286fdeea4f7b329e6bee8f5316d1",
+    "target_csv_sha256": "f709c2289805615e21395a915119d44f5f139023cc845b979562741a0652baf5",
+    "canonical_target_sha256": "f5bb3735bce57f52483394922a4c865744a7bbc1df46ec20fba495c6fb7c6ac4",
+    "rows": 69201,
+    "bytes": {
+      "own_cell": 48828,
+      "within_row": 48852,
+      "bsdiff": 71755,
+      "xdelta3": 85418,
+      "row_diff": 186220,
+      "column_diff": 169508,
+      "rule_diff": 167887,
+      "zstd_full": 2209789,
+      "zstd_patch": 141196,
+      "hdiff": 65637,
+      "whole": 46816,
+      "substring": 34268,
+      "absolute": 37908,
+      "full": 34468,
+      "own_sorted": 54140,
+      "conditional": 53832,
+      "row": 34424,
+      "context": 30632
+    },
+    "wire_sha256": {
+      "row": "08b9ca7c9b831aed44a70ecdb86116417fe5cf29754ba08162106f9ef36d50cf",
+      "context": "416a8d8b9bff0b46c968a81327beef8a28b2ca712badc3d7db98b24513b3d3b1"
+    },
+    "selected": {
+      "row": {
+        "artist": "plain",
+        "title": "legacy",
+        "dateText": "plain",
+        "medium": "plain",
+        "creditLine": "legacy",
+        "year": "plain",
+        "dimensions": "plain",
+        "width": "plain",
+        "height": "plain",
+        "depth": "legacy",
+        "units": "plain",
+        "thumbnailCopyright": "legacy",
+        "thumbnailUrl": "row",
+        "url": "plain"
+      },
+      "context": {
+        "artist": "plain",
+        "title": "context",
+        "dateText": "plain",
+        "medium": "plain",
+        "creditLine": "legacy",
+        "year": "plain",
+        "dimensions": "context",
+        "width": "plain",
+        "height": "plain",
+        "depth": "legacy",
+        "units": "plain",
+        "thumbnailCopyright": "legacy",
+        "thumbnailUrl": "start",
+        "url": "end"
+      }
+    },
+    "passed": true
+  },
+  {
+    "base_sha256": "f709c2289805615e21395a915119d44f5f139023cc845b979562741a0652baf5",
+    "target_csv_sha256": "3fb68c02725846b540a86fa9629de8b0a6902659378e853af0691bc5ff74f09d",
+    "canonical_target_sha256": "7d20923db1e8c2291f47634e2f37b1bb4c141142e1ef63b3f4de66c25d128be9",
+    "rows": 69201,
+    "bytes": {
+      "own_cell": 55416,
+      "within_row": 32876,
+      "bsdiff": 117266,
+      "xdelta3": 84298,
+      "row_diff": 83090,
+      "column_diff": 67909,
+      "rule_diff": 67722,
+      "zstd_full": 2225318,
+      "zstd_patch": 86810,
+      "hdiff": 70840,
+      "whole": 32876,
+      "substring": 32412,
+      "absolute": 32804,
+      "full": 32816,
+      "own_sorted": 63288,
+      "conditional": 62188,
+      "row": 32260,
+      "context": 31800
+    },
+    "wire_sha256": {
+      "row": "cd5d7976d18252e249d197283e9813f7bd09eaf94bdff406e81ae6e935bf8333",
+      "context": "b07ce00bc27cae1c90de3897f4910cd42c226c231a3cda0bace4e1c068631c10"
+    },
+    "selected": {
+      "row": {
+        "artist": "legacy",
+        "artistRole": "plain",
+        "artistId": "plain",
+        "title": "legacy",
+        "dateText": "legacy",
+        "medium": "plain",
+        "creditLine": "legacy",
+        "year": "legacy",
+        "acquisitionYear": "plain",
+        "dimensions": "legacy",
+        "width": "legacy",
+        "height": "plain",
+        "depth": "plain",
+        "units": "plain",
+        "thumbnailCopyright": "legacy",
+        "thumbnailUrl": "legacy",
+        "url": "row"
+      },
+      "context": {
+        "artist": "legacy",
+        "artistRole": "plain",
+        "artistId": "plain",
+        "title": "context",
+        "dateText": "legacy",
+        "medium": "plain",
+        "creditLine": "legacy",
+        "year": "legacy",
+        "acquisitionYear": "plain",
+        "dimensions": "legacy",
+        "width": "legacy",
+        "height": "plain",
+        "depth": "plain",
+        "units": "plain",
+        "thumbnailCopyright": "legacy",
+        "thumbnailUrl": "legacy",
+        "url": "context"
+      }
+    },
+    "passed": false
+  }
+]

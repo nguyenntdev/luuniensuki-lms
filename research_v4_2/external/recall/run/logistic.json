@@ -1,0 +1,128 @@
+{
+  "rows": 500316,
+  "learners": 4523,
+  "original_overlap": 0,
+  "script_sha256": "0ccbb8532e3ebbc530e33f707ebb156a61073779bff4186a5a53208ee8670ae0",
+  "validation_helpers_sha256": "116b48cc05f19698dd92efb58bf889fc69b1a4e9aed36f10325e7f9196395458",
+  "comparator_protocol_sha256": "c896ee16f873908dc8b6fdcc3595c07bed780a5c2a00b6b00a6fc63daf6c12c6",
+  "sklearn_version": "1.8.0",
+  "author_trials": [
+    {
+      "lrate": 0.0003,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.47679026019370585
+    },
+    {
+      "lrate": 0.0003,
+      "calibration": [
+        2.0360262465403203,
+        0.044561451818862466
+      ],
+      "dev_loss": 0.33471064896204034
+    },
+    {
+      "lrate": 0.001,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3990973111569527
+    },
+    {
+      "lrate": 0.001,
+      "calibration": [
+        2.038833446832696,
+        0.03224852202191588
+      ],
+      "dev_loss": 0.33434599304933343
+    },
+    {
+      "lrate": 0.003,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3695199086422984
+    },
+    {
+      "lrate": 0.003,
+      "calibration": [
+        2.071302096018365,
+        0.00615046668134519
+      ],
+      "dev_loss": 0.33427497050869387
+    },
+    {
+      "lrate": 0.01,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3623405883374312
+    },
+    {
+      "lrate": 0.01,
+      "calibration": [
+        2.070802217211366,
+        0.006172570008142193
+      ],
+      "dev_loss": 0.33427683949867537
+    }
+  ],
+  "author_selected": {
+    "lrate": 0.003,
+    "calibration": [
+      2.071302096018365,
+      0.00615046668134519
+    ],
+    "dev_loss": 0.33427497050869387
+  },
+  "linear_trials": [
+    {
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.33917318601264645
+    },
+    {
+      "calibration": [
+        1.2431530139015152,
+        0.38230958786256386
+      ],
+      "dev_loss": 0.3325520829608043
+    }
+  ],
+  "linear_selected": {
+    "calibration": [
+      1.2431530139015152,
+      0.38230958786256386
+    ],
+    "dev_loss": 0.3325520829608043
+  },
+  "linear_iterations": 918,
+  "mean_learner_nll": {
+    "author_lr": 0.3385290885718998,
+    "log_feature_lr": 0.33528070145480987,
+    "catboost": 0.3327334807274804
+  },
+  "comparator_minus_catboost": {
+    "author_lr": {
+      "gain": 0.005795607844419426,
+      "ci95": [
+        0.005012895931812911,
+        0.006587842094366696
+      ]
+    },
+    "log_feature_lr": {
+      "gain": 0.00254722072732952,
+      "ci95": [
+        0.0019167227997391534,
+        0.0032095001558798846
+      ]
+    }
+  }
+}

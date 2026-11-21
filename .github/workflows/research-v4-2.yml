@@ -1,0 +1,54 @@
+name: Research V4.2 Science and Release Gates CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  research-v4-2-gates:
+    name: Run V4.2 Automated Gates & Integrity Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest numpy scipy scikit-learn PyYAML pydantic
+
+      - name: Negative Canary Test (Verifies failures are never masked by pipefail)
+        run: |
+          set -euo pipefail
+          echo "Running negative canary to prove CI catches intentional test failures..."
+          CANARY_PASSED=0
+          # We execute an intentional failure in a subshell and verify that the pipeline fails as expected
+          if (set -euo pipefail; python -c "import sys; sys.exit(42)" 2>&1 | tee /tmp/canary.log); then
+            echo "ERROR: Subshell with intentional non-zero exit code 42 succeeded! Masking detected."
+            exit 1
+          else
+            CANARY_EXIT=$?
+            if [ "$CANARY_EXIT" -eq 42 ]; then
+              echo "Negative canary passed: Non-zero exit code 42 correctly propagated through tee."
+              CANARY_PASSED=1
+            fi
+          fi
+          test "$CANARY_PASSED" -eq 1
+
+      - name: Run V4.2 Release Gates Test Suite
+        run: |
+          set -euo pipefail
+          python -m pytest -v -rs tests/research_v4_2 2>&1 | tee /tmp/pytest_v42.log
+          python -m research_v4_2.gates.test_exit --exit-code 0 --log-file /tmp/pytest_v42.log

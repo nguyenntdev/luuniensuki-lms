@@ -55,10 +55,10 @@ Gamified LMS for Vietnamese heritage (Cửu Đỉnh). Polyglot monorepo: Axum/Ru
 
 ## Architecture & Request Routing
 
-Request flow: `Browser -> Nginx (:80/:443) -> Next.js (frontend/, :3000) -> Rust Gateway (backend-rust/, :8001) -> PostgreSQL 15`.
+In the Compose stack, `nginx-lms.conf` sends page requests to Next.js (`web:3000`) and `/api/` and `/health` directly to Axum (`api_rust:8001`). Both API services use PostgreSQL 15 over the Compose network at `db:5432`.
 
-- **Rust Gateway**: `backend-rust/` has ~168 native Axum handler bindings across 20 route groups (auth, users, lessons, quizzes, progress, quests, classrooms, leaderboard, admin, timeline, trails, FSRS, streak economy, live, history, etc.). Unmatched routes fall back to the Python gateway.
-- **Python Proxy Routes**: Managed via `backend-rust/config/route-modes.toml` (hot-reloaded on SIGHUP / every 30s). Routes pinned to `"gateway"` (`/api/v1/live/*`, `/api/v1/ai-tutor/*`) are proxied to Python (`backend/`, :8000). Default for unknown routes is `"native"`.
+- Axum registers handlers in `backend-rust/src/main.rs`. Check `backend-rust/config/route-modes.toml` for the exact method/path pairs pinned to Python, including live sessions and AI tutor calls. Unregistered routes fall back to FastAPI at `api:8000`.
+- Next.js pages and layouts live in `frontend/src/app/`, shared components in `frontend/src/components/`, and client integrations in `frontend/src/lib/`. Flutter navigation starts in `mobile/lib/routing/app_router.dart`.
 - **AI Background Worker**: `services/ai_teacher_agent/realtime_worker.py` (compose service `ai_teacher_agent`).
 - **Real-Time Media**: LiveKit (`livekit`, :7880/:7881) with Janus WebRTC gateway (`janus-gateway`, :8188/:8088/:7088) as alternative.
 - **Static Assets**:
@@ -89,27 +89,25 @@ cargo run               # Runs gateway on 0.0.0.0:8001
 ### Python Backend
 
 ```bash
-# Tests require a running PostgreSQL instance. Test DB defaults to luuniensuki_test.
-# conftest.py drops and recreates ALL tables per session (scope="session").
-DATABASE_URL="postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test" pytest
+# From a virtual environment at the repository root
+python -m pip install -r backend/requirements.txt -r backend/requirements-dev.txt
 
-# Run single test file or specific test case
-pytest tests/backend/test_auth.py::test_register -v
+# Use a disposable PostgreSQL database. The session fixture drops the public schema.
+export DATABASE_URL="postgresql+psycopg://postgres:postgres@localhost:5432/luuniensuki_test"
+python -m pytest tests/backend/test_auth.py::test_auth_register_login_me -v
 
 # Run live audio / STT / TTS unit tests
 pytest backend/tests/test_live_audio_bridge.py -v
 
-# Migrations & database seeding
+# Migrations and seeding target the database selected by DATABASE_URL
 alembic upgrade head
 python -m backend.seed --seed-path data --image-path ban-duc-noi
-
-# In docker container
-docker compose exec api pytest
 ```
 
 ### Frontend (`cd frontend`)
 
 ```bash
+npm ci
 npm run dev          # Next.js dev server on :3000
 npm run lint:ci      # Strict ESLint (flat config, --max-warnings=0, --exit-on-fatal-error)
 npm run type-check   # tsc --noEmit (also runs as prebuild hook)
@@ -123,6 +121,10 @@ npm run gen:api      # Regenerate src/types/api.ts from backend OpenAPI schema
 ### Mobile Client (`cd mobile`)
 
 ```bash
+flutter pub get
+flutter analyze --no-fatal-infos
+flutter test
+
 # Code generation for Freezed / Riverpod models
 flutter pub run build_runner build --delete-conflicting-outputs
 # Or from repo root:
@@ -132,23 +134,35 @@ flutter pub run build_runner build --delete-conflicting-outputs
 ### Local Docker Stack
 
 ```bash
-cp .env.example .env
+test -f .env || cp .env.example .env
 docker compose up -d db api api_rust web
 curl -s http://127.0.0.1:8001/health  # Verify gateway health
 ```
 
-## CI & What It Actually Runs
+## Continuous integration
 
-GitHub Actions (`.github/workflows/ci.yml`): pushes/PRs to `main`.
+Pushes and pull requests targeting `main` run the jobs in [.github/workflows/ci.yml](.github/workflows/ci.yml).
 
-| Job | Python / Node | What runs | What does NOT run |
-|-----|--------------|-----------|-------------------|
-| `backend` | Python 3.11, PG 15 | `pytest` (all tests) | `cargo test`, lint scripts |
-| `frontend` | Node 20 | `npm run lint:ci`, `npm run build`, Playwright `@smoke` | `npm run type-check`, `npm run test` (Vitest) |
+| Job | Toolchain | Checks |
+|---|---|---|
+| Backend | Python 3.11, PostgreSQL 15 | `tests/backend` and `tests/research`, followed by V5 smoke cases T001–T005 and the full `tests/v5` suite |
+| Research | Python 3.11 | `python3 research/tools/check_sources.py` and `python3 research/tools/reproduce_all.py --all` |
+| Frontend | Node 20 | Strict ESLint, Next.js build (includes the TypeScript prebuild check), Chromium Playwright tests matching `@smoke` |
+| Mobile | Flutter 3.29.0, Java 17 | Static analysis, unit and widget tests, debug APK build |
 
-Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` before deploying.
+Run Vitest locally with `npm test` in `frontend/`. For Rust changes, run Cargo tests and the six manual lint scripts above before committing. The deploy workflow separately runs the Python 3.12 backend suite and frontend lint/build unless tests are skipped on manual dispatch. It builds the backend image, runs Alembic inside the API container, and restarts the standalone Next.js service. See [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
 
-**Note**: The Rust gateway has no automated CI job. The 6 `scripts/ci/lint-*.sh` scripts exist but are manual-only. Run them locally before committing Rust changes.
+## Research code and evidence
+
+Run research commands from the repository root. Each generation has its own test suite and evidence directory.
+
+| Program | Local checks and evidence |
+|---|---|
+| Original LN-01–LN-10 | Run `python -m pytest tests/research`. Follow [research/REPRODUCE.md](research/REPRODUCE.md) to reproduce the baselines and inspect outputs in `research_artifacts/`. |
+| V2 | Run `python -m pytest tests/research_v2`. The path-filtered [V2 workflow](.github/workflows/research-v2.yml) audits committed runs in `research_artifacts_v2/runs/` and executes the synthetic T3/T3S matrix. T1/T2 remain blocked pending data. |
+| V3 (P01–P14) | Run `python -m pytest tests/research_v3`. Use [research_v3/REPRODUCE.md](research_v3/REPRODUCE.md) for paper-specific commands and the [V3 workflow](.github/workflows/research-v3.yml) for license, split, ethics and result-integrity checks. Use [scientific readiness](research_artifacts_v3/release/SCIENTIFIC_READINESS.md) and the underlying run manifests for claims about paper outcomes. |
+
+**Research V4.2.** Run `python -m pytest tests/research_v4_2` for the gates and paper fixture contracts. Task and claim registers live in `research_v4_2/release/`. The [external portfolio](research_v4_2/external/README.md) links the manuscripts, frozen results, source versions and reproduction instructions. Evaluate empirical claims against published labels, executable baselines and saved predictions. A passing fixture suite measures the software contracts. Use the [all-baseline evidence table](research_v4_2/external/SUPERIORITY.md) to check which external studies qualify for the publication goal.
 
 ## Testing Quirks & Contract Enforcement
 
@@ -178,6 +192,8 @@ Deploy workflow (`deploy.yml`) uses Python 3.12 and runs `pytest tests/backend` 
 - **Deployment**: Production at `https://lms.histolab.icu` via `docker-compose.prod.yml`. Deploy: `./scripts/deployment/deploy-safe.sh`. Post-deploy smoke: `./scripts/testing/rust_gateway_contracts.sh`.
 
 ## Production Delivery Waves Execution Log
+
+The entries below record the original wave and benchmark runs. For current verification, use the relevant test suite, wave artifacts, or versioned research readiness report.
 
 ### Wave W00: Baseline / Truth & Contract Inventory (COMPLETED)
 - **Status**: 10/10 slots complete. 78/78 tests passing.

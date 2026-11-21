@@ -1,0 +1,17 @@
+{
+  "dataset": "Settles and Meeder (2016), Duolingo shared learning traces, Harvard Dataverse, doi:10.7910/DVN/N8XJME, CC BY-NC 4.0",
+  "dataset_sha256": "26cf9b33f2e9b2e8aa9a8f262a017b30699ca2f625c56a12ce699d4ea7076873",
+  "baseline_commit": "0041df0dcd436bf1b4aa7a17a020d9c670db70d8",
+  "upstream_sha256": "3a8776a703dd42042e2c5b408858fd6f6693ce21d5a1e0a4879a17127b9135ee",
+  "baseline": "Settles and Meeder ACL 2016 author implementation, bias, lexeme and half-life loss enabled, one shuffled pass as upstream",
+  "candidate": "CatBoost CPU cross-entropy on fractional recall, same pre-session information: elapsed days, past correct, past wrong, learning-language:lexeme",
+  "seed": 42,
+  "sample": "SHA256 of UTF-8 user ID. First uint32 mod 100 < 2 includes all recorded traces for that learner. Second uint32 mod 100 partitions selected learners: <60 train, <70 calibration, <85 dev, else test.",
+  "hlr_learning_rates": [0.0003, 0.001, 0.003, 0.01],
+  "catboost_settings": [[4,150],[4,400],[6,150],[6,400]],
+  "catboost_learning_rate": 0.05,
+  "calibration": "For each fitted model evaluate raw and sigmoid-recalibrated odds; calibrator fits calibration users only. Select among 8 versions per family on DEV mean learner loss.",
+  "primary": "Expected binary negative log likelihood using observed within-session recall fraction, averaged first within each learner, then across learners",
+  "margin_nats": 0.005,
+  "decision": "One planned contrast. Gain >= margin, paired learner-bootstrap 95% lower bound > 0 and two-sided paired sign-flip p < .05. Evaluation within this snapshot only."
+}

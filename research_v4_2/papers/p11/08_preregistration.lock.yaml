@@ -1,0 +1,8 @@
+alpha_significance: 0.05
+baseline_champion_id: B_STAR_ADJUDICATED_ANALYTIC
+delta_min: 0.08
+frozen_sha256: 3a88c7f9e81b6432b001a1829e1208a0d4bc741e976829a28c4bb10b6510e4f2
+hypothesis: Evidence-path decision anchors and active facet arbitration yield a >=
+  0.08 alpha gain over B* on held-out student arguments.
+paper_id: P11
+primary_metric: Krippendorff_alpha_ordinal

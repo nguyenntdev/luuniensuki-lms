@@ -1,0 +1,9 @@
+{
+  "paper_id": "P05",
+  "v3_source_commit": "4e5a792... / 331c581...",
+  "status": "REPRODUCED",
+  "findings": "V3 reported +0.0088 AUC advantage over basic logistic regression on course-level OULAD, but lacked comparison with LefoKT/HawkesKT and failed to model cross-skill cognitive interference.",
+  "v3_baseline_auc": 0.7132,
+  "v3_proposed_auc": 0.7220,
+  "reproduced_at": "2026-11-20T00:00:00Z"
+}

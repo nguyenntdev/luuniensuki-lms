@@ -1,0 +1,10 @@
+{
+  "device": "NVIDIA GeForce RTX 4060 Ti",
+  "pytorch": "2.6.0+cu124",
+  "clients": 7,
+  "rounds": 40,
+  "local_steps": 5,
+  "parameter_payload_per_client_bytes": 3240,
+  "training_learners": 15216,
+  "development_learners": 8505
+}

@@ -1,0 +1,370 @@
+{
+  "instances": 20,
+  "witnesses_checked": 340,
+  "bootstrap_samples": 20000,
+  "comparisons": [
+    {
+      "baseline": "greedy",
+      "mean_saving": 0.06805489435160098,
+      "interval": [
+        0.05626047624841025,
+        0.08019600572369569
+      ],
+      "raw_p": 9.5367431640625e-7,
+      "wins": 20,
+      "ties": 0,
+      "losses": 0,
+      "by_family": {
+        "e": 0.07080645161290322,
+        "f": 0.0853921568627451,
+        "g": 0.056393541660576654,
+        "h": 0.05962742727017896
+      },
+      "holm_p": 0.0000057220458984375,
+      "pass": true
+    },
+    {
+      "baseline": "exchange",
+      "mean_saving": 0.038500678428349096,
+      "interval": [
+        0.028168826951070633,
+        0.048798876681661385
+      ],
+      "raw_p": 0.0000152587890625,
+      "wins": 16,
+      "ties": 4,
+      "losses": 0,
+      "by_family": {
+        "e": 0.02693965517241379,
+        "f": 0.03833333333333333,
+        "g": 0.049011738125741756,
+        "h": 0.03971798708190751
+      },
+      "holm_p": 0.0000457763671875,
+      "pass": true
+    },
+    {
+      "baseline": "single",
+      "mean_saving": 0.009569501411402333,
+      "interval": [
+        0.004729650612657421,
+        0.01446900521410257
+      ],
+      "raw_p": 0.00390625,
+      "wins": 9,
+      "ties": 10,
+      "losses": 1,
+      "by_family": {
+        "e": 0.013392857142857142,
+        "f": 0,
+        "g": 0.021713888626929558,
+        "h": 0.0031712598758226324
+      },
+      "holm_p": 0.0078125,
+      "pass": false
+    },
+    {
+      "baseline": "cft",
+      "mean_saving": -0.01704310036197463,
+      "interval": [
+        -0.025844631821673035,
+        -0.007627373800559595
+      ],
+      "raw_p": 0.99658203125,
+      "wins": 2,
+      "ties": 8,
+      "losses": 10,
+      "by_family": {
+        "e": -0.007142857142857143,
+        "f": -0.04285714285714286,
+        "g": -0.0025050489556970113,
+        "h": -0.015667352492201504
+      },
+      "holm_p": 0.99658203125,
+      "pass": false
+    },
+    {
+      "baseline": "zhu",
+      "mean_saving": 0.06805489435160098,
+      "interval": [
+        0.05626047624841025,
+        0.08019600572369569
+      ],
+      "raw_p": 9.5367431640625e-7,
+      "wins": 20,
+      "ties": 0,
+      "losses": 0,
+      "by_family": {
+        "e": 0.07080645161290322,
+        "f": 0.0853921568627451,
+        "g": 0.056393541660576654,
+        "h": 0.05962742727017896
+      },
+      "holm_p": 0.0000057220458984375,
+      "pass": true
+    },
+    {
+      "baseline": "highs",
+      "mean_saving": 0.06805489435160098,
+      "interval": [
+        0.05626047624841025,
+        0.08019600572369569
+      ],
+      "raw_p": 9.5367431640625e-7,
+      "wins": 20,
+      "ties": 0,
+      "losses": 0,
+      "by_family": {
+        "e": 0.07080645161290322,
+        "f": 0.0853921568627451,
+        "g": 0.056393541660576654,
+        "h": 0.05962742727017896
+      },
+      "holm_p": 0.0000057220458984375,
+      "pass": true
+    }
+  ],
+  "all_pass": false,
+  "costs": [
+    {
+      "name": "scpnre1",
+      "medians": {
+        "adaptive": 29,
+        "greedy": 30,
+        "exchange": 29,
+        "single": 29,
+        "cft": 29,
+        "zhu": 30,
+        "highs": 30
+      }
+    },
+    {
+      "name": "scpnre2",
+      "medians": {
+        "adaptive": 31,
+        "greedy": 32,
+        "exchange": 32,
+        "single": 32,
+        "cft": 31,
+        "zhu": 32,
+        "highs": 32
+      }
+    },
+    {
+      "name": "scpnre3",
+      "medians": {
+        "adaptive": 27,
+        "greedy": 31,
+        "exchange": 29,
+        "single": 28,
+        "cft": 27,
+        "zhu": 31,
+        "highs": 31
+      }
+    },
+    {
+      "name": "scpnre4",
+      "medians": {
+        "adaptive": 29,
+        "greedy": 32,
+        "exchange": 29,
+        "single": 29,
+        "cft": 28,
+        "zhu": 32,
+        "highs": 32
+      }
+    },
+    {
+      "name": "scpnre5",
+      "medians": {
+        "adaptive": 28,
+        "greedy": 30,
+        "exchange": 29,
+        "single": 28,
+        "cft": 28,
+        "zhu": 30,
+        "highs": 30
+      }
+    },
+    {
+      "name": "scpnrf1",
+      "medians": {
+        "adaptive": 15,
+        "greedy": 16,
+        "exchange": 15,
+        "single": 15,
+        "cft": 14,
+        "zhu": 16,
+        "highs": 16
+      }
+    },
+    {
+      "name": "scpnrf2",
+      "medians": {
+        "adaptive": 15,
+        "greedy": 16,
+        "exchange": 15,
+        "single": 15,
+        "cft": 15,
+        "zhu": 16,
+        "highs": 16
+      }
+    },
+    {
+      "name": "scpnrf3",
+      "medians": {
+        "adaptive": 15,
+        "greedy": 17,
+        "exchange": 16,
+        "single": 15,
+        "cft": 14,
+        "zhu": 17,
+        "highs": 17
+      }
+    },
+    {
+      "name": "scpnrf4",
+      "medians": {
+        "adaptive": 15,
+        "greedy": 17,
+        "exchange": 16,
+        "single": 15,
+        "cft": 14,
+        "zhu": 17,
+        "highs": 17
+      }
+    },
+    {
+      "name": "scpnrf5",
+      "medians": {
+        "adaptive": 14,
+        "greedy": 15,
+        "exchange": 15,
+        "single": 14,
+        "cft": 14,
+        "zhu": 15,
+        "highs": 15
+      }
+    },
+    {
+      "name": "scpnrg1",
+      "medians": {
+        "adaptive": 176,
+        "greedy": 189,
+        "exchange": 187,
+        "single": 181,
+        "cft": 177,
+        "zhu": 189,
+        "highs": 189
+      }
+    },
+    {
+      "name": "scpnrg2",
+      "medians": {
+        "adaptive": 157,
+        "greedy": 162,
+        "exchange": 161,
+        "single": 158,
+        "cft": 156,
+        "zhu": 162,
+        "highs": 162
+      }
+    },
+    {
+      "name": "scpnrg3",
+      "medians": {
+        "adaptive": 168,
+        "greedy": 181,
+        "exchange": 180,
+        "single": 173,
+        "cft": 168,
+        "zhu": 181,
+        "highs": 181
+      }
+    },
+    {
+      "name": "scpnrg4",
+      "medians": {
+        "adaptive": 172,
+        "greedy": 181,
+        "exchange": 180,
+        "single": 175,
+        "cft": 170,
+        "zhu": 181,
+        "highs": 181
+      }
+    },
+    {
+      "name": "scpnrg5",
+      "medians": {
+        "adaptive": 170,
+        "greedy": 181,
+        "exchange": 179,
+        "single": 175,
+        "cft": 170,
+        "zhu": 181,
+        "highs": 181
+      }
+    },
+    {
+      "name": "scpnrh1",
+      "medians": {
+        "adaptive": 66,
+        "greedy": 69,
+        "exchange": 67,
+        "single": 66,
+        "cft": 65,
+        "zhu": 69,
+        "highs": 69
+      }
+    },
+    {
+      "name": "scpnrh2",
+      "medians": {
+        "adaptive": 67,
+        "greedy": 73,
+        "exchange": 71,
+        "single": 68,
+        "cft": 65,
+        "zhu": 73,
+        "highs": 73
+      }
+    },
+    {
+      "name": "scpnrh3",
+      "medians": {
+        "adaptive": 62,
+        "greedy": 63,
+        "exchange": 63,
+        "single": 61,
+        "cft": 61,
+        "zhu": 63,
+        "highs": 63
+      }
+    },
+    {
+      "name": "scpnrh4",
+      "medians": {
+        "adaptive": 62,
+        "greedy": 67,
+        "exchange": 66,
+        "single": 62,
+        "cft": 60,
+        "zhu": 67,
+        "highs": 67
+      }
+    },
+    {
+      "name": "scpnrh5",
+      "medians": {
+        "adaptive": 56,
+        "greedy": 61,
+        "exchange": 59,
+        "single": 57,
+        "cft": 57,
+        "zhu": 61,
+        "highs": 61
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "noncanonical_ids_with_matching_internal_id": 57963,
+  "also_in_canonical_export": 57548,
+  "noncanonical_labels_conflict_with_canonical": 14437,
+  "conflicting_among_early_blank_or_pending": {
+    "Copyright Not Evaluated": 1153,
+    "Copyright Undetermined": 34
+  },
+  "different_nonblank_labels_on_both_paths": 14437,
+  "different_nonblank_labels_on_both_paths_among_early_pending": {
+    "Copyright Not Evaluated": 1153,
+    "Copyright Undetermined": 34
+  },
+  "early_pending_under_unambiguous_later_labels": {
+    "ambiguous": 1187,
+    "still_pending": 61,
+    "other_substantive": 53,
+    "public_domain": 1
+  }
+}

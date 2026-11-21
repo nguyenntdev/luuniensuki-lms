@@ -1,0 +1,35 @@
+{
+  "paper_id": "P04",
+  "ablations": {
+    "A1_no_topological_inversion": {
+      "desc": "Removes (I - A) inversion and trains directly on raw cumulative features X",
+      "s1_auc": 0.8796,
+      "s2_auc": 0.8318,
+      "delta_vs_full": -0.0641
+    },
+    "A2_unverified_shuffled_dag": {
+      "desc": "Inverts randomly permuted adjacency matrix instead of canonical curriculum DAG",
+      "s1_auc": 0.8124,
+      "s2_auc": 0.7950,
+      "delta_vs_full": -0.1313
+    },
+    "A3_no_regularization": {
+      "desc": "Removes L2 ridge penalty (C -> infinity)",
+      "s1_auc": 0.9410,
+      "s2_auc": 0.9055,
+      "delta_vs_full": -0.0027
+    }
+  },
+  "canaries": {
+    "negative_label_shuffle_canary": {
+      "desc": "Shuffle y_train randomly; verifies AUC drops to 0.50 null",
+      "auc_s0": 0.5012,
+      "auc_s1": 0.4988,
+      "passed": true
+    },
+    "future_leakage_canary": {
+      "desc": "Verifies test target labels are never read or passed into feature transformations",
+      "passed": true
+    }
+  }
+}

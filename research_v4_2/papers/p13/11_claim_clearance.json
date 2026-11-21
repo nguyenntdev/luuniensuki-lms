@@ -1,0 +1,8 @@
+{
+  "paper_id": "P13",
+  "claim_id": "CLAIM_P13_SCHEDULE_NORMALIZED_EARLY_WARNING_V42",
+  "claim_status": "ENGINEERING_ONLY",
+  "evidence_source": "generated_fixtures",
+  "human_approval": false,
+  "submission_ready": false
+}

@@ -1,0 +1,17 @@
+{
+  "outcomes": {
+    "other_substantive": 56,
+    "public_domain": 1,
+    "still_pending": 1245
+  },
+  "final_declarations": {
+    "In Copyright": 54,
+    "No Known Copyright": 2,
+    "Public Domain": 1
+  },
+  "distinct_resolved_groups": 12,
+  "earlier_sibling_support": {
+    "unavailable": 55,
+    "available": 2
+  }
+}

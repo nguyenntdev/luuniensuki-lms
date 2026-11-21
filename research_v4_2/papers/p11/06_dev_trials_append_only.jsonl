@@ -1,0 +1,3 @@
+{"trial_id": 1, "config": {"threshold": 1.5}, "dev_alpha": 0.81, "notes": "insufficient arbitration"}
+{"trial_id": 2, "config": {"threshold": 0.5}, "dev_alpha": 0.94, "notes": "excessive arbitration cost"}
+{"trial_id": 3, "config": {"threshold": 1.0}, "dev_alpha": 1.0, "notes": "optimal trade-off: high reliability at minimal arbitration burden"}

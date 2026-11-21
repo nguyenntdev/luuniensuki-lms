@@ -1,0 +1,10 @@
+{"case_id": "DEV-FAIL-001", "baseline_champion": "c1_static_fallback", "failure_stratum": "rights_violation", "error_overlap_with_c1": true, "residual_gap_confirmed": true}
+{"case_id": "DEV-FAIL-002", "baseline_champion": "c1_static_fallback", "failure_stratum": "device_payload_exceeded", "error_overlap_with_c1": true, "residual_gap_confirmed": true}
+{"case_id": "DEV-FAIL-003", "baseline_champion": "c1_static_fallback", "failure_stratum": "rights_violation", "error_overlap_with_c1": true, "residual_gap_confirmed": true}
+{"case_id": "DEV-FAIL-004", "baseline_champion": "c1_static_fallback", "failure_stratum": "device_payload_exceeded", "error_overlap_with_c1": true, "residual_gap_confirmed": true}
+{"case_id": "DEV-FAIL-005", "baseline_champion": "c1_static_fallback", "failure_stratum": "rights_violation", "error_overlap_with_c1": true, "residual_gap_confirmed": true}
+{"case_id": "DEV-FAIL-006", "baseline_champion": "c1_static_fallback", "failure_stratum": "device_payload_exceeded", "error_overlap_with_c1": true, "residual_gap_confirmed": true}
+{"case_id": "DEV-FAIL-007", "baseline_champion": "c1_static_fallback", "failure_stratum": "rights_violation", "error_overlap_with_c1": true, "residual_gap_confirmed": true}
+{"case_id": "DEV-FAIL-008", "baseline_champion": "c1_static_fallback", "failure_stratum": "device_payload_exceeded", "error_overlap_with_c1": true, "residual_gap_confirmed": true}
+{"case_id": "DEV-FAIL-009", "baseline_champion": "c1_static_fallback", "failure_stratum": "rights_violation", "error_overlap_with_c1": true, "residual_gap_confirmed": true}
+{"case_id": "DEV-FAIL-010", "baseline_champion": "c1_static_fallback", "failure_stratum": "device_payload_exceeded", "error_overlap_with_c1": true, "residual_gap_confirmed": true}

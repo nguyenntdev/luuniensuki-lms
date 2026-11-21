@@ -1,0 +1,9 @@
+{
+  "evidence_source": "generated_fixtures",
+  "paper_id": "P07",
+  "independent_cohort_source": "generated_fixtures",
+  "n_replication_cases": 60,
+  "replication_delta": 0.5093,
+  "consistent_direction": true,
+  "status": "FIXTURE_CHECK"
+}

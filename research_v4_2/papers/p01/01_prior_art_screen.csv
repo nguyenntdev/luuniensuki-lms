@@ -1,0 +1,4 @@
+reference_id,title,year,doi_or_url,mechanism,overlap_risk,permission_status
+CRC2026,Conformal selective prediction with cost aware deferral for safe clinical triage under distribution shift,2026,https://www.nature.com/articles/s41598-026-40637-w,Conformal cost-aware deferral,HIGH,DIFFERENTIATED_VIA_GROUP_CAPACITY_COUPLING
+WILDS,WILDS: A Benchmark of in-the-Wild Distribution Shifts,2021,https://proceedings.mlr.press/v139/koh21a.html,Empirical OOD shift evaluation,MEDIUM,BENCHMARK_METHODOLOGY_REFERENCE
+FAIR2024,Group Fairness in Predict-Then-Optimize Settings for Restless Bandits,2024,https://proceedings.mlr.press/v244/verma24a.html,Predict-then-optimize fairness,MEDIUM,DISTINCT_TASK_SETTING

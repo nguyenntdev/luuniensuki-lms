@@ -1,0 +1,10 @@
+{
+  "paper_id": "P13",
+  "cohort": "generated_fixtures",
+  "candidate_auroc": 1.0,
+  "baseline_b_star_auroc": 1.0,
+  "delta_observed": 0.0,
+  "delta_min": 0.04,
+  "replicated": false,
+  "evidence_source": "generated_fixtures"
+}

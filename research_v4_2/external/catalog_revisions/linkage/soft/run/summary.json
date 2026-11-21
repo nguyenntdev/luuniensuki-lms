@@ -1,0 +1,324 @@
+{
+  "DBLP-ACM": {
+    "fit": 5900,
+    "calibration": 1517,
+    "validation": 2473,
+    "models": {
+      "original_flat": {
+        "threshold": 0.6501098104313783,
+        "calibration_f1": 0.9523809523809524,
+        "f1": 0.9405162738496072,
+        "tp": 419,
+        "fp": 28,
+        "fn": 25,
+        "tn": 2001
+      },
+      "original_aligned": {
+        "threshold": 0.4845130575969428,
+        "calibration_f1": 0.9548872180451128,
+        "f1": 0.9469026548672567,
+        "tp": 428,
+        "fp": 32,
+        "fn": 16,
+        "tn": 1997
+      },
+      "original_matrix": {
+        "threshold": 0.6553236126377233,
+        "calibration_f1": 0.9734848484848485,
+        "f1": 0.9664429530201343,
+        "tp": 432,
+        "fp": 18,
+        "fn": 12,
+        "tn": 2011
+      },
+      "original_pooled": {
+        "threshold": 0.5570132622689644,
+        "calibration_f1": 0.979047619047619,
+        "f1": 0.9653631284916201,
+        "tp": 432,
+        "fp": 19,
+        "fn": 12,
+        "tn": 2010
+      },
+      "original_candidate": {
+        "threshold": 0.1775680133897251,
+        "calibration_f1": 0.9739776951672862,
+        "f1": 0.9671052631578947,
+        "tp": 441,
+        "fp": 27,
+        "fn": 3,
+        "tn": 2002
+      },
+      "secondstring": {
+        "threshold": 0.7528321682805804,
+        "calibration_f1": 0.9281767955801105,
+        "f1": 0.913232104121475,
+        "tp": 421,
+        "fp": 57,
+        "fn": 23,
+        "tn": 1972
+      },
+      "char": {
+        "threshold": 0.26742889013641485,
+        "calibration_f1": 0.9700374531835206,
+        "f1": 0.9659714599341384,
+        "tp": 440,
+        "fp": 27,
+        "fn": 4,
+        "tn": 2002
+      },
+      "flat_soft": {
+        "threshold": 0.39989237026376245,
+        "calibration_f1": 0.9718574108818012,
+        "f1": 0.9656699889258029,
+        "tp": 436,
+        "fp": 23,
+        "fn": 8,
+        "tn": 2006
+      },
+      "assignment": {
+        "threshold": 0.37557632476431385,
+        "calibration_f1": 0.9735849056603774,
+        "f1": 0.9656699889258029,
+        "tp": 436,
+        "fp": 23,
+        "fn": 8,
+        "tn": 2006
+      },
+      "ordered": {
+        "threshold": 0.8599249895861967,
+        "calibration_f1": 0.9809885931558935,
+        "f1": 0.96962879640045,
+        "tp": 431,
+        "fp": 14,
+        "fn": 13,
+        "tn": 2015
+      },
+      "candidate": {
+        "threshold": 0.7921822640291827,
+        "calibration_f1": 0.9791271347248577,
+        "f1": 0.9696969696969697,
+        "tp": 432,
+        "fp": 15,
+        "fn": 12,
+        "tn": 2014
+      }
+    },
+    "contrasts": {
+      "original_flat": {
+        "gain": 0.029180695847362492,
+        "fixed": 37,
+        "lost": 11
+      },
+      "original_aligned": {
+        "gain": 0.022794314829713058,
+        "fixed": 25,
+        "lost": 4
+      },
+      "original_matrix": {
+        "gain": 0.0032540166768354473,
+        "fixed": 11,
+        "lost": 8
+      },
+      "original_pooled": {
+        "gain": 0.004333841205349631,
+        "fixed": 9,
+        "lost": 5
+      },
+      "original_candidate": {
+        "gain": 0.002591706539075034,
+        "fixed": 12,
+        "lost": 9
+      },
+      "secondstring": {
+        "gain": 0.05646486557549468,
+        "fixed": 61,
+        "lost": 8
+      },
+      "char": {
+        "gain": 0.0037255097628313694,
+        "fixed": 12,
+        "lost": 8
+      },
+      "flat_soft": {
+        "gain": 0.00402698077116681,
+        "fixed": 9,
+        "lost": 5
+      },
+      "assignment": {
+        "gain": 0.00402698077116681,
+        "fixed": 9,
+        "lost": 5
+      },
+      "ordered": {
+        "gain": 6.81732965197579e-05,
+        "fixed": 1,
+        "lost": 1
+      }
+    },
+    "strongest_competitor": "ordered",
+    "smallest_gain": 6.81732965197579e-05,
+    "passes_one_point": false
+  },
+  "DBLP-GoogleScholar": {
+    "fit": 13840,
+    "calibration": 3383,
+    "validation": 5742,
+    "models": {
+      "original_flat": {
+        "threshold": 0.36446863819698194,
+        "calibration_f1": 0.9030868628858579,
+        "f1": 0.8818755635707844,
+        "tp": 978,
+        "fp": 170,
+        "fn": 92,
+        "tn": 4502
+      },
+      "original_aligned": {
+        "threshold": 0.2605534584630881,
+        "calibration_f1": 0.9110473457675753,
+        "f1": 0.897355445988346,
+        "tp": 1001,
+        "fp": 160,
+        "fn": 69,
+        "tn": 4512
+      },
+      "original_matrix": {
+        "threshold": 0.22121484351600704,
+        "calibration_f1": 0.914651493598862,
+        "f1": 0.8935041979673001,
+        "tp": 1011,
+        "fp": 182,
+        "fn": 59,
+        "tn": 4490
+      },
+      "original_pooled": {
+        "threshold": 0.25086082938371074,
+        "calibration_f1": 0.9127040454222853,
+        "f1": 0.8982142857142857,
+        "tp": 1006,
+        "fp": 164,
+        "fn": 64,
+        "tn": 4508
+      },
+      "original_candidate": {
+        "threshold": 0.2878367415450042,
+        "calibration_f1": 0.9126074498567335,
+        "f1": 0.9012178619756428,
+        "tp": 999,
+        "fp": 148,
+        "fn": 71,
+        "tn": 4524
+      },
+      "secondstring": {
+        "threshold": 0.5028384944667521,
+        "calibration_f1": 0.870748299319728,
+        "f1": 0.8606271777003485,
+        "tp": 988,
+        "fp": 238,
+        "fn": 82,
+        "tn": 4434
+      },
+      "char": {
+        "threshold": 0.5109234025253678,
+        "calibration_f1": 0.9378698224852071,
+        "f1": 0.9222065063649222,
+        "tp": 978,
+        "fp": 73,
+        "fn": 92,
+        "tn": 4599
+      },
+      "flat_soft": {
+        "threshold": 0.5582318051933775,
+        "calibration_f1": 0.9374068554396424,
+        "f1": 0.9197911722828667,
+        "tp": 969,
+        "fp": 68,
+        "fn": 101,
+        "tn": 4604
+      },
+      "assignment": {
+        "threshold": 0.43376711793690925,
+        "calibration_f1": 0.9392831016825164,
+        "f1": 0.927873429502094,
+        "tp": 997,
+        "fp": 82,
+        "fn": 73,
+        "tn": 4590
+      },
+      "ordered": {
+        "threshold": 0.3509917929432697,
+        "calibration_f1": 0.9439184268026221,
+        "f1": 0.9372997711670481,
+        "tp": 1024,
+        "fp": 91,
+        "fn": 46,
+        "tn": 4581
+      },
+      "candidate": {
+        "threshold": 0.35930686919052895,
+        "calibration_f1": 0.9467541940189642,
+        "f1": 0.9378739070409572,
+        "tp": 1019,
+        "fp": 84,
+        "fn": 51,
+        "tn": 4588
+      }
+    },
+    "contrasts": {
+      "original_flat": {
+        "gain": 0.05599834347017274,
+        "fixed": 164,
+        "lost": 37
+      },
+      "original_aligned": {
+        "gain": 0.04051846105261114,
+        "fixed": 129,
+        "lost": 35
+      },
+      "original_matrix": {
+        "gain": 0.044369709073657115,
+        "fixed": 144,
+        "lost": 38
+      },
+      "original_pooled": {
+        "gain": 0.039659621326671446,
+        "fixed": 127,
+        "lost": 34
+      },
+      "original_candidate": {
+        "gain": 0.03665604506531439,
+        "fixed": 113,
+        "lost": 29
+      },
+      "secondstring": {
+        "gain": 0.07724672934060872,
+        "fixed": 229,
+        "lost": 44
+      },
+      "char": {
+        "gain": 0.015667400676035004,
+        "fixed": 63,
+        "lost": 33
+      },
+      "flat_soft": {
+        "gain": 0.018082734758090524,
+        "fixed": 63,
+        "lost": 29
+      },
+      "assignment": {
+        "gain": 0.01000047753886324,
+        "fixed": 50,
+        "lost": 30
+      },
+      "ordered": {
+        "gain": 0.0005741358739090874,
+        "fixed": 12,
+        "lost": 10
+      }
+    },
+    "strongest_competitor": "ordered",
+    "smallest_gain": 0.0005741358739090874,
+    "passes_one_point": false
+  }
+}

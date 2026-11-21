@@ -1,0 +1,7 @@
+# Interpretation of the development-page exclusion
+
+This discrepancy was found by comparing page titles while the first three base checkpoints had finished scoring and before the eight-model comparison or any stack accuracy was available. The frozen evaluator's cohort function restricts the test release to real revisions before collecting page titles. The written protocol specifies excluding every title in the official test release from development.
+
+Both interpretations hold out the same 128 real-revision test pages and score all 1,335 rows. The frozen code selected 192 development pages with 1,800 rows. It includes 56 real development rows from *Linkin Park*. Four synthetic rows in the test file use that title. None belongs to the evaluated holdout. Excluding every test-release title changes one selected development page. *San Francisco International Airport* contributes 22 real rows, yielding 1,766 development rows across 192 pages.
+
+Preserve the first run under the frozen evaluator. For the literal protocol, score the additional 22 development rows with each declared checkpoint, join existing scores by example ID, retune both stacks on the corrected development set, and execute the frozen comparison on exactly the same test scores. Report both outcomes. No threshold, candidate, test page, bootstrap seed or comparator changes. Stored test labels are used only for scoring the fixed policies.

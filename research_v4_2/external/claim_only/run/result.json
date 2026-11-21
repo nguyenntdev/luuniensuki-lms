@@ -1,0 +1,17 @@
+{
+  "n_train": 145446,
+  "n_dev": 19998,
+  "majority_accuracy": 0.3333333333333333,
+  "1": {
+    "accuracy": 0.5033503350335033,
+    "macro_f1": 0.48018803895130097,
+    "support_high_count": 473,
+    "support_high_precision": 0.7526427061310782
+  },
+  "2": {
+    "accuracy": 0.5247024702470247,
+    "macro_f1": 0.5073812157004224,
+    "support_high_count": 795,
+    "support_high_precision": 0.8037735849056604
+  }
+}

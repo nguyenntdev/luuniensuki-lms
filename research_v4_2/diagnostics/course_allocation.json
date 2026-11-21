@@ -1,0 +1,1088 @@
+{
+  "dataset_sha256": "e90e55fd65ec462ae283ebeb2cca409319e3460ed898d8754f62fb35cc83a65d",
+  "sklearn": "1.8.0",
+  "source_rows": 4424,
+  "resolved_rows": 3630,
+  "features": [
+    "Admission grade",
+    "Previous qualification (grade)",
+    "Application order",
+    "Curricular units 1st sem (enrolled)",
+    "Curricular units 1st sem (approved)",
+    "Curricular units 1st sem (grade)",
+    "Curricular units 1st sem (evaluations)"
+  ],
+  "folds": "leave one course out, no tuning",
+  "models": {
+    "logistic": {
+      "auc": 0.8885475546425936,
+      "nll": 0.382167889210508,
+      "courses": {
+        "33": {
+          "n": 9,
+          "k": 1,
+          "seats_changed": 0,
+          "risk": {
+            "captured": 1,
+            "by_group": {
+              "0": {
+                "captured": 0,
+                "positives": 1
+              },
+              "1": {
+                "captured": 1,
+                "positives": 7
+              }
+            }
+          },
+          "quota": {
+            "captured": 1,
+            "by_group": {
+              "0": {
+                "captured": 0,
+                "positives": 1
+              },
+              "1": {
+                "captured": 1,
+                "positives": 7
+              }
+            }
+          }
+        },
+        "171": {
+          "n": 178,
+          "k": 17,
+          "seats_changed": 1,
+          "risk": {
+            "captured": 8,
+            "by_group": {
+              "0": {
+                "captured": 5,
+                "positives": 36
+              },
+              "1": {
+                "captured": 3,
+                "positives": 46
+              }
+            }
+          },
+          "quota": {
+            "captured": 7,
+            "by_group": {
+              "0": {
+                "captured": 4,
+                "positives": 36
+              },
+              "1": {
+                "captured": 3,
+                "positives": 46
+              }
+            }
+          }
+        },
+        "8014": {
+          "n": 194,
+          "k": 19,
+          "seats_changed": 4,
+          "risk": {
+            "captured": 19,
+            "by_group": {
+              "0": {
+                "captured": 11,
+                "positives": 54
+              },
+              "1": {
+                "captured": 8,
+                "positives": 17
+              }
+            }
+          },
+          "quota": {
+            "captured": 19,
+            "by_group": {
+              "0": {
+                "captured": 15,
+                "positives": 54
+              },
+              "1": {
+                "captured": 4,
+                "positives": 17
+              }
+            }
+          }
+        },
+        "9003": {
+          "n": 173,
+          "k": 17,
+          "seats_changed": 2,
+          "risk": {
+            "captured": 17,
+            "by_group": {
+              "0": {
+                "captured": 3,
+                "positives": 17
+              },
+              "1": {
+                "captured": 14,
+                "positives": 69
+              }
+            }
+          },
+          "quota": {
+            "captured": 17,
+            "by_group": {
+              "0": {
+                "captured": 5,
+                "positives": 17
+              },
+              "1": {
+                "captured": 12,
+                "positives": 69
+              }
+            }
+          }
+        },
+        "9070": {
+          "n": 184,
+          "k": 18,
+          "seats_changed": 6,
+          "risk": {
+            "captured": 18,
+            "by_group": {
+              "0": {
+                "captured": 4,
+                "positives": 22
+              },
+              "1": {
+                "captured": 14,
+                "positives": 29
+              }
+            }
+          },
+          "quota": {
+            "captured": 16,
+            "by_group": {
+              "0": {
+                "captured": 8,
+                "positives": 22
+              },
+              "1": {
+                "captured": 8,
+                "positives": 29
+              }
+            }
+          }
+        },
+        "9085": {
+          "n": 262,
+          "k": 26,
+          "seats_changed": 5,
+          "risk": {
+            "captured": 25,
+            "by_group": {
+              "0": {
+                "captured": 16,
+                "positives": 59
+              },
+              "1": {
+                "captured": 9,
+                "positives": 31
+              }
+            }
+          },
+          "quota": {
+            "captured": 25,
+            "by_group": {
+              "0": {
+                "captured": 21,
+                "positives": 59
+              },
+              "1": {
+                "captured": 4,
+                "positives": 31
+              }
+            }
+          }
+        },
+        "9119": {
+          "n": 106,
+          "k": 10,
+          "seats_changed": 1,
+          "risk": {
+            "captured": 10,
+            "by_group": {
+              "0": {
+                "captured": 0,
+                "positives": 6
+              },
+              "1": {
+                "captured": 10,
+                "positives": 86
+              }
+            }
+          },
+          "quota": {
+            "captured": 10,
+            "by_group": {
+              "0": {
+                "captured": 1,
+                "positives": 6
+              },
+              "1": {
+                "captured": 9,
+                "positives": 86
+              }
+            }
+          }
+        },
+        "9130": {
+          "n": 120,
+          "k": 12,
+          "seats_changed": 2,
+          "risk": {
+            "captured": 12,
+            "by_group": {
+              "0": {
+                "captured": 5,
+                "positives": 38
+              },
+              "1": {
+                "captured": 7,
+                "positives": 40
+              }
+            }
+          },
+          "quota": {
+            "captured": 12,
+            "by_group": {
+              "0": {
+                "captured": 7,
+                "positives": 38
+              },
+              "1": {
+                "captured": 5,
+                "positives": 40
+              }
+            }
+          }
+        },
+        "9147": {
+          "n": 272,
+          "k": 27,
+          "seats_changed": 8,
+          "risk": {
+            "captured": 27,
+            "by_group": {
+              "0": {
+                "captured": 7,
+                "positives": 54
+              },
+              "1": {
+                "captured": 20,
+                "positives": 80
+              }
+            }
+          },
+          "quota": {
+            "captured": 27,
+            "by_group": {
+              "0": {
+                "captured": 15,
+                "positives": 54
+              },
+              "1": {
+                "captured": 12,
+                "positives": 80
+              }
+            }
+          }
+        },
+        "9238": {
+          "n": 313,
+          "k": 31,
+          "seats_changed": 6,
+          "risk": {
+            "captured": 31,
+            "by_group": {
+              "0": {
+                "captured": 21,
+                "positives": 43
+              },
+              "1": {
+                "captured": 10,
+                "positives": 22
+              }
+            }
+          },
+          "quota": {
+            "captured": 30,
+            "by_group": {
+              "0": {
+                "captured": 26,
+                "positives": 43
+              },
+              "1": {
+                "captured": 4,
+                "positives": 22
+              }
+            }
+          }
+        },
+        "9254": {
+          "n": 211,
+          "k": 21,
+          "seats_changed": 4,
+          "risk": {
+            "captured": 20,
+            "by_group": {
+              "0": {
+                "captured": 9,
+                "positives": 52
+              },
+              "1": {
+                "captured": 11,
+                "positives": 44
+              }
+            }
+          },
+          "quota": {
+            "captured": 20,
+            "by_group": {
+              "0": {
+                "captured": 13,
+                "positives": 52
+              },
+              "1": {
+                "captured": 7,
+                "positives": 44
+              }
+            }
+          }
+        },
+        "9500": {
+          "n": 666,
+          "k": 66,
+          "seats_changed": 9,
+          "risk": {
+            "captured": 65,
+            "by_group": {
+              "0": {
+                "captured": 44,
+                "positives": 81
+              },
+              "1": {
+                "captured": 21,
+                "positives": 37
+              }
+            }
+          },
+          "quota": {
+            "captured": 63,
+            "by_group": {
+              "0": {
+                "captured": 51,
+                "positives": 81
+              },
+              "1": {
+                "captured": 12,
+                "positives": 37
+              }
+            }
+          }
+        },
+        "9556": {
+          "n": 69,
+          "k": 6,
+          "seats_changed": 3,
+          "risk": {
+            "captured": 6,
+            "by_group": {
+              "0": {
+                "captured": 2,
+                "positives": 21
+              },
+              "1": {
+                "captured": 4,
+                "positives": 12
+              }
+            }
+          },
+          "quota": {
+            "captured": 6,
+            "by_group": {
+              "0": {
+                "captured": 5,
+                "positives": 21
+              },
+              "1": {
+                "captured": 1,
+                "positives": 12
+              }
+            }
+          }
+        },
+        "9670": {
+          "n": 220,
+          "k": 22,
+          "seats_changed": 4,
+          "risk": {
+            "captured": 22,
+            "by_group": {
+              "0": {
+                "captured": 8,
+                "positives": 41
+              },
+              "1": {
+                "captured": 14,
+                "positives": 54
+              }
+            }
+          },
+          "quota": {
+            "captured": 22,
+            "by_group": {
+              "0": {
+                "captured": 12,
+                "positives": 41
+              },
+              "1": {
+                "captured": 10,
+                "positives": 54
+              }
+            }
+          }
+        },
+        "9773": {
+          "n": 297,
+          "k": 29,
+          "seats_changed": 4,
+          "risk": {
+            "captured": 29,
+            "by_group": {
+              "0": {
+                "captured": 15,
+                "positives": 60
+              },
+              "1": {
+                "captured": 14,
+                "positives": 41
+              }
+            }
+          },
+          "quota": {
+            "captured": 29,
+            "by_group": {
+              "0": {
+                "captured": 19,
+                "positives": 60
+              },
+              "1": {
+                "captured": 10,
+                "positives": 41
+              }
+            }
+          }
+        },
+        "9853": {
+          "n": 142,
+          "k": 14,
+          "seats_changed": 0,
+          "risk": {
+            "captured": 14,
+            "by_group": {
+              "0": {
+                "captured": 13,
+                "positives": 81
+              },
+              "1": {
+                "captured": 1,
+                "positives": 4
+              }
+            }
+          },
+          "quota": {
+            "captured": 14,
+            "by_group": {
+              "0": {
+                "captured": 13,
+                "positives": 81
+              },
+              "1": {
+                "captured": 1,
+                "positives": 4
+              }
+            }
+          }
+        },
+        "9991": {
+          "n": 214,
+          "k": 21,
+          "seats_changed": 1,
+          "risk": {
+            "captured": 21,
+            "by_group": {
+              "0": {
+                "captured": 10,
+                "positives": 54
+              },
+              "1": {
+                "captured": 11,
+                "positives": 82
+              }
+            }
+          },
+          "quota": {
+            "captured": 21,
+            "by_group": {
+              "0": {
+                "captured": 9,
+                "positives": 54
+              },
+              "1": {
+                "captured": 12,
+                "positives": 82
+              }
+            }
+          }
+        }
+      },
+      "binding_courses": 15,
+      "review_slots": 357
+    },
+    "boosting": {
+      "auc": 0.8660446086303584,
+      "nll": 0.5145098803364457,
+      "courses": {
+        "33": {
+          "n": 9,
+          "k": 1,
+          "seats_changed": 0,
+          "risk": {
+            "captured": 1,
+            "by_group": {
+              "0": {
+                "captured": 0,
+                "positives": 1
+              },
+              "1": {
+                "captured": 1,
+                "positives": 7
+              }
+            }
+          },
+          "quota": {
+            "captured": 1,
+            "by_group": {
+              "0": {
+                "captured": 0,
+                "positives": 1
+              },
+              "1": {
+                "captured": 1,
+                "positives": 7
+              }
+            }
+          }
+        },
+        "171": {
+          "n": 178,
+          "k": 17,
+          "seats_changed": 2,
+          "risk": {
+            "captured": 12,
+            "by_group": {
+              "0": {
+                "captured": 5,
+                "positives": 36
+              },
+              "1": {
+                "captured": 7,
+                "positives": 46
+              }
+            }
+          },
+          "quota": {
+            "captured": 13,
+            "by_group": {
+              "0": {
+                "captured": 7,
+                "positives": 36
+              },
+              "1": {
+                "captured": 6,
+                "positives": 46
+              }
+            }
+          }
+        },
+        "8014": {
+          "n": 194,
+          "k": 19,
+          "seats_changed": 4,
+          "risk": {
+            "captured": 18,
+            "by_group": {
+              "0": {
+                "captured": 10,
+                "positives": 54
+              },
+              "1": {
+                "captured": 8,
+                "positives": 17
+              }
+            }
+          },
+          "quota": {
+            "captured": 18,
+            "by_group": {
+              "0": {
+                "captured": 14,
+                "positives": 54
+              },
+              "1": {
+                "captured": 4,
+                "positives": 17
+              }
+            }
+          }
+        },
+        "9003": {
+          "n": 173,
+          "k": 17,
+          "seats_changed": 1,
+          "risk": {
+            "captured": 17,
+            "by_group": {
+              "0": {
+                "captured": 4,
+                "positives": 17
+              },
+              "1": {
+                "captured": 13,
+                "positives": 69
+              }
+            }
+          },
+          "quota": {
+            "captured": 17,
+            "by_group": {
+              "0": {
+                "captured": 5,
+                "positives": 17
+              },
+              "1": {
+                "captured": 12,
+                "positives": 69
+              }
+            }
+          }
+        },
+        "9070": {
+          "n": 184,
+          "k": 18,
+          "seats_changed": 5,
+          "risk": {
+            "captured": 17,
+            "by_group": {
+              "0": {
+                "captured": 5,
+                "positives": 22
+              },
+              "1": {
+                "captured": 12,
+                "positives": 29
+              }
+            }
+          },
+          "quota": {
+            "captured": 17,
+            "by_group": {
+              "0": {
+                "captured": 9,
+                "positives": 22
+              },
+              "1": {
+                "captured": 8,
+                "positives": 29
+              }
+            }
+          }
+        },
+        "9085": {
+          "n": 262,
+          "k": 26,
+          "seats_changed": 4,
+          "risk": {
+            "captured": 26,
+            "by_group": {
+              "0": {
+                "captured": 17,
+                "positives": 59
+              },
+              "1": {
+                "captured": 9,
+                "positives": 31
+              }
+            }
+          },
+          "quota": {
+            "captured": 26,
+            "by_group": {
+              "0": {
+                "captured": 21,
+                "positives": 59
+              },
+              "1": {
+                "captured": 5,
+                "positives": 31
+              }
+            }
+          }
+        },
+        "9119": {
+          "n": 106,
+          "k": 10,
+          "seats_changed": 1,
+          "risk": {
+            "captured": 10,
+            "by_group": {
+              "0": {
+                "captured": 0,
+                "positives": 6
+              },
+              "1": {
+                "captured": 10,
+                "positives": 86
+              }
+            }
+          },
+          "quota": {
+            "captured": 10,
+            "by_group": {
+              "0": {
+                "captured": 1,
+                "positives": 6
+              },
+              "1": {
+                "captured": 9,
+                "positives": 86
+              }
+            }
+          }
+        },
+        "9130": {
+          "n": 120,
+          "k": 12,
+          "seats_changed": 2,
+          "risk": {
+            "captured": 12,
+            "by_group": {
+              "0": {
+                "captured": 5,
+                "positives": 38
+              },
+              "1": {
+                "captured": 7,
+                "positives": 40
+              }
+            }
+          },
+          "quota": {
+            "captured": 12,
+            "by_group": {
+              "0": {
+                "captured": 7,
+                "positives": 38
+              },
+              "1": {
+                "captured": 5,
+                "positives": 40
+              }
+            }
+          }
+        },
+        "9147": {
+          "n": 272,
+          "k": 27,
+          "seats_changed": 5,
+          "risk": {
+            "captured": 27,
+            "by_group": {
+              "0": {
+                "captured": 10,
+                "positives": 54
+              },
+              "1": {
+                "captured": 17,
+                "positives": 80
+              }
+            }
+          },
+          "quota": {
+            "captured": 27,
+            "by_group": {
+              "0": {
+                "captured": 15,
+                "positives": 54
+              },
+              "1": {
+                "captured": 12,
+                "positives": 80
+              }
+            }
+          }
+        },
+        "9238": {
+          "n": 313,
+          "k": 31,
+          "seats_changed": 5,
+          "risk": {
+            "captured": 30,
+            "by_group": {
+              "0": {
+                "captured": 21,
+                "positives": 43
+              },
+              "1": {
+                "captured": 9,
+                "positives": 22
+              }
+            }
+          },
+          "quota": {
+            "captured": 28,
+            "by_group": {
+              "0": {
+                "captured": 24,
+                "positives": 43
+              },
+              "1": {
+                "captured": 4,
+                "positives": 22
+              }
+            }
+          }
+        },
+        "9254": {
+          "n": 211,
+          "k": 21,
+          "seats_changed": 2,
+          "risk": {
+            "captured": 20,
+            "by_group": {
+              "0": {
+                "captured": 11,
+                "positives": 52
+              },
+              "1": {
+                "captured": 9,
+                "positives": 44
+              }
+            }
+          },
+          "quota": {
+            "captured": 21,
+            "by_group": {
+              "0": {
+                "captured": 13,
+                "positives": 52
+              },
+              "1": {
+                "captured": 8,
+                "positives": 44
+              }
+            }
+          }
+        },
+        "9500": {
+          "n": 666,
+          "k": 66,
+          "seats_changed": 10,
+          "risk": {
+            "captured": 66,
+            "by_group": {
+              "0": {
+                "captured": 44,
+                "positives": 81
+              },
+              "1": {
+                "captured": 22,
+                "positives": 37
+              }
+            }
+          },
+          "quota": {
+            "captured": 63,
+            "by_group": {
+              "0": {
+                "captured": 51,
+                "positives": 81
+              },
+              "1": {
+                "captured": 12,
+                "positives": 37
+              }
+            }
+          }
+        },
+        "9556": {
+          "n": 69,
+          "k": 6,
+          "seats_changed": 1,
+          "risk": {
+            "captured": 6,
+            "by_group": {
+              "0": {
+                "captured": 4,
+                "positives": 21
+              },
+              "1": {
+                "captured": 2,
+                "positives": 12
+              }
+            }
+          },
+          "quota": {
+            "captured": 6,
+            "by_group": {
+              "0": {
+                "captured": 5,
+                "positives": 21
+              },
+              "1": {
+                "captured": 1,
+                "positives": 12
+              }
+            }
+          }
+        },
+        "9670": {
+          "n": 220,
+          "k": 22,
+          "seats_changed": 3,
+          "risk": {
+            "captured": 22,
+            "by_group": {
+              "0": {
+                "captured": 9,
+                "positives": 41
+              },
+              "1": {
+                "captured": 13,
+                "positives": 54
+              }
+            }
+          },
+          "quota": {
+            "captured": 22,
+            "by_group": {
+              "0": {
+                "captured": 12,
+                "positives": 41
+              },
+              "1": {
+                "captured": 10,
+                "positives": 54
+              }
+            }
+          }
+        },
+        "9773": {
+          "n": 297,
+          "k": 29,
+          "seats_changed": 4,
+          "risk": {
+            "captured": 29,
+            "by_group": {
+              "0": {
+                "captured": 15,
+                "positives": 60
+              },
+              "1": {
+                "captured": 14,
+                "positives": 41
+              }
+            }
+          },
+          "quota": {
+            "captured": 29,
+            "by_group": {
+              "0": {
+                "captured": 19,
+                "positives": 60
+              },
+              "1": {
+                "captured": 10,
+                "positives": 41
+              }
+            }
+          }
+        },
+        "9853": {
+          "n": 142,
+          "k": 14,
+          "seats_changed": 0,
+          "risk": {
+            "captured": 14,
+            "by_group": {
+              "0": {
+                "captured": 13,
+                "positives": 81
+              },
+              "1": {
+                "captured": 1,
+                "positives": 4
+              }
+            }
+          },
+          "quota": {
+            "captured": 14,
+            "by_group": {
+              "0": {
+                "captured": 13,
+                "positives": 81
+              },
+              "1": {
+                "captured": 1,
+                "positives": 4
+              }
+            }
+          }
+        },
+        "9991": {
+          "n": 214,
+          "k": 21,
+          "seats_changed": 1,
+          "risk": {
+            "captured": 21,
+            "by_group": {
+              "0": {
+                "captured": 10,
+                "positives": 54
+              },
+              "1": {
+                "captured": 11,
+                "positives": 82
+              }
+            }
+          },
+          "quota": {
+            "captured": 21,
+            "by_group": {
+              "0": {
+                "captured": 9,
+                "positives": 54
+              },
+              "1": {
+                "captured": 12,
+                "positives": 82
+              }
+            }
+          }
+        }
+      },
+      "binding_courses": 15,
+      "review_slots": 357
+    }
+  }
+}

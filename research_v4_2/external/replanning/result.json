@@ -1,0 +1,66 @@
+{
+  "queries": 512,
+  "scenarios": 48,
+  "verified": 122880,
+  "witness_legs": 1106292,
+  "finite": 15114,
+  "unreachable": 9462,
+  "affected": 80,
+  "became_unreachable": 6,
+  "results": {
+    "csa": {
+      "setup_ms": 0.000521,
+      "p95_ms": 2.240088,
+      "geometric_ms": 1.929430173958164,
+      "amortized_p95_ms": 2.2400988541666664,
+      "amortized_geometric_ms": 1.9294410538131934
+    },
+    "full_profile": {
+      "setup_ms": 0.00008,
+      "p95_ms": 0.456075,
+      "geometric_ms": 0.3978287755562224,
+      "amortized_p95_ms": 0.4560766666666667,
+      "amortized_geometric_ms": 0.39783044614388713
+    },
+    "path_cache": {
+      "setup_ms": 2.213961,
+      "p95_ms": 0.111936,
+      "geometric_ms": 0.03146489251984458,
+      "amortized_p95_ms": 0.1580601875,
+      "amortized_geometric_ms": 0.07956918848494723
+    },
+    "all_predecessors": {
+      "setup_ms": 0.330894,
+      "p95_ms": 0.173523,
+      "geometric_ms": 0.11693876302851404,
+      "amortized_p95_ms": 0.180416625,
+      "amortized_geometric_ms": 0.12388842028855994
+    },
+    "candidate": {
+      "setup_ms": 0.309274,
+      "p95_ms": 0.15399,
+      "geometric_ms": 0.11552514497203945,
+      "amortized_p95_ms": 0.16043320833333335,
+      "amortized_geometric_ms": 0.12200605824094006
+    }
+  },
+  "gains": {
+    "csa": {
+      "p95": 0.9312571648970933,
+      "geometric": 0.9401247339596419
+    },
+    "full_profile": {
+      "p95": 0.6623581647755303,
+      "geometric": 0.7096108877229443
+    },
+    "path_cache": {
+      "p95": -0.37569682675814753,
+      "geometric": -2.67155695507871
+    },
+    "all_predecessors": {
+      "p95": 0.11256721011047544,
+      "geometric": 0.012088532663287244
+    }
+  },
+  "advance": false
+}

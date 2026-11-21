@@ -1,0 +1,1201 @@
+{
+  "sources": {
+    "gte-model.onnx": "947f31df7effaeec4edb57c50e4ed7e0f2034d9336063f92615b92e3e0d24d78",
+    "gte-tokenizer.json": "6c8aaa9a542084f2457eab775d4eeb51f92a70c0fd9de28d5edb0ddec3c08d30",
+    "model.onnx": "84c56795d395593cbee215e2d635a8f0ad3199ae99f99299c44cf1eaecff3ad4",
+    "tokenizer.json": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+    "mrbench_v3_devset.json": "a395feab801de50d44b73e1e9b88f84824a1f1d92e15ae86842d90c2b6dbf33c",
+    "MRBench_V2.json": "a8792225075533d15c23e1c903d0c649f19708ee93f5c3d8267eaa6ab623aac1",
+    "mrbench_v3_testset.json": "5a73434fd9e1dfc73026e146d3709f95f2483a51a5e5b354bc96d981448d92cd"
+  },
+  "audit": {
+    "v2_independent_cases": 0,
+    "official_unlabeled_cases": 191,
+    "source_linked_cases": {
+      "Bridge": 37,
+      "MathDial": 145
+    }
+  },
+  "splits": {
+    "fold0": {
+      "cases": [
+        174,
+        52,
+        74
+      ],
+      "groups": [
+        128,
+        34,
+        44
+      ],
+      "chosen_C": {
+        "lexical": 0.1,
+        "identity_lexical": 0.1
+      },
+      "mlp_iterations": {
+        "gte_mlp": 89,
+        "minilm_mlp": 1000
+      }
+    },
+    "fold1": {
+      "cases": [
+        169,
+        74,
+        57
+      ],
+      "groups": [
+        118,
+        44,
+        44
+      ],
+      "chosen_C": {
+        "lexical": 0.1,
+        "identity_lexical": 0.1
+      },
+      "mlp_iterations": {
+        "gte_mlp": 116,
+        "minilm_mlp": 1000
+      }
+    },
+    "fold2": {
+      "cases": [
+        182,
+        57,
+        61
+      ],
+      "groups": [
+        118,
+        44,
+        44
+      ],
+      "chosen_C": {
+        "lexical": 10.0,
+        "identity_lexical": 1.0
+      },
+      "mlp_iterations": {
+        "gte_mlp": 91,
+        "minilm_mlp": 1000
+      }
+    },
+    "fold3": {
+      "cases": [
+        183,
+        61,
+        56
+      ],
+      "groups": [
+        122,
+        44,
+        40
+      ],
+      "chosen_C": {
+        "lexical": 10.0,
+        "identity_lexical": 0.1
+      },
+      "mlp_iterations": {
+        "gte_mlp": 105,
+        "minilm_mlp": 1000
+      }
+    },
+    "fold4": {
+      "cases": [
+        192,
+        56,
+        52
+      ],
+      "groups": [
+        132,
+        40,
+        34
+      ],
+      "chosen_C": {
+        "lexical": 1.0,
+        "identity_lexical": 0.1
+      },
+      "mlp_iterations": {
+        "gte_mlp": 93,
+        "minilm_mlp": 1000
+      }
+    },
+    "to_Bridge": {
+      "cases": [
+        117,
+        28,
+        37
+      ],
+      "groups": [
+        96,
+        23,
+        27
+      ],
+      "chosen_C": {
+        "lexical": 10.0,
+        "identity_lexical": 1.0
+      },
+      "mlp_iterations": {
+        "gte_mlp": 91,
+        "minilm_mlp": 1000
+      }
+    },
+    "to_MathDial": {
+      "cases": [
+        31,
+        6,
+        145
+      ],
+      "groups": [
+        21,
+        6,
+        119
+      ],
+      "chosen_C": {
+        "lexical": 0.1,
+        "identity_lexical": 10.0
+      },
+      "mlp_iterations": {
+        "gte_mlp": 102,
+        "minilm_mlp": 207
+      }
+    }
+  },
+  "results": {
+    "fold0": {
+      "cases": 74,
+      "groups": 44,
+      "oracle": 72,
+      "number_of_yes_histogram": {
+        "0": 2,
+        "1": 5,
+        "2": 13,
+        "3": 6,
+        "4": 16,
+        "5": 19,
+        "6": 13
+      },
+      "policies": {
+        "identity": {
+          "successes": 58,
+          "rescued": 0,
+          "lost": 0,
+          "gain_ci95": [
+            0.0,
+            0.0
+          ],
+          "selections": {
+            "Llama31405B": 74
+          }
+        },
+        "lexical": {
+          "successes": 54,
+          "rescued": 6,
+          "lost": 10,
+          "gain_ci95": [
+            -0.1694915254237288,
+            0.05333333333333334
+          ],
+          "selections": {
+            "Llama31405B": 25,
+            "Mistral": 16,
+            "GPT4": 16,
+            "Llama318B": 7,
+            "Gemini": 7,
+            "Sonnet": 3
+          }
+        },
+        "identity_lexical": {
+          "successes": 58,
+          "rescued": 6,
+          "lost": 6,
+          "gain_ci95": [
+            -0.1016949152542373,
+            0.09615963855421679
+          ],
+          "selections": {
+            "Llama31405B": 29,
+            "GPT4": 23,
+            "Mistral": 13,
+            "Gemini": 4,
+            "Sonnet": 3,
+            "Llama318B": 2
+          }
+        },
+        "minilm_xgb": {
+          "successes": 51,
+          "rescued": 7,
+          "lost": 14,
+          "gain_ci95": [
+            -0.23439797794117645,
+            0.01694915254237288
+          ],
+          "selections": {
+            "Mistral": 18,
+            "GPT4": 16,
+            "Llama31405B": 12,
+            "Llama318B": 11,
+            "Gemini": 9,
+            "Sonnet": 8
+          }
+        },
+        "minilm_mlp": {
+          "successes": 56,
+          "rescued": 9,
+          "lost": 11,
+          "gain_ci95": [
+            -0.1694915254237288,
+            0.09090909090909091
+          ],
+          "selections": {
+            "GPT4": 23,
+            "Mistral": 21,
+            "Llama31405B": 8,
+            "Sonnet": 8,
+            "Gemini": 7,
+            "Llama318B": 7
+          }
+        },
+        "gte_mlp": {
+          "successes": 49,
+          "rescued": 7,
+          "lost": 16,
+          "gain_ci95": [
+            -0.2745311167945439,
+            0.0
+          ],
+          "selections": {
+            "Sonnet": 19,
+            "Mistral": 14,
+            "Gemini": 11,
+            "Llama318B": 11,
+            "GPT4": 10,
+            "Llama31405B": 9
+          }
+        },
+        "gte_xgb": {
+          "successes": 55,
+          "rescued": 7,
+          "lost": 10,
+          "gain_ci95": [
+            -0.17569554848966612,
+            0.05813953488372093
+          ],
+          "selections": {
+            "Llama31405B": 18,
+            "Gemini": 14,
+            "Mistral": 13,
+            "GPT4": 11,
+            "Llama318B": 10,
+            "Sonnet": 8
+          }
+        }
+      }
+    },
+    "fold1": {
+      "cases": 57,
+      "groups": 44,
+      "oracle": 55,
+      "number_of_yes_histogram": {
+        "0": 2,
+        "1": 7,
+        "2": 6,
+        "3": 15,
+        "4": 8,
+        "5": 13,
+        "6": 6
+      },
+      "policies": {
+        "identity": {
+          "successes": 42,
+          "rescued": 0,
+          "lost": 0,
+          "gain_ci95": [
+            0.0,
+            0.0
+          ],
+          "selections": {
+            "Llama31405B": 57
+          }
+        },
+        "lexical": {
+          "successes": 39,
+          "rescued": 4,
+          "lost": 7,
+          "gain_ci95": [
+            -0.16923728813559322,
+            0.05555555555555555
+          ],
+          "selections": {
+            "Llama31405B": 19,
+            "Mistral": 18,
+            "GPT4": 11,
+            "Llama318B": 5,
+            "Sonnet": 2,
+            "Gemini": 2
+          }
+        },
+        "identity_lexical": {
+          "successes": 38,
+          "rescued": 4,
+          "lost": 8,
+          "gain_ci95": [
+            -0.1896551724137931,
+            0.04918032786885246
+          ],
+          "selections": {
+            "Llama31405B": 23,
+            "Mistral": 16,
+            "GPT4": 15,
+            "Llama318B": 2,
+            "Gemini": 1
+          }
+        },
+        "minilm_xgb": {
+          "successes": 36,
+          "rescued": 3,
+          "lost": 9,
+          "gain_ci95": [
+            -0.22641509433962265,
+            0.019230769230769232
+          ],
+          "selections": {
+            "Mistral": 14,
+            "Llama31405B": 13,
+            "GPT4": 11,
+            "Sonnet": 8,
+            "Llama318B": 7,
+            "Gemini": 4
+          }
+        },
+        "minilm_mlp": {
+          "successes": 36,
+          "rescued": 5,
+          "lost": 11,
+          "gain_ci95": [
+            -0.24528301886792453,
+            0.031746031746031744
+          ],
+          "selections": {
+            "Llama31405B": 15,
+            "GPT4": 11,
+            "Llama318B": 10,
+            "Gemini": 9,
+            "Sonnet": 6,
+            "Mistral": 6
+          }
+        },
+        "gte_mlp": {
+          "successes": 38,
+          "rescued": 3,
+          "lost": 7,
+          "gain_ci95": [
+            -0.18181818181818182,
+            0.03508771929824561
+          ],
+          "selections": {
+            "Llama31405B": 15,
+            "Mistral": 10,
+            "GPT4": 10,
+            "Sonnet": 8,
+            "Llama318B": 7,
+            "Gemini": 7
+          }
+        },
+        "gte_xgb": {
+          "successes": 36,
+          "rescued": 4,
+          "lost": 10,
+          "gain_ci95": [
+            -0.23335937499999998,
+            0.031275201612902856
+          ],
+          "selections": {
+            "Llama31405B": 17,
+            "Mistral": 15,
+            "GPT4": 9,
+            "Llama318B": 6,
+            "Gemini": 6,
+            "Sonnet": 4
+          }
+        }
+      }
+    },
+    "fold2": {
+      "cases": 61,
+      "groups": 44,
+      "oracle": 59,
+      "number_of_yes_histogram": {
+        "0": 2,
+        "1": 3,
+        "2": 3,
+        "3": 12,
+        "4": 17,
+        "5": 13,
+        "6": 11
+      },
+      "policies": {
+        "identity": {
+          "successes": 50,
+          "rescued": 0,
+          "lost": 0,
+          "gain_ci95": [
+            0.0,
+            0.0
+          ],
+          "selections": {
+            "Llama31405B": 61
+          }
+        },
+        "lexical": {
+          "successes": 51,
+          "rescued": 7,
+          "lost": 6,
+          "gain_ci95": [
+            -0.09230769230769231,
+            0.1206896551724138
+          ],
+          "selections": {
+            "GPT4": 17,
+            "Mistral": 13,
+            "Llama31405B": 12,
+            "Sonnet": 8,
+            "Llama318B": 6,
+            "Gemini": 5
+          }
+        },
+        "identity_lexical": {
+          "successes": 51,
+          "rescued": 6,
+          "lost": 5,
+          "gain_ci95": [
+            -0.08196721311475409,
+            0.11291083384053549
+          ],
+          "selections": {
+            "GPT4": 22,
+            "Llama31405B": 21,
+            "Mistral": 6,
+            "Gemini": 6,
+            "Sonnet": 3,
+            "Llama318B": 3
+          }
+        },
+        "minilm_xgb": {
+          "successes": 38,
+          "rescued": 6,
+          "lost": 18,
+          "gain_ci95": [
+            -0.3220338983050847,
+            -0.078125
+          ],
+          "selections": {
+            "GPT4": 14,
+            "Gemini": 13,
+            "Sonnet": 10,
+            "Llama318B": 9,
+            "Mistral": 9,
+            "Llama31405B": 6
+          }
+        },
+        "minilm_mlp": {
+          "successes": 44,
+          "rescued": 8,
+          "lost": 14,
+          "gain_ci95": [
+            -0.24561403508771928,
+            0.045454545454545456
+          ],
+          "selections": {
+            "Llama318B": 17,
+            "GPT4": 14,
+            "Mistral": 13,
+            "Gemini": 6,
+            "Llama31405B": 6,
+            "Sonnet": 5
+          }
+        },
+        "gte_mlp": {
+          "successes": 45,
+          "rescued": 7,
+          "lost": 12,
+          "gain_ci95": [
+            -0.2222222222222222,
+            0.05172413793103448
+          ],
+          "selections": {
+            "Mistral": 17,
+            "GPT4": 16,
+            "Llama318B": 8,
+            "Llama31405B": 7,
+            "Gemini": 7,
+            "Sonnet": 6
+          }
+        },
+        "gte_xgb": {
+          "successes": 42,
+          "rescued": 6,
+          "lost": 14,
+          "gain_ci95": [
+            -0.27586206896551724,
+            0.0
+          ],
+          "selections": {
+            "GPT4": 17,
+            "Mistral": 13,
+            "Llama31405B": 10,
+            "Gemini": 9,
+            "Llama318B": 8,
+            "Sonnet": 4
+          }
+        }
+      }
+    },
+    "fold3": {
+      "cases": 56,
+      "groups": 40,
+      "oracle": 55,
+      "number_of_yes_histogram": {
+        "0": 1,
+        "1": 3,
+        "2": 6,
+        "3": 11,
+        "4": 15,
+        "5": 12,
+        "6": 8
+      },
+      "policies": {
+        "identity": {
+          "successes": 42,
+          "rescued": 0,
+          "lost": 0,
+          "gain_ci95": [
+            0.0,
+            0.0
+          ],
+          "selections": {
+            "Llama31405B": 56
+          }
+        },
+        "lexical": {
+          "successes": 38,
+          "rescued": 3,
+          "lost": 7,
+          "gain_ci95": [
+            -0.17857142857142858,
+            0.0392156862745098
+          ],
+          "selections": {
+            "Llama31405B": 17,
+            "GPT4": 14,
+            "Mistral": 11,
+            "Gemini": 7,
+            "Llama318B": 5,
+            "Sonnet": 2
+          }
+        },
+        "identity_lexical": {
+          "successes": 39,
+          "rescued": 1,
+          "lost": 4,
+          "gain_ci95": [
+            -0.14035087719298245,
+            0.018867924528301886
+          ],
+          "selections": {
+            "Llama31405B": 26,
+            "GPT4": 14,
+            "Mistral": 10,
+            "Gemini": 4,
+            "Sonnet": 1,
+            "Llama318B": 1
+          }
+        },
+        "minilm_xgb": {
+          "successes": 37,
+          "rescued": 7,
+          "lost": 12,
+          "gain_ci95": [
+            -0.25424499229583974,
+            0.05634467180441128
+          ],
+          "selections": {
+            "Mistral": 12,
+            "Llama318B": 11,
+            "Llama31405B": 10,
+            "Gemini": 9,
+            "GPT4": 9,
+            "Sonnet": 5
+          }
+        },
+        "minilm_mlp": {
+          "successes": 35,
+          "rescued": 7,
+          "lost": 14,
+          "gain_ci95": [
+            -0.2786885245901639,
+            0.0425531914893617
+          ],
+          "selections": {
+            "Mistral": 13,
+            "GPT4": 12,
+            "Llama318B": 12,
+            "Llama31405B": 10,
+            "Gemini": 7,
+            "Sonnet": 2
+          }
+        },
+        "gte_mlp": {
+          "successes": 33,
+          "rescued": 6,
+          "lost": 15,
+          "gain_ci95": [
+            -0.3018867924528302,
+            0.0
+          ],
+          "selections": {
+            "Llama318B": 18,
+            "GPT4": 15,
+            "Llama31405B": 11,
+            "Mistral": 6,
+            "Gemini": 4,
+            "Sonnet": 2
+          }
+        },
+        "gte_xgb": {
+          "successes": 38,
+          "rescued": 5,
+          "lost": 9,
+          "gain_ci95": [
+            -0.2,
+            0.047619047619047616
+          ],
+          "selections": {
+            "Llama318B": 15,
+            "Mistral": 14,
+            "Llama31405B": 13,
+            "GPT4": 8,
+            "Gemini": 4,
+            "Sonnet": 2
+          }
+        }
+      }
+    },
+    "fold4": {
+      "cases": 52,
+      "groups": 34,
+      "oracle": 50,
+      "number_of_yes_histogram": {
+        "0": 2,
+        "1": 3,
+        "2": 4,
+        "3": 12,
+        "4": 14,
+        "5": 7,
+        "6": 10
+      },
+      "policies": {
+        "identity": {
+          "successes": 46,
+          "rescued": 0,
+          "lost": 0,
+          "gain_ci95": [
+            0.0,
+            0.0
+          ],
+          "selections": {
+            "Llama31405B": 52
+          }
+        },
+        "lexical": {
+          "successes": 34,
+          "rescued": 2,
+          "lost": 14,
+          "gain_ci95": [
+            -0.3508771929824561,
+            -0.1111111111111111
+          ],
+          "selections": {
+            "Mistral": 12,
+            "Llama31405B": 12,
+            "Llama318B": 10,
+            "GPT4": 9,
+            "Gemini": 5,
+            "Sonnet": 4
+          }
+        },
+        "identity_lexical": {
+          "successes": 38,
+          "rescued": 1,
+          "lost": 9,
+          "gain_ci95": [
+            -0.2653061224489796,
+            -0.049160497091486274
+          ],
+          "selections": {
+            "Llama31405B": 22,
+            "GPT4": 10,
+            "Mistral": 7,
+            "Llama318B": 5,
+            "Sonnet": 4,
+            "Gemini": 4
+          }
+        },
+        "minilm_xgb": {
+          "successes": 39,
+          "rescued": 0,
+          "lost": 7,
+          "gain_ci95": [
+            -0.23076923076923078,
+            -0.041666666666666664
+          ],
+          "selections": {
+            "Mistral": 13,
+            "GPT4": 12,
+            "Llama31405B": 12,
+            "Llama318B": 8,
+            "Sonnet": 4,
+            "Gemini": 3
+          }
+        },
+        "minilm_mlp": {
+          "successes": 37,
+          "rescued": 2,
+          "lost": 11,
+          "gain_ci95": [
+            -0.2894736842105263,
+            -0.06382978723404255
+          ],
+          "selections": {
+            "Llama31405B": 13,
+            "GPT4": 13,
+            "Llama318B": 11,
+            "Mistral": 8,
+            "Gemini": 4,
+            "Sonnet": 3
+          }
+        },
+        "gte_mlp": {
+          "successes": 33,
+          "rescued": 0,
+          "lost": 13,
+          "gain_ci95": [
+            -0.3728813559322034,
+            -0.13333333333333333
+          ],
+          "selections": {
+            "Sonnet": 14,
+            "Llama318B": 9,
+            "Llama31405B": 8,
+            "GPT4": 8,
+            "Mistral": 7,
+            "Gemini": 6
+          }
+        },
+        "gte_xgb": {
+          "successes": 38,
+          "rescued": 1,
+          "lost": 9,
+          "gain_ci95": [
+            -0.28,
+            -0.038461538461538464
+          ],
+          "selections": {
+            "Llama31405B": 11,
+            "Mistral": 10,
+            "Llama318B": 8,
+            "Sonnet": 8,
+            "GPT4": 8,
+            "Gemini": 7
+          }
+        }
+      }
+    },
+    "to_Bridge": {
+      "cases": 37,
+      "groups": 27,
+      "oracle": 37,
+      "number_of_yes_histogram": {
+        "1": 3,
+        "2": 6,
+        "3": 2,
+        "4": 9,
+        "5": 8,
+        "6": 9
+      },
+      "policies": {
+        "identity": {
+          "successes": 30,
+          "rescued": 0,
+          "lost": 0,
+          "gain_ci95": [
+            0.0,
+            0.0
+          ],
+          "selections": {
+            "Llama31405B": 37
+          }
+        },
+        "lexical": {
+          "successes": 28,
+          "rescued": 2,
+          "lost": 4,
+          "gain_ci95": [
+            -0.2222222222222222,
+            0.07407407407407407
+          ],
+          "selections": {
+            "Gemini": 9,
+            "Llama31405B": 8,
+            "Mistral": 6,
+            "Llama318B": 6,
+            "GPT4": 5,
+            "Sonnet": 3
+          }
+        },
+        "identity_lexical": {
+          "successes": 27,
+          "rescued": 1,
+          "lost": 4,
+          "gain_ci95": [
+            -0.24324324324324326,
+            0.037037037037037035
+          ],
+          "selections": {
+            "Llama31405B": 19,
+            "GPT4": 7,
+            "Mistral": 6,
+            "Sonnet": 2,
+            "Gemini": 2,
+            "Llama318B": 1
+          }
+        },
+        "minilm_xgb": {
+          "successes": 26,
+          "rescued": 4,
+          "lost": 8,
+          "gain_ci95": [
+            -0.2962962962962963,
+            0.037037037037037035
+          ],
+          "selections": {
+            "Mistral": 11,
+            "GPT4": 7,
+            "Llama31405B": 7,
+            "Llama318B": 6,
+            "Gemini": 4,
+            "Sonnet": 2
+          }
+        },
+        "minilm_mlp": {
+          "successes": 25,
+          "rescued": 2,
+          "lost": 7,
+          "gain_ci95": [
+            -0.2962962962962963,
+            0.0
+          ],
+          "selections": {
+            "Mistral": 15,
+            "Llama318B": 9,
+            "Sonnet": 6,
+            "Gemini": 3,
+            "GPT4": 2,
+            "Llama31405B": 2
+          }
+        },
+        "gte_mlp": {
+          "successes": 31,
+          "rescued": 3,
+          "lost": 2,
+          "gain_ci95": [
+            -0.10810810810810811,
+            0.16216216216216217
+          ],
+          "selections": {
+            "Llama31405B": 12,
+            "Gemini": 10,
+            "Sonnet": 7,
+            "Mistral": 5,
+            "Llama318B": 2,
+            "GPT4": 1
+          }
+        },
+        "gte_xgb": {
+          "successes": 26,
+          "rescued": 2,
+          "lost": 6,
+          "gain_ci95": [
+            -0.2962962962962963,
+            0.037037037037037035
+          ],
+          "selections": {
+            "Mistral": 9,
+            "Llama31405B": 8,
+            "Llama318B": 7,
+            "Sonnet": 6,
+            "Gemini": 4,
+            "GPT4": 3
+          }
+        }
+      }
+    },
+    "to_MathDial": {
+      "cases": 145,
+      "groups": 119,
+      "oracle": 141,
+      "number_of_yes_histogram": {
+        "0": 4,
+        "1": 12,
+        "2": 17,
+        "3": 28,
+        "4": 31,
+        "5": 34,
+        "6": 19
+      },
+      "policies": {
+        "identity": {
+          "successes": 71,
+          "rescued": 0,
+          "lost": 0,
+          "gain_ci95": [
+            0.0,
+            0.0
+          ],
+          "selections": {
+            "Gemini": 145
+          }
+        },
+        "lexical": {
+          "successes": 83,
+          "rescued": 22,
+          "lost": 10,
+          "gain_ci95": [
+            0.0070921985815602835,
+            0.1564625850340136
+          ],
+          "selections": {
+            "Gemini": 72,
+            "Mistral": 19,
+            "Llama31405B": 15,
+            "Llama318B": 14,
+            "Sonnet": 13,
+            "GPT4": 12
+          }
+        },
+        "identity_lexical": {
+          "successes": 93,
+          "rescued": 29,
+          "lost": 7,
+          "gain_ci95": [
+            0.07298907526465896,
+            0.22916666666666666
+          ],
+          "selections": {
+            "Gemini": 68,
+            "Llama31405B": 29,
+            "GPT4": 20,
+            "Mistral": 14,
+            "Sonnet": 8,
+            "Llama318B": 6
+          }
+        },
+        "minilm_xgb": {
+          "successes": 90,
+          "rescued": 37,
+          "lost": 18,
+          "gain_ci95": [
+            0.02777298850574713,
+            0.23448275862068965
+          ],
+          "selections": {
+            "Llama318B": 32,
+            "GPT4": 25,
+            "Sonnet": 25,
+            "Mistral": 23,
+            "Llama31405B": 23,
+            "Gemini": 17
+          }
+        },
+        "minilm_mlp": {
+          "successes": 83,
+          "rescued": 29,
+          "lost": 17,
+          "gain_ci95": [
+            0.0,
+            0.16892129805862197
+          ],
+          "selections": {
+            "Sonnet": 44,
+            "Gemini": 27,
+            "Llama318B": 24,
+            "Mistral": 18,
+            "GPT4": 18,
+            "Llama31405B": 14
+          }
+        },
+        "gte_mlp": {
+          "successes": 88,
+          "rescued": 37,
+          "lost": 20,
+          "gain_ci95": [
+            0.014388489208633094,
+            0.21678321678321677
+          ],
+          "selections": {
+            "Llama31405B": 44,
+            "Llama318B": 25,
+            "Gemini": 24,
+            "GPT4": 21,
+            "Sonnet": 19,
+            "Mistral": 12
+          }
+        },
+        "gte_xgb": {
+          "successes": 89,
+          "rescued": 32,
+          "lost": 14,
+          "gain_ci95": [
+            0.03571428571428571,
+            0.2112676056338028
+          ],
+          "selections": {
+            "Gemini": 35,
+            "Llama31405B": 32,
+            "Mistral": 25,
+            "Llama318B": 21,
+            "Sonnet": 16,
+            "GPT4": 16
+          }
+        }
+      }
+    },
+    "pooled": {
+      "cases": 300,
+      "groups": 206,
+      "oracle": 291,
+      "number_of_yes_histogram": {
+        "0": 9,
+        "1": 21,
+        "2": 32,
+        "3": 56,
+        "4": 70,
+        "5": 64,
+        "6": 48
+      },
+      "policies": {
+        "identity": {
+          "successes": 238,
+          "rescued": 0,
+          "lost": 0,
+          "gain_ci95": [
+            0.0,
+            0.0
+          ],
+          "selections": {
+            "Llama31405B": 300
+          }
+        },
+        "lexical": {
+          "successes": 216,
+          "rescued": 22,
+          "lost": 44,
+          "gain_ci95": [
+            -0.12374581939799331,
+            -0.023411371237458192
+          ],
+          "selections": {
+            "Llama31405B": 85,
+            "Mistral": 70,
+            "GPT4": 67,
+            "Llama318B": 33,
+            "Gemini": 26,
+            "Sonnet": 19
+          }
+        },
+        "identity_lexical": {
+          "successes": 224,
+          "rescued": 18,
+          "lost": 32,
+          "gain_ci95": [
+            -0.09215138092125964,
+            -0.0031545741324921135
+          ],
+          "selections": {
+            "Llama31405B": 121,
+            "GPT4": 84,
+            "Mistral": 52,
+            "Gemini": 19,
+            "Llama318B": 13,
+            "Sonnet": 11
+          }
+        },
+        "minilm_xgb": {
+          "successes": 201,
+          "rescued": 23,
+          "lost": 60,
+          "gain_ci95": [
+            -0.18275862068965518,
+            -0.06666666666666667
+          ],
+          "selections": {
+            "Mistral": 66,
+            "GPT4": 62,
+            "Llama31405B": 53,
+            "Llama318B": 46,
+            "Gemini": 38,
+            "Sonnet": 35
+          }
+        },
+        "minilm_mlp": {
+          "successes": 208,
+          "rescued": 31,
+          "lost": 61,
+          "gain_ci95": [
+            -0.16491318502441674,
+            -0.03678929765886288
+          ],
+          "selections": {
+            "GPT4": 73,
+            "Mistral": 61,
+            "Llama318B": 57,
+            "Llama31405B": 52,
+            "Gemini": 33,
+            "Sonnet": 24
+          }
+        },
+        "gte_mlp": {
+          "successes": 198,
+          "rescued": 23,
+          "lost": 63,
+          "gain_ci95": [
+            -0.1952881463643053,
+            -0.07453416149068323
+          ],
+          "selections": {
+            "GPT4": 59,
+            "Mistral": 54,
+            "Llama318B": 53,
+            "Llama31405B": 50,
+            "Sonnet": 49,
+            "Gemini": 35
+          }
+        },
+        "gte_xgb": {
+          "successes": 209,
+          "rescued": 23,
+          "lost": 52,
+          "gain_ci95": [
+            -0.15658570581257414,
+            -0.04054054054054054
+          ],
+          "selections": {
+            "Llama31405B": 69,
+            "Mistral": 65,
+            "GPT4": 53,
+            "Llama318B": 47,
+            "Gemini": 40,
+            "Sonnet": 26
+          }
+        }
+      }
+    }
+  }
+}

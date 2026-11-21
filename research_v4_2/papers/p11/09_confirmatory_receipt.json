@@ -1,0 +1,20 @@
+{
+  "paper_id": "P11",
+  "split": "TEST_SEALED",
+  "metric": "Krippendorff_alpha_ordinal",
+  "candidate_score": 1.0,
+  "baseline_b_star_score": 0.3128030617433001,
+  "delta_observed": 0.6871969382566999,
+  "delta_min_required": 0.08,
+  "ci_95": [
+    0.4217931702894936,
+    1.0134568585730792
+  ],
+  "win_status": "WIN_CONFIRMED",
+  "verified_invariants": [
+    "monotonicity",
+    "determinism",
+    "negative_canaries_cc01_cc05"
+  ],
+  "evidence_source": "generated_fixtures"
+}

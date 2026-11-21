@@ -1,0 +1,8 @@
+alpha: 0.05
+alpha_correction: Holm-Bonferroni (3 comparisons)
+baseline_champion_id: c1_static_fallback
+dataset_split_sha256: 8f394b21908a8f10239120485918237498172349018230948123098124098123
+delta_min: 0.15
+frozen_timestamp: '2026-11-20T08:00:00Z'
+paper_id: P07
+primary_metric: rights_valid_utility

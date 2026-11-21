@@ -1,0 +1,17 @@
+{
+  "tune": {
+    "queries": 348,
+    "annotations": 375,
+    "shortlisted": 353,
+    "zero_hit": 17,
+    "oracle_ndcg10": 0.9488804031421924
+  },
+  "screen": {
+    "queries": 157,
+    "annotations": 189,
+    "shortlisted": 178,
+    "zero_hit": 8,
+    "oracle_ndcg10": 0.9430456487214001
+  },
+  "input_sha256": "6892309dfeae36833d268241ebdfa78b6fcd7c61ef1dd8385b68d90a13c9b69c"
+}

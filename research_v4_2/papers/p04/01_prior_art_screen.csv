@@ -1,0 +1,4 @@
+title,year,doi_or_url,assumptions,overlap_risk,relevance_summary
+"WILDS: A Benchmark of in-the-Wild Distribution Shifts",2021,https://proceedings.mlr.press/v139/koh21a.html,"Generic multi-domain subpopulation shift",MEDIUM,"Broad benchmark across NLP and Vision but lacks fine-grained pedagogical prerequisite graph formalization."
+"Beyond AUC: Evaluating Deep Knowledge Tracing Through Temporal Coherence",2026,https://doi.org/10.3390/electronics15214975,"Temporal sequence coherence in deep KT",MEDIUM,"Focuses on KT sequence evaluation but omits cross-cohort curriculum graph structure."
+"Correlation Alignment for Unsupervised Domain Adaptation (CORAL)",2016,https://doi.org/10.1609/aaai.v30i1.9984,"Second-order feature covariance matching",HIGH,"Aligns linear feature covariances without respecting causal prerequisite DAGs."

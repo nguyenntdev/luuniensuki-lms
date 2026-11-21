@@ -1,0 +1,9 @@
+baseline_champion_id: B_STAR_CALIBRATED_HAZARD
+cutoff_day: 35
+delta_min: 0.04
+frozen_sha256: 5c4d12fe7a80b8529d10e0123561a7a03369d71c50409a63321bf8115eb37508
+hypothesis: Schedule-normalized activity rates improve AUROC by >= 0.04 over unnormalized
+  hazard model on test cohort.
+paper_id: P13
+primary_metric: AUROC
+secondary_constraint: ECE <= 0.05

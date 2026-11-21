@@ -1,0 +1,21 @@
+{
+  "tate": {
+    "records": 69201,
+    "thumbnail_links": 58415,
+    "linked_with_copyright_notice": 14239
+  },
+  "smithsonian": {
+    "records": 103,
+    "image_entries": 179,
+    "explicit_cc0": 179
+  },
+  "source_sha256": {
+    "artwork_data.csv": "3fb68c02725846b540a86fa9629de8b0a6902659378e853af0691bc5ff74f09d",
+    "fsg_00.txt": "42b7aa4d6bc8f17f27fc5f19b12fd3b88f00a44ff9253bf7f1cae1c12222bdfb",
+    "fsg_01.txt": "8f5a5ed9ab7bdfedaeb3fd8906de9b36442f3aab1e57c566f866d4c620fd7294",
+    "fsg_02.txt": "e752f742be124141a82d56d98b49a63f732c178b21effd0d1b90907db3d8b48e",
+    "fsg_03.txt": "0b1f246c82cc1b69a122a2210de3ebed775242020953a8f95401a970c0c92480",
+    "fsg_04.txt": "a0c17b5b046b6ac93c3f2bdaf503f58df7799356d94c3a2f73ca6f8d49ee1eae",
+    "fsg_05.txt": "18aadb11b35435db5833da9b3be02f1b198aea2d17589f78804b8346c68ea045"
+  }
+}

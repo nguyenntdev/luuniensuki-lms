@@ -1,0 +1,4 @@
+id,title,doi,year,overlap,decision
+SRL2025,Investigating Self-Regulated Learning Measurement Based on Trace Data,10.1007/s10758-025-09816-y,2025,VERY_HIGH,GATE_SRL_CONSTRUCT_CLAIMS
+SRLREVIEW2025,Balancing Contextualization and Generalization in Trace-based Measurement,10.3102/00346543251382238,2025,HIGH,REQUIRE_SCHEDULE_NORMALIZATION
+SRLRUBRIC,Development and validation of learning analytics rubric,10.1007/s11423-025-10521-x,2025,MEDIUM,INCLUDE_AS_BASELINE_SURVIVAL

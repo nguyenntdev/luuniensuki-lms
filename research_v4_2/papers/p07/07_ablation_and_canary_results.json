@@ -1,0 +1,25 @@
+{
+  "full_method": {
+    "utility": 0.5492,
+    "false_permissions": 0.0
+  },
+  "ablation_no_rights_closure": {
+    "utility": 0.52,
+    "false_permissions": 0.38,
+    "failure": "violations_admitted"
+  },
+  "ablation_no_device_budget": {
+    "utility": 0.58,
+    "false_permissions": 0.0,
+    "failure": "mobile_oom_crash"
+  },
+  "ablation_no_affordance_gate": {
+    "utility": 0.49,
+    "false_permissions": 0.0,
+    "failure": "pedagogical_incompleteness"
+  },
+  "negative_canary_corrupted_rights": {
+    "status": "PASS",
+    "abstention_triggered": true
+  }
+}

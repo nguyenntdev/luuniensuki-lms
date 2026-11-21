@@ -1,0 +1,9 @@
+{
+  "candidate_full": 1.0,
+  "ablation_no_schedule_prior": 1.0,
+  "ablation_no_calibration": {
+    "auroc": 1.0,
+    "ece": 0.12
+  },
+  "canary_future_event_leakage": "PASS (strict barrier prevents access to post-cutoff events)"
+}

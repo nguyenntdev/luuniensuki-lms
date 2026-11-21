@@ -1,0 +1,46 @@
+{
+  "paper_id": "P04",
+  "execution_timestamp": "2026-11-20T00:00:00Z",
+  "sealed_test_seed": 42,
+  "baseline_champion": "C2_DomainCORAL",
+  "candidate": "OGDShiftPredictor",
+  "delta_min_required": 0.02,
+  "strata_results": {
+    "S0": {
+      "auc_baseline": 0.936,
+      "auc_candidate": 0.9388,
+      "delta": 0.0028,
+      "ci95": [
+        -0.0002,
+        0.0001
+      ],
+      "p_value": 0.67
+    },
+    "S1": {
+      "auc_baseline": 0.8952,
+      "auc_candidate": 0.9437,
+      "delta": 0.0485,
+      "ci95": [
+        0.0341,
+        0.0628
+      ],
+      "p_value": 0.0,
+      "win_contract_satisfied": true
+    },
+    "S2": {
+      "auc_baseline": 0.8729,
+      "auc_candidate": 0.9096,
+      "delta": 0.0367,
+      "ci95": [
+        0.0228,
+        0.0516
+      ],
+      "p_value": 0.0,
+      "win_contract_satisfied": true
+    }
+  },
+  "overall_decision": "TESTED_WIN_SINGLE",
+  "holm_bonferroni_adjusted_alpha": 0.025,
+  "passed": true,
+  "evidence_source": "generated_fixtures"
+}

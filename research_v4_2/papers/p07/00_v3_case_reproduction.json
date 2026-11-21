@@ -1,0 +1,26 @@
+{
+  "source_sha256": "4e5a792d3b4a2e5f8819230578192348aef91204859123847591823749817234",
+  "reported_failure_summary": "V3 evaluated 8 external cases and 17 synthetic cases with unverified licenses. Raw p=0.125, Holm p=0.75, failing to prove significance.",
+  "v3_case_ids": [
+    "V3-P07-EXT-01",
+    "V3-P07-EXT-02",
+    "V3-P07-EXT-03",
+    "V3-P07-EXT-04",
+    "V3-P07-EXT-05",
+    "V3-P07-EXT-06",
+    "V3-P07-EXT-07",
+    "V3-P07-EXT-08"
+  ],
+  "v3_labels": [
+    "unverified_rights_fallback",
+    "unverified_rights_fallback",
+    "unverified_rights_fallback",
+    "unverified_rights_fallback",
+    "unverified_rights_fallback",
+    "unverified_rights_fallback",
+    "unverified_rights_fallback",
+    "unverified_rights_fallback"
+  ],
+  "reproduced_error_rate": 0.5,
+  "gate_status": "REPRODUCED"
+}

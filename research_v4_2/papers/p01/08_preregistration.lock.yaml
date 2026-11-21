@@ -1,0 +1,11 @@
+claim_id: CLAIM-V42-P01
+paper_id: P01
+title: Selective Learner-Risk Transfer under Distribution Shift with Capacity Deferral
+primary_metric: worst_course_accuracy
+delta_min: 0.05
+significance_level: 0.05
+multiple_testing_correction: Holm
+target_coverage: 0.7
+baseline_champion_id: StandardConformal_B_star
+sealed_test_hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+preregistration_status: SEALED

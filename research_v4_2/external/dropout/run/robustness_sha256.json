@@ -1,0 +1,18 @@
+{
+  "source.zip": "e90e55fd65ec462ae283ebeb2cca409319e3460ed898d8754f62fb35cc83a65d",
+  "oulad.zip": "f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4",
+  "score_robustness.py": "7af645fc9403c9146611154bb5cb7efd217054fc6b9c34cb3a34fc283bd72f7f",
+  "robustness.py": "88611ec356a532e5092c5390263bc3a731f3dae4cfd574d62ac2f319531431c3",
+  "sensitivity.md": "88d519a66fbce6a3f5943b6541c9a408059edde4e555819f0cd6d5c68dccf28c",
+  "evaluate.py": "b6beafb36b3195e0c72cc577a4fade0f07503eaab952223b71e5b6f06f9311dd",
+  "protocol.json": "127e1f772b4857ce5bd6bfd4829fa56a75438b608bf1d89cf053da8647f3d92c",
+  "dev_trials.json": "4ee41de8e6762f0c96dac91e8d1a3f18a75fc72730a9ab9490811b34d04500ed",
+  "predictions.csv": "4eff150120f19e36ed47025a1cf30e756bf2abb151aaca7134e64d57a8722b00",
+  "result.json": "7c3a2dd1c2d34c9587237afa66ac692c83522c936c966ae3b0b835036f024cec",
+  "portugal_three_status.csv.gz": "7358baf3198313eb4ee00d0cdd9ba26da37fbf01052445e382f8f0cd25d2d840",
+  "uk_later_cohort.csv.gz": "5b7158831aafd980ed339da724d7eeb5bc83c6998174aa84d04d7aa7063369c2",
+  "uk_development.json": "075f6fb4d721912ddf71772e229b437f52750ab43b96c3be905c089a63ba90b1",
+  "course_scores.csv": "30462939d472c84295efca2898bf2b41b494f8d3e8b019e4b72fdf703f243f1b",
+  "robustness_summary.csv": "40b38ee6331be7f44521df711b8062e9885fd3154210d9c0d64747c6c481a8fc",
+  "portugal_unit_support.csv": "3a508ca3d2b021ff8a662e4d5de8ca4af4c927855704a2dc9f61a3fa8d3d9727"
+}

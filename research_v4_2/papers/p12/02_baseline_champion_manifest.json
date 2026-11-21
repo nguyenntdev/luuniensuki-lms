@@ -1,0 +1,12 @@
+{
+  "paper_id": "P12",
+  "champion_id": "B_STAR_PAGE_LEVEL_VERIFIER",
+  "description": "Page-level source verifier with generic provenance chain.",
+  "dev_support_recall": 0.5714285714285714,
+  "dev_false_support_rate": 0.4,
+  "comparator_pool": [
+    "C0_EXACT_LOCATOR",
+    "C1_SNIPPET_NLI",
+    "B_STAR_PAGE_LEVEL_VERIFIER"
+  ]
+}

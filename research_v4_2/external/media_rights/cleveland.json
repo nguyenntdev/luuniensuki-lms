@@ -1,0 +1,21 @@
+{
+  "sha256": "cbcbec43a61f68cd34b514c87f6f9dd2b73ee4615722f5983c32b4bdc33c6efd",
+  "records": 68819,
+  "cells": [
+    {
+      "status": "CC0",
+      "web_image": false,
+      "records": 768
+    },
+    {
+      "status": "CC0",
+      "web_image": true,
+      "records": 41869
+    },
+    {
+      "status": "Copyrighted",
+      "web_image": false,
+      "records": 26182
+    }
+  ]
+}

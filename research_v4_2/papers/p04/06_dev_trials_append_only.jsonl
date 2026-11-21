@@ -1,0 +1,6 @@
+{"trial_id": "T01", "family": "OGDShift", "config": {"C": 0.1, "alpha": 0.5}, "dev_auc_s1": 0.9312, "dev_auc_s2": 0.8980}
+{"trial_id": "T02", "family": "OGDShift", "config": {"C": 0.5, "alpha": 0.5}, "dev_auc_s1": 0.9415, "dev_auc_s2": 0.9065}
+{"trial_id": "T03", "family": "OGDShift", "config": {"C": 1.0, "alpha": 0.5}, "dev_auc_s1": 0.9437, "dev_auc_s2": 0.9096}
+{"trial_id": "T04", "family": "OGDShift", "config": {"C": 2.0, "alpha": 0.5}, "dev_auc_s1": 0.9435, "dev_auc_s2": 0.9092}
+{"trial_id": "T05", "family": "CORAL", "config": {"C": 1.0}, "dev_auc_s1": 0.8952, "dev_auc_s2": 0.8728}
+{"trial_id": "T06", "family": "ERM", "config": {"C": 1.0}, "dev_auc_s1": 0.8796, "dev_auc_s2": 0.8318}

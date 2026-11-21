@@ -1,0 +1,6 @@
+{
+  "status": "Designed after viewing buckets 2-5, before evaluating buckets 6-9. Secondary within-archive comparison.",
+  "cohort": "First big-endian SHA256 uint32 modulo 100 from 6 through 9 inclusive, all sessions, learner-weighted loss.",
+  "models": "Reconstruct original CatBoost. Train upstream lr on the original training learners with sqrt(right+1), sqrt(wrong+1), time in days, bias and learning-language:lexeme, using its defaults except learning rates 0.0003, 0.001, 0.003, 0.01. Seed 42 and one pass each. Choose raw or calibration-user sigmoid on original dev learner NLL. Additional logistic regression with log1p(days), log1p(right), log1p(wrong), one-hot lexeme and intercept, C=1, learner-weighted training with mean normalized row weight 1, L2. Choose raw vs recalibrated on original dev. No new-cohort refit or selection. Report every comparator.",
+  "inference": "Mean learner NLL and paired learner percentile bootstrap 95% intervals with 10000 replicates, seed 42. Descriptive, without multiplicity adjustment. The original margin and decision remain primary."
+}

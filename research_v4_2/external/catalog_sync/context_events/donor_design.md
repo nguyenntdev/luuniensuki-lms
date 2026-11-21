@@ -1,0 +1,5 @@
+# Development extension after observing the edit-site permutation screen
+
+The first screen reduced both patch sizes but cleared 5% only in January–June. In June–October the changed date, dimensions and title fields contain many adjacent repeated results when sorted by accession. Try a two-pass dependency representation. Independently reconstruct the exceptions first. A chronological pass through the changed cells in a transmitted column order can then copy the preceding target, the most recent target for the same old value, or transfer the preceding donor's replacement span. In both phases the decoder knows the old table, output of earlier fields, transmitted modes, and recovered exceptions. Include every byte.
+
+Compare selectable identifier, first-field and own-field orders in every arm. Let the matched order-only arm use the same event permutations and conventional representations. The preceding-target arm adds simple run reuse and the full one adds old-value memory and span transfer. Compare each with both first-screen variants and every archived control. Keep the original 5% criterion. Both Tate intervals are development data.

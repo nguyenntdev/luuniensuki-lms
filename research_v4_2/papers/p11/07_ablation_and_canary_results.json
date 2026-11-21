@@ -1,0 +1,7 @@
+{
+  "full_candidate": 1.0,
+  "ablation_no_active_arbitration": 0.22487383591678156,
+  "ablation_no_fabrication_caps": 0.95,
+  "canary_cc01_zero_evidence": "PASS (score capped to 0)",
+  "canary_cc05_fabricated_citation": "PASS (fabrication flagged, score capped to 1)"
+}

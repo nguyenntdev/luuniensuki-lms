@@ -1,0 +1,13 @@
+{
+  "queries": 505,
+  "screen": 157,
+  "components": 101,
+  "settings_checked": {
+    "doc_full": 4,
+    "doc_focus": 4,
+    "ce_pair": 16,
+    "candidate": 16
+  },
+  "margin_passes": 2,
+  "comparisons": 7
+}

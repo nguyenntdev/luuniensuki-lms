@@ -1,0 +1,66 @@
+{
+  "G": {
+    "total": 3150,
+    "coverage": 0.15968253968253968,
+    "policies": {
+      "gate": {
+        "accepted": 503,
+        "correct": 368,
+        "accuracy": 0.731610337972167
+      },
+      "full_logit": {
+        "accepted": 3150,
+        "correct": 1738,
+        "accuracy": 0.5517460317460318
+      },
+      "same_cases_logit": {
+        "accepted": 503,
+        "correct": 370,
+        "accuracy": 0.73558648111332
+      },
+      "global_confidence": {
+        "accepted": 503,
+        "correct": 370,
+        "accuracy": 0.73558648111332
+      },
+      "course_confidence": {
+        "accepted": 503,
+        "correct": 370,
+        "accuracy": 0.73558648111332
+      }
+    },
+    "disagreements_on_accepted": 4
+  },
+  "T": {
+    "total": 3228,
+    "coverage": 0.36152416356877326,
+    "policies": {
+      "gate": {
+        "accepted": 1167,
+        "correct": 675,
+        "accuracy": 0.5784061696658098
+      },
+      "full_logit": {
+        "accepted": 3228,
+        "correct": 1787,
+        "accuracy": 0.5535935563816605
+      },
+      "same_cases_logit": {
+        "accepted": 1167,
+        "correct": 761,
+        "accuracy": 0.6520994001713796
+      },
+      "global_confidence": {
+        "accepted": 1167,
+        "correct": 761,
+        "accuracy": 0.6520994001713796
+      },
+      "course_confidence": {
+        "accepted": 1167,
+        "correct": 761,
+        "accuracy": 0.6520994001713796
+      }
+    },
+    "disagreements_on_accepted": 129
+  }
+}

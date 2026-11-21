@@ -1,0 +1,4 @@
+id,title,doi,year,overlap,decision
+AV2025,AVerImaTeC: Image-Text Claims with Evidence,10.48550/arXiv.2406.07409,2025,HIGH,INCLUDE_AS_BASELINE_COMPARATOR
+COVEGAT,CoVeGAT Citation-Aligned Claim Verification,10.18653/v1/2025.r2lm-1.1,2025,MEDIUM_HIGH,ADAPT_AS_C1_NLI
+AV2024,AVeriTeC Shared Task,10.18653/v1/2024.fever-1.1,2024,MEDIUM,BENCHMARK_RETRIEVAL

@@ -1,0 +1,53 @@
+{
+  "archives": {
+    "e51eafbfab4a59f5d864fd81d5ef899d0fd502e7": "83a695bb8a3a04d589400b7f0e9bff1975b50e56931e273036f1b42f9099f561",
+    "790eb625934680f2eeccb262391618d2ca948486": "752d5761774a3e0a1060b1b742d7ddc33f99e959b06ee66a8c4c70beb0bc0846"
+  },
+  "excluded_training_files": {
+    "e51eafbfab4a59f5d864fd81d5ef899d0fd502e7": {
+      "empty_file": 79,
+      "conflicting_object_id": 1
+    },
+    "790eb625934680f2eeccb262391618d2ca948486": {
+      "missing_object_id": 2,
+      "empty_file": 20,
+      "conflicting_bucket": 58035,
+      "conflicting_object_id": 1
+    }
+  },
+  "training": {
+    "early_train_objects": 59622,
+    "late_train_objects": 59681,
+    "late_only": 61,
+    "early_label_counts": {
+      "": 17,
+      "Copyright Not Evaluated": 1263,
+      "Copyright Undetermined": 39,
+      "In Copyright": 12083,
+      "In Copyright–Educational Use": 5172,
+      "In Copyright–Non-Commercial Use": 428,
+      "In Copyright–Rights-holder(s) Unlocatable": 1050,
+      "No Copyright–United States": 5148,
+      "No Known Copyright": 1431,
+      "Permission Denied": 1,
+      "Public Domain": 32990
+    },
+    "early_dated_nonblank": 59618,
+    "early_artist_nonblank": 51642,
+    "observed_early_labels": 59605,
+    "family_keys": 6282,
+    "repeated_families": 4366,
+    "mixed_repeated_families": 316,
+    "objects_in_repeated_families": 41497,
+    "objects_in_mixed_repeated_families": 10798,
+    "objects_agreeing_with_nearest_other_family_member": 39742,
+    "largest_family": 1027,
+    "transitions": {
+      "no_valid_later_record": 2,
+      "revised": 354,
+      "same": 59249,
+      "still_blank": 17
+    },
+    "later_labels_of_early_blank": {}
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "train_rows": 19500,
+  "eligible_train": 16063,
+  "test_rows": 11249,
+  "eligible_test": 8815,
+  "auc": {
+    "logit_all": {
+      "all": 0.8324483977933111,
+      "eligible": 0.6214334692271012
+    },
+    "catboost_all": {
+      "all": 0.8335110465206035,
+      "eligible": 0.6228119022560543
+    },
+    "logit_risk": {
+      "all": 0.8000405546991814,
+      "eligible": 0.5991033694964775
+    },
+    "catboost_risk": {
+      "all": 0.670795907648075,
+      "eligible": 0.5945016405263686
+    }
+  },
+  "all_minus_eligible_catboost_ci95": [
+    0.19873687613552102,
+    0.22224974928049374
+  ]
+}

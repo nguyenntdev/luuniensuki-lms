@@ -1,0 +1,353 @@
+[
+  {
+    "base_sha256": "1199312edf5d79f3a3e81ff752f8eee741fa286fdeea4f7b329e6bee8f5316d1",
+    "target_csv_sha256": "f709c2289805615e21395a915119d44f5f139023cc845b979562741a0652baf5",
+    "canonical_target_sha256": "f5bb3735bce57f52483394922a4c865744a7bbc1df46ec20fba495c6fb7c6ac4",
+    "rows": 69201,
+    "bytes": {
+      "own_cell": 48828,
+      "within_row": 48852,
+      "bsdiff": 71755,
+      "xdelta3": 85418,
+      "row_diff": 186220,
+      "column_diff": 169508,
+      "rule_diff": 167887,
+      "zstd_full": 2209789,
+      "zstd_patch": 141196,
+      "hdiff": 65637,
+      "whole": 46816,
+      "substring": 34268,
+      "absolute": 37908,
+      "full": 34468,
+      "own_sorted": 54140,
+      "conditional": 53832,
+      "row": 34424,
+      "context": 30632,
+      "reorder": 29408,
+      "preceding": 29128,
+      "dictionary": 27680
+    },
+    "wire_sha256": {
+      "reorder": "8f88625b6a381862d9344f490056b9eec916d0e650bb5f415322a5077870fb89",
+      "preceding": "a0d784be2b4300a8a19e5ffdda04af3889cb32410b31ec3a9de832f5e87a1a96",
+      "dictionary": "a57ebdb57869d02144aeb70eb48a34c57c2a5dc64ad2c4022c1058f79dce5094"
+    },
+    "selected": {
+      "reorder": {
+        "artist": "plain",
+        "title": {
+          "order": 4,
+          "hits": 0,
+          "residual": "context"
+        },
+        "dateText": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "medium": "plain",
+        "creditLine": "legacy",
+        "year": "plain",
+        "dimensions": {
+          "order": 0,
+          "hits": 0,
+          "residual": "context"
+        },
+        "width": "plain",
+        "height": "plain",
+        "depth": "legacy",
+        "units": "plain",
+        "thumbnailCopyright": "legacy",
+        "thumbnailUrl": {
+          "order": 0,
+          "hits": 0,
+          "residual": "start"
+        },
+        "url": {
+          "order": 0,
+          "hits": 0,
+          "residual": "end"
+        }
+      },
+      "preceding": {
+        "artist": "plain",
+        "title": {
+          "order": 4,
+          "hits": 0,
+          "residual": "context"
+        },
+        "dateText": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "medium": "plain",
+        "creditLine": "legacy",
+        "year": "plain",
+        "dimensions": {
+          "order": 0,
+          "hits": 0,
+          "residual": "context"
+        },
+        "width": "plain",
+        "height": "plain",
+        "depth": "legacy",
+        "units": "plain",
+        "thumbnailCopyright": {
+          "order": 16,
+          "hits": 3663,
+          "residual": "context"
+        },
+        "thumbnailUrl": {
+          "order": 0,
+          "hits": 0,
+          "residual": "start"
+        },
+        "url": {
+          "order": 0,
+          "hits": 0,
+          "residual": "end"
+        }
+      },
+      "dictionary": {
+        "artist": "plain",
+        "title": {
+          "order": 4,
+          "hits": 2606,
+          "residual": "context"
+        },
+        "dateText": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "medium": "plain",
+        "creditLine": "legacy",
+        "year": "plain",
+        "dimensions": {
+          "order": 0,
+          "hits": 0,
+          "residual": "context"
+        },
+        "width": "plain",
+        "height": "plain",
+        "depth": "legacy",
+        "units": "plain",
+        "thumbnailCopyright": {
+          "order": 16,
+          "hits": 3663,
+          "residual": "context"
+        },
+        "thumbnailUrl": {
+          "order": 0,
+          "hits": 0,
+          "residual": "start"
+        },
+        "url": {
+          "order": 0,
+          "hits": 0,
+          "residual": "end"
+        }
+      }
+    },
+    "passed": false
+  },
+  {
+    "base_sha256": "f709c2289805615e21395a915119d44f5f139023cc845b979562741a0652baf5",
+    "target_csv_sha256": "3fb68c02725846b540a86fa9629de8b0a6902659378e853af0691bc5ff74f09d",
+    "canonical_target_sha256": "7d20923db1e8c2291f47634e2f37b1bb4c141142e1ef63b3f4de66c25d128be9",
+    "rows": 69201,
+    "bytes": {
+      "own_cell": 55416,
+      "within_row": 32876,
+      "bsdiff": 117266,
+      "xdelta3": 84298,
+      "row_diff": 83090,
+      "column_diff": 67909,
+      "rule_diff": 67722,
+      "zstd_full": 2225318,
+      "zstd_patch": 86810,
+      "hdiff": 70840,
+      "whole": 32876,
+      "substring": 32412,
+      "absolute": 32804,
+      "full": 32816,
+      "own_sorted": 63288,
+      "conditional": 62188,
+      "row": 32260,
+      "context": 31800,
+      "reorder": 30924,
+      "preceding": 30232,
+      "dictionary": 30080
+    },
+    "wire_sha256": {
+      "reorder": "99a2fcd228335e2e8f467285cc8cddbe4e713548228971ab549c45885fb7e3d7",
+      "preceding": "6146e04603fb148ac5a98fc4f8c9817d2470847e631b0cec25db8591b57646dd",
+      "dictionary": "191a1b6ab22e3dd02a5f1f95ee0afb75bfa6ada446021433f472dca3d0b1acbe"
+    },
+    "selected": {
+      "reorder": {
+        "artist": "legacy",
+        "artistRole": "plain",
+        "artistId": "plain",
+        "title": {
+          "order": 0,
+          "hits": 0,
+          "residual": "context"
+        },
+        "dateText": {
+          "order": 5,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "medium": "plain",
+        "creditLine": "legacy",
+        "year": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "acquisitionYear": "plain",
+        "dimensions": {
+          "order": 0,
+          "hits": 0,
+          "residual": "context"
+        },
+        "width": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "height": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "depth": "plain",
+        "units": "plain",
+        "thumbnailCopyright": "legacy",
+        "thumbnailUrl": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "url": {
+          "order": 0,
+          "hits": 0,
+          "residual": "context"
+        }
+      },
+      "preceding": {
+        "artist": "legacy",
+        "artistRole": "plain",
+        "artistId": "plain",
+        "title": {
+          "order": 0,
+          "hits": 535,
+          "residual": "context"
+        },
+        "dateText": {
+          "order": 5,
+          "hits": 1213,
+          "residual": "context"
+        },
+        "medium": "plain",
+        "creditLine": "legacy",
+        "year": {
+          "order": 0,
+          "hits": 1007,
+          "residual": "codes"
+        },
+        "acquisitionYear": "plain",
+        "dimensions": {
+          "order": 0,
+          "hits": 1054,
+          "residual": "context"
+        },
+        "width": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "height": {
+          "order": 0,
+          "hits": 1067,
+          "residual": "codes"
+        },
+        "depth": "plain",
+        "units": "plain",
+        "thumbnailCopyright": {
+          "order": 16,
+          "hits": 739,
+          "residual": "codes"
+        },
+        "thumbnailUrl": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "url": {
+          "order": 0,
+          "hits": 0,
+          "residual": "context"
+        }
+      },
+      "dictionary": {
+        "artist": "legacy",
+        "artistRole": "plain",
+        "artistId": "plain",
+        "title": {
+          "order": 0,
+          "hits": 739,
+          "residual": "context"
+        },
+        "dateText": {
+          "order": 5,
+          "hits": 1216,
+          "residual": "context"
+        },
+        "medium": "plain",
+        "creditLine": "legacy",
+        "year": {
+          "order": 0,
+          "hits": 1018,
+          "residual": "codes"
+        },
+        "acquisitionYear": "plain",
+        "dimensions": {
+          "order": 0,
+          "hits": 1069,
+          "residual": "context"
+        },
+        "width": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "height": {
+          "order": 0,
+          "hits": 1090,
+          "residual": "codes"
+        },
+        "depth": "plain",
+        "units": "plain",
+        "thumbnailCopyright": {
+          "order": 16,
+          "hits": 739,
+          "residual": "codes"
+        },
+        "thumbnailUrl": {
+          "order": 0,
+          "hits": 0,
+          "residual": "codes"
+        },
+        "url": {
+          "order": 0,
+          "hits": 0,
+          "residual": "context"
+        }
+      }
+    },
+    "passed": false
+  }
+]

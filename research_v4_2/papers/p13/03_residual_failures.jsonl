@@ -1,0 +1,1 @@
+{"case_id": "break_week_false_positive", "model": "B*", "ground_truth": 0, "prediction": 0.82, "error_type": "Schedule break misclassified as dropout"}

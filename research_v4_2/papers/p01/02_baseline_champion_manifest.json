@@ -1,0 +1,25 @@
+{
+  "paper_id": "P01",
+  "selection_split": "DEV",
+  "target_coverage": 0.7,
+  "eligible_comparators": [
+    {
+      "id": "FullCoverage_C0",
+      "dev_worst_course_acc": 0.5666666666666667,
+      "dev_overall_acc": 0.672
+    },
+    {
+      "id": "UncertaintyThreshold_C1",
+      "dev_worst_course_acc": 0.6410256410256411,
+      "dev_overall_acc": 0.7428571428571429
+    },
+    {
+      "id": "StandardConformal_B_star",
+      "dev_worst_course_acc": 0.6410256410256411,
+      "dev_overall_acc": 0.7428571428571429
+    }
+  ],
+  "champion_id": "StandardConformal_B_star",
+  "champion_dev_worst_course_acc": 0.6410256410256411,
+  "selection_rule": "Highest dev worst_course_accuracy among eligible C1/C2 comparators"
+}

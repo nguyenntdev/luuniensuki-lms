@@ -1,0 +1,30 @@
+{
+  "unavailable": {
+    "rows": 55814,
+    "learners": 1133,
+    "learner_weight": 0.7531288623665419,
+    "conditional_gain": 0.000452193239970426,
+    "contribution": 0.0003405597803887676
+  },
+  "all_reconcile": {
+    "rows": 58655,
+    "learners": 631,
+    "learner_weight": 0.223421870707744,
+    "conditional_gain": 0.0003714766141792649,
+    "contribution": 8.299600006411022e-05
+  },
+  "admissible_extra_counts": {
+    "rows": 208,
+    "learners": 22,
+    "learner_weight": 0.0007530763778001967,
+    "conditional_gain": -0.0008776568211209225,
+    "contribution": -6.609426198013796e-07
+  },
+  "other_counter_or_clock_difference": {
+    "rows": 7915,
+    "learners": 253,
+    "learner_weight": 0.022696190547913827,
+    "conditional_gain": -0.0004029733042407458,
+    "contribution": -9.145958898770418e-06
+  }
+}

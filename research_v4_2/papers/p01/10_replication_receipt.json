@@ -1,0 +1,18 @@
+{
+  "paper_id": "P01",
+  "claim_id": "CLAIM-V42-P01",
+  "replication_cohort": "generated_fixtures",
+  "target_coverage": 0.7,
+  "candidate_score": 0.6717171717171717,
+  "baseline_champion_score": 0.6917293233082706,
+  "observed_delta": -0.020012151591098926,
+  "predefined_delta_min": 0.05,
+  "ci_95": [
+    -0.07313077169852025,
+    0.03977114612550182
+  ],
+  "p_adjusted": 1.0,
+  "replication_success": false,
+  "status": "FIXTURE_CHECK",
+  "evidence_source": "generated_fixtures"
+}

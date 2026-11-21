@@ -1,0 +1,2 @@
+{"case_id": "case_cc05_fabricated_citation", "baseline_score": 3, "ground_truth": 1, "failure_mode": "fabricated citation undetected by standard rubric", "stratum": "fabricated"}
+{"case_id": "case_cc01_zero_evidence", "baseline_score": 1, "ground_truth": 0, "failure_mode": "zero evidence received nonzero score due to keyword match", "stratum": "zero_evidence"}

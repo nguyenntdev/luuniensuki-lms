@@ -1,0 +1,16 @@
+{
+  "paper_id": "P12",
+  "split": "TEST_SEALED",
+  "metric": "expert_locator_correct_support_recall",
+  "candidate_recall": 1.0,
+  "baseline_b_star_recall": 0.5,
+  "candidate_false_support_rate": 0.0,
+  "baseline_false_support_rate": 0.0,
+  "delta_observed": 0.5,
+  "delta_min_required": 0.1,
+  "win_status": "WIN_CONFIRMED",
+  "formal_properties_verified": [
+    "cryptographic_tamper_evident_chain_100pct"
+  ],
+  "evidence_source": "generated_fixtures"
+}

@@ -1,0 +1,16 @@
+{
+  "paper_id": "P13",
+  "split": "TEST_SEALED",
+  "metric": "AUROC",
+  "candidate_auroc": 1.0,
+  "baseline_b_star_auroc": 1.0,
+  "candidate_ece": 0.09914846721938804,
+  "baseline_ece": 0.21771097698292055,
+  "delta_observed": 0.0,
+  "delta_min_required": 0.04,
+  "win_status": "TESTED_NULL",
+  "invariants_verified": [
+    "strict_no_future_leakage_cutoff"
+  ],
+  "evidence_source": "generated_fixtures"
+}

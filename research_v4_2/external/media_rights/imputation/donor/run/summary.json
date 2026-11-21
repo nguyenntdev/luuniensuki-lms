@@ -1,0 +1,22 @@
+{
+  "train": 302046,
+  "development": 100875,
+  "loss": {
+    "previous_global": 0.1372807157114247,
+    "cpu_neighbor": 0.13919527876472482,
+    "direct_rate": 0.1745054832568602,
+    "metadata": 0.1431207046990437,
+    "rich_global": 0.13140205787217754,
+    "two_orders": 0.12918350173449816,
+    "compatible": 0.134730759326891
+  },
+  "gain": {
+    "previous_global": 0.0025499563845337025,
+    "cpu_neighbor": 0.004464519437833825,
+    "direct_rate": 0.0397747239299692,
+    "metadata": 0.008389945372152707,
+    "rich_global": -0.003328701454713451,
+    "two_orders": -0.005547257592392829
+  },
+  "pass_screen": false
+}

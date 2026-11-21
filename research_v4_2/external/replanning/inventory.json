@@ -1,0 +1,26 @@
+{
+  "source": "04cd2571fed0494c0c0dd2e30fa770140fd87ad7b6eb3c40265426c3c43d0772",
+  "date": "20261120",
+  "routes": [
+    "Blue",
+    "Green-B",
+    "Green-C",
+    "Green-D",
+    "Green-E",
+    "Mattapan",
+    "Orange",
+    "Red"
+  ],
+  "stations": 124,
+  "trips": 418,
+  "legs": 4931,
+  "target_ids": [
+    "place-bndhl",
+    "place-denrd",
+    "place-chswk",
+    "place-north"
+  ],
+  "queries": 512,
+  "scenarios": 48,
+  "projection_sha256": "64d6fef445accd9acba63f4673b51886c9fdeb5c0afb54f190a46bb20cf5b264"
+}

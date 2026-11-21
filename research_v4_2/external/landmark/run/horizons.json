@@ -1,0 +1,278 @@
+[
+  {
+    "day": 14,
+    "target": "withdrawal",
+    "model": "logistic",
+    "test": 11221,
+    "eligible": 9330,
+    "all_auc": 0.7254590752731688,
+    "eligible_auc": 0.5839782161651053,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 14210721,
+        "auc": 0.5839782161651053
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 14017983,
+        "auc": 0.8688852026714542
+      }
+    ]
+  },
+  {
+    "day": 14,
+    "target": "withdrawal",
+    "model": "catboost",
+    "test": 11221,
+    "eligible": 9330,
+    "all_auc": 0.7269939314252614,
+    "eligible_auc": 0.5865558475182223,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 14210721,
+        "auc": 0.5865558475182223
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 14017983,
+        "auc": 0.8693629461528096
+      }
+    ]
+  },
+  {
+    "day": 14,
+    "target": "unsuccessful",
+    "model": "logistic",
+    "test": 11221,
+    "eligible": 9330,
+    "all_auc": 0.7352111520645894,
+    "eligible_auc": 0.6565966202329838,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 21153825,
+        "auc": 0.6565966202329838
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 10296495,
+        "auc": 0.8967222341194746
+      }
+    ]
+  },
+  {
+    "day": 14,
+    "target": "unsuccessful",
+    "model": "catboost",
+    "test": 11221,
+    "eligible": 9330,
+    "all_auc": 0.7395725385306096,
+    "eligible_auc": 0.6622070476615931,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 21153825,
+        "auc": 0.6622070476615931
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 10296495,
+        "auc": 0.898517505228721
+      }
+    ]
+  },
+  {
+    "day": 56,
+    "target": "withdrawal",
+    "model": "logistic",
+    "test": 11249,
+    "eligible": 8876,
+    "all_auc": 0.8255260250424032,
+    "eligible_auc": 0.6219910139837834,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 10737795,
+        "auc": 0.6219910139837834
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 17633763,
+        "auc": 0.9494653807017821
+      }
+    ]
+  },
+  {
+    "day": 56,
+    "target": "withdrawal",
+    "model": "catboost",
+    "test": 11249,
+    "eligible": 8876,
+    "all_auc": 0.8247399561208447,
+    "eligible_auc": 0.620342770559505,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 10737795,
+        "auc": 0.620342770559505
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 17633763,
+        "auc": 0.9492043190100717
+      }
+    ]
+  },
+  {
+    "day": 56,
+    "target": "unsuccessful",
+    "model": "logistic",
+    "test": 11249,
+    "eligible": 8876,
+    "all_auc": 0.821314770632774,
+    "eligible_auc": 0.7169019353123767,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 18659520,
+        "auc": 0.7169019353123768
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 12947088,
+        "auc": 0.9717959745079356
+      }
+    ]
+  },
+  {
+    "day": 56,
+    "target": "unsuccessful",
+    "model": "catboost",
+    "test": 11249,
+    "eligible": 8876,
+    "all_auc": 0.8165464006767194,
+    "eligible_auc": 0.7096222196498088,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 18659520,
+        "auc": 0.7096222196498088
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 12947088,
+        "auc": 0.9706469902730251
+      }
+    ]
+  },
+  {
+    "day": 60,
+    "target": "withdrawal",
+    "model": "logistic",
+    "test": 11249,
+    "eligible": 8815,
+    "all_auc": 0.8324483977933111,
+    "eligible_auc": 0.6214334692271012,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 10284504,
+        "auc": 0.6214334692271013
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 18087054,
+        "auc": 0.9524338789501043
+      }
+    ]
+  },
+  {
+    "day": 60,
+    "target": "withdrawal",
+    "model": "catboost",
+    "test": 11249,
+    "eligible": 8815,
+    "all_auc": 0.8335110465206035,
+    "eligible_auc": 0.6228119022560543,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 10284504,
+        "auc": 0.6228119022560543
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 18087054,
+        "auc": 0.9533169691426807
+      }
+    ]
+  },
+  {
+    "day": 60,
+    "target": "unsuccessful",
+    "model": "logistic",
+    "test": 11249,
+    "eligible": 8815,
+    "all_auc": 0.8262596384907865,
+    "eligible_auc": 0.7174589604328198,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 18326704,
+        "auc": 0.7174589604328198
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 13279904,
+        "auc": 0.9764081502396403
+      }
+    ]
+  },
+  {
+    "day": 60,
+    "target": "unsuccessful",
+    "model": "catboost",
+    "test": 11249,
+    "eligible": 8815,
+    "all_auc": 0.8244859113005737,
+    "eligible_auc": 0.7143996541876815,
+    "pair_strata": [
+      {
+        "positive": "active",
+        "negative": "active",
+        "pairs": 18326704,
+        "auc": 0.7143996541876816
+      },
+      {
+        "positive": "exited",
+        "negative": "active",
+        "pairs": 13279904,
+        "auc": 0.9764085643992607
+      }
+    ]
+  }
+]

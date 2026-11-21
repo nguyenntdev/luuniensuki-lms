@@ -1,0 +1,13 @@
+{
+  "paper_id": "P01",
+  "title": "Selective learner-risk transfer under distribution shift",
+  "v3_source_commit": "4e5a792d7f1b9c83a1d9b3240e34c9c27f6a421b",
+  "v3_observed_metrics": {
+    "reported_base_accuracy": 0.2091,
+    "logistic_comparator_accuracy": 0.5536,
+    "reported_coverage": 0.362,
+    "fairness_issue": "Denominator mismatch: selective accuracy evaluated on 36.2% coverage vs 100% full coverage for logistic comparator."
+  },
+  "reproduction_status": "VERIFIED_V3_FAILURE_REPRODUCED",
+  "audit_timestamp": "2026-11-20T10:00:00Z"
+}

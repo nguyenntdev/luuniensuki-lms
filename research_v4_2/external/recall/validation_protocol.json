@@ -1,0 +1,9 @@
+{
+  "status": "Follow-up design recorded before evaluating learner buckets 2 through 5. The primary results were known. This is a local protocol, not a registered study.",
+  "primary_result_sha256": "36971deb2cff2f972ab3546ed4668df14ec98bb814d322f036f624c079295554",
+  "sample": "First big-endian SHA256 uint32 of UTF-8 learner ID modulo 100 in [2,5] inclusive. All sessions. No original learner eligible. Same historical archive.",
+  "models": "Retrain the two selected configurations on original training users using original order and seed. Use archived calibration coefficients. Require maximum absolute error below 1e-7 on all original test predictions before opening follow-up cohort.",
+  "ablation": "Authors' omit_h_term=True HLR at 0.001, using 1 and 3 passes. Choose pass count and raw vs calibrated probabilities on original dev learner NLL. Fit calibration on original calibration learners only. Include calibration-set mean learner recall as constant benchmark.",
+  "diagnostics": "Report raw and calibrated loss, score and observed recall by fixed raw HLR probability band, half-life clipping and probability clipping frequencies. Check training order sensitivity using seeds 43 and 44 on original calibration only.",
+  "inference": "Fixed-model contrasts on disjoint validation learners. Paired mean learner NLL differences and 10000 paired learner percentile bootstrap replicates with seed 42. Report hash bucket contrasts for primary pair. Sensitivity and stronger baseline contrasts are descriptive. No change to the original decision."
+}

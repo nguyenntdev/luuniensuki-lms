@@ -1,0 +1,10 @@
+{
+  "paper_id": "P12",
+  "cohort": "generated_fixtures",
+  "candidate_recall": 1.0,
+  "baseline_b_star_recall": 0.5,
+  "delta_observed": 0.5,
+  "delta_min": 0.1,
+  "replicated": true,
+  "evidence_source": "generated_fixtures"
+}

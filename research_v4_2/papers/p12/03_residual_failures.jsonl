@@ -1,0 +1,2 @@
+{"case_id": "cl_02_cross_edition_alias", "b_star_verdict": "UNVERIFIED", "ground_truth": "SUPPORT", "failure_mode": "B* fails on edition shift"}
+{"case_id": "cl_03_refutation_khac_nham", "b_star_verdict": "SUPPORT", "ground_truth": "REFUTE", "failure_mode": "B* conflates topic match with confirmation"}

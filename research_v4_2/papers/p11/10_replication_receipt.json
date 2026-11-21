@@ -1,0 +1,11 @@
+{
+  "paper_id": "P11",
+  "cohort": "generated_fixtures",
+  "metric": "Krippendorff_alpha_ordinal",
+  "candidate_score": 1.0,
+  "baseline_b_star_score": 0.3670315619350263,
+  "delta_observed": 0.6329684380649737,
+  "delta_min": 0.08,
+  "replicated": true,
+  "evidence_source": "generated_fixtures"
+}

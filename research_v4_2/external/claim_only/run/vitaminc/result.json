@@ -1,0 +1,33 @@
+{
+  "release_rows": 55197,
+  "real_rows": 34481,
+  "real_pages": 2836,
+  "sample_rows": 1622,
+  "sample_pages": 128,
+  "claim_pairs": 810,
+  "gold_violates_one_support": 5,
+  "independent_correct": 1379,
+  "paired_correct": 1437,
+  "independent_per_label": {
+    "SUPPORTS": 767,
+    "REFUTES": 351,
+    "NOT ENOUGH INFO": 261
+  },
+  "paired_per_label": {
+    "SUPPORTS": 790,
+    "REFUTES": 365,
+    "NOT ENOUGH INFO": 282
+  },
+  "label_counts": {
+    "SUPPORTS": 811,
+    "REFUTES": 459,
+    "NOT ENOUGH INFO": 352
+  },
+  "rescued": 71,
+  "regressed": 13,
+  "difference": 0.035758323057953144,
+  "page_bootstrap_ci95": [
+    0.02284632684345234,
+    0.0520100328662861
+  ]
+}

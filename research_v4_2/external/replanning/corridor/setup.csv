@@ -1,0 +1,11 @@
+method,ns
+csa,741
+full_profile,241
+path_cache,1878836
+all_predecessors,262994
+eager,301237
+indexed_csa,519975
+lazy_unpruned,1057964
+lazy_pruned,1092722
+signature_only,744843
+candidate,910069

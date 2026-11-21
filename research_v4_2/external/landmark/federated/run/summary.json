@@ -1,0 +1,74 @@
+{
+  "registrations": 8815,
+  "learners": 8505,
+  "clients": 7,
+  "macro_auc": {
+    "adapted": 0.6252783922124031,
+    "fedavg": 0.5962906033484746,
+    "fedprox": 0.5965070230695344,
+    "intercept_only": 0.5962906033484746,
+    "local": 0.6200295618080759,
+    "pooled": 0.5915048177217953,
+    "pooled_boosting": 0.6015966213381104,
+    "weak_ridge": 0.6311610610255277
+  },
+  "contrasts": {
+    "pooled_boosting": {
+      "auc_gain": 0.023681770874292685,
+      "simultaneous_ci95": [
+        -0.014934038188632745,
+        0.062297579937218114
+      ],
+      "clears_margin": false
+    },
+    "fedavg": {
+      "auc_gain": 0.0289877888639285,
+      "simultaneous_ci95": [
+        0.01744112967841481,
+        0.04053444804944219
+      ],
+      "clears_margin": true
+    },
+    "fedprox": {
+      "auc_gain": 0.028771369142868708,
+      "simultaneous_ci95": [
+        0.017213726060460136,
+        0.04032901222527728
+      ],
+      "clears_margin": true
+    },
+    "pooled": {
+      "auc_gain": 0.033773574490607805,
+      "simultaneous_ci95": [
+        0.021985368391010243,
+        0.04556178059020537
+      ],
+      "clears_margin": true
+    },
+    "local": {
+      "auc_gain": 0.0052488304043272205,
+      "simultaneous_ci95": [
+        -0.0013636286705618157,
+        0.011861289479216258
+      ],
+      "clears_margin": false
+    },
+    "intercept_only": {
+      "auc_gain": 0.0289877888639285,
+      "simultaneous_ci95": [
+        0.01744112967841481,
+        0.04053444804944219
+      ],
+      "clears_margin": true
+    },
+    "weak_ridge": {
+      "auc_gain": -0.005882668813124603,
+      "simultaneous_ci95": [
+        -0.03654011844013101,
+        0.02477478081388181
+      ],
+      "clears_margin": false
+    }
+  },
+  "advances": false
+}

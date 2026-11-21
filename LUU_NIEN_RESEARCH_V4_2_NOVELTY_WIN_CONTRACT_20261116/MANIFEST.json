@@ -1,0 +1,118 @@
+{
+  "date": "2026-11-16",
+  "repo_head": "331c581f540ba4a6d41618b49222a0f56fdf0042",
+  "files": {
+    "00_START/READ_ME_FIRST.md": {
+      "bytes": 2734,
+      "sha256": "183ee66793f075dbaa8be6df991268ba4321ab780c02ea8018af8a9ba9afa3cb"
+    },
+    "01_NOVELTY/PAPER_BY_PAPER_SCREENING.md": {
+      "bytes": 4741,
+      "sha256": "a7329c7a3909eb6ea58604b96907340ee488090cfb9ba821b2b64553b5552f42"
+    },
+    "01_NOVELTY/REVIEW_PROTOCOL.md": {
+      "bytes": 1484,
+      "sha256": "b7c20777b25377e8bc2228da0d1f259a3ece18a0325d4aefa6379facabb2915e"
+    },
+    "02_WIN_CONTRACT/WIN_CONTRACT.md": {
+      "bytes": 6385,
+      "sha256": "e14d780586c95e7cc8cc974374d7c70a874d50d72f12df0203b37eb3d44c015f"
+    },
+    "03_PAPERS/P01_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5860,
+      "sha256": "ac73e38d22c62537146fba6950ec5cb89bd67ee2eb01c628f6ca153e86752316"
+    },
+    "03_PAPERS/P02_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5819,
+      "sha256": "0cf5d3a1b4d46c9f8290c95c60ffe4644292d04c469465e0af207a58496804e0"
+    },
+    "03_PAPERS/P03_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5887,
+      "sha256": "62cf877e3c5277d99fbf451f164d591cc94e1c981d89d4234d6cf6517cbd6f76"
+    },
+    "03_PAPERS/P04_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5631,
+      "sha256": "9a730392f00980e550f7679a626ff47917e8eea682c7b1018135d422a2edba78"
+    },
+    "03_PAPERS/P05_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 6759,
+      "sha256": "ca5c1445d607281ab74e9f0f22ce3b4b286e2867b503f685fca890da56c7ae0d"
+    },
+    "03_PAPERS/P06_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5652,
+      "sha256": "2a6c42fff3503037d91fd40995c2f8c3f7a10acdeaac59af59c2f073b069c165"
+    },
+    "03_PAPERS/P07_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5662,
+      "sha256": "b35f2bcda0500c7e2b6d9a47bd79253947b69b7b9c6a26e9c0cb596303b2794b"
+    },
+    "03_PAPERS/P08_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5738,
+      "sha256": "eae0c1483244957543b554ad3cd574f9aba08fb1ce443f3bbe561ce0b6fc6872"
+    },
+    "03_PAPERS/P09_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5904,
+      "sha256": "392f5c6a408128b90f2a9721d18dc395e30517db95b24b7ed8ee0448967f61c8"
+    },
+    "03_PAPERS/P10_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5295,
+      "sha256": "d60d3021274be1c114189d2ff7f3b8c5cff4b6f667a5fe99bffce35843a9cd01"
+    },
+    "03_PAPERS/P11_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5451,
+      "sha256": "8953a8cfec932bd9ff2dc6984476bf0c5515666be19323ca6448a478742a2eb9"
+    },
+    "03_PAPERS/P12_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5694,
+      "sha256": "b3fd847c21923cb83ece5ebc8b1c0c90b0bbfd328ec7709a2b1e2bd650a2b134"
+    },
+    "03_PAPERS/P13_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5953,
+      "sha256": "2d6a6803e2d0d303b4a113f0755742a35009dfe81be7e3327d0d38aa1057ca25"
+    },
+    "03_PAPERS/P14_NOVELTY_AND_WIN_METHOD.md": {
+      "bytes": 5824,
+      "sha256": "3560c11b72c5608017489f7d203ecf2f6ecf710b97cc66ef3b595ad06141fc0a"
+    },
+    "04_BASELINES/BASELINE_DISCOVERY.csv": {
+      "bytes": 6957,
+      "sha256": "f6f5871a1e5d50c924795178005331e958520755f7490cd738342f3e251096da"
+    },
+    "04_BASELINES/COMPARATOR_PARITY_POLICY.md": {
+      "bytes": 1869,
+      "sha256": "a7deff14c41d7f83d62209a6a2edd9e4864df7266834f1204d60765dcde3c67c"
+    },
+    "05_EXECUTION/ENGINEERING_AND_SCIENCE_GATES.md": {
+      "bytes": 4071,
+      "sha256": "fc6a1138d265aa133a6a2f6952726a9d3968f0a0af1f4495cbc8cbfc6bcb43bc"
+    },
+    "06_AGENT/GOAL.md": {
+      "bytes": 3099,
+      "sha256": "56c24cd3c753b28b0f65b9531b4edf48766fb468bb1e248041de68ab6df41051"
+    },
+    "07_TICKETS/V42_TASK_REGISTER.csv": {
+      "bytes": 46550,
+      "sha256": "e1526247a12f8ab8eadb0419ad6eee80f913046cab94645db2f36f2c61c78f11"
+    },
+    "07_TICKETS/V42_TASK_REGISTER.json": {
+      "bytes": 90570,
+      "sha256": "e475547fadd6c01baccf7b60dfc184bc72ab24c0ac913d4896ed0d1730ea2f3d"
+    },
+    "08_REFERENCES/VERIFIED_CLOSEST_WORK.md": {
+      "bytes": 6122,
+      "sha256": "5b8052550e57123346d823693ec08b25e1a66e3436caf5e0870778ce32c7a67c"
+    },
+    "MANIFEST.json": {
+      "bytes": 4309,
+      "sha256": "53ca5e6c5b7b835e659fe9b11796cb75f31b8da09195a0f6290fd5ebbb739cba"
+    },
+    "V42_MASTER_OVERVIEW.md": {
+      "bytes": 12691,
+      "sha256": "7bf7c0c8eadb4d2eadc08113de060d8e99b0931c00b10236c674e43374a64ffc"
+    }
+  },
+  "ticket_count": 274,
+  "paper_specs": 14,
+  "source_verified_review_not_exhaustive": true,
+  "winning_not_guaranteed": true
+}

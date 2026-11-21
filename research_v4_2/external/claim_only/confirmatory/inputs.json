@@ -1,0 +1,188 @@
+[
+  {
+    "path": "vitaminc/albert-base-vitaminc/config.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc/resolve/74617d45d0e1e67c0ec806f893b5bea7dbaab394/config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "24747a47ca3ea56a2e0dc2a2c004d0b6caa48f8e5f84eb97b20f60ddd860786e"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc/special_tokens_map.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc/resolve/74617d45d0e1e67c0ec806f893b5bea7dbaab394/special_tokens_map.json",
+    "study": "vitaminc_challenge",
+    "sha256": "dafa474106cf4c7bee4470cf371e915005d4fe7a664f88c4b512dc4e4f2f2476"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc/spiece.model",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc/resolve/74617d45d0e1e67c0ec806f893b5bea7dbaab394/spiece.model",
+    "study": "vitaminc_challenge",
+    "sha256": "fefb02b667a6c5c2fe27602d28e5fb3428f66ab89c7d6f388e7c8d44a02d0336"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc/tokenizer_config.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc/resolve/74617d45d0e1e67c0ec806f893b5bea7dbaab394/tokenizer_config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "3a7e20518084860b652061fcf94ba2e26dfa750930f7ba8cbdb1c838d28e7bd7"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc/pytorch_model.bin",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc/resolve/74617d45d0e1e67c0ec806f893b5bea7dbaab394/pytorch_model.bin",
+    "study": "vitaminc_challenge",
+    "sha256": "6aa6aafccbc60506edd0917f01f722ae1d307f1f75cc65ba7a629445c99c9ffb"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc-mnli/config.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-mnli/resolve/5c9fea6e2ffa1fe7187fc3d29ffeba5d77b46da9/config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "b655e355f613ac75918675fc33a587a73d97e83363160040d837eac859ab4bda"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc-mnli/special_tokens_map.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-mnli/resolve/5c9fea6e2ffa1fe7187fc3d29ffeba5d77b46da9/special_tokens_map.json",
+    "study": "vitaminc_challenge",
+    "sha256": "dafa474106cf4c7bee4470cf371e915005d4fe7a664f88c4b512dc4e4f2f2476"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc-mnli/spiece.model",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-mnli/resolve/5c9fea6e2ffa1fe7187fc3d29ffeba5d77b46da9/spiece.model",
+    "study": "vitaminc_challenge",
+    "sha256": "fefb02b667a6c5c2fe27602d28e5fb3428f66ab89c7d6f388e7c8d44a02d0336"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc-mnli/tokenizer_config.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-mnli/resolve/5c9fea6e2ffa1fe7187fc3d29ffeba5d77b46da9/tokenizer_config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "3a7e20518084860b652061fcf94ba2e26dfa750930f7ba8cbdb1c838d28e7bd7"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc-mnli/model.safetensors",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-mnli/resolve/5c9fea6e2ffa1fe7187fc3d29ffeba5d77b46da9/model.safetensors",
+    "study": "vitaminc_challenge",
+    "sha256": "c48e88efef4e2ae6bf8229558fc50d1dd84681b52d7d78889e88d2f61d89f0b3"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc-fever/config.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-fever/resolve/15de029c9f4e929c8f6cc56bc39fcac22f6bdbc3/config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "716ecac897f7d004c29e63e8aa79c4cff16f44850dad0d4f1cb57718791704d6"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc-fever/special_tokens_map.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-fever/resolve/15de029c9f4e929c8f6cc56bc39fcac22f6bdbc3/special_tokens_map.json",
+    "study": "vitaminc_challenge",
+    "sha256": "dafa474106cf4c7bee4470cf371e915005d4fe7a664f88c4b512dc4e4f2f2476"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc-fever/spiece.model",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-fever/resolve/15de029c9f4e929c8f6cc56bc39fcac22f6bdbc3/spiece.model",
+    "study": "vitaminc_challenge",
+    "sha256": "fefb02b667a6c5c2fe27602d28e5fb3428f66ab89c7d6f388e7c8d44a02d0336"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc-fever/tokenizer_config.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-fever/resolve/15de029c9f4e929c8f6cc56bc39fcac22f6bdbc3/tokenizer_config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "3a7e20518084860b652061fcf94ba2e26dfa750930f7ba8cbdb1c838d28e7bd7"
+  },
+  {
+    "path": "vitaminc/albert-base-vitaminc-fever/pytorch_model.bin",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-fever/resolve/15de029c9f4e929c8f6cc56bc39fcac22f6bdbc3/pytorch_model.bin",
+    "study": "vitaminc_challenge",
+    "sha256": "194d21f91f0dea25f73fc828f7b18baddd90f07a82f1a844d470c8bf691a772d"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc/config.json",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc/resolve/e86807a8bfa4f9cfec822c5855f1c86c4f475f03/config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "0d1d89318d0c578000e6a88abf5bef98733359981175bc6ea7fee0c6bcbec769"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc/special_tokens_map.json",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc/resolve/e86807a8bfa4f9cfec822c5855f1c86c4f475f03/special_tokens_map.json",
+    "study": "vitaminc_challenge",
+    "sha256": "dafa474106cf4c7bee4470cf371e915005d4fe7a664f88c4b512dc4e4f2f2476"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc/spiece.model",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc/resolve/e86807a8bfa4f9cfec822c5855f1c86c4f475f03/spiece.model",
+    "study": "vitaminc_challenge",
+    "sha256": "fefb02b667a6c5c2fe27602d28e5fb3428f66ab89c7d6f388e7c8d44a02d0336"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc/tokenizer_config.json",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc/resolve/e86807a8bfa4f9cfec822c5855f1c86c4f475f03/tokenizer_config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "dabbeb4a1c2b7bf88ddb4bc8db3870725916241b44f7424f8952473dc4f7dc2c"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc/model.safetensors",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc/resolve/e86807a8bfa4f9cfec822c5855f1c86c4f475f03/model.safetensors",
+    "study": "vitaminc_challenge",
+    "sha256": "9bdb51b39fa05791282ff19137d6d5888d22c7d6c2629ef72e28641b717c14a7"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc-mnli/config.json",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc-mnli/resolve/3082ba54344bd9ddada2be1c5e9b4131721d2a5d/config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "51b8da5020b23ef17e6ada41acd88c63c0648289117ea2aa9399f9e347f9b13f"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc-mnli/special_tokens_map.json",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc-mnli/resolve/3082ba54344bd9ddada2be1c5e9b4131721d2a5d/special_tokens_map.json",
+    "study": "vitaminc_challenge",
+    "sha256": "dafa474106cf4c7bee4470cf371e915005d4fe7a664f88c4b512dc4e4f2f2476"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc-mnli/spiece.model",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc-mnli/resolve/3082ba54344bd9ddada2be1c5e9b4131721d2a5d/spiece.model",
+    "study": "vitaminc_challenge",
+    "sha256": "fefb02b667a6c5c2fe27602d28e5fb3428f66ab89c7d6f388e7c8d44a02d0336"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc-mnli/tokenizer_config.json",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc-mnli/resolve/3082ba54344bd9ddada2be1c5e9b4131721d2a5d/tokenizer_config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "dabbeb4a1c2b7bf88ddb4bc8db3870725916241b44f7424f8952473dc4f7dc2c"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc-mnli/model.safetensors",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc-mnli/resolve/3082ba54344bd9ddada2be1c5e9b4131721d2a5d/model.safetensors",
+    "study": "vitaminc_challenge",
+    "sha256": "e77c1a8df1046d4bd66b5dc04ec22cdc855c2e28ecf463f38227402001b99258"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc-fever/config.json",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc-fever/resolve/a29e77de7236a072af559b02171b59e1007ca010/config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "5e4de1c5cf96c29d9bd2baefa79daa0af4cd974977a5d0a4bff22fa0a605649b"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc-fever/special_tokens_map.json",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc-fever/resolve/a29e77de7236a072af559b02171b59e1007ca010/special_tokens_map.json",
+    "study": "vitaminc_challenge",
+    "sha256": "dafa474106cf4c7bee4470cf371e915005d4fe7a664f88c4b512dc4e4f2f2476"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc-fever/spiece.model",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc-fever/resolve/a29e77de7236a072af559b02171b59e1007ca010/spiece.model",
+    "study": "vitaminc_challenge",
+    "sha256": "fefb02b667a6c5c2fe27602d28e5fb3428f66ab89c7d6f388e7c8d44a02d0336"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc-fever/tokenizer_config.json",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc-fever/resolve/a29e77de7236a072af559b02171b59e1007ca010/tokenizer_config.json",
+    "study": "vitaminc_challenge",
+    "sha256": "dabbeb4a1c2b7bf88ddb4bc8db3870725916241b44f7424f8952473dc4f7dc2c"
+  },
+  {
+    "path": "vitaminc/albert-xlarge-vitaminc-fever/model.safetensors",
+    "url": "https://huggingface.co/tals/albert-xlarge-vitaminc-fever/resolve/a29e77de7236a072af559b02171b59e1007ca010/model.safetensors",
+    "study": "vitaminc_challenge",
+    "sha256": "00a75e8f43a55aeb30eda98f99a484a829eba7190a0d2fc295ada386db5a14fb"
+  },
+  {
+    "path": "vitaminc/dev.jsonl",
+    "url": "https://huggingface.co/datasets/tals/vitaminc/resolve/be6febb761b0b2807687e61e0b5282e459df2fa0/dev.jsonl",
+    "study": "vitaminc_challenge",
+    "sha256": "544934677f5d133873e6d38f4557f8966f4efa5d3d70874ffe6913f2091b86b5"
+  }
+]

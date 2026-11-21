@@ -1,0 +1,36 @@
+{
+  "train": 302046,
+  "development": {
+    "all": {
+      "n": 100875,
+      "positives": 52259,
+      "loss": {
+        "family_rate": 0.379226969460292,
+        "catboost": 0.1560056992265106,
+        "pooled": 0.16189247762210518,
+        "neighbor": 0.13919527876472484
+      }
+    },
+    "seen_family": {
+      "n": 97141,
+      "positives": 50233,
+      "loss": {
+        "family_rate": 0.3672501092749482,
+        "catboost": 0.15483122115321224,
+        "pooled": 0.16084895868723223,
+        "neighbor": 0.13748734729312018
+      }
+    },
+    "unseen_family": {
+      "n": 3734,
+      "positives": 2026,
+      "loss": {
+        "family_rate": 0.6908081626216414,
+        "catboost": 0.18656005769417977,
+        "pooled": 0.18903989938227966,
+        "neighbor": 0.1836275688244856
+      }
+    }
+  },
+  "pass_screen": true
+}

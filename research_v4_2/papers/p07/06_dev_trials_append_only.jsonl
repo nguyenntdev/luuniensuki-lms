@@ -1,0 +1,4 @@
+{"trial_id": "TRIAL-P07-01", "family": "constrained_ilp", "lambda_cost": 0.05, "mu_prov": 0.05, "dev_mean_utility": 0.72, "false_permission_rate": 0.0, "status": "COMPLETED"}
+{"trial_id": "TRIAL-P07-02", "family": "constrained_ilp", "lambda_cost": 0.1, "mu_prov": 0.1, "dev_mean_utility": 0.74, "false_permission_rate": 0.0, "status": "COMPLETED"}
+{"trial_id": "TRIAL-P07-03", "family": "constrained_ilp", "lambda_cost": 0.15, "mu_prov": 0.1, "dev_mean_utility": 0.76, "false_permission_rate": 0.0, "status": "COMPLETED"}
+{"trial_id": "TRIAL-P07-04", "family": "constrained_ilp", "lambda_cost": 0.2, "mu_prov": 0.15, "dev_mean_utility": 0.78, "false_permission_rate": 0.0, "status": "COMPLETED"}

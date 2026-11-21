@@ -1,0 +1,20 @@
+{
+  "paper_id": "P11",
+  "title": "Reliability-aware historical reasoning rubric",
+  "v3_source_commit": "4e5a792d4715fba268154e680a1334c9103e671c",
+  "proven_failure": "V3 synthetic toy reliability (alpha was reported on generated scores without independent raters or span-level verification); conflated citation presence with reasoning validity.",
+  "case_reproductions": [
+    {
+      "case_id": "CC01",
+      "name": "zero_evidence",
+      "v3_status": "unverified",
+      "v4_status": "cap_applied"
+    },
+    {
+      "case_id": "CC05",
+      "name": "fabricated_citation",
+      "v3_status": "false_positive_pass",
+      "v4_status": "fabrication_detected_and_capped"
+    }
+  ]
+}

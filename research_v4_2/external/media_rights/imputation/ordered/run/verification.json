@@ -1,0 +1,47 @@
+{
+  "training": 302046,
+  "counts": {
+    "all": 100875,
+    "seen_family": 97141,
+    "unseen_family": 3734
+  },
+  "positives": {
+    "all": 52259,
+    "seen_family": 50233,
+    "unseen_family": 2026
+  },
+  "mean_loss": {
+    "all": {
+      "simple_window": 0.31780710157152525,
+      "metadata_id": 0.15166890091680546,
+      "nearest": 0.1555416454958901,
+      "global": 0.13728071571142106,
+      "grouped": 0.1431294699232241,
+      "full": 0.1377806510235552
+    },
+    "seen_family": {
+      "simple_window": 0.3163103839973299,
+      "metadata_id": 0.15038039316877402,
+      "nearest": 0.1544457799386078,
+      "global": 0.13608072485258527,
+      "grouped": 0.14135436926490233,
+      "full": 0.1363087681262693
+    },
+    "unseen_family": {
+      "simple_window": 0.356744606090742,
+      "metadata_id": 0.18518977160549238,
+      "nearest": 0.18405087851678661,
+      "global": 0.16849879605908988,
+      "grouped": 0.1893091841841027,
+      "full": 0.17607207483855766
+    }
+  },
+  "all_object_gain": {
+    "simple_window": 0.18002645054797006,
+    "metadata_id": 0.01388824989325027,
+    "nearest": 0.017760994472334923,
+    "global": -0.000499935312134131,
+    "grouped": 0.0053488188996689
+  },
+  "pass_screen": false
+}

@@ -1,0 +1,8 @@
+baseline_champion_id: B_STAR_PAGE_LEVEL_VERIFIER
+constraint: false_support_rate <= 0.05
+delta_min: 0.1
+frozen_sha256: 81c039fb2300b9c1d68305c2a106f8907312ca3b56cf2c00a6e60b135bfae7e1
+hypothesis: Version-specific page proof and contradiction ledger improves support
+  recall by >= 0.10 over B* at false support rate <= 0.05.
+paper_id: P12
+primary_metric: expert_locator_correct_support_recall

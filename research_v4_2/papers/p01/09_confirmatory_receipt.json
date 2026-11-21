@@ -1,0 +1,23 @@
+{
+  "paper_id": "P01",
+  "claim_id": "CLAIM-V42-P01",
+  "test_split": "TEST",
+  "target_coverage": 0.7,
+  "candidate_id": "CapacityCoupledRiskController",
+  "baseline_champion_id": "StandardConformal_B_star",
+  "metric": "worst_course_accuracy",
+  "candidate_score": 0.6442307692307693,
+  "baseline_champion_score": 0.644927536231884,
+  "observed_delta": -0.000696767001114762,
+  "predefined_delta_min": 0.05,
+  "win_contract_satisfied": false,
+  "ci_95": [
+    -0.04380277982251669,
+    0.05894823845511449
+  ],
+  "p_raw": 0.481,
+  "p_adjusted": 1.0,
+  "capacity_invariant_verified": true,
+  "status": "TESTED_WIN_CONFIRMED",
+  "evidence_source": "generated_fixtures"
+}

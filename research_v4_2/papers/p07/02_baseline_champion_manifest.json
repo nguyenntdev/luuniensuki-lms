@@ -1,0 +1,17 @@
+{
+  "paper_id": "P07",
+  "comparator_pool": [
+    "c0_url_present",
+    "c1_static_fallback",
+    "c2_siglip2_greedy"
+  ],
+  "dev_scores": {
+    "c0": 0.16015,
+    "c1": 0.36615000000000003,
+    "c2": 0.11220000000000001,
+    "proposed": 0.551121875
+  },
+  "baseline_champion_id": "c1_static_fallback",
+  "selection_rule": "Highest mean rights-valid utility on sealed DEV set",
+  "all_manifest_retained": true
+}

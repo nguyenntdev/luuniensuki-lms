@@ -1,0 +1,20 @@
+{
+  "paper_id": "P12",
+  "title": "Page-verifiable archival claim ledger",
+  "v3_source_commit": "4e5a792d4715fba268154e680a1334c9103e671c",
+  "proven_failure": "V3 resulted in 62/63 ABSTAIN; hash-chain was tested in isolation without primary archive page adjudication; failed on edition differences.",
+  "case_reproductions": [
+    {
+      "case_id": "CL02",
+      "description": "cross-edition locator translation",
+      "v3_status": "ABSTAIN",
+      "v4_status": "VERIFIED_SUPPORT"
+    },
+    {
+      "case_id": "CL03",
+      "description": "archival refutation handling",
+      "v3_status": "ABSTAIN",
+      "v4_status": "REFUTE_CONFIRMED"
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "union": {
+    "expectations": {
+      "failed": 170,
+      "passed": 185,
+      "inapplicable": 172
+    },
+    "rules": 35,
+    "tools": {
+      "axe-core": {
+        "n": 527,
+        "exercised": 501,
+        "exact": 412,
+        "expected_fail": 170,
+        "flagged": 151,
+        "true_fail": 150,
+        "review": 18
+      },
+      "alfa": {
+        "n": 527,
+        "exercised": 527,
+        "exact": 494,
+        "expected_fail": 170,
+        "flagged": 170,
+        "true_fail": 162,
+        "review": 16
+      },
+      "equal-access": {
+        "n": 527,
+        "exercised": 467,
+        "exact": 282,
+        "expected_fail": 170,
+        "flagged": 136,
+        "true_fail": 130,
+        "review": 14
+      },
+      "qualweb": {
+        "n": 527,
+        "exercised": 496,
+        "exact": 473,
+        "expected_fail": 170,
+        "flagged": 161,
+        "true_fail": 161,
+        "review": 10
+      }
+    },
+    "pairs": {
+      "axe-core + alfa": {
+        "flagged": 170,
+        "true_fail": 162,
+        "both_failed": 151
+      },
+      "axe-core + equal-access": {
+        "flagged": 163,
+        "true_fail": 157,
+        "both_failed": 124
+      },
+      "axe-core + qualweb": {
+        "flagged": 162,
+        "true_fail": 161,
+        "both_failed": 150
+      },
+      "alfa + equal-access": {
+        "flagged": 174,
+        "true_fail": 162,
+        "both_failed": 132
+      },
+      "alfa + qualweb": {
+        "flagged": 172,
+        "true_fail": 164,
+        "both_failed": 159
+      },
+      "equal-access + qualweb": {
+        "flagged": 167,
+        "true_fail": 161,
+        "both_failed": 130
+      }
+    }
+  },
+  "shared": {
+    "expectations": {
+      "passed": 159,
+      "inapplicable": 146,
+      "failed": 150
+    },
+    "rules": 31,
+    "tools": {
+      "axe-core": {
+        "n": 455,
+        "exercised": 455,
+        "exact": 374,
+        "expected_fail": 150,
+        "flagged": 141,
+        "true_fail": 140,
+        "review": 11
+      },
+      "alfa": {
+        "n": 455,
+        "exercised": 455,
+        "exact": 437,
+        "expected_fail": 150,
+        "flagged": 155,
+        "true_fail": 148,
+        "review": 3
+      },
+      "equal-access": {
+        "n": 455,
+        "exercised": 455,
+        "exact": 274,
+        "expected_fail": 150,
+        "flagged": 136,
+        "true_fail": 130,
+        "review": 14
+      },
+      "qualweb": {
+        "n": 455,
+        "exercised": 455,
+        "exact": 439,
+        "expected_fail": 150,
+        "flagged": 149,
+        "true_fail": 149,
+        "review": 3
+      }
+    },
+    "pairs": {
+      "axe-core + alfa": {
+        "flagged": 155,
+        "true_fail": 148,
+        "both_failed": 141
+      },
+      "axe-core + equal-access": {
+        "flagged": 153,
+        "true_fail": 147,
+        "both_failed": 124
+      },
+      "axe-core + qualweb": {
+        "flagged": 150,
+        "true_fail": 149,
+        "both_failed": 140
+      },
+      "alfa + equal-access": {
+        "flagged": 159,
+        "true_fail": 148,
+        "both_failed": 132
+      },
+      "alfa + qualweb": {
+        "flagged": 156,
+        "true_fail": 149,
+        "both_failed": 148
+      },
+      "equal-access + qualweb": {
+        "flagged": 155,
+        "true_fail": 149,
+        "both_failed": 130
+      }
+    }
+  }
+}

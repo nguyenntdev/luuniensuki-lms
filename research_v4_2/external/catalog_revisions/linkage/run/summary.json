@@ -1,0 +1,72 @@
+{
+  "DBLP-ACM": {
+    "fit": 5900,
+    "calibration": 1517,
+    "validation": 2473,
+    "validation_positive": 444,
+    "prior_pair_count": 9,
+    "models": {
+      "flat": {
+        "threshold": 0.6501098104313783,
+        "calibration_f1": 0.9523809523809524,
+        "f1": 0.9405162738496072
+      },
+      "aligned": {
+        "threshold": 0.4845130575969428,
+        "calibration_f1": 0.9548872180451128,
+        "f1": 0.9469026548672567
+      },
+      "matrix": {
+        "threshold": 0.6553236126377233,
+        "calibration_f1": 0.9734848484848485,
+        "f1": 0.9664429530201343
+      },
+      "pooled": {
+        "threshold": 0.5570132622689644,
+        "calibration_f1": 0.979047619047619,
+        "f1": 0.9653631284916201
+      },
+      "candidate": {
+        "threshold": 0.1775680133897251,
+        "calibration_f1": 0.9739776951672862,
+        "f1": 0.9671052631578947
+      }
+    },
+    "smallest_gain": 0.0006623101377604135
+  },
+  "DBLP-GoogleScholar": {
+    "fit": 13840,
+    "calibration": 3383,
+    "validation": 5742,
+    "validation_positive": 1070,
+    "prior_pair_count": 72,
+    "models": {
+      "flat": {
+        "threshold": 0.36446863819698194,
+        "calibration_f1": 0.9030868628858579,
+        "f1": 0.8818755635707844
+      },
+      "aligned": {
+        "threshold": 0.2605534584630881,
+        "calibration_f1": 0.9110473457675753,
+        "f1": 0.897355445988346
+      },
+      "matrix": {
+        "threshold": 0.22121484351600704,
+        "calibration_f1": 0.914651493598862,
+        "f1": 0.8935041979673001
+      },
+      "pooled": {
+        "threshold": 0.25086082938371074,
+        "calibration_f1": 0.9127040454222853,
+        "f1": 0.8982142857142857
+      },
+      "candidate": {
+        "threshold": 0.2878367415450042,
+        "calibration_f1": 0.9126074498567335,
+        "f1": 0.9012178619756428
+      }
+    },
+    "smallest_gain": 0.003003576261357055
+  }
+}

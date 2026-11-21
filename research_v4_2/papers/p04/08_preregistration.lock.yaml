@@ -1,0 +1,16 @@
+preregistration_version: "v4.2.0"
+paper_id: "P04"
+timestamp: "2026-11-20T00:00:00Z"
+target: "Curriculum-Shift Invariant Student Failure Prediction"
+primary_metric: "AUC"
+delta_min: 0.02
+alpha: 0.05
+baseline_champion_id: "C2_DomainCORAL"
+candidate_id: "OGDShiftPredictor"
+strata_frozen:
+  - "S0"
+  - "S1"
+  - "S2"
+statistical_test: "paired_cluster_bootstrap_1000"
+prereg_hash: "a89e023cf847d1b332bc61e3895e626e257ef51a70ff53907a97491d9d9bb72a"
+status: "LOCKED_BEFORE_TEST"

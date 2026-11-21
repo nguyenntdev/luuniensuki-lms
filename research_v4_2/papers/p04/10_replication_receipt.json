@@ -1,0 +1,31 @@
+{
+  "paper_id": "P04",
+  "replication_seed": 2026,
+  "independent_cohort": "generated_fixtures",
+  "replication_results": {
+    "S1": {
+      "auc_baseline": 0.891,
+      "auc_candidate": 0.9412,
+      "delta": 0.0502,
+      "ci95": [
+        0.0351,
+        0.0653
+      ],
+      "p_value": 0.0,
+      "replicated": true
+    },
+    "S2": {
+      "auc_baseline": 0.8695,
+      "auc_candidate": 0.9078,
+      "delta": 0.0383,
+      "ci95": [
+        0.0241,
+        0.0525
+      ],
+      "p_value": 0.0,
+      "replicated": true
+    }
+  },
+  "replication_status": "FIXTURE_CHECK",
+  "evidence_source": "generated_fixtures"
+}

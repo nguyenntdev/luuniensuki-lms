@@ -1,0 +1,25 @@
+{
+  "paper_id": "P04",
+  "task": "Curriculum-Shift Invariant Student Failure Prediction",
+  "metric": "AUC",
+  "eligible_baselines": [
+    {
+      "id": "C0",
+      "name": "Global Base Rate",
+      "family": "Trivial"
+    },
+    {
+      "id": "C1",
+      "name": "Standard Regularized Logistic Regression (ERM)",
+      "family": "Linear ERM"
+    },
+    {
+      "id": "C2",
+      "name": "Correlation Alignment (CORAL)",
+      "family": "Domain Adaptation"
+    }
+  ],
+  "dev_champion_b_star": "C2_DomainCORAL",
+  "selection_rule": "Highest dev-strata shifted AUC",
+  "decision": "FROZEN_FOR_TEST"
+}

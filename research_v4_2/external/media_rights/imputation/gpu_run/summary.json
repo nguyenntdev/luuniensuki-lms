@@ -1,0 +1,37 @@
+{
+  "device": "GPU",
+  "train": 302046,
+  "development": {
+    "all": {
+      "n": 100875,
+      "positives": 52259,
+      "loss": {
+        "family_rate": 0.379226969460292,
+        "catboost": 0.1592707975514481,
+        "pooled": 0.16389245034005043,
+        "neighbor": 0.15361556202168317
+      }
+    },
+    "seen_family": {
+      "n": 97141,
+      "positives": 50233,
+      "loss": {
+        "family_rate": 0.3672501092749482,
+        "catboost": 0.15813787038065066,
+        "pooled": 0.16276782127895473,
+        "neighbor": 0.15222980726554014
+      }
+    },
+    "unseen_family": {
+      "n": 3734,
+      "positives": 2026,
+      "loss": {
+        "family_rate": 0.6908081626216414,
+        "catboost": 0.18874419827411443,
+        "pooled": 0.19314997353873742,
+        "neighbor": 0.1896663394096029
+      }
+    }
+  },
+  "pass_screen": true
+}

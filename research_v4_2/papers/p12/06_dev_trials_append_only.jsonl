@@ -1,0 +1,3 @@
+{"trial_id": 1, "config": {"threshold": 0.9}, "dev_recall": 0.7, "notes": "threshold too strict"}
+{"trial_id": 2, "config": {"threshold": 0.5}, "dev_recall": 1.0, "false_support": 0.15, "notes": "false support rate violated <= 0.05"}
+{"trial_id": 3, "config": {"threshold": 0.7}, "dev_recall": 1.0, "false_support": 0.0, "notes": "meets false support <= 0.05 with optimal recall"}

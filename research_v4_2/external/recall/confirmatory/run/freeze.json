@@ -1,0 +1,787 @@
+{
+  "sha256": {
+    "study.py": "7fffb07328fbfbac91fd2cf7dc21402738ca7e525e8e128e695db24283ad032d",
+    "protocol.md": "49a508d110af71bb6384d61975eacdb61ca4b0aa90319a8118a9d9f2f01aaf31",
+    "traces.csv.gz": "26cf9b33f2e9b2e8aa9a8f262a017b30699ca2f625c56a12ce699d4ea7076873",
+    "experiment.py": "3a8776a703dd42042e2c5b408858fd6f6693ce21d5a1e0a4879a17127b9135ee",
+    "models.pkl": "978c0ae6ddb926bf210ee2506294a2576052abb3d3bf9735726460262d586c7d"
+  },
+  "versions": {
+    "python": "3.12.3",
+    "numpy": "2.4.4",
+    "pandas": "3.0.2",
+    "scipy": "1.17.1",
+    "sklearn": "1.8.0",
+    "catboost": "1.2.8"
+  },
+  "partitions": {
+    "train": {
+      "rows": 257203,
+      "learners": 2307,
+      "buckets": [
+        10,
+        11
+      ]
+    },
+    "calibration": {
+      "rows": 125921,
+      "learners": 1176,
+      "buckets": [
+        12
+      ]
+    },
+    "development": {
+      "rows": 122592,
+      "learners": 1133,
+      "buckets": [
+        13
+      ]
+    }
+  },
+  "selected": {
+    "constant": {
+      "model": "constant",
+      "setting": null,
+      "calibration": [
+        -0.00561333922161341,
+        0.9880449636957334
+      ],
+      "dev_loss": 0.34395219128305937
+    },
+    "author_hlr": {
+      "model": "author_hlr",
+      "setting": 0.001,
+      "calibration": [
+        1.954264963443426,
+        0.029046300582250013
+      ],
+      "dev_loss": 0.343205480927634
+    },
+    "author_hlr_ablated": {
+      "model": "author_hlr_ablated",
+      "setting": 0.003,
+      "calibration": [
+        2.1085002034790197,
+        0.013136743533098051
+      ],
+      "dev_loss": 0.3433096039547834
+    },
+    "author_lr": {
+      "model": "author_lr",
+      "setting": 0.0003,
+      "calibration": [
+        2.098695974140918,
+        0.0
+      ],
+      "dev_loss": 0.3439521896681053
+    },
+    "logistic": {
+      "model": "logistic",
+      "setting": 10.0,
+      "calibration": [
+        0.26516349850888704,
+        0.8611458353208904
+      ],
+      "dev_loss": 0.34045494474251037
+    },
+    "history_logistic": {
+      "model": "history_logistic",
+      "setting": 10.0,
+      "calibration": [
+        0.4401794899954294,
+        0.7755982818161977
+      ],
+      "dev_loss": 0.3373428046029518
+    },
+    "history_hlr": {
+      "model": "history_hlr",
+      "setting": 1.0,
+      "calibration": [
+        1.8940877357600798,
+        0.07004311235454404
+      ],
+      "dev_loss": 0.34283171178164457
+    },
+    "hist_boost": {
+      "model": "hist_boost",
+      "setting": 200,
+      "calibration": [
+        0.8874428883116046,
+        0.5430031792311458
+      ],
+      "dev_loss": 0.33869611305224806
+    },
+    "base_catboost": {
+      "model": "base_catboost",
+      "setting": [
+        4,
+        400,
+        false
+      ],
+      "calibration": [
+        -0.014731936031332958,
+        1.0270593613426209
+      ],
+      "dev_loss": 0.3383926686416021
+    },
+    "matched_catboost": {
+      "model": "matched_catboost",
+      "setting": [
+        4,
+        400,
+        false
+      ],
+      "calibration": [
+        -0.02712541172756837,
+        1.006484657187469
+      ],
+      "dev_loss": 0.33340068292993463
+    }
+  },
+  "trials": [
+    {
+      "model": "constant",
+      "setting": null,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3439849052502926
+    },
+    {
+      "model": "constant",
+      "setting": null,
+      "calibration": [
+        -0.00561333922161341,
+        0.9880449636957334
+      ],
+      "dev_loss": 0.34395219128305937
+    },
+    {
+      "model": "author_hlr",
+      "setting": 0.0003,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 1.5063896421015717
+    },
+    {
+      "model": "author_hlr",
+      "setting": 0.0003,
+      "calibration": [
+        2.076525380301797,
+        0.015693007788884935
+      ],
+      "dev_loss": 0.3433838954719601
+    },
+    {
+      "model": "author_hlr",
+      "setting": 0.001,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.6079622069287952
+    },
+    {
+      "model": "author_hlr",
+      "setting": 0.001,
+      "calibration": [
+        1.954264963443426,
+        0.029046300582250013
+      ],
+      "dev_loss": 0.343205480927634
+    },
+    {
+      "model": "author_hlr",
+      "setting": 0.003,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.6096047560156093
+    },
+    {
+      "model": "author_hlr",
+      "setting": 0.003,
+      "calibration": [
+        1.9567188167193625,
+        0.028836889332954762
+      ],
+      "dev_loss": 0.34320599207587965
+    },
+    {
+      "model": "author_hlr",
+      "setting": 0.01,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.6143919363147052
+    },
+    {
+      "model": "author_hlr",
+      "setting": 0.01,
+      "calibration": [
+        1.968235817845935,
+        0.02720572391362081
+      ],
+      "dev_loss": 0.3432058496989363
+    },
+    {
+      "model": "author_hlr_ablated",
+      "setting": 0.0003,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 3.182399847707722
+    },
+    {
+      "model": "author_hlr_ablated",
+      "setting": 0.0003,
+      "calibration": [
+        2.119288053524724,
+        0.011621053080387023
+      ],
+      "dev_loss": 0.34334071388701215
+    },
+    {
+      "model": "author_hlr_ablated",
+      "setting": 0.001,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 2.999721538743751
+    },
+    {
+      "model": "author_hlr_ablated",
+      "setting": 0.001,
+      "calibration": [
+        2.1162089869225458,
+        0.011861788420609965
+      ],
+      "dev_loss": 0.34333256388701133
+    },
+    {
+      "model": "author_hlr_ablated",
+      "setting": 0.003,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 2.5701349422868276
+    },
+    {
+      "model": "author_hlr_ablated",
+      "setting": 0.003,
+      "calibration": [
+        2.1085002034790197,
+        0.013136743533098051
+      ],
+      "dev_loss": 0.3433096039547834
+    },
+    {
+      "model": "author_hlr_ablated",
+      "setting": 0.01,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 1.7950478226848665
+    },
+    {
+      "model": "author_hlr_ablated",
+      "setting": 0.01,
+      "calibration": [
+        2.0860359787948783,
+        0.015768002977998147
+      ],
+      "dev_loss": 0.3433261419501637
+    },
+    {
+      "model": "author_lr",
+      "setting": 0.0003,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.4660480170187681
+    },
+    {
+      "model": "author_lr",
+      "setting": 0.0003,
+      "calibration": [
+        2.098695974140918,
+        0.0
+      ],
+      "dev_loss": 0.3439521896681053
+    },
+    {
+      "model": "author_lr",
+      "setting": 0.001,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.39660264735466905
+    },
+    {
+      "model": "author_lr",
+      "setting": 0.001,
+      "calibration": [
+        2.0986924746255298,
+        0.0
+      ],
+      "dev_loss": 0.34395219123091214
+    },
+    {
+      "model": "author_lr",
+      "setting": 0.003,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3775258254794894
+    },
+    {
+      "model": "author_lr",
+      "setting": 0.003,
+      "calibration": [
+        2.0766588438668245,
+        0.013651120222981141
+      ],
+      "dev_loss": 0.3439775505100449
+    },
+    {
+      "model": "author_lr",
+      "setting": 0.01,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.37318929133017675
+    },
+    {
+      "model": "author_lr",
+      "setting": 0.01,
+      "calibration": [
+        2.0656468914325994,
+        0.020202495623366738
+      ],
+      "dev_loss": 0.34398662296301435
+    },
+    {
+      "model": "logistic",
+      "setting": 1.0,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3439337254982939
+    },
+    {
+      "model": "logistic",
+      "setting": 1.0,
+      "calibration": [
+        0.8975722437667959,
+        0.5552807588632348
+      ],
+      "dev_loss": 0.3409324642448492
+    },
+    {
+      "model": "logistic",
+      "setting": 10.0,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.34080269345080694
+    },
+    {
+      "model": "logistic",
+      "setting": 10.0,
+      "calibration": [
+        0.26516349850888704,
+        0.8611458353208904
+      ],
+      "dev_loss": 0.34045494474251037
+    },
+    {
+      "model": "history_logistic",
+      "setting": 1.0,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.34111792533599355
+    },
+    {
+      "model": "history_logistic",
+      "setting": 1.0,
+      "calibration": [
+        0.7934303287325707,
+        0.5977590542042627
+      ],
+      "dev_loss": 0.33877836115699667
+    },
+    {
+      "model": "history_logistic",
+      "setting": 10.0,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.33789023543189317
+    },
+    {
+      "model": "history_logistic",
+      "setting": 10.0,
+      "calibration": [
+        0.4401794899954294,
+        0.7755982818161977
+      ],
+      "dev_loss": 0.3373428046029518
+    },
+    {
+      "model": "history_hlr",
+      "setting": 1.0,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.42570930056374545
+    },
+    {
+      "model": "history_hlr",
+      "setting": 1.0,
+      "calibration": [
+        1.8940877357600798,
+        0.07004311235454404
+      ],
+      "dev_loss": 0.34283171178164457
+    },
+    {
+      "model": "history_hlr",
+      "setting": 10.0,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.4218649631713383
+    },
+    {
+      "model": "history_hlr",
+      "setting": 10.0,
+      "calibration": [
+        1.8989199840926434,
+        0.06950699070337854
+      ],
+      "dev_loss": 0.3428319716790326
+    },
+    {
+      "model": "hist_boost",
+      "setting": 200,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.34302127550292255
+    },
+    {
+      "model": "hist_boost",
+      "setting": 200,
+      "calibration": [
+        0.8874428883116046,
+        0.5430031792311458
+      ],
+      "dev_loss": 0.33869611305224806
+    },
+    {
+      "model": "hist_boost",
+      "setting": 500,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3485296700652365
+    },
+    {
+      "model": "hist_boost",
+      "setting": 500,
+      "calibration": [
+        1.168029752958312,
+        0.4014047516484688
+      ],
+      "dev_loss": 0.33959425357027034
+    },
+    {
+      "model": "base_catboost",
+      "setting": [
+        4,
+        400,
+        false
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.338488534519369
+    },
+    {
+      "model": "base_catboost",
+      "setting": [
+        4,
+        400,
+        false
+      ],
+      "calibration": [
+        -0.014731936031332958,
+        1.0270593613426209
+      ],
+      "dev_loss": 0.3383926686416021
+    },
+    {
+      "model": "base_catboost",
+      "setting": [
+        4,
+        400,
+        true
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.33929959391082076
+    },
+    {
+      "model": "base_catboost",
+      "setting": [
+        4,
+        400,
+        true
+      ],
+      "calibration": [
+        -0.0319983496127451,
+        1.000508528731142
+      ],
+      "dev_loss": 0.33928445501788695
+    },
+    {
+      "model": "base_catboost",
+      "setting": [
+        6,
+        650,
+        false
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3392486925680752
+    },
+    {
+      "model": "base_catboost",
+      "setting": [
+        6,
+        650,
+        false
+      ],
+      "calibration": [
+        0.10725941340219484,
+        0.9659473676393244
+      ],
+      "dev_loss": 0.3390660889984281
+    },
+    {
+      "model": "base_catboost",
+      "setting": [
+        6,
+        650,
+        true
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.33994635986224964
+    },
+    {
+      "model": "base_catboost",
+      "setting": [
+        6,
+        650,
+        true
+      ],
+      "calibration": [
+        0.3686004580400072,
+        0.807465137108556
+      ],
+      "dev_loss": 0.33952502221785663
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        4,
+        400,
+        false
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3334091834316132
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        4,
+        400,
+        false
+      ],
+      "calibration": [
+        -0.02712541172756837,
+        1.006484657187469
+      ],
+      "dev_loss": 0.33340068292993463
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        4,
+        400,
+        true
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.334747234479235
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        4,
+        400,
+        true
+      ],
+      "calibration": [
+        -0.005553226791877224,
+        0.9881908974926208
+      ],
+      "dev_loss": 0.3347108798259194
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        6,
+        650,
+        false
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3341141749020844
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        6,
+        650,
+        false
+      ],
+      "calibration": [
+        0.11508215732258896,
+        0.936755094231195
+      ],
+      "dev_loss": 0.3340985096639659
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        6,
+        650,
+        true
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3365575701482541
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        6,
+        650,
+        true
+      ],
+      "calibration": [
+        0.2734900228371311,
+        0.8499566714821644
+      ],
+      "dev_loss": 0.3360333623361606
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        8,
+        800,
+        false
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.33591565756080427
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        8,
+        800,
+        false
+      ],
+      "calibration": [
+        0.328042941681883,
+        0.8279755769940913
+      ],
+      "dev_loss": 0.33559381978908964
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        8,
+        800,
+        true
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3385388711375708
+    },
+    {
+      "model": "matched_catboost",
+      "setting": [
+        8,
+        800,
+        true
+      ],
+      "calibration": [
+        0.5761638820560259,
+        0.693762680632821
+      ],
+      "dev_loss": 0.3369123818217484
+    }
+  ],
+  "weights": {
+    "matched_catboost": 0.9436250375866461,
+    "hist_boost": 0.0,
+    "history_logistic": 0.05637496241335388,
+    "history_hlr": 1.505824055641097e-17
+  }
+}

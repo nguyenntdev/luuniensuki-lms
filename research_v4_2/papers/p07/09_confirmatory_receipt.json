@@ -1,0 +1,17 @@
+{
+  "evidence_source": "generated_fixtures",
+  "paper_id": "P07",
+  "candidate_score": 0.5492,
+  "baseline_champion_score": 0.1166,
+  "delta": 0.4325,
+  "delta_min": 0.15,
+  "ci95": [
+    0.3165,
+    0.5527
+  ],
+  "p_raw": 6.355966477550206e-10,
+  "p_adjusted": 1.9067899432650617e-09,
+  "win_condition_satisfied": true,
+  "false_permission_rate": 0.0,
+  "n_test_cases": 60
+}

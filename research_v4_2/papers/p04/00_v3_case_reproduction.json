@@ -1,0 +1,10 @@
+{
+  "paper_id": "P04",
+  "v3_source_commit": "4e5a792... / 331c581...",
+  "status": "REPRODUCED",
+  "findings": "V3 identified curriculum shift degradation on S1 and S3, but lacked causal deconvolution and true C2 CORAL/DANN comparators.",
+  "s0_in_domain_auc": 0.9388,
+  "s1_shift_auc_c1": 0.8796,
+  "s2_shift_auc_c1": 0.8318,
+  "reproduced_at": "2026-11-20T00:00:00Z"
+}

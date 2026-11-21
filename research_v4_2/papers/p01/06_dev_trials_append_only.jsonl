@@ -1,0 +1,5 @@
+{"trial_id": 1, "family": "UncertaintyThreshold", "config": {"metric": "entropy"}, "dev_worst_acc": 0.6410256410256411}
+{"trial_id": 2, "family": "StandardConformal", "config": {"alpha": 0.1}, "dev_worst_acc": 0.6410256410256411}
+{"trial_id": 3, "family": "CapacityCoupled", "config": {"lambda": 1.0, "min_frac": 0.1}, "dev_worst_acc": 0.612}
+{"trial_id": 4, "family": "CapacityCoupled", "config": {"lambda": 2.0, "min_frac": 0.1}, "dev_worst_acc": 0.655}
+{"trial_id": 5, "family": "CapacityCoupled", "config": {"lambda": 2.5, "min_frac": 0.1}, "dev_worst_acc": 0.6789473684210526}

@@ -1,0 +1,228 @@
+{
+  "partitions": {
+    "train": {
+      "rows": 148978,
+      "learners": 1353
+    },
+    "cal": {
+      "rows": 29726,
+      "learners": 253
+    },
+    "dev": {
+      "rows": 38220,
+      "learners": 350
+    },
+    "test": {
+      "rows": 42144,
+      "learners": 360
+    }
+  },
+  "mean_learner_nll": {
+    "hlr": 0.3348439030232183,
+    "catboost": 0.33095651809153903
+  },
+  "gain": 0.0038873849316793077,
+  "ci95": [
+    0.0019832870074008167,
+    0.005929886086318016
+  ],
+  "p": 9.999000099990002e-05,
+  "selected": {
+    "hlr": {
+      "family": "hlr",
+      "setting": 0.001,
+      "calibration": [
+        2.0966232799810367,
+        0.0070940521923665185
+      ],
+      "dev_loss": 0.33378960997963614
+    },
+    "catboost": {
+      "family": "catboost",
+      "setting": [
+        4,
+        400
+      ],
+      "calibration": [
+        0.30750911794788793,
+        0.8409460689568784
+      ],
+      "dev_loss": 0.33047056611150344
+    }
+  },
+  "trials": [
+    {
+      "family": "hlr",
+      "setting": 0.0003,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 2.4733014491922543
+    },
+    {
+      "family": "hlr",
+      "setting": 0.0003,
+      "calibration": [
+        2.0807290862961185,
+        0.005776692435050038
+      ],
+      "dev_loss": 0.333839577238624
+    },
+    {
+      "family": "hlr",
+      "setting": 0.001,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 3.782270230209133
+    },
+    {
+      "family": "hlr",
+      "setting": 0.001,
+      "calibration": [
+        2.0966232799810367,
+        0.0070940521923665185
+      ],
+      "dev_loss": 0.33378960997963614
+    },
+    {
+      "family": "hlr",
+      "setting": 0.003,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.5756227261179695
+    },
+    {
+      "family": "hlr",
+      "setting": 0.003,
+      "calibration": [
+        2.0248888734303474,
+        0.010583335431033679
+      ],
+      "dev_loss": 0.33384953194842437
+    },
+    {
+      "family": "hlr",
+      "setting": 0.01,
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.5770632918974389
+    },
+    {
+      "family": "hlr",
+      "setting": 0.01,
+      "calibration": [
+        2.022780200689218,
+        0.01084018734046383
+      ],
+      "dev_loss": 0.33384277773290305
+    },
+    {
+      "family": "catboost",
+      "setting": [
+        4,
+        150
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.33069618948524254
+    },
+    {
+      "family": "catboost",
+      "setting": [
+        4,
+        150
+      ],
+      "calibration": [
+        0.15161222796939888,
+        0.9091511395035576
+      ],
+      "dev_loss": 0.3308166375374037
+    },
+    {
+      "family": "catboost",
+      "setting": [
+        4,
+        400
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3306573156456709
+    },
+    {
+      "family": "catboost",
+      "setting": [
+        4,
+        400
+      ],
+      "calibration": [
+        0.30750911794788793,
+        0.8409460689568784
+      ],
+      "dev_loss": 0.33047056611150344
+    },
+    {
+      "family": "catboost",
+      "setting": [
+        6,
+        150
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3305597447785355
+    },
+    {
+      "family": "catboost",
+      "setting": [
+        6,
+        150
+      ],
+      "calibration": [
+        0.11968594589914848,
+        0.9278633010843134
+      ],
+      "dev_loss": 0.33065148737356215
+    },
+    {
+      "family": "catboost",
+      "setting": [
+        6,
+        400
+      ],
+      "calibration": [
+        0.0,
+        1.0
+      ],
+      "dev_loss": 0.3308167432538129
+    },
+    {
+      "family": "catboost",
+      "setting": [
+        6,
+        400
+      ],
+      "calibration": [
+        0.3200827714196423,
+        0.8349650890671781
+      ],
+      "dev_loss": 0.3305655504755162
+    }
+  ],
+  "catboost_version": "1.2.8",
+  "evaluator_sha256": "8dc0548f3511e14e9711a12421d09194641bf1f55c5bda8a6d052d1b89668061",
+  "protocol_sha256": "fdcf4fa739a0d6fe037b83a1ad8a596c180bff9015a648a47ed5210951f6d60d",
+  "predictions_sha256": "d22677b4a377c5e8d5c84c1ce9fc2e5328d8dab8abde94a1dc17076112bcbd81",
+  "decision": "NO_DEMONSTRATED_IMPROVEMENT"
+}

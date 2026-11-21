@@ -1,0 +1,38 @@
+{
+  "n": 3630,
+  "courses": 17,
+  "mean_course_nll": {
+    "spline": 0.48672928806791066,
+    "catboost": 0.4528636468326018,
+    "xgboost": 0.49980971217155457
+  },
+  "contrasts": {
+    "catboost": {
+      "gain": -0.033865641235308976,
+      "ci95": [
+        -0.08066335508108838,
+        -0.006263243912981116
+      ],
+      "p": 0.008056640625,
+      "holm_p": 0.01611328125
+    },
+    "xgboost": {
+      "gain": 0.01308047494289967,
+      "ci95": [
+        -0.015497145346406688,
+        0.05572741559556226
+      ],
+      "p": 0.675628662109375,
+      "holm_p": 0.675628662109375
+    }
+  },
+  "decision": "NO_DEMONSTRATED_IMPROVEMENT",
+  "protocol_sha256": "127e1f772b4857ce5bd6bfd4829fa56a75438b608bf1d89cf053da8647f3d92c",
+  "evaluator_sha256": "b6beafb36b3195e0c72cc577a4fade0f07503eaab952223b71e5b6f06f9311dd",
+  "predictions_sha256": "4eff150120f19e36ed47025a1cf30e756bf2abb151aaca7134e64d57a8722b00",
+  "versions": {
+    "catboost": "1.2.8",
+    "xgboost": "3.1.2",
+    "sklearn": "1.8.0"
+  }
+}

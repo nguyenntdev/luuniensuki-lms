@@ -1,0 +1,145 @@
+{
+  "projection_uncompressed_sha256": "963ed46b8c97ec25d589aca29c50d05fb89689600ea98aca304917edafba3d78",
+  "source_sha256": {
+    "Chicago": "632d9b8796015c577ca54120a5466a8cd916ad24ff522b2650a9ef29573f7892",
+    "Cleveland": "cbcbec43a61f68cd34b514c87f6f9dd2b73ee4615722f5983c32b4bdc33c6efd"
+  },
+  "cells": [
+    {
+      "museum": "Chicago",
+      "declared": false,
+      "image_locator": false,
+      "copyright_notice": false,
+      "records": 12256
+    },
+    {
+      "museum": "Chicago",
+      "declared": false,
+      "image_locator": false,
+      "copyright_notice": true,
+      "records": 679
+    },
+    {
+      "museum": "Chicago",
+      "declared": false,
+      "image_locator": true,
+      "copyright_notice": false,
+      "records": 52202
+    },
+    {
+      "museum": "Chicago",
+      "declared": false,
+      "image_locator": true,
+      "copyright_notice": true,
+      "records": 12496
+    },
+    {
+      "museum": "Chicago",
+      "declared": true,
+      "image_locator": false,
+      "copyright_notice": false,
+      "records": 3056
+    },
+    {
+      "museum": "Chicago",
+      "declared": true,
+      "image_locator": true,
+      "copyright_notice": false,
+      "records": 59063
+    },
+    {
+      "museum": "Cleveland",
+      "declared": false,
+      "image_locator": false,
+      "copyright_notice": false,
+      "records": 17528
+    },
+    {
+      "museum": "Cleveland",
+      "declared": false,
+      "image_locator": false,
+      "copyright_notice": true,
+      "records": 8654
+    },
+    {
+      "museum": "Cleveland",
+      "declared": true,
+      "image_locator": false,
+      "copyright_notice": false,
+      "records": 768
+    },
+    {
+      "museum": "Cleveland",
+      "declared": true,
+      "image_locator": true,
+      "copyright_notice": false,
+      "records": 41869
+    }
+  ],
+  "policies": {
+    "Chicago": {
+      "all": {
+        "TP": 62119,
+        "FP": 77633,
+        "FN": 0,
+        "TN": 0
+      },
+      "none": {
+        "TP": 0,
+        "FP": 0,
+        "FN": 62119,
+        "TN": 77633
+      },
+      "locator": {
+        "TP": 59063,
+        "FP": 64698,
+        "FN": 3056,
+        "TN": 12935
+      },
+      "blank_notice": {
+        "TP": 62119,
+        "FP": 64458,
+        "FN": 0,
+        "TN": 13175
+      },
+      "locator_blank_notice": {
+        "TP": 59063,
+        "FP": 52202,
+        "FN": 3056,
+        "TN": 25431
+      }
+    },
+    "Cleveland": {
+      "all": {
+        "TP": 42637,
+        "FP": 26182,
+        "FN": 0,
+        "TN": 0
+      },
+      "none": {
+        "TP": 0,
+        "FP": 0,
+        "FN": 42637,
+        "TN": 26182
+      },
+      "locator": {
+        "TP": 41869,
+        "FP": 0,
+        "FN": 768,
+        "TN": 26182
+      },
+      "blank_notice": {
+        "TP": 42637,
+        "FP": 17528,
+        "FN": 0,
+        "TN": 8654
+      },
+      "locator_blank_notice": {
+        "TP": 41869,
+        "FP": 0,
+        "FN": 768,
+        "TN": 26182
+      }
+    }
+  }
+}

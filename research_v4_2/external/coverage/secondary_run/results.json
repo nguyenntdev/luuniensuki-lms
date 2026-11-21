@@ -1,0 +1,323 @@
+{
+  "oulad": {
+    "accepted": 552,
+    "accepted_true_alarm": 97,
+    "active_2014J": 8815,
+    "archive_sha256": "f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4",
+    "argmax_correct_same_cases": 350,
+    "calibration": 2286,
+    "changed_both_wrong": 0,
+    "corrections": 0,
+    "counts_by_module": {
+      "AAA": 306,
+      "BBB": 1631,
+      "CCC": 1166,
+      "DDD": 1217,
+      "EEE": 928,
+      "FFF": 1586,
+      "GGG": 690
+    },
+    "coverage": 0.0733652312599681,
+    "full_argmax_correct": 3804,
+    "full_argmax_risk": 0.4944178628389155,
+    "gate_correct": 350,
+    "gate_risk": 0.36594202898550726,
+    "gold_counts": {
+      "Distinction": 1055,
+      "Fail": 1605,
+      "Pass": 3787,
+      "Withdrawn": 1077
+    },
+    "interval95": {
+      "coverage": [
+        0.0673928440845069,
+        0.07923714523333578
+      ],
+      "gate_risk": [
+        0.32839668782873654,
+        0.4065404868307216
+      ],
+      "label_effect": [
+        0.0,
+        0.0
+      ],
+      "same_cases_argmax_risk": [
+        0.32839668782873654,
+        0.4065404868307216
+      ],
+      "selection_effect_vs_full": [
+        0.0885012900920532,
+        0.16544029560961382
+      ],
+      "total_effect_vs_full": [
+        0.0885012900920532,
+        0.16544029560961382
+      ]
+    },
+    "label_disagreements": 0,
+    "label_effect": 0.0,
+    "predictions_sha256": "6aa4cb38fab724a08389e47887e310a7bf1e022eb0f3988bda6f5421053fd1e8",
+    "previously_seen_active_2014J": 1291,
+    "risk_curve": [
+      {
+        "accepted": 752,
+        "argmax_interval95": [
+          0.3497340425531915,
+          0.4178959873706442
+        ],
+        "argmax_risk": 0.3829787234042553,
+        "coverage": 0.09994683678894205,
+        "reroute_interval95": [
+          0.3497340425531915,
+          0.4178959873706442
+        ],
+        "reroute_risk": 0.3829787234042553,
+        "risk_difference_interval95": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "accepted": 1881,
+        "argmax_interval95": [
+          0.38563525309858837,
+          0.4320630465292022
+        ],
+        "argmax_risk": 0.4098883572567783,
+        "coverage": 0.25,
+        "reroute_interval95": [
+          0.38563525309858837,
+          0.4320630465292022
+        ],
+        "reroute_risk": 0.4098883572567783,
+        "risk_difference_interval95": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "accepted": 3762,
+        "argmax_interval95": [
+          0.42536877944495033,
+          0.4572954022988506
+        ],
+        "argmax_risk": 0.44178628389154706,
+        "coverage": 0.5,
+        "reroute_interval95": [
+          0.4253483916363187,
+          0.45693912104434914
+        ],
+        "reroute_risk": 0.44178628389154706,
+        "risk_difference_interval95": [
+          -0.001330503797559114,
+          0.0010666666666666602
+        ]
+      },
+      {
+        "accepted": 5643,
+        "argmax_interval95": [
+          0.45101171458998934,
+          0.4782916888180046
+        ],
+        "argmax_risk": 0.46517809675704413,
+        "coverage": 0.75,
+        "reroute_interval95": [
+          0.4620533177320038,
+          0.4887477172958117
+        ],
+        "reroute_risk": 0.4756335282651072,
+        "risk_difference_interval95": [
+          0.006015383683207179,
+          0.015730148527987414
+        ]
+      },
+      {
+        "accepted": 7524,
+        "argmax_interval95": [
+          0.4829188065449315,
+          0.5058288707884699
+        ],
+        "argmax_risk": 0.4944178628389155,
+        "coverage": 1.0,
+        "reroute_interval95": [
+          0.5191497834186931,
+          0.5418282827056508
+        ],
+        "reroute_risk": 0.53056884635832,
+        "risk_difference_interval95": [
+          0.029380288668744318,
+          0.04328459595787002
+        ]
+      }
+    ],
+    "same_cases_argmax_risk": 0.36594202898550726,
+    "selection_effect_vs_full": 0.12847583385340822,
+    "spoiled": 0,
+    "test": 7524,
+    "test_learners": 7238,
+    "thresholds": {
+      "alpha_conf": 0.2,
+      "alpha_fail": 0.3,
+      "calibration_n": 2286,
+      "tau_conf": 0.6386246612745189,
+      "tau_fail": 0.32136192154183985
+    },
+    "top_k_selector_different_ids": 0,
+    "total_2014J": 11260,
+    "total_effect_vs_full": 0.12847583385340822,
+    "train": 9062,
+    "withdrawn_without_date": 67
+  },
+  "uci": {
+    "accepted": 159,
+    "accepted_true_alarm": 50,
+    "archive_sha256": "e90e55fd65ec462ae283ebeb2cca409319e3460ed898d8754f62fb35cc83a65d",
+    "argmax_correct_same_cases": 111,
+    "calibration": 875,
+    "changed_both_wrong": 0,
+    "corrections": 0,
+    "coverage": 0.1776536312849162,
+    "full_argmax_correct": 517,
+    "full_argmax_risk": 0.4223463687150838,
+    "gate_correct": 111,
+    "gate_risk": 0.3018867924528302,
+    "gold_counts": {
+      "Dropout": 290,
+      "Enrolled": 136,
+      "Graduate": 469
+    },
+    "interval95": {
+      "coverage": [
+        0.15304469273743018,
+        0.20337988826815628
+      ],
+      "gate_risk": [
+        0.2292858332292577,
+        0.37671232876712324
+      ],
+      "label_effect": [
+        0.0,
+        0.0
+      ],
+      "same_cases_argmax_risk": [
+        0.2292858332292577,
+        0.37671232876712324
+      ],
+      "selection_effect_vs_full": [
+        0.04837808626959063,
+        0.18549529277881235
+      ],
+      "total_effect_vs_full": [
+        0.04837808626959063,
+        0.18549529277881235
+      ]
+    },
+    "label_disagreements": 0,
+    "label_effect": 0.0,
+    "predictions_sha256": "53ab03de0738ec8c269661ce5edf242a1c03cc5d6144f23a11f8a78afc1dbda1",
+    "risk_curve": [
+      {
+        "accepted": 89,
+        "argmax_interval95": [
+          0.19101123595505617,
+          0.3707865168539326
+        ],
+        "argmax_risk": 0.2696629213483146,
+        "coverage": 0.09944134078212291,
+        "reroute_interval95": [
+          0.19101123595505617,
+          0.3707865168539326
+        ],
+        "reroute_risk": 0.2696629213483146,
+        "risk_difference_interval95": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "accepted": 223,
+        "argmax_interval95": [
+          0.22869955156950672,
+          0.34977578475336324
+        ],
+        "argmax_risk": 0.2825112107623318,
+        "coverage": 0.24916201117318434,
+        "reroute_interval95": [
+          0.22869955156950672,
+          0.34977578475336324
+        ],
+        "reroute_risk": 0.2825112107623318,
+        "risk_difference_interval95": [
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "accepted": 447,
+        "argmax_interval95": [
+          0.29972035794183444,
+          0.3870246085011186
+        ],
+        "argmax_risk": 0.3422818791946309,
+        "coverage": 0.4994413407821229,
+        "reroute_interval95": [
+          0.30201342281879195,
+          0.39373601789709173
+        ],
+        "reroute_risk": 0.348993288590604,
+        "risk_difference_interval95": [
+          -0.008948545861297563,
+          0.022371364653243853
+        ]
+      },
+      {
+        "accepted": 671,
+        "argmax_interval95": [
+          0.33979135618479883,
+          0.4113263785394933
+        ],
+        "argmax_risk": 0.37555886736214605,
+        "coverage": 0.7497206703910615,
+        "reroute_interval95": [
+          0.3353204172876304,
+          0.4068554396423249
+        ],
+        "reroute_risk": 0.3710879284649776,
+        "risk_difference_interval95": [
+          -0.025335320417287588,
+          0.014903129657228011
+        ]
+      },
+      {
+        "accepted": 895,
+        "argmax_interval95": [
+          0.39106145251396646,
+          0.45363128491620114
+        ],
+        "argmax_risk": 0.4223463687150838,
+        "coverage": 1.0,
+        "reroute_interval95": [
+          0.36310055865921786,
+          0.423463687150838
+        ],
+        "reroute_risk": 0.39329608938547483,
+        "risk_difference_interval95": [
+          -0.053631284916201116,
+          -0.006675977653631432
+        ]
+      }
+    ],
+    "same_cases_argmax_risk": 0.3018867924528302,
+    "selection_effect_vs_full": 0.12045957626225356,
+    "spoiled": 0,
+    "test": 895,
+    "test_learners": 895,
+    "thresholds": {
+      "tau_conf": 0.6058919986971902,
+      "tau_fail": 0.29579354660628254
+    },
+    "top_k_selector_different_ids": 0,
+    "total_effect_vs_full": 0.12045957626225356,
+    "train": 2654
+  }
+}

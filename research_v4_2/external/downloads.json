@@ -1,0 +1,242 @@
+[
+  {
+    "study": "landmark",
+    "path": "oulad/2013-2014/oulad.zip",
+    "url": "https://archive.ics.uci.edu/static/public/349/open+university+learning+analytics+dataset.zip",
+    "sha256": "f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4"
+  },
+  {
+    "study": "dropout",
+    "path": "uci/dropout-697/source.zip",
+    "url": "https://archive.ics.uci.edu/static/public/697/predict+students+dropout+and+academic+success.zip",
+    "sha256": "e90e55fd65ec462ae283ebeb2cca409319e3460ed898d8754f62fb35cc83a65d"
+  },
+  {
+    "study": "recall",
+    "path": "duolingo-hlr/traces.csv.gz",
+    "url": "https://dataverse.harvard.edu/api/access/datafile/3091087",
+    "sha256": "26cf9b33f2e9b2e8aa9a8f262a017b30699ca2f625c56a12ce699d4ea7076873"
+  },
+  {
+    "study": "recall",
+    "path": "duolingo-hlr/experiment.py",
+    "url": "https://raw.githubusercontent.com/duolingo/halflife-regression/0041df0dcd436bf1b4aa7a17a020d9c670db70d8/experiment.py",
+    "sha256": "3a8776a703dd42042e2c5b408858fd6f6693ce21d5a1e0a4879a17127b9135ee"
+  },
+  {
+    "study": "tutoring",
+    "path": "mrbench/mrbench_v3_devset.json",
+    "url": "https://raw.githubusercontent.com/kaushal0494/UnifyingAITutorEvaluation/bbef521ddb875f2cc8a5ee798f4066965a7cfd8a/BEA_Shared_Task_2025_Datasets/mrbench_v3_devset.json",
+    "sha256": "a395feab801de50d44b73e1e9b88f84824a1f1d92e15ae86842d90c2b6dbf33c"
+  },
+  {
+    "study": "set_cover",
+    "path": "orlib/scp41.txt",
+    "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/scp41.txt",
+    "sha256": "85788fe18b2af8034fea25619a8ce0e8db1c870935854f73d9be4bb721ae445e"
+  },
+  {
+    "study": "set_cover",
+    "path": "orlib/scp42.txt",
+    "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/scp42.txt",
+    "sha256": "08094a5dda03cdc4975e5750978131f45462645ff1f44abd0816c05cf706edd7"
+  },
+  {
+    "study": "set_cover",
+    "path": "orlib/scp43.txt",
+    "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/scp43.txt",
+    "sha256": "19e94d9825584b00fb795af2bd3cd17d1e21966ad75c563c8b936da8b83c4105"
+  },
+  {
+    "study": "set_cover",
+    "path": "orlib/scp44.txt",
+    "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/scp44.txt",
+    "sha256": "253cc2e40df68757edb97b272d4b844000297b40894532bd85e33e2e045a6c68"
+  },
+  {
+    "study": "set_cover",
+    "path": "orlib/scp45.txt",
+    "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/scp45.txt",
+    "sha256": "05ddb202c92a26623036486fadd089f73d5ec0ce8cfc262ca44f17a3b9de8863"
+  },
+  {
+    "study": "set_cover",
+    "path": "orlib/scp46.txt",
+    "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/scp46.txt",
+    "sha256": "465c0a82beed8789cf0ae6104c035925d4539b6967956428cd8fbafe65a1c316"
+  },
+  {
+    "study": "set_cover",
+    "path": "orlib/scp47.txt",
+    "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/scp47.txt",
+    "sha256": "74bcc2f3544a37c4ef0f18cce72285a665137e9b509fb48e8ab1be581c10a9db"
+  },
+  {
+    "study": "set_cover",
+    "path": "orlib/scp48.txt",
+    "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/scp48.txt",
+    "sha256": "5c1137889bc04ea982f21ce9783c16fb88092d628fd9fe739150821cc03f3be8"
+  },
+  {
+    "study": "set_cover",
+    "path": "orlib/scp49.txt",
+    "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/scp49.txt",
+    "sha256": "4239aa79093ee7cb00ec2958ad5f6e092b0f099742cbd2822bd8ad9177c18c79"
+  },
+  {
+    "study": "set_cover",
+    "path": "orlib/scp410.txt",
+    "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/scp410.txt",
+    "sha256": "d10d8531380a005299a4dce4c08a77c11568cdbd484a0ccf1da3a3e7c65b5187"
+  },
+  {
+    "study": "claim_only",
+    "path": "fever/train.jsonl",
+    "url": "https://fever.ai/download/fever/train.jsonl",
+    "sha256": "eba7e8f87076753f8494718b9a857827af7bf73e76c9e4b75420207d26e588b6"
+  },
+  {
+    "study": "claim_only",
+    "path": "fever/shared_task_dev.jsonl",
+    "url": "https://fever.ai/download/fever/shared_task_dev.jsonl",
+    "sha256": "e89865bfe1b4dd054e03dd57d7241a6fde24862905f31117cf0cd719f7c78df7"
+  },
+  {
+    "study": "claim_only",
+    "path": "fever/symmetric_dev.jsonl",
+    "url": "https://raw.githubusercontent.com/TalSchuster/FeverSymmetric/fa25d17e73ea0694edc78133ec654b9f32f6db73/symmetric_v0.2/fever_symmetric_dev.jsonl",
+    "sha256": "1d43d016da9264de2139cd10edd459ffbeac84f1fd85d60b70ab6ef63d283f81"
+  },
+  {
+    "study": "claim_only",
+    "path": "fever/symmetric_test.jsonl",
+    "url": "https://raw.githubusercontent.com/TalSchuster/FeverSymmetric/fa25d17e73ea0694edc78133ec654b9f32f6db73/symmetric_v0.2/fever_symmetric_test.jsonl",
+    "sha256": "b2ff560615bd3337c858bc5b09256d04f39aaa034aaae2351bb2d6345c110f83"
+  },
+  {
+    "study": "paired",
+    "path": "fever/nli/bart-large-mnli/config.json",
+    "url": "https://huggingface.co/Xenova/bart-large-mnli/resolve/71a9d2a7c389b1a812afc3cc1668f8c877681b00/config.json",
+    "sha256": "f3899d6a9ee4adb9e050aaec1ba3cc86b44e8a062d525da7c1cd140b33ccf974"
+  },
+  {
+    "study": "paired",
+    "path": "fever/nli/bart-large-mnli/tokenizer.json",
+    "url": "https://huggingface.co/Xenova/bart-large-mnli/resolve/71a9d2a7c389b1a812afc3cc1668f8c877681b00/tokenizer.json",
+    "sha256": "1649e42e2e4cc707159be564b62216cd3c21a0225fad65b04bed94477dd79083"
+  },
+  {
+    "study": "paired",
+    "path": "fever/nli/bart-large-mnli/model_quantized.onnx",
+    "url": "https://huggingface.co/Xenova/bart-large-mnli/resolve/71a9d2a7c389b1a812afc3cc1668f8c877681b00/onnx/model_quantized.onnx",
+    "sha256": "4f856ac35c040afa5c95e164dc532239c466db3aad24a56d8d9f17858b1baba8"
+  },
+  {
+    "study": "paired",
+    "path": "fever/nli/roberta-large-mnli/config.json",
+    "url": "https://huggingface.co/Xenova/roberta-large-mnli/resolve/f44e410851308d901c324c31af38793f50205e91/config.json",
+    "sha256": "e5a310135f40b13a42147d5c8333aabb1369698e512ab3939b7ff6848f84369f"
+  },
+  {
+    "study": "paired",
+    "path": "fever/nli/roberta-large-mnli/tokenizer.json",
+    "url": "https://huggingface.co/Xenova/roberta-large-mnli/resolve/f44e410851308d901c324c31af38793f50205e91/tokenizer.json",
+    "sha256": "1649e42e2e4cc707159be564b62216cd3c21a0225fad65b04bed94477dd79083"
+  },
+  {
+    "study": "paired",
+    "path": "fever/nli/roberta-large-mnli/model_quantized.onnx",
+    "url": "https://huggingface.co/Xenova/roberta-large-mnli/resolve/f44e410851308d901c324c31af38793f50205e91/onnx/model_quantized.onnx",
+    "sha256": "4be69b449042d7334c490d6969214c1bac542032bca8e3776a8ca4683cd2aa5c"
+  },
+  {
+    "study": "vitaminc",
+    "path": "vitaminc/test.jsonl",
+    "url": "https://huggingface.co/datasets/tals/vitaminc/resolve/be6febb761b0b2807687e61e0b5282e459df2fa0/test.jsonl",
+    "sha256": "7ad1808dbc30c62e0a1427a53022d0dfaff668a1fde3c4b612a2d266edd753ad"
+  },
+  {
+    "study": "vitaminc",
+    "path": "vitaminc/LICENSE",
+    "url": "https://huggingface.co/datasets/tals/vitaminc/resolve/be6febb761b0b2807687e61e0b5282e459df2fa0/LICENSE",
+    "sha256": "e5727854e203fc66d725caa6d8e97e541f64a906d1d15d19e63f32bb52134dd1"
+  },
+  {
+    "study": "vitaminc",
+    "path": "vitaminc/README.txt",
+    "url": "https://huggingface.co/datasets/tals/vitaminc/resolve/be6febb761b0b2807687e61e0b5282e459df2fa0/README.txt",
+    "sha256": "aecc6e74b43865b1c8a3c9e044a296644badbf4ffd81adbb6d0ffc80a26256cd"
+  },
+  {
+    "study": "vitaminc",
+    "path": "vitaminc/albert-base-vitaminc-fever/config.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-fever/resolve/15de029c9f4e929c8f6cc56bc39fcac22f6bdbc3/config.json",
+    "sha256": "716ecac897f7d004c29e63e8aa79c4cff16f44850dad0d4f1cb57718791704d6"
+  },
+  {
+    "study": "vitaminc",
+    "path": "vitaminc/albert-base-vitaminc-fever/pytorch_model.bin",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-fever/resolve/15de029c9f4e929c8f6cc56bc39fcac22f6bdbc3/pytorch_model.bin",
+    "sha256": "194d21f91f0dea25f73fc828f7b18baddd90f07a82f1a844d470c8bf691a772d"
+  },
+  {
+    "study": "vitaminc",
+    "path": "vitaminc/albert-base-vitaminc-fever/special_tokens_map.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-fever/resolve/15de029c9f4e929c8f6cc56bc39fcac22f6bdbc3/special_tokens_map.json",
+    "sha256": "dafa474106cf4c7bee4470cf371e915005d4fe7a664f88c4b512dc4e4f2f2476"
+  },
+  {
+    "study": "vitaminc",
+    "path": "vitaminc/albert-base-vitaminc-fever/spiece.model",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-fever/resolve/15de029c9f4e929c8f6cc56bc39fcac22f6bdbc3/spiece.model",
+    "sha256": "fefb02b667a6c5c2fe27602d28e5fb3428f66ab89c7d6f388e7c8d44a02d0336"
+  },
+  {
+    "study": "vitaminc",
+    "path": "vitaminc/albert-base-vitaminc-fever/tokenizer_config.json",
+    "url": "https://huggingface.co/tals/albert-base-vitaminc-fever/resolve/15de029c9f4e929c8f6cc56bc39fcac22f6bdbc3/tokenizer_config.json",
+    "sha256": "3a7e20518084860b652061fcf94ba2e26dfa750930f7ba8cbdb1c838d28e7bd7"
+  },
+  {
+    "study": "accessibility",
+    "path": "act-reports/axe-core.json",
+    "url": "https://raw.githubusercontent.com/w3c/wcag-act-rules/4ce3d61b6f7b04cbf2df0082a3446e97248b9124/_data/wcag-act-rules/implementations/axe-core.json",
+    "sha256": "733e1d80e991154c7bd7293bd26c762b4777bfa8b0c9efc7b0e06a4f067d4736"
+  },
+  {
+    "study": "accessibility",
+    "path": "act-reports/alfa.json",
+    "url": "https://raw.githubusercontent.com/w3c/wcag-act-rules/4ce3d61b6f7b04cbf2df0082a3446e97248b9124/_data/wcag-act-rules/implementations/alfa.json",
+    "sha256": "eb0c760d8e56dbfb4f2338511b79e1873587ca13cd6392e562ba56fcd802e213"
+  },
+  {
+    "study": "accessibility",
+    "path": "act-reports/equal-access.json",
+    "url": "https://raw.githubusercontent.com/w3c/wcag-act-rules/4ce3d61b6f7b04cbf2df0082a3446e97248b9124/_data/wcag-act-rules/implementations/equal-access.json",
+    "sha256": "3caaaaa0a96a041c66db3f892a908fbb36238d70b18a998815b624f075663e66"
+  },
+  {
+    "study": "accessibility",
+    "path": "act-reports/qualweb.json",
+    "url": "https://raw.githubusercontent.com/w3c/wcag-act-rules/4ce3d61b6f7b04cbf2df0082a3446e97248b9124/_data/wcag-act-rules/implementations/qualweb.json",
+    "sha256": "87d0394e3619563ab1b036a4d8efb3c753916d3bd71d77838c183a27dd529d65"
+  },
+  {
+    "study": "bart_original",
+    "path": "fever/nli/bart-original/config.json",
+    "url": "https://huggingface.co/facebook/bart-large-mnli/resolve/d7645e127eaf1aefc7862fd59a17a5aa8558b8ce/config.json",
+    "sha256": "a0f9bcb245b680a96ccae0ad8d155f267ec3e3c971ef4a4937e52ea9ba368a86"
+  },
+  {
+    "study": "bart_original",
+    "path": "fever/nli/bart-original/tokenizer.json",
+    "url": "https://huggingface.co/facebook/bart-large-mnli/resolve/d7645e127eaf1aefc7862fd59a17a5aa8558b8ce/tokenizer.json",
+    "sha256": "847bbeab6174d66a88898f729d52fa8d355fafe1bea101cf960dd404581df70e"
+  },
+  {
+    "study": "bart_original",
+    "path": "fever/nli/bart-original/model.safetensors",
+    "url": "https://huggingface.co/facebook/bart-large-mnli/resolve/d7645e127eaf1aefc7862fd59a17a5aa8558b8ce/model.safetensors",
+    "sha256": "cfbb687dbbd9df99fe865e1860350a22aebac4d26ee4bcb50217f1df606a018e"
+  }
+]

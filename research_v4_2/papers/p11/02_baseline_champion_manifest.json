@@ -1,0 +1,13 @@
+{
+  "paper_id": "P11",
+  "champion_id": "B_STAR_ADJUDICATED_ANALYTIC",
+  "description": "Standard sourcing/contextualization/corroboration analytic rubric with 20% random sample adjudication.",
+  "selection_rule": "Strongest eligible baseline on DEV cohort without data leakage.",
+  "dev_metric_score": 0.34847271492476695,
+  "eligibility_verified": true,
+  "comparator_pool": [
+    "C0_KEYWORD",
+    "C1_STANDARD_ANALYTIC",
+    "B_STAR_ADJUDICATED_ANALYTIC"
+  ]
+}

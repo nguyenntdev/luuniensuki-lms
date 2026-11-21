@@ -1,0 +1,1070 @@
+{
+  "scope": "development only",
+  "instances": 20,
+  "paired_seeds": 60,
+  "witness_records_checked": 515,
+  "max_prefix_cpu": 5.110546335000002,
+  "prefixes_over_five_seconds": 2,
+  "branches": {
+    "pool": {
+      "reported_optimal_by_deadline": 35,
+      "late_returns": 25,
+      "max_return_cpu": 6.722231771,
+      "strict_improvements": 3
+    },
+    "random": {
+      "reported_optimal_by_deadline": 56,
+      "late_returns": 4,
+      "max_return_cpu": 5.118664418000002,
+      "strict_improvements": 1
+    },
+    "full": {
+      "reported_optimal_by_deadline": 0,
+      "late_returns": 60,
+      "max_return_cpu": 45.18908465,
+      "strict_improvements": 0
+    }
+  },
+  "instance_median_comparisons": {
+    "cft": {
+      "wins": 0,
+      "ties": 11,
+      "losses": 9,
+      "mean_relative_saving": -0.010856347681257568
+    },
+    "prefix": {
+      "wins": 1,
+      "ties": 19,
+      "losses": 0,
+      "mean_relative_saving": 0.0002793296089385475
+    },
+    "random": {
+      "wins": 1,
+      "ties": 19,
+      "losses": 0,
+      "mean_relative_saving": 0.0002793296089385475
+    },
+    "full": {
+      "wins": 1,
+      "ties": 19,
+      "losses": 0,
+      "mean_relative_saving": 0.0002793296089385475
+    }
+  },
+  "family_median_comparisons": {
+    "e": {
+      "cft": {
+        "wins": 0,
+        "ties": 5,
+        "losses": 0,
+        "mean_relative_saving": 0
+      },
+      "prefix": {
+        "wins": 0,
+        "ties": 5,
+        "losses": 0,
+        "mean_relative_saving": 0
+      },
+      "random": {
+        "wins": 0,
+        "ties": 5,
+        "losses": 0,
+        "mean_relative_saving": 0
+      },
+      "full": {
+        "wins": 0,
+        "ties": 5,
+        "losses": 0,
+        "mean_relative_saving": 0
+      }
+    },
+    "f": {
+      "cft": {
+        "wins": 0,
+        "ties": 3,
+        "losses": 2,
+        "mean_relative_saving": -0.02857142857142857
+      },
+      "prefix": {
+        "wins": 0,
+        "ties": 5,
+        "losses": 0,
+        "mean_relative_saving": 0
+      },
+      "random": {
+        "wins": 0,
+        "ties": 5,
+        "losses": 0,
+        "mean_relative_saving": 0
+      },
+      "full": {
+        "wins": 0,
+        "ties": 5,
+        "losses": 0,
+        "mean_relative_saving": 0
+      }
+    },
+    "g": {
+      "cft": {
+        "wins": 0,
+        "ties": 0,
+        "losses": 5,
+        "mean_relative_saving": -0.008387208568204043
+      },
+      "prefix": {
+        "wins": 1,
+        "ties": 4,
+        "losses": 0,
+        "mean_relative_saving": 0.00111731843575419
+      },
+      "random": {
+        "wins": 1,
+        "ties": 4,
+        "losses": 0,
+        "mean_relative_saving": 0.00111731843575419
+      },
+      "full": {
+        "wins": 1,
+        "ties": 4,
+        "losses": 0,
+        "mean_relative_saving": 0.00111731843575419
+      }
+    },
+    "h": {
+      "cft": {
+        "wins": 0,
+        "ties": 3,
+        "losses": 2,
+        "mean_relative_saving": -0.006466753585397653
+      },
+      "prefix": {
+        "wins": 0,
+        "ties": 5,
+        "losses": 0,
+        "mean_relative_saving": 0
+      },
+      "random": {
+        "wins": 0,
+        "ties": 5,
+        "losses": 0,
+        "mean_relative_saving": 0
+      },
+      "full": {
+        "wins": 0,
+        "ties": 5,
+        "losses": 0,
+        "mean_relative_saving": 0
+      }
+    }
+  },
+  "paired_seed_comparisons": {
+    "cft": {
+      "wins": 1,
+      "ties": 34,
+      "losses": 25,
+      "mean_relative_saving": -0.011013771640292939
+    },
+    "prefix": {
+      "wins": 3,
+      "ties": 57,
+      "losses": 0,
+      "mean_relative_saving": 0.0002803816978611033
+    },
+    "random": {
+      "wins": 3,
+      "ties": 56,
+      "losses": 1,
+      "mean_relative_saving": 0.000019965031194436587
+    },
+    "full": {
+      "wins": 3,
+      "ties": 57,
+      "losses": 0,
+      "mean_relative_saving": 0.0002803816978611033
+    }
+  },
+  "instance_medians": [
+    {
+      "instance": "scpnre1",
+      "pool": 29,
+      "cft": 29,
+      "prefix": 29,
+      "random": 29,
+      "full": 29
+    },
+    {
+      "instance": "scpnre2",
+      "pool": 31,
+      "cft": 31,
+      "prefix": 31,
+      "random": 31,
+      "full": 31
+    },
+    {
+      "instance": "scpnre3",
+      "pool": 27,
+      "cft": 27,
+      "prefix": 27,
+      "random": 27,
+      "full": 27
+    },
+    {
+      "instance": "scpnre4",
+      "pool": 28,
+      "cft": 28,
+      "prefix": 28,
+      "random": 28,
+      "full": 28
+    },
+    {
+      "instance": "scpnre5",
+      "pool": 28,
+      "cft": 28,
+      "prefix": 28,
+      "random": 28,
+      "full": 28
+    },
+    {
+      "instance": "scpnrf1",
+      "pool": 14,
+      "cft": 14,
+      "prefix": 14,
+      "random": 14,
+      "full": 14
+    },
+    {
+      "instance": "scpnrf2",
+      "pool": 15,
+      "cft": 15,
+      "prefix": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf3",
+      "pool": 15,
+      "cft": 14,
+      "prefix": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf4",
+      "pool": 15,
+      "cft": 14,
+      "prefix": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf5",
+      "pool": 14,
+      "cft": 14,
+      "prefix": 14,
+      "random": 14,
+      "full": 14
+    },
+    {
+      "instance": "scpnrg1",
+      "pool": 178,
+      "cft": 176,
+      "prefix": 179,
+      "random": 179,
+      "full": 179
+    },
+    {
+      "instance": "scpnrg2",
+      "pool": 158,
+      "cft": 156,
+      "prefix": 158,
+      "random": 158,
+      "full": 158
+    },
+    {
+      "instance": "scpnrg3",
+      "pool": 169,
+      "cft": 168,
+      "prefix": 169,
+      "random": 169,
+      "full": 169
+    },
+    {
+      "instance": "scpnrg4",
+      "pool": 171,
+      "cft": 170,
+      "prefix": 171,
+      "random": 171,
+      "full": 171
+    },
+    {
+      "instance": "scpnrg5",
+      "pool": 170,
+      "cft": 169,
+      "prefix": 170,
+      "random": 170,
+      "full": 170
+    },
+    {
+      "instance": "scpnrh1",
+      "pool": 65,
+      "cft": 65,
+      "prefix": 65,
+      "random": 65,
+      "full": 65
+    },
+    {
+      "instance": "scpnrh2",
+      "pool": 66,
+      "cft": 65,
+      "prefix": 66,
+      "random": 66,
+      "full": 66
+    },
+    {
+      "instance": "scpnrh3",
+      "pool": 61,
+      "cft": 61,
+      "prefix": 61,
+      "random": 61,
+      "full": 61
+    },
+    {
+      "instance": "scpnrh4",
+      "pool": 60,
+      "cft": 59,
+      "prefix": 60,
+      "random": 60,
+      "full": 60
+    },
+    {
+      "instance": "scpnrh5",
+      "pool": 57,
+      "cft": 57,
+      "prefix": 57,
+      "random": 57,
+      "full": 57
+    }
+  ],
+  "seed_costs": [
+    {
+      "instance": "scpnre1",
+      "seed": 11,
+      "cft": 29,
+      "prefix": 29,
+      "observed": 5,
+      "distinct": 4,
+      "pool_size": 51,
+      "pool": 29,
+      "random": 29,
+      "full": 29
+    },
+    {
+      "instance": "scpnre1",
+      "seed": 29,
+      "cft": 29,
+      "prefix": 29,
+      "observed": 10,
+      "distinct": 7,
+      "pool_size": 56,
+      "pool": 29,
+      "random": 29,
+      "full": 29
+    },
+    {
+      "instance": "scpnre1",
+      "seed": 47,
+      "cft": 29,
+      "prefix": 29,
+      "observed": 11,
+      "distinct": 7,
+      "pool_size": 56,
+      "pool": 29,
+      "random": 29,
+      "full": 29
+    },
+    {
+      "instance": "scpnre2",
+      "seed": 11,
+      "cft": 31,
+      "prefix": 31,
+      "observed": 8,
+      "distinct": 6,
+      "pool_size": 62,
+      "pool": 31,
+      "random": 31,
+      "full": 31
+    },
+    {
+      "instance": "scpnre2",
+      "seed": 29,
+      "cft": 31,
+      "prefix": 31,
+      "observed": 6,
+      "distinct": 6,
+      "pool_size": 59,
+      "pool": 31,
+      "random": 31,
+      "full": 31
+    },
+    {
+      "instance": "scpnre2",
+      "seed": 47,
+      "cft": 31,
+      "prefix": 31,
+      "observed": 6,
+      "distinct": 6,
+      "pool_size": 58,
+      "pool": 31,
+      "random": 31,
+      "full": 31
+    },
+    {
+      "instance": "scpnre3",
+      "seed": 11,
+      "cft": 27,
+      "prefix": 27,
+      "observed": 6,
+      "distinct": 4,
+      "pool_size": 47,
+      "pool": 27,
+      "random": 27,
+      "full": 27
+    },
+    {
+      "instance": "scpnre3",
+      "seed": 29,
+      "cft": 27,
+      "prefix": 27,
+      "observed": 4,
+      "distinct": 4,
+      "pool_size": 47,
+      "pool": 27,
+      "random": 27,
+      "full": 27
+    },
+    {
+      "instance": "scpnre3",
+      "seed": 47,
+      "cft": 27,
+      "prefix": 27,
+      "observed": 5,
+      "distinct": 4,
+      "pool_size": 47,
+      "pool": 27,
+      "random": 27,
+      "full": 27
+    },
+    {
+      "instance": "scpnre4",
+      "seed": 11,
+      "cft": 28,
+      "prefix": 28,
+      "observed": 11,
+      "distinct": 9,
+      "pool_size": 60,
+      "pool": 28,
+      "random": 28,
+      "full": 28
+    },
+    {
+      "instance": "scpnre4",
+      "seed": 29,
+      "cft": 28,
+      "prefix": 28,
+      "observed": 5,
+      "distinct": 5,
+      "pool_size": 54,
+      "pool": 28,
+      "random": 28,
+      "full": 28
+    },
+    {
+      "instance": "scpnre4",
+      "seed": 47,
+      "cft": 28,
+      "prefix": 28,
+      "observed": 7,
+      "distinct": 7,
+      "pool_size": 57,
+      "pool": 28,
+      "random": 28,
+      "full": 28
+    },
+    {
+      "instance": "scpnre5",
+      "seed": 11,
+      "cft": 28,
+      "prefix": 28,
+      "observed": 6,
+      "distinct": 4,
+      "pool_size": 44,
+      "pool": 28,
+      "random": 28,
+      "full": 28
+    },
+    {
+      "instance": "scpnre5",
+      "seed": 29,
+      "cft": 28,
+      "prefix": 28,
+      "observed": 10,
+      "distinct": 5,
+      "pool_size": 47,
+      "pool": 28,
+      "random": 28,
+      "full": 28
+    },
+    {
+      "instance": "scpnre5",
+      "seed": 47,
+      "cft": 28,
+      "prefix": 28,
+      "observed": 4,
+      "distinct": 4,
+      "pool_size": 44,
+      "pool": 28,
+      "random": 28,
+      "full": 28
+    },
+    {
+      "instance": "scpnrf1",
+      "seed": 11,
+      "cft": 14,
+      "prefix": 14,
+      "observed": 3,
+      "distinct": 3,
+      "pool_size": 34,
+      "pool": 14,
+      "random": 14,
+      "full": 14
+    },
+    {
+      "instance": "scpnrf1",
+      "seed": 29,
+      "cft": 14,
+      "prefix": 14,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 25,
+      "pool": 14,
+      "random": 14,
+      "full": 14
+    },
+    {
+      "instance": "scpnrf1",
+      "seed": 47,
+      "cft": 14,
+      "prefix": 14,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 25,
+      "pool": 14,
+      "random": 14,
+      "full": 14
+    },
+    {
+      "instance": "scpnrf2",
+      "seed": 11,
+      "cft": 15,
+      "prefix": 15,
+      "observed": 3,
+      "distinct": 3,
+      "pool_size": 31,
+      "pool": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf2",
+      "seed": 29,
+      "cft": 15,
+      "prefix": 15,
+      "observed": 3,
+      "distinct": 3,
+      "pool_size": 31,
+      "pool": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf2",
+      "seed": 47,
+      "cft": 15,
+      "prefix": 15,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 23,
+      "pool": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf3",
+      "seed": 11,
+      "cft": 14,
+      "prefix": 15,
+      "observed": 3,
+      "distinct": 3,
+      "pool_size": 25,
+      "pool": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf3",
+      "seed": 29,
+      "cft": 14,
+      "prefix": 15,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 18,
+      "pool": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf3",
+      "seed": 47,
+      "cft": 14,
+      "prefix": 15,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 18,
+      "pool": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf4",
+      "seed": 11,
+      "cft": 14,
+      "prefix": 15,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 23,
+      "pool": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf4",
+      "seed": 29,
+      "cft": 14,
+      "prefix": 15,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 23,
+      "pool": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf4",
+      "seed": 47,
+      "cft": 14,
+      "prefix": 15,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 23,
+      "pool": 15,
+      "random": 15,
+      "full": 15
+    },
+    {
+      "instance": "scpnrf5",
+      "seed": 11,
+      "cft": 14,
+      "prefix": 14,
+      "observed": 1,
+      "distinct": 1,
+      "pool_size": 14,
+      "pool": 14,
+      "random": 14,
+      "full": 14
+    },
+    {
+      "instance": "scpnrf5",
+      "seed": 29,
+      "cft": 14,
+      "prefix": 14,
+      "observed": 2,
+      "distinct": 1,
+      "pool_size": 14,
+      "pool": 14,
+      "random": 14,
+      "full": 14
+    },
+    {
+      "instance": "scpnrf5",
+      "seed": 47,
+      "cft": 14,
+      "prefix": 14,
+      "observed": 2,
+      "distinct": 1,
+      "pool_size": 14,
+      "pool": 14,
+      "random": 14,
+      "full": 14
+    },
+    {
+      "instance": "scpnrg1",
+      "seed": 11,
+      "cft": 176,
+      "prefix": 179,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 150,
+      "pool": 178,
+      "random": 179,
+      "full": 179
+    },
+    {
+      "instance": "scpnrg1",
+      "seed": 29,
+      "cft": 177,
+      "prefix": 177,
+      "observed": 4,
+      "distinct": 4,
+      "pool_size": 173,
+      "pool": 176,
+      "random": 177,
+      "full": 177
+    },
+    {
+      "instance": "scpnrg1",
+      "seed": 47,
+      "cft": 176,
+      "prefix": 179,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 150,
+      "pool": 178,
+      "random": 179,
+      "full": 179
+    },
+    {
+      "instance": "scpnrg2",
+      "seed": 11,
+      "cft": 156,
+      "prefix": 158,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 141,
+      "pool": 158,
+      "random": 158,
+      "full": 158
+    },
+    {
+      "instance": "scpnrg2",
+      "seed": 29,
+      "cft": 155,
+      "prefix": 158,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 141,
+      "pool": 158,
+      "random": 158,
+      "full": 158
+    },
+    {
+      "instance": "scpnrg2",
+      "seed": 47,
+      "cft": 157,
+      "prefix": 158,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 141,
+      "pool": 158,
+      "random": 158,
+      "full": 158
+    },
+    {
+      "instance": "scpnrg3",
+      "seed": 11,
+      "cft": 168,
+      "prefix": 169,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 148,
+      "pool": 169,
+      "random": 169,
+      "full": 169
+    },
+    {
+      "instance": "scpnrg3",
+      "seed": 29,
+      "cft": 168,
+      "prefix": 169,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 148,
+      "pool": 169,
+      "random": 169,
+      "full": 169
+    },
+    {
+      "instance": "scpnrg3",
+      "seed": 47,
+      "cft": 168,
+      "prefix": 169,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 148,
+      "pool": 169,
+      "random": 169,
+      "full": 169
+    },
+    {
+      "instance": "scpnrg4",
+      "seed": 11,
+      "cft": 169,
+      "prefix": 171,
+      "observed": 4,
+      "distinct": 4,
+      "pool_size": 159,
+      "pool": 171,
+      "random": 171,
+      "full": 171
+    },
+    {
+      "instance": "scpnrg4",
+      "seed": 29,
+      "cft": 170,
+      "prefix": 173,
+      "observed": 4,
+      "distinct": 4,
+      "pool_size": 171,
+      "pool": 173,
+      "random": 173,
+      "full": 173
+    },
+    {
+      "instance": "scpnrg4",
+      "seed": 47,
+      "cft": 170,
+      "prefix": 170,
+      "observed": 4,
+      "distinct": 4,
+      "pool_size": 169,
+      "pool": 170,
+      "random": 170,
+      "full": 170
+    },
+    {
+      "instance": "scpnrg5",
+      "seed": 11,
+      "cft": 169,
+      "prefix": 170,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 144,
+      "pool": 170,
+      "random": 170,
+      "full": 170
+    },
+    {
+      "instance": "scpnrg5",
+      "seed": 29,
+      "cft": 169,
+      "prefix": 170,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 144,
+      "pool": 170,
+      "random": 170,
+      "full": 170
+    },
+    {
+      "instance": "scpnrg5",
+      "seed": 47,
+      "cft": 169,
+      "prefix": 170,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 144,
+      "pool": 170,
+      "random": 170,
+      "full": 170
+    },
+    {
+      "instance": "scpnrh1",
+      "seed": 11,
+      "cft": 65,
+      "prefix": 65,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 90,
+      "pool": 65,
+      "random": 65,
+      "full": 65
+    },
+    {
+      "instance": "scpnrh1",
+      "seed": 29,
+      "cft": 64,
+      "prefix": 65,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 90,
+      "pool": 65,
+      "random": 65,
+      "full": 65
+    },
+    {
+      "instance": "scpnrh1",
+      "seed": 47,
+      "cft": 65,
+      "prefix": 65,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 90,
+      "pool": 65,
+      "random": 64,
+      "full": 65
+    },
+    {
+      "instance": "scpnrh2",
+      "seed": 11,
+      "cft": 64,
+      "prefix": 66,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 88,
+      "pool": 66,
+      "random": 66,
+      "full": 66
+    },
+    {
+      "instance": "scpnrh2",
+      "seed": 29,
+      "cft": 65,
+      "prefix": 66,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 88,
+      "pool": 66,
+      "random": 66,
+      "full": 66
+    },
+    {
+      "instance": "scpnrh2",
+      "seed": 47,
+      "cft": 65,
+      "prefix": 66,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 88,
+      "pool": 66,
+      "random": 66,
+      "full": 66
+    },
+    {
+      "instance": "scpnrh3",
+      "seed": 11,
+      "cft": 61,
+      "prefix": 61,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 75,
+      "pool": 61,
+      "random": 61,
+      "full": 61
+    },
+    {
+      "instance": "scpnrh3",
+      "seed": 29,
+      "cft": 61,
+      "prefix": 61,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 75,
+      "pool": 61,
+      "random": 61,
+      "full": 61
+    },
+    {
+      "instance": "scpnrh3",
+      "seed": 47,
+      "cft": 61,
+      "prefix": 61,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 75,
+      "pool": 61,
+      "random": 61,
+      "full": 61
+    },
+    {
+      "instance": "scpnrh4",
+      "seed": 11,
+      "cft": 59,
+      "prefix": 60,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 85,
+      "pool": 60,
+      "random": 60,
+      "full": 60
+    },
+    {
+      "instance": "scpnrh4",
+      "seed": 29,
+      "cft": 60,
+      "prefix": 60,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 85,
+      "pool": 60,
+      "random": 60,
+      "full": 60
+    },
+    {
+      "instance": "scpnrh4",
+      "seed": 47,
+      "cft": 59,
+      "prefix": 60,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 85,
+      "pool": 60,
+      "random": 60,
+      "full": 60
+    },
+    {
+      "instance": "scpnrh5",
+      "seed": 11,
+      "cft": 57,
+      "prefix": 57,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 83,
+      "pool": 57,
+      "random": 57,
+      "full": 57
+    },
+    {
+      "instance": "scpnrh5",
+      "seed": 29,
+      "cft": 57,
+      "prefix": 57,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 83,
+      "pool": 57,
+      "random": 57,
+      "full": 57
+    },
+    {
+      "instance": "scpnrh5",
+      "seed": 47,
+      "cft": 57,
+      "prefix": 57,
+      "observed": 2,
+      "distinct": 2,
+      "pool_size": 83,
+      "pool": 57,
+      "random": 57,
+      "full": 57
+    }
+  ]
+}

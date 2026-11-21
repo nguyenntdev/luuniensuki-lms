@@ -1,0 +1,4 @@
+{"case_id": "P04_CASE_001", "stratum": "S1", "c1_pred": 0.42, "c2_pred": 0.48, "gold": 1, "failure_mode": "Collinear downstream shortcut collapse under modular rearrangement"}
+{"case_id": "P04_CASE_042", "stratum": "S1", "c1_pred": 0.68, "c2_pred": 0.61, "gold": 0, "failure_mode": "Spurious cumulative prerequisite carryover"}
+{"case_id": "P04_CASE_105", "stratum": "S2", "c1_pred": 0.35, "c2_pred": 0.45, "gold": 1, "failure_mode": "Elective modular decoupling breaks ERM feature weighting"}
+{"case_id": "P04_CASE_188", "stratum": "S2", "c1_pred": 0.72, "c2_pred": 0.69, "gold": 0, "failure_mode": "Downstream scale inflation false positive"}

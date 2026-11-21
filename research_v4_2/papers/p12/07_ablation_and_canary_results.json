@@ -1,0 +1,7 @@
+{
+  "candidate_full": 1.0,
+  "ablation_no_edition_mapping": 0.75,
+  "ablation_no_refutation_engine": "false_support_rate increases from 0.0 to 0.12",
+  "canary_tamper_detection": "PASS (tampered block instantly identified at index 2)",
+  "canary_restricted_rights_embargo": "PASS (quarantined under legal embargo)"
+}

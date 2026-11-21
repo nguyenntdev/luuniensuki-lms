@@ -1,0 +1,21 @@
+{
+  "paper_id": "P01",
+  "primary_metric": "worst_course_accuracy",
+  "candidate_test": 0.6442307692307693,
+  "ablations": {
+    "no_robustness_lambda_zero": {
+      "worst_course_accuracy": 0.625,
+      "drop_from_candidate": 0.019230769230769273
+    },
+    "random_deferral": {
+      "worst_course_accuracy": 0.544,
+      "drop_from_candidate": 0.10023076923076923
+    }
+  },
+  "negative_canaries": {
+    "group_label_permutation": {
+      "worst_course_accuracy": 0.6323529411764706,
+      "passed_drop": true
+    }
+  }
+}

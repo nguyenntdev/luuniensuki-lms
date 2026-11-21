@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "scope": "Retrospective single-dataset end-of-first-semester dropout discrimination among resolved outcomes. Prior exploratory summaries on this snapshot are known.",
+  "source_url": "https://archive.ics.uci.edu/static/public/697/predict+students+dropout+and+academic+success.zip",
+  "dataset_doi": "10.24432/C5MC89",
+  "license": "CC BY 4.0",
+  "source_sha256": "e90e55fd65ec462ae283ebeb2cca409319e3460ed898d8754f62fb35cc83a65d",
+  "features": ["Admission grade", "Previous qualification (grade)", "Application order", "Curricular units 1st sem (enrolled)", "Curricular units 1st sem (approved)", "Curricular units 1st sem (grade)", "Curricular units 1st sem (evaluations)"],
+  "shared_feature_engineering": "approved/max(enrolled,1) and evaluations/max(enrolled,1) for all methods",
+  "outer": "leave one course out, evaluating every resolved record once",
+  "inner": "GroupKFold(3) by course; minimize mean course NLL; deterministic first minimum",
+  "candidate": "additive cubic uniform-knot splines, 4 knots, L2 logistic regression",
+  "candidate_C": [0.1, 1, 10, 100],
+  "baselines": ["CatBoost (NeurIPS 2018)", "XGBoost (KDD 2016)"],
+  "tree_settings": [[2, 150], [3, 300], [4, 300], [6, 500]],
+  "tree_learning_rate": 0.05,
+  "seed": 42,
+  "primary": "mean per-course binary negative log likelihood",
+  "inference": "paired course bootstrap, 10000 resamples, exact two-sided paired course sign-flip test under exchangeability, Holm across two comparisons",
+  "margin": 0.01,
+  "decision": "Benchmark improvement only if both mean NLL gains reach 0.01, both bootstrap lower bounds exceed zero, and both Holm-adjusted p values are below .05. No tuning after evaluation."
+}

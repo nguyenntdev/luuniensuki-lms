@@ -1,0 +1,8 @@
+{
+  "paper_id": "P01",
+  "claim_id": "CLAIM-V42-P01",
+  "claim_status": "ENGINEERING_ONLY",
+  "evidence_source": "generated_fixtures",
+  "human_approval": false,
+  "submission_ready": false
+}

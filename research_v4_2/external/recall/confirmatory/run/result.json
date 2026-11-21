@@ -1,0 +1,210 @@
+{
+  "partition": {
+    "rows": 526770,
+    "learners": 4596,
+    "buckets": [
+      14,
+      15,
+      16,
+      17
+    ]
+  },
+  "freeze_sha256": "9ed4ba92ef42d4fe094774ab1968ab77a4751eaac7f503a3e3c628c9134d0e66",
+  "losses_sha256": "66cc553d038e5ff85623f168867a0a8358cce8e4ce3af781ca80281a8f430d07",
+  "mean_learner_nll": {
+    "constant": 0.33594091537903953,
+    "author_hlr": 0.335344096303754,
+    "author_hlr_ablated": 0.33545993534264507,
+    "author_lr": 0.3359408999599236,
+    "logistic": 0.33153505970272146,
+    "history_logistic": 0.32923866228121185,
+    "history_hlr": 0.334625175886554,
+    "hist_boost": 0.33000359657466893,
+    "base_catboost": 0.32993854896280067,
+    "matched_catboost": 0.3254744673616995,
+    "ensemble": 0.32544605327277354
+  },
+  "contrasts": {
+    "constant": {
+      "gain": 0.010494862106269917,
+      "simultaneous_ci95": [
+        0.008971835954762647,
+        0.012017888257777188
+      ],
+      "holm_lower95_at_margin": 0.005,
+      "raw_p_zero": 1.4198641911053176e-80,
+      "holm_p_zero": 1.4198641911053175e-79,
+      "raw_p_margin": 3.533909224168528e-24,
+      "holm_p_margin": 3.533909224168528e-23,
+      "pass_margin": true
+    },
+    "author_hlr": {
+      "gain": 0.009898043030981261,
+      "simultaneous_ci95": [
+        0.008415651616406089,
+        0.011380434445556434
+      ],
+      "holm_lower95_at_margin": 0.005,
+      "raw_p_zero": 5.852933455487493e-76,
+      "holm_p_zero": 4.097053418841245e-75,
+      "raw_p_margin": 1.2817591270912292e-20,
+      "holm_p_margin": 8.972313889638604e-20,
+      "pass_margin": true
+    },
+    "author_hlr_ablated": {
+      "gain": 0.010013882069871163,
+      "simultaneous_ci95": [
+        0.008520996677938484,
+        0.011506767461803841
+      ],
+      "holm_lower95_at_margin": 0.005,
+      "raw_p_zero": 1.2968914605202484e-76,
+      "holm_p_zero": 1.0375131684161987e-75,
+      "raw_p_margin": 3.1061048320989572e-21,
+      "holm_p_margin": 2.4848838656791658e-20,
+      "pass_margin": true
+    },
+    "author_lr": {
+      "gain": 0.01049484668714938,
+      "simultaneous_ci95": [
+        0.008971814919636117,
+        0.012017878454662642
+      ],
+      "holm_lower95_at_margin": 0.005,
+      "raw_p_zero": 1.4224085301678555e-80,
+      "holm_p_zero": 1.4198641911053175e-79,
+      "raw_p_margin": 3.536236360408966e-24,
+      "holm_p_margin": 3.533909224168528e-23,
+      "pass_margin": true
+    },
+    "logistic": {
+      "gain": 0.006089006429946703,
+      "simultaneous_ci95": [
+        0.004822515034038336,
+        0.007355497825855071
+      ],
+      "holm_lower95_at_margin": 0.005,
+      "raw_p_zero": 4.5109318478570417e-41,
+      "holm_p_zero": 2.2554659239285207e-40,
+      "raw_p_margin": 0.007890785857633318,
+      "holm_p_margin": 0.039453929288166587,
+      "pass_margin": true
+    },
+    "history_logistic": {
+      "gain": 0.0037926090084389815,
+      "simultaneous_ci95": [
+        0.0028159553732756797,
+        0.004769262643602283
+      ],
+      "holm_lower95_at_margin": 0.003012877049504651,
+      "raw_p_zero": 1.1677808166375478e-27,
+      "holm_p_zero": 2.3355616332750956e-27,
+      "raw_p_margin": 0.9997392070791017,
+      "holm_p_margin": 1.0,
+      "pass_margin": false
+    },
+    "history_hlr": {
+      "gain": 0.009179122613779761,
+      "simultaneous_ci95": [
+        0.0077919717606105415,
+        0.01056627346694898
+      ],
+      "holm_lower95_at_margin": 0.005,
+      "raw_p_zero": 1.0893654326406273e-74,
+      "holm_p_zero": 6.5361925958437636e-74,
+      "raw_p_margin": 1.760990083548564e-17,
+      "holm_p_margin": 1.0565940501291383e-16,
+      "pass_margin": true
+    },
+    "hist_boost": {
+      "gain": 0.0045575433018966655,
+      "simultaneous_ci95": [
+        0.003526923820181996,
+        0.0055881627836113345
+      ],
+      "holm_lower95_at_margin": 0.003734726575003619,
+      "raw_p_zero": 3.711389677526524e-35,
+      "holm_p_zero": 1.4845558710106096e-34,
+      "raw_p_margin": 0.8859973638087467,
+      "holm_p_margin": 1.0,
+      "pass_margin": false
+    },
+    "base_catboost": {
+      "gain": 0.004492495690027221,
+      "simultaneous_ci95": [
+        0.003455048381785379,
+        0.005529942998269063
+      ],
+      "holm_lower95_at_margin": 0.0036642278243049975,
+      "raw_p_zero": 8.13894429567981e-34,
+      "holm_p_zero": 2.441683288703943e-33,
+      "raw_p_margin": 0.9152183667819052,
+      "holm_p_margin": 1.0,
+      "pass_margin": false
+    },
+    "matched_catboost": {
+      "gain": 2.841408892487208e-05,
+      "simultaneous_ci95": [
+        -2.0234226320926772e-05,
+        7.706240417067093e-05
+      ],
+      "holm_lower95_at_margin": -1.0425316141304767e-05,
+      "raw_p_zero": 0.050505572850482544,
+      "holm_p_zero": 0.050505572850482544,
+      "raw_p_margin": 1.0,
+      "holm_p_margin": 1.0,
+      "pass_margin": false
+    }
+  },
+  "counts_as_superior": false,
+  "gain_by_bucket": {
+    "14": {
+      "constant": 0.009543901392564088,
+      "author_hlr": 0.008966869397098507,
+      "author_hlr_ablated": 0.009025584071432774,
+      "author_lr": 0.009543883504654488,
+      "logistic": 0.005377430257976271,
+      "history_logistic": 0.003062376504616441,
+      "history_hlr": 0.008760646427283738,
+      "hist_boost": 0.0030888543765006334,
+      "base_catboost": 0.00409322787175887,
+      "matched_catboost": 6.0456644056397466e-05
+    },
+    "15": {
+      "constant": 0.012135290720359052,
+      "author_hlr": 0.011331037343358349,
+      "author_hlr_ablated": 0.011503332849785148,
+      "author_lr": 0.012135275507270317,
+      "logistic": 0.00680045596041275,
+      "history_logistic": 0.005005301284967312,
+      "history_hlr": 0.010592020602531883,
+      "hist_boost": 0.005966021374252136,
+      "base_catboost": 0.004600952060979623,
+      "matched_catboost": -5.120253987918498e-05
+    },
+    "16": {
+      "constant": 0.010231787076551323,
+      "author_hlr": 0.009752803817691315,
+      "author_hlr_ablated": 0.009871675981825461,
+      "author_lr": 0.010231769346061714,
+      "logistic": 0.005885234295006143,
+      "history_logistic": 0.003184671438306951,
+      "history_hlr": 0.008902013304669413,
+      "hist_boost": 0.004383735247789543,
+      "base_catboost": 0.004408271645703797,
+      "matched_catboost": 7.359334637202347e-05
+    },
+    "17": {
+      "constant": 0.010000531783625467,
+      "author_hlr": 0.009487672376796546,
+      "author_hlr_ablated": 0.009600547761383676,
+      "author_lr": 0.010000521256553112,
+      "logistic": 0.006295755648566913,
+      "history_logistic": 0.0038895171465164946,
+      "history_hlr": 0.008367900113005087,
+      "hist_boost": 0.004792252078842998,
+      "base_catboost": 0.004897807641623076,
+      "matched_catboost": 3.393887646168472e-05
+    }
+  }
+}

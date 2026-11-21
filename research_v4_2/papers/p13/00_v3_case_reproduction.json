@@ -1,0 +1,13 @@
+{
+  "paper_id": "P13",
+  "title": "Early-warning from clickstream (SRL claims gated)",
+  "v3_source_commit": "4e5a792d4715fba268154e680a1334c9103e671c",
+  "proven_failure": "V3 SRL-proxy model underperformed click-count (delta AUC -0.008 group, -0.019 time); falsely claimed SRL measurement from clicks without psychometric construct.",
+  "case_reproductions": [
+    {
+      "case_id": "TET_BREAK_WEEK_4",
+      "failure_in_v3": "False dropout alarm on 78% of active students during holiday break",
+      "v4_status": "Normalized via course schedule prior"
+    }
+  ]
+}

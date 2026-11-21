@@ -1,0 +1,12 @@
+{
+  "paper_id": "P13",
+  "champion_id": "B_STAR_CALIBRATED_HAZARD",
+  "description": "Calibrated discrete-time hazard survival baseline without schedule normalization.",
+  "dev_auroc": 0.9856459330143541,
+  "dev_ece": 0.1472009718378423,
+  "comparator_pool": [
+    "C0_CLICK_COUNT_LR",
+    "C1_TIME_WINDOW_GBDT",
+    "B_STAR_CALIBRATED_HAZARD"
+  ]
+}

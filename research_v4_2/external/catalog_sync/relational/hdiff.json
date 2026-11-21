@@ -1,0 +1,12 @@
+[
+  {
+    "canonical_target_sha256": "f5bb3735bce57f52483394922a4c865744a7bbc1df46ec20fba495c6fb7c6ac4",
+    "patch_sha256": "4f79e88751b54c66bdd92d88a8cd7109252fdeeeb5a4286a96cb75c39c0e9e6a",
+    "bytes": 65637
+  },
+  {
+    "canonical_target_sha256": "7d20923db1e8c2291f47634e2f37b1bb4c141142e1ef63b3f4de66c25d128be9",
+    "patch_sha256": "10b285775bf2161ff9de308a4475632af90d815f54ad55786e32b5f8ddd8bb62",
+    "bytes": 70840
+  }
+]

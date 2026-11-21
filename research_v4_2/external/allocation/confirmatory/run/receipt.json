@@ -1,0 +1,12 @@
+{
+  "protocol_sha256": "3ad71e1ec7a550aa9823323aeb6834ebd41c6b342e45e76f9699739ef0729a2a",
+  "decisions_sha256": "002d6d4f9b1abd9491a5a0704e19de35c3f49b00665818feaee42c0937df71f4",
+  "training_learners": {
+    "oulad": 11224,
+    "uci856": 87
+  },
+  "source_sha256": {
+    "oulad": "f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4",
+    "uci856": "bbf757cd90b8312e9bfadb9192b05413f939a7c20e5f880a0d7e97064fecf557"
+  }
+}

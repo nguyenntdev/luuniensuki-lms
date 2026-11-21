@@ -1,0 +1,15 @@
+{
+  "source_pairs": 280,
+  "unmatched_pairs": 95,
+  "eligible_pairs": 185,
+  "citing_pages": 142,
+  "artworks": 181,
+  "file_alerts": 185,
+  "record_alerts": 5,
+  "path_alerts": 0,
+  "record_alerts_on_unchanged_path": 5,
+  "labeled_pairs": 44,
+  "labeled_record_alerts": 0,
+  "labeled_title_alerts": 0,
+  "labeled_path_or_title_alerts": 0
+}

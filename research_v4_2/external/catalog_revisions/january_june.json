@@ -1,0 +1,36 @@
+{
+  "source_sha": [
+    "1199312edf5d79f3a3e81ff752f8eee741fa286fdeea4f7b329e6bee8f5316d1",
+    "f709c2289805615e21395a915119d44f5f139023cc845b979562741a0652baf5"
+  ],
+  "common": 69075,
+  "added": 126,
+  "removed": 0,
+  "record_changes": 10681,
+  "by_field": {
+    "accession_number": 0,
+    "artist": 5,
+    "artistRole": 0,
+    "artistId": 0,
+    "title": 4634,
+    "dateText": 154,
+    "medium": 6,
+    "creditLine": 2,
+    "year": 142,
+    "acquisitionYear": 0,
+    "dimensions": 138,
+    "width": 70,
+    "height": 66,
+    "depth": 12,
+    "units": 7,
+    "inscription": 0,
+    "thumbnailCopyright": 3895,
+    "thumbnailUrl": 347,
+    "url": 2893
+  },
+  "citation_opportunities": 269915,
+  "changed_citations": 4798,
+  "alerts_file": 269915,
+  "alerts_record": 42587,
+  "alerts_field": 4798
+}

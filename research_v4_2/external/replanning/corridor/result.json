@@ -1,0 +1,139 @@
+{
+  "queries": 512,
+  "scenarios": 48,
+  "verified": 245760,
+  "witness_legs": 2214003,
+  "finite": 15114,
+  "unreachable": 9462,
+  "affected": 80,
+  "became_unreachable": 6,
+  "results": {
+    "csa": {
+      "setup_ms": 0.000741,
+      "p95_ms": 2.423615,
+      "geometric_ms": 1.998906400541583,
+      "amortized_p95_ms": 2.4236304375,
+      "amortized_geometric_ms": 1.9989218782999791
+    },
+    "full_profile": {
+      "setup_ms": 0.000241,
+      "p95_ms": 0.447231,
+      "geometric_ms": 0.3814957332861383,
+      "amortized_p95_ms": 0.4472360208333333,
+      "amortized_geometric_ms": 0.3815007631389388
+    },
+    "path_cache": {
+      "setup_ms": 1.878836,
+      "p95_ms": 0.111193,
+      "geometric_ms": 0.032505015926789234,
+      "amortized_p95_ms": 0.15033541666666667,
+      "amortized_geometric_ms": 0.07334056929074242
+    },
+    "all_predecessors": {
+      "setup_ms": 0.262994,
+      "p95_ms": 0.172458,
+      "geometric_ms": 0.11147488042306336,
+      "amortized_p95_ms": 0.17793704166666666,
+      "amortized_geometric_ms": 0.11701152965640924
+    },
+    "eager": {
+      "setup_ms": 0.301237,
+      "p95_ms": 0.142459,
+      "geometric_ms": 0.10938306944345993,
+      "amortized_p95_ms": 0.14873477083333334,
+      "amortized_geometric_ms": 0.11569420335124693
+    },
+    "indexed_csa": {
+      "setup_ms": 0.519975,
+      "p95_ms": 0.071139,
+      "geometric_ms": 0.024830986824580945,
+      "amortized_p95_ms": 0.0819718125,
+      "amortized_geometric_ms": 0.036642805722472166
+    },
+    "lazy_unpruned": {
+      "setup_ms": 1.057964,
+      "p95_ms": 0.03271,
+      "geometric_ms": 0.019563412091247512,
+      "amortized_p95_ms": 0.05475091666666667,
+      "amortized_geometric_ms": 0.04184889395547106
+    },
+    "lazy_pruned": {
+      "setup_ms": 1.092722,
+      "p95_ms": 0.037827,
+      "geometric_ms": 0.01958001441439979,
+      "amortized_p95_ms": 0.06059204166666667,
+      "amortized_geometric_ms": 0.04261088834464678
+    },
+    "signature_only": {
+      "setup_ms": 0.744843,
+      "p95_ms": 0.029835,
+      "geometric_ms": 0.01862309289482578,
+      "amortized_p95_ms": 0.0453525625,
+      "amortized_geometric_ms": 0.034343731795212634
+    },
+    "candidate": {
+      "setup_ms": 0.910069,
+      "p95_ms": 0.034906,
+      "geometric_ms": 0.018564894486455773,
+      "amortized_p95_ms": 0.053865770833333326,
+      "amortized_geometric_ms": 0.03777848159777442
+    }
+  },
+  "gains": {
+    "csa": {
+      "p95": 0.9855975474652533,
+      "geometric": 0.9907124743402563,
+      "amortized_p95": 0.9777747588906762,
+      "amortized_geometric": 0.981100571258991
+    },
+    "full_profile": {
+      "p95": 0.9219508486665727,
+      "geometric": 0.9513365606305975,
+      "amortized_p95": 0.879558514242736,
+      "amortized_geometric": 0.9009740340047082
+    },
+    "path_cache": {
+      "p95": 0.6860773609849541,
+      "geometric": 0.42886062482573994,
+      "amortized_p95": 0.641696068513463,
+      "amortized_geometric": 0.4848897143406399
+    },
+    "all_predecessors": {
+      "p95": 0.7975970961045588,
+      "geometric": 0.8334611850131679,
+      "amortized_p95": 0.6972762369836335,
+      "amortized_geometric": 0.6771388109470362
+    },
+    "eager": {
+      "p95": 0.754975115647309,
+      "geometric": 0.8302763436707912,
+      "amortized_p95": 0.6378400925921128,
+      "amortized_geometric": 0.6734626238526473
+    },
+    "indexed_csa": {
+      "p95": 0.5093268108913536,
+      "geometric": 0.25234971056092614,
+      "amortized_p95": 0.3428744687897035,
+      "amortized_geometric": -0.03099314730164826
+    },
+    "lazy_unpruned": {
+      "p95": -0.067135432589422,
+      "geometric": 0.051040053756188364,
+      "amortized_p95": 0.016166776507547276,
+      "amortized_geometric": 0.09726451461364127
+    },
+    "lazy_pruned": {
+      "p95": 0.0772199751500251,
+      "geometric": 0.05184469768303457,
+      "amortized_p95": 0.11100914655321226,
+      "amortized_geometric": 0.11340779163735637
+    },
+    "signature_only": {
+      "p95": -0.16996815820345224,
+      "geometric": 0.0031250667490455575,
+      "amortized_p95": -0.18771173808168684,
+      "amortized_geometric": -0.1000109662817883
+    }
+  },
+  "advance": false
+}

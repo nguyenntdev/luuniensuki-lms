@@ -1,0 +1,96 @@
+[
+  {
+    "base_sha256": "1199312edf5d79f3a3e81ff752f8eee741fa286fdeea4f7b329e6bee8f5316d1",
+    "canonical_target_sha256": "f5bb3735bce57f52483394922a4c865744a7bbc1df46ec20fba495c6fb7c6ac4",
+    "target_rows": 69201,
+    "bytes": {
+      "own_cell": 48828,
+      "within_row": 48852,
+      "bsdiff": 71755,
+      "xdelta3": 85418,
+      "row_diff": 186220,
+      "column_diff": 169508,
+      "rule_diff": 167887,
+      "zstd_full": 2209789,
+      "zstd_patch": 141196,
+      "hdiff": 65637,
+      "whole": 46816,
+      "substring": 34268,
+      "absolute": 37908,
+      "full": 34468
+    },
+    "wire_sha256": {
+      "whole": "670151158ca7568160485a8135c85620c025a370785c100c55880cc61cd1b005",
+      "substring": "2117384f1fa2d053b52517e3ea84154a032c0b3c582abf91f89632abca47fbd2",
+      "absolute": "3aae8c479c8f458aaf26cc3bc75984944451944895c8979719ef2e01190453d0",
+      "full": "05c55aaeacccbf1eca349eece0141d681a3a14d50c88174f9e7c38a014be6ed7"
+    },
+    "programs": {
+      "whole": {
+        "whole": 34
+      },
+      "substring": {
+        "sub": 9,
+        "end": 6
+      },
+      "absolute": {
+        "sub": 9,
+        "end": 6,
+        "whole": 19
+      },
+      "full": {
+        "sub": 9,
+        "end": 6,
+        "whole": 22
+      }
+    },
+    "passed": false
+  },
+  {
+    "base_sha256": "f709c2289805615e21395a915119d44f5f139023cc845b979562741a0652baf5",
+    "canonical_target_sha256": "7d20923db1e8c2291f47634e2f37b1bb4c141142e1ef63b3f4de66c25d128be9",
+    "target_rows": 69201,
+    "bytes": {
+      "own_cell": 55416,
+      "within_row": 32876,
+      "bsdiff": 117266,
+      "xdelta3": 84298,
+      "row_diff": 83090,
+      "column_diff": 67909,
+      "rule_diff": 67722,
+      "zstd_full": 2225318,
+      "zstd_patch": 86810,
+      "hdiff": 70840,
+      "whole": 32876,
+      "substring": 32412,
+      "absolute": 32804,
+      "full": 32816
+    },
+    "wire_sha256": {
+      "whole": "9a01d8d07f9e4836a318e97adcd7bc1f35d3f70027f596601f106114319130c4",
+      "substring": "6d9acf4f2377cb20c842f122795f17fe85d44b01936c0a80b92a7fe81f781d52",
+      "absolute": "dc6519e1ccb1049fed0ad7411bfbda193c08992b15491bafc0c3231ea37e1861",
+      "full": "447b6398193173218928acf25e6b78bee4bd84be6c03d48cfd8bb19ee85c5c7a"
+    },
+    "programs": {
+      "whole": {
+        "whole": 124
+      },
+      "substring": {
+        "sub": 30,
+        "end": 46,
+        "start": 1
+      },
+      "absolute": {
+        "sub": 5,
+        "end": 10
+      },
+      "full": {
+        "sub": 25,
+        "end": 24,
+        "whole": 44
+      }
+    },
+    "passed": false
+  }
+]

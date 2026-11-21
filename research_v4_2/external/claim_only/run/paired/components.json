@@ -1,0 +1,284 @@
+{
+  "bart-large-mnli": {
+    "dev": {
+      "decisions": {
+        "n": 708,
+        "claims": 354,
+        "evidence_strings": 340,
+        "unbalanced_gold_claim_groups": 0,
+        "unbalanced_gold_evidence_groups": 0,
+        "three_way_correct": 11,
+        "methods": {
+          "independent": {
+            "status": "ok",
+            "correct": 482,
+            "complete_claims": 137,
+            "rescued": 0,
+            "regressed": 0
+          },
+          "claim_balance": {
+            "status": "optimal",
+            "correct": 590,
+            "complete_claims": 295,
+            "rescued": 158,
+            "regressed": 50
+          },
+          "joint_balance": {
+            "status": "optimal",
+            "correct": 640,
+            "complete_claims": 320,
+            "rescued": 187,
+            "regressed": 29
+          }
+        }
+      },
+      "geometry": {
+        "components": 163,
+        "quartet_components": 152,
+        "quartets_completely_correct": 139,
+        "all_components_correct": 147,
+        "residual_only_independent_correct": 640,
+        "optimum_disagreements_after_centering": 0,
+        "optimum_disagreements_after_offset": 0,
+        "component_ci95": [
+          0.18032386207528162,
+          0.2631598297213622
+        ]
+      }
+    },
+    "test": {
+      "decisions": {
+        "n": 712,
+        "claims": 355,
+        "evidence_strings": 341,
+        "unbalanced_gold_claim_groups": 0,
+        "unbalanced_gold_evidence_groups": 0,
+        "three_way_correct": 9,
+        "methods": {
+          "independent": {
+            "status": "ok",
+            "correct": 476,
+            "complete_claims": 129,
+            "rescued": 0,
+            "regressed": 0
+          },
+          "claim_balance": {
+            "status": "optimal",
+            "correct": 614,
+            "complete_claims": 306,
+            "rescued": 177,
+            "regressed": 39
+          },
+          "joint_balance": {
+            "status": "optimal",
+            "correct": 644,
+            "complete_claims": 321,
+            "rescued": 202,
+            "regressed": 34
+          }
+        }
+      },
+      "geometry": {
+        "components": 163,
+        "quartet_components": 150,
+        "quartets_completely_correct": 137,
+        "all_components_correct": 146,
+        "residual_only_independent_correct": 644,
+        "optimum_disagreements_after_centering": 0,
+        "optimum_disagreements_after_offset": 0,
+        "component_ci95": [
+          0.19219387838411547,
+          0.27958579881656803
+        ]
+      }
+    }
+  },
+  "roberta-large-mnli": {
+    "dev": {
+      "decisions": {
+        "n": 708,
+        "claims": 354,
+        "evidence_strings": 340,
+        "unbalanced_gold_claim_groups": 0,
+        "unbalanced_gold_evidence_groups": 0,
+        "three_way_correct": 547,
+        "methods": {
+          "independent": {
+            "status": "ok",
+            "correct": 634,
+            "complete_claims": 280,
+            "rescued": 0,
+            "regressed": 0
+          },
+          "claim_balance": {
+            "status": "optimal",
+            "correct": 696,
+            "complete_claims": 348,
+            "rescued": 68,
+            "regressed": 6
+          },
+          "joint_balance": {
+            "status": "optimal",
+            "correct": 704,
+            "complete_claims": 352,
+            "rescued": 72,
+            "regressed": 2
+          }
+        }
+      },
+      "geometry": {
+        "components": 163,
+        "quartet_components": 152,
+        "quartets_completely_correct": 152,
+        "all_components_correct": 162,
+        "residual_only_independent_correct": 704,
+        "optimum_disagreements_after_centering": 0,
+        "optimum_disagreements_after_offset": 0,
+        "component_ci95": [
+          0.075,
+          0.125
+        ]
+      }
+    },
+    "test": {
+      "decisions": {
+        "n": 712,
+        "claims": 355,
+        "evidence_strings": 341,
+        "unbalanced_gold_claim_groups": 0,
+        "unbalanced_gold_evidence_groups": 0,
+        "three_way_correct": 572,
+        "methods": {
+          "independent": {
+            "status": "ok",
+            "correct": 645,
+            "complete_claims": 290,
+            "rescued": 0,
+            "regressed": 0
+          },
+          "claim_balance": {
+            "status": "optimal",
+            "correct": 694,
+            "complete_claims": 346,
+            "rescued": 56,
+            "regressed": 7
+          },
+          "joint_balance": {
+            "status": "optimal",
+            "correct": 704,
+            "complete_claims": 351,
+            "rescued": 64,
+            "regressed": 5
+          }
+        }
+      },
+      "geometry": {
+        "components": 163,
+        "quartet_components": 150,
+        "quartets_completely_correct": 148,
+        "all_components_correct": 161,
+        "residual_only_independent_correct": 704,
+        "optimum_disagreements_after_centering": 0,
+        "optimum_disagreements_after_offset": 0,
+        "component_ci95": [
+          0.05758426966292135,
+          0.1087615992803711
+        ]
+      }
+    }
+  },
+  "original": {
+    "dev": {
+      "decisions": {
+        "n": 708,
+        "claims": 354,
+        "evidence_strings": 340,
+        "unbalanced_gold_claim_groups": 0,
+        "unbalanced_gold_evidence_groups": 0,
+        "three_way_correct": 547,
+        "methods": {
+          "independent": {
+            "status": "ok",
+            "correct": 622,
+            "complete_claims": 269,
+            "rescued": 0,
+            "regressed": 0
+          },
+          "claim_balance": {
+            "status": "optimal",
+            "correct": 686,
+            "complete_claims": 343,
+            "rescued": 74,
+            "regressed": 10
+          },
+          "joint_balance": {
+            "status": "optimal",
+            "correct": 704,
+            "complete_claims": 352,
+            "rescued": 84,
+            "regressed": 2
+          }
+        }
+      },
+      "geometry": {
+        "components": 163,
+        "quartet_components": 152,
+        "quartets_completely_correct": 152,
+        "all_components_correct": 162,
+        "residual_only_independent_correct": 704,
+        "optimum_disagreements_after_centering": 0,
+        "optimum_disagreements_after_offset": 0,
+        "component_ci95": [
+          0.08798882681564246,
+          0.14548022598870056
+        ]
+      }
+    },
+    "test": {
+      "decisions": {
+        "n": 712,
+        "claims": 355,
+        "evidence_strings": 341,
+        "unbalanced_gold_claim_groups": 0,
+        "unbalanced_gold_evidence_groups": 0,
+        "three_way_correct": 548,
+        "methods": {
+          "independent": {
+            "status": "ok",
+            "correct": 617,
+            "complete_claims": 263,
+            "rescued": 0,
+            "regressed": 0
+          },
+          "claim_balance": {
+            "status": "optimal",
+            "correct": 688,
+            "complete_claims": 343,
+            "rescued": 80,
+            "regressed": 9
+          },
+          "joint_balance": {
+            "status": "optimal",
+            "correct": 704,
+            "complete_claims": 351,
+            "rescued": 91,
+            "regressed": 4
+          }
+        }
+      },
+      "geometry": {
+        "components": 163,
+        "quartet_components": 150,
+        "quartets_completely_correct": 149,
+        "all_components_correct": 161,
+        "residual_only_independent_correct": 704,
+        "optimum_disagreements_after_centering": 0,
+        "optimum_disagreements_after_offset": 0,
+        "component_ci95": [
+          0.09285714285714286,
+          0.1511627906976744
+        ]
+      }
+    }
+  }
+}
