@@ -1,0 +1,83 @@
+{
+  "registrations": 8815,
+  "learners": 8505,
+  "clients": 7,
+  "macro_auc": {
+    "adapted": 0.6252783922124031,
+    "fedavg": 0.5962906033484746,
+    "fedprox": 0.5965070230695344,
+    "intercept_only": 0.5962906033484746,
+    "local": 0.6200295618080759,
+    "newton": 0.6158682270838645,
+    "pooled": 0.5915048177217953,
+    "pooled_boosting": 0.6015966213381104,
+    "weak_ridge": 0.6311610610255277
+  },
+  "contrasts": {
+    "pooled_boosting": {
+      "auc_gain": 0.014271605745754035,
+      "simultaneous_ci95": [
+        -0.005130903523805824,
+        0.033674115015313894
+      ],
+      "clears_margin": false
+    },
+    "fedavg": {
+      "auc_gain": 0.01957762373538985,
+      "simultaneous_ci95": [
+        -0.020398184713626394,
+        0.05955343218440609
+      ],
+      "clears_margin": false
+    },
+    "fedprox": {
+      "auc_gain": 0.019361204014330058,
+      "simultaneous_ci95": [
+        -0.020571805127835262,
+        0.05929421315649538
+      ],
+      "clears_margin": false
+    },
+    "pooled": {
+      "auc_gain": 0.024363409362069155,
+      "simultaneous_ci95": [
+        -0.016426383486057995,
+        0.0651532022101963
+      ],
+      "clears_margin": false
+    },
+    "local": {
+      "auc_gain": -0.00416133472421143,
+      "simultaneous_ci95": [
+        -0.04358925148499782,
+        0.03526658203657496
+      ],
+      "clears_margin": false
+    },
+    "intercept_only": {
+      "auc_gain": 0.01957762373538985,
+      "simultaneous_ci95": [
+        -0.020398184713626394,
+        0.05955343218440609
+      ],
+      "clears_margin": false
+    },
+    "weak_ridge": {
+      "auc_gain": -0.015292833941663253,
+      "simultaneous_ci95": [
+        -0.0537853705053219,
+        0.023199702621995395
+      ],
+      "clears_margin": false
+    },
+    "adapted": {
+      "auc_gain": -0.00941016512853865,
+      "simultaneous_ci95": [
+        -0.05038765586419444,
+        0.03156732560711714
+      ],
+      "clears_margin": false
+    }
+  },
+  "advances": false
+}

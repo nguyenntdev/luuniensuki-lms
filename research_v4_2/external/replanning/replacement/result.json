@@ -1,0 +1,152 @@
+{
+  "queries": 512,
+  "scenarios": 48,
+  "verified": 270336,
+  "witness_legs": 2435538,
+  "finite": 15114,
+  "unreachable": 9462,
+  "affected": 80,
+  "became_unreachable": 6,
+  "results": {
+    "csa": {
+      "setup_ms": 0.002321,
+      "p95_ms": 2.370129,
+      "geometric_ms": 1.952915745147468,
+      "amortized_p95_ms": 2.3701773541666666,
+      "amortized_geometric_ms": 1.9529642626690416
+    },
+    "full_profile": {
+      "setup_ms": 0.000261,
+      "p95_ms": 0.454624,
+      "geometric_ms": 0.3746983112093383,
+      "amortized_p95_ms": 0.4546294375,
+      "amortized_geometric_ms": 0.3747037638020133
+    },
+    "path_cache": {
+      "setup_ms": 1.842699,
+      "p95_ms": 0.122858,
+      "geometric_ms": 0.03235526290077676,
+      "amortized_p95_ms": 0.1612475625,
+      "amortized_geometric_ms": 0.07257248846762804
+    },
+    "all_predecessors": {
+      "setup_ms": 0.251155,
+      "p95_ms": 0.173396,
+      "geometric_ms": 0.11384780527123489,
+      "amortized_p95_ms": 0.17862839583333334,
+      "amortized_geometric_ms": 0.11913774515679842
+    },
+    "eager": {
+      "setup_ms": 0.2977,
+      "p95_ms": 0.156617,
+      "geometric_ms": 0.11181425697301955,
+      "amortized_p95_ms": 0.16281908333333334,
+      "amortized_geometric_ms": 0.11807481238994269
+    },
+    "indexed_csa": {
+      "setup_ms": 0.485037,
+      "p95_ms": 0.081226,
+      "geometric_ms": 0.024453009293488398,
+      "amortized_p95_ms": 0.0913309375,
+      "amortized_geometric_ms": 0.03557361124024844
+    },
+    "lazy_unpruned": {
+      "setup_ms": 1.075348,
+      "p95_ms": 0.03727,
+      "geometric_ms": 0.01903042495101736,
+      "amortized_p95_ms": 0.05967308333333333,
+      "amortized_geometric_ms": 0.0417281121570826
+    },
+    "lazy_pruned": {
+      "setup_ms": 1.049112,
+      "p95_ms": 0.034069,
+      "geometric_ms": 0.01891745409878598,
+      "amortized_p95_ms": 0.0559255,
+      "amortized_geometric_ms": 0.04108363628437037
+    },
+    "signature_only": {
+      "setup_ms": 0.724858,
+      "p95_ms": 0.034892,
+      "geometric_ms": 0.01948652777046213,
+      "amortized_p95_ms": 0.04999320833333334,
+      "amortized_geometric_ms": 0.034815774076832076
+    },
+    "corridor": {
+      "setup_ms": 0.881767,
+      "p95_ms": 0.032145,
+      "geometric_ms": 0.019450678919072806,
+      "amortized_p95_ms": 0.05051514583333333,
+      "amortized_geometric_ms": 0.03809627091117488
+    },
+    "candidate": {
+      "setup_ms": 0.546102,
+      "p95_ms": 0.127923,
+      "geometric_ms": 0.024915402968180258,
+      "amortized_p95_ms": 0.139300125,
+      "amortized_geometric_ms": 0.03794560073455921
+    }
+  },
+  "gains": {
+    "csa": {
+      "p95": 0.9460269884044286,
+      "geometric": 0.9872419468018069,
+      "amortized_p95": 0.9412279740353116,
+      "amortized_geometric": 0.9805702534040739
+    },
+    "full_profile": {
+      "p95": 0.7186180228056591,
+      "geometric": 0.9335054303080101,
+      "amortized_p95": 0.6935963369068023,
+      "amortized_geometric": 0.8987317331709297
+    },
+    "path_cache": {
+      "p95": -0.04122645655960544,
+      "geometric": 0.22994280576276493,
+      "amortized_p95": 0.13611019701460603,
+      "amortized_geometric": 0.4771351853053052
+    },
+    "all_predecessors": {
+      "p95": 0.2622494175182818,
+      "geometric": 0.7811516620033127,
+      "amortized_p95": 0.2201680793798766,
+      "amortized_geometric": 0.6814980786767568
+    },
+    "eager": {
+      "p95": 0.1832112733611293,
+      "geometric": 0.7771715017147387,
+      "amortized_p95": 0.14444841385812168,
+      "amortized_geometric": 0.6786308615147856
+    },
+    "indexed_csa": {
+      "p95": -0.5749021249353654,
+      "geometric": -0.018909479366819415,
+      "amortized_p95": -0.5252238596587273,
+      "amortized_geometric": -0.06667834418865715
+    },
+    "lazy_unpruned": {
+      "p95": -2.432331634022002,
+      "geometric": -0.3092404942249223,
+      "amortized_p95": -1.3343879219692858,
+      "amortized_geometric": 0.0906465983480007
+    },
+    "lazy_pruned": {
+      "p95": -2.754821098359212,
+      "geometric": -0.31705898891432716,
+      "amortized_p95": -1.490815906876112,
+      "amortized_geometric": 0.07638164080926246
+    },
+    "signature_only": {
+      "p95": -2.666255875272269,
+      "geometric": -0.2785963339219042,
+      "amortized_p95": -1.786380983416914,
+      "amortized_geometric": -0.08989679938812145
+    },
+    "corridor": {
+      "p95": -2.9795613625758284,
+      "geometric": -0.28095286914375484,
+      "amortized_p95": -1.7575912669756226,
+      "amortized_geometric": 0.0039549849109109525
+    }
+  },
+  "advance": false
+}

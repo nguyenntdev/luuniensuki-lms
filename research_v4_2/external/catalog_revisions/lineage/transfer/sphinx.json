@@ -1,0 +1,603 @@
+{
+  "censored": [
+    [
+      "d491d3e04c0b95ea9603a82a5fb8cb83c1e192f1",
+      "doc/usage/domains/index.rst",
+      3,
+      "python-domain",
+      0
+    ],
+    [
+      "d491d3e04c0b95ea9603a82a5fb8cb83c1e192f1",
+      "doc/usage/domains/index.rst",
+      4,
+      "signatures",
+      0
+    ],
+    [
+      "d491d3e04c0b95ea9603a82a5fb8cb83c1e192f1",
+      "doc/usage/domains/index.rst",
+      5,
+      "info-field-lists",
+      0
+    ],
+    [
+      "d491d3e04c0b95ea9603a82a5fb8cb83c1e192f1",
+      "doc/usage/domains/index.rst",
+      6,
+      "python-roles",
+      0
+    ],
+    [
+      "db6cc67f1a5be76ff67986e1ca812fdb6f194231",
+      "doc/usage/domains/index.rst",
+      3,
+      "c-domain",
+      0
+    ],
+    [
+      "db6cc67f1a5be76ff67986e1ca812fdb6f194231",
+      "doc/usage/domains/index.rst",
+      4,
+      "c-roles",
+      0
+    ],
+    [
+      "de3266ab25cfd122382e3463d6425178c2610c13",
+      "doc/usage/domains/index.rst",
+      3,
+      "cpp-domain",
+      0
+    ],
+    [
+      "de3266ab25cfd122382e3463d6425178c2610c13",
+      "doc/usage/domains/index.rst",
+      14,
+      "cpp-roles",
+      0
+    ],
+    [
+      "c8b21910595c784ca37ec89264fd5546163f95cb",
+      "doc/usage/domains/index.rst",
+      3,
+      "domains-std",
+      0
+    ],
+    [
+      "607aadc6602962161ad6bd89fd6d96149489be06",
+      "doc/usage/domains/index.rst",
+      3,
+      "math-domain",
+      0
+    ],
+    [
+      "385a9193a743a5a875beb980b2a6c617f9d2999d",
+      "doc/usage/domains/c.rst",
+      0,
+      "c-domain",
+      0
+    ],
+    [
+      "385a9193a743a5a875beb980b2a6c617f9d2999d",
+      "doc/usage/domains/cpp.rst",
+      0,
+      "cpp-domain",
+      0
+    ],
+    [
+      "385a9193a743a5a875beb980b2a6c617f9d2999d",
+      "doc/usage/domains/mathematics.rst",
+      0,
+      "math-domain",
+      0
+    ],
+    [
+      "385a9193a743a5a875beb980b2a6c617f9d2999d",
+      "doc/usage/domains/python.rst",
+      0,
+      "python-domain",
+      0
+    ],
+    [
+      "385a9193a743a5a875beb980b2a6c617f9d2999d",
+      "doc/usage/domains/standard.rst",
+      0,
+      "domains-std",
+      0
+    ],
+    [
+      "6a56592b30906b5b735c54e91a738a084a9e9c46",
+      "doc/usage/restructuredtext/roles.rst",
+      1,
+      "xref-syntax",
+      0
+    ],
+    [
+      "6a56592b30906b5b735c54e91a738a084a9e9c46",
+      "doc/usage/restructuredtext/roles.rst",
+      2,
+      "any-role",
+      0
+    ],
+    [
+      "6a56592b30906b5b735c54e91a738a084a9e9c46",
+      "doc/usage/restructuredtext/roles.rst",
+      4,
+      "ref-role",
+      0
+    ],
+    [
+      "3d8b00827e5f900dfe80ab2a8a8a26317548d614",
+      "doc/usage/referencing.rst",
+      0,
+      "xref-syntax",
+      0
+    ],
+    [
+      "0e3f5b4ab252dd041b7f6681f3d1dd0ff1ef448c",
+      "doc/extdev/appapi.rst",
+      4,
+      "events",
+      0
+    ],
+    [
+      "a53a758d40e8bbc5dafe41db37c20a73441b1e47",
+      "doc/usage/installation.rst",
+      12,
+      "windows-other-method",
+      0
+    ],
+    [
+      "26576590eda4a4d3f86e5eba8f0a4857056c2f0f",
+      "doc/usage/domains/c.rst",
+      1,
+      "c-roles",
+      0
+    ],
+    [
+      "26576590eda4a4d3f86e5eba8f0a4857056c2f0f",
+      "doc/usage/domains/cpp.rst",
+      11,
+      "cpp-roles",
+      0
+    ],
+    [
+      "26576590eda4a4d3f86e5eba8f0a4857056c2f0f",
+      "doc/usage/domains/python.rst",
+      3,
+      "python-roles",
+      0
+    ],
+    [
+      "26576590eda4a4d3f86e5eba8f0a4857056c2f0f",
+      "doc/usage/restructuredtext/basics.rst",
+      12,
+      "rst-roles-alt",
+      0
+    ]
+  ],
+  "start": "953002e6261bdd9314ee0a3314aae19479a88c7e",
+  "end": "847ad0c991e21db9daa02fec09acbd456f353300",
+  "transitions": 765,
+  "total": 13,
+  "hard": 9,
+  "correct": {
+    "title": 12,
+    "content": 13,
+    "context": 10,
+    "combined": 12,
+    "no_title": 13,
+    "no_content": 12,
+    "no_context": 12,
+    "exact": 4,
+    "ordinal": 9,
+    "nearest": 10,
+    "interpolation": 10,
+    "title_body": 12
+  },
+  "rows": [
+    {
+      "commit": "670bcb743b718d7b3ced548c645aafe71d0310eb",
+      "path": "doc/extdev/index.rst",
+      "blobs": [
+        "014a806e5d5040b001f10b508cea504950df20ab",
+        "8332315ff933403566b14ba76349eb14e0c5ec0f"
+      ],
+      "label": "dev-extensions",
+      "source": 0,
+      "target": 0,
+      "titles": [
+        "Developing extensions for Sphinx",
+        "Sphinx Extensions API"
+      ],
+      "candidates": 5,
+      "hard": true,
+      "predictions": {
+        "title": 0,
+        "content": 0,
+        "context": 0,
+        "combined": 0,
+        "no_title": 0,
+        "no_content": 0,
+        "no_context": 0,
+        "exact": null,
+        "ordinal": 0,
+        "nearest": 0,
+        "interpolation": 0,
+        "title_body": 0
+      }
+    },
+    {
+      "commit": "b2069fb64f54877b5426189c1542aec20d36822f",
+      "path": "doc/extdev/i18n.rst",
+      "blobs": [
+        "6b32b8b736afc0c2ce16fbe8a5b453ba900ee9bc",
+        "c5ffc84830663c681ffbd12e230488531f7ee03f"
+      ],
+      "label": "ext-i18n",
+      "source": 1,
+      "target": 1,
+      "titles": [
+        "Extension internationalization (`i18n`) and localization (`l10n`) using i18n API",
+        "Extension internationalization (``i18n``) and localization (``l10n``) using i18n API"
+      ],
+      "candidates": 2,
+      "hard": false,
+      "predictions": {
+        "title": 1,
+        "content": 1,
+        "context": 1,
+        "combined": 1,
+        "no_title": 1,
+        "no_content": 1,
+        "no_context": 1,
+        "exact": 1,
+        "ordinal": 1,
+        "nearest": 1,
+        "interpolation": 1,
+        "title_body": 1
+      }
+    },
+    {
+      "commit": "8f97fd276a0af0ad4f2bc9d42edb61e45af04e19",
+      "path": "doc/development/tutorials/index.rst",
+      "blobs": [
+        "a7eee48991f7c696eb1fbc016f4433a84a7fb535",
+        "a9c8368af39b11217d37a6071468ed43dc72bcab"
+      ],
+      "label": "extension-tutorials-index",
+      "source": 0,
+      "target": 0,
+      "titles": [
+        "Extension tutorials",
+        "Tutorials"
+      ],
+      "candidates": 1,
+      "hard": true,
+      "predictions": {
+        "title": 0,
+        "content": 0,
+        "context": 0,
+        "combined": 0,
+        "no_title": 0,
+        "no_content": 0,
+        "no_context": 0,
+        "exact": null,
+        "ordinal": 0,
+        "nearest": 0,
+        "interpolation": 0,
+        "title_body": 0
+      }
+    },
+    {
+      "commit": "8f97fd276a0af0ad4f2bc9d42edb61e45af04e19",
+      "path": "doc/extdev/index.rst",
+      "blobs": [
+        "a451f80f91f98906cf88287a0588503dd429ba99",
+        "57162e6f3b950225db4428f4780ef16436949cf9"
+      ],
+      "label": "dev-extensions",
+      "source": 0,
+      "target": 0,
+      "titles": [
+        "Sphinx Extensions API",
+        "Sphinx API"
+      ],
+      "candidates": 5,
+      "hard": true,
+      "predictions": {
+        "title": 0,
+        "content": 0,
+        "context": 0,
+        "combined": 0,
+        "no_title": 0,
+        "no_content": 0,
+        "no_context": 0,
+        "exact": null,
+        "ordinal": 0,
+        "nearest": 0,
+        "interpolation": 0,
+        "title_body": 0
+      }
+    },
+    {
+      "commit": "a53a758d40e8bbc5dafe41db37c20a73441b1e47",
+      "path": "doc/usage/installation.rst",
+      "blobs": [
+        "13dc6a983c058cf7588ca81cbf1d3a7b0d51e1ae",
+        "7be688928c866405b9aa116bd7a55856fb05ae4f"
+      ],
+      "label": "install-pypi",
+      "source": 13,
+      "target": 1,
+      "titles": [
+        "Installation from PyPI",
+        "PyPI package"
+      ],
+      "candidates": 10,
+      "hard": true,
+      "predictions": {
+        "title": 9,
+        "content": 1,
+        "context": 3,
+        "combined": 9,
+        "no_title": 1,
+        "no_content": 9,
+        "no_context": 9,
+        "exact": null,
+        "ordinal": 9,
+        "nearest": 5,
+        "interpolation": 7,
+        "title_body": 9
+      }
+    },
+    {
+      "commit": "d130c2e710aa2b8e11216da4ce037295d49a4f15",
+      "path": "doc/development/tutorials/autodoc_ext.rst",
+      "blobs": [
+        "cfd23e7e694f55114061634eb0faed12e06af291",
+        "fb2a9176ee2483de143e10da10b13aa58905024e"
+      ],
+      "label": "autodoc_ext_tutorial",
+      "source": 0,
+      "target": 0,
+      "titles": [
+        "Developing autodoc extension for IntEnum",
+        "Developing autodoc extensions"
+      ],
+      "candidates": 6,
+      "hard": true,
+      "predictions": {
+        "title": 0,
+        "content": 0,
+        "context": 0,
+        "combined": 0,
+        "no_title": 0,
+        "no_content": 0,
+        "no_context": 0,
+        "exact": null,
+        "ordinal": 0,
+        "nearest": 0,
+        "interpolation": 0,
+        "title_body": 0
+      }
+    },
+    {
+      "commit": "82edc3d3855e826fa6bc1592aead842b6f679d5b",
+      "path": "doc/usage/configuration.rst",
+      "blobs": [
+        "b283c2fb7d0b8f0da80bf217c985f2f185eb3d38",
+        "614db1a336a29d7c51dac5625f53b50f82a32996"
+      ],
+      "label": "intl-options",
+      "source": 3,
+      "target": 7,
+      "titles": [
+        "Options for internationalization",
+        "Options for internationalisation"
+      ],
+      "candidates": 38,
+      "hard": true,
+      "predictions": {
+        "title": 7,
+        "content": 7,
+        "context": 4,
+        "combined": 7,
+        "no_title": 7,
+        "no_content": 7,
+        "no_context": 7,
+        "exact": null,
+        "ordinal": 3,
+        "nearest": 4,
+        "interpolation": 8,
+        "title_body": 7
+      }
+    },
+    {
+      "commit": "82edc3d3855e826fa6bc1592aead842b6f679d5b",
+      "path": "doc/usage/configuration.rst",
+      "blobs": [
+        "b283c2fb7d0b8f0da80bf217c985f2f185eb3d38",
+        "614db1a336a29d7c51dac5625f53b50f82a32996"
+      ],
+      "label": "math-options",
+      "source": 4,
+      "target": 9,
+      "titles": [
+        "Options for Math",
+        "Options for Maths"
+      ],
+      "candidates": 38,
+      "hard": true,
+      "predictions": {
+        "title": 9,
+        "content": 9,
+        "context": 17,
+        "combined": 9,
+        "no_title": 9,
+        "no_content": 9,
+        "no_context": 9,
+        "exact": null,
+        "ordinal": 4,
+        "nearest": 16,
+        "interpolation": 12,
+        "title_body": 9
+      }
+    },
+    {
+      "commit": "82edc3d3855e826fa6bc1592aead842b6f679d5b",
+      "path": "doc/usage/configuration.rst",
+      "blobs": [
+        "b283c2fb7d0b8f0da80bf217c985f2f185eb3d38",
+        "614db1a336a29d7c51dac5625f53b50f82a32996"
+      ],
+      "label": "epub-options",
+      "source": 9,
+      "target": 21,
+      "titles": [
+        "Options for epub output",
+        "Options for EPUB output"
+      ],
+      "candidates": 38,
+      "hard": false,
+      "predictions": {
+        "title": 21,
+        "content": 21,
+        "context": 21,
+        "combined": 21,
+        "no_title": 21,
+        "no_content": 21,
+        "no_context": 21,
+        "exact": 21,
+        "ordinal": 9,
+        "nearest": 21,
+        "interpolation": 21,
+        "title_body": 21
+      }
+    },
+    {
+      "commit": "9943274033130d218e1d8f253cc6040cbffeec92",
+      "path": "doc/latex.rst",
+      "blobs": [
+        "5c9c503565b8d608a3a6ca2052f64b8e35a64cc2",
+        "c53e25fcf404f398dc2d95243a23035b269fc811"
+      ],
+      "label": "sphinxbox",
+      "source": 6,
+      "target": 6,
+      "titles": [
+        "The ``\\sphinxbox`` command",
+        "The :code-tex:`\\\\sphinxbox` command"
+      ],
+      "candidates": 9,
+      "hard": true,
+      "predictions": {
+        "title": 6,
+        "content": 6,
+        "context": 6,
+        "combined": 6,
+        "no_title": 6,
+        "no_content": 6,
+        "no_context": 6,
+        "exact": null,
+        "ordinal": 6,
+        "nearest": 6,
+        "interpolation": 6,
+        "title_body": 6
+      }
+    },
+    {
+      "commit": "6cf3f9238efaa40d963adcd06ddaa29de368c156",
+      "path": "doc/extdev/index.rst",
+      "blobs": [
+        "700eda592510e730841e035226eafae1092f8cfa",
+        "5160cd45e7281711de8646c1e546d7db7f1dbdfb"
+      ],
+      "label": "build-phases",
+      "source": 2,
+      "target": 2,
+      "titles": [
+        "Build Phases",
+        "Build phases"
+      ],
+      "candidates": 5,
+      "hard": false,
+      "predictions": {
+        "title": 2,
+        "content": 2,
+        "context": 2,
+        "combined": 2,
+        "no_title": 2,
+        "no_content": 2,
+        "no_context": 2,
+        "exact": 2,
+        "ordinal": 2,
+        "nearest": 2,
+        "interpolation": 2,
+        "title_body": 2
+      }
+    },
+    {
+      "commit": "6cf3f9238efaa40d963adcd06ddaa29de368c156",
+      "path": "doc/index.rst",
+      "blobs": [
+        "f1cde1fd5fc08e1f211d8141dc11b2531be08b5f",
+        "0946fbe98452a490e9b73291dfe363d1790c1fea"
+      ],
+      "label": "user-guides",
+      "source": 2,
+      "target": 2,
+      "titles": [
+        "User Guides",
+        "User guide"
+      ],
+      "candidates": 5,
+      "hard": true,
+      "predictions": {
+        "title": 2,
+        "content": 2,
+        "context": 2,
+        "combined": 2,
+        "no_title": 2,
+        "no_content": 2,
+        "no_context": 2,
+        "exact": null,
+        "ordinal": 2,
+        "nearest": 2,
+        "interpolation": 2,
+        "title_body": 2
+      }
+    },
+    {
+      "commit": "6cf3f9238efaa40d963adcd06ddaa29de368c156",
+      "path": "doc/usage/theming.rst",
+      "blobs": [
+        "135c2f55ad4fb991d997b277d756a45d0d1c4fa2",
+        "a596acfe0eb490fcfba712027b035d836bb7d7c7"
+      ],
+      "label": "html-themes",
+      "source": 0,
+      "target": 0,
+      "titles": [
+        "HTML Theming",
+        "HTML theming"
+      ],
+      "candidates": 6,
+      "hard": false,
+      "predictions": {
+        "title": 0,
+        "content": 0,
+        "context": 0,
+        "combined": 0,
+        "no_title": 0,
+        "no_content": 0,
+        "no_context": 0,
+        "exact": 0,
+        "ordinal": 0,
+        "nearest": 0,
+        "interpolation": 0,
+        "title_body": 0
+      }
+    }
+  ]
+}

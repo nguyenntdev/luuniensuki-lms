@@ -2,7 +2,7 @@
 
 These manuscripts use labels, revision histories, test expectations or mathematical constraints supplied by external sources. A paper on predictions describes recorded outcomes. A paper on a hypothetical decision describes whom that rule would select. Neither type of study measures the effect of deploying the LMS. The original V4.2 contracts and thresholds remain available in the [release register](../release/V42_TASK_REGISTER.csv). This portfolio changes several original scientific questions to ones answerable with public data.
 
-The [all-baseline evidence table](SUPERIORITY.md) records eligibility for the current ten-paper goal. The venue assessments below describe possible publication formats under the earlier criterion.
+The current goal is ten distinct proposed methods, with at least three strong wins and the rest equivalent or slightly better than the strongest appropriate controls. The [ten-method audit](TEN_METHODS.md) lists the selected questions, effect sizes and evidence levels. The [per-study comparisons](SUPERIORITY.md) preserve the original thresholds and follow-ups. Venue fit also depends on novelty, the measured endpoint and external validity.
 
 The [fourteen-paper spec crosswalk](SPEC_COVERAGE.md) maps every V3/V4.2 paper to the evidence for its original question and identifies the ML and federated-learning comparisons.
 

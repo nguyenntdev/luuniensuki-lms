@@ -1,0 +1,23 @@
+archive sha256 f2ed1902616c1fe8d2824d872c0b7d2d72be435bf0124d077044fe4be2c6d3e4
+AAA 2013J 2014J 0
+BBB 2013B 2013J 0
+BBB 2013J 2014B 0
+CCC 2014B 2014J 0
+DDD 2013J 2014B 0
+DDD 2014B 2014J 1
+EEE 2013J 2014B 0
+EEE 2014B 2014J 0
+FFF 2013B 2013J 0
+FFF 2013J 2014B 0
+FFF 2014B 2014J 0
+GGG 2013J 2014B 0
+GGG 2014B 2014J 0
+events / eligible 1 13
+weekly_quiz_js 0.1111
+weekly_full_js 1.0
+pooled_full_js 1.0
+pooled_quiz_js 0.1429
+raw_click_js 1.0
+inventory_js 0.5
+different_season 0.0833
+weekly_quiz_abs 0.1
