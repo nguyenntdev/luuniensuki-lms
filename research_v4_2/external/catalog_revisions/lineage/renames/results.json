@@ -1,0 +1,586 @@
+{
+  "start": "15eefc09ad1222be48d4d9956716c1c8b2cb2d5b",
+  "end": "4434e728a7db24540d581f52e96570ca1230356e",
+  "transitions": 5662,
+  "total": 21,
+  "hard": 19,
+  "correct": {
+    "title": 17,
+    "content": 17,
+    "context": 16,
+    "combined": 19,
+    "no_title": 18,
+    "no_content": 19,
+    "no_context": 19,
+    "exact": 2
+  },
+  "rows": [
+    {
+      "commit": "d3bcd15cd2d54342fd0d94610942f88aa6c88963",
+      "path": "pep-0622.rst",
+      "blobs": [
+        "7f6382d412745189c63c20bbfab2631041933a9b",
+        "d4aa4755f062366787b251b8e4fefed0cfe7f0be"
+      ],
+      "label": "literal_pattern",
+      "source": 6,
+      "target": 6,
+      "titles": [
+        "Literal Pattern",
+        "Literal Patterns"
+      ],
+      "candidates": 61,
+      "hard": true,
+      "predictions": {
+        "title": 6,
+        "content": 6,
+        "context": 6,
+        "combined": 6,
+        "no_title": 6,
+        "no_content": 6,
+        "no_context": 6,
+        "exact": null
+      }
+    },
+    {
+      "commit": "d3bcd15cd2d54342fd0d94610942f88aa6c88963",
+      "path": "pep-0622.rst",
+      "blobs": [
+        "7f6382d412745189c63c20bbfab2631041933a9b",
+        "d4aa4755f062366787b251b8e4fefed0cfe7f0be"
+      ],
+      "label": "constant_value_pattern",
+      "source": 8,
+      "target": 8,
+      "titles": [
+        "Constant Value Pattern",
+        "Constant Value Patterns"
+      ],
+      "candidates": 61,
+      "hard": true,
+      "predictions": {
+        "title": 8,
+        "content": 8,
+        "context": 8,
+        "combined": 8,
+        "no_title": 8,
+        "no_content": 8,
+        "no_context": 8,
+        "exact": null
+      }
+    },
+    {
+      "commit": "d3bcd15cd2d54342fd0d94610942f88aa6c88963",
+      "path": "pep-0622.rst",
+      "blobs": [
+        "7f6382d412745189c63c20bbfab2631041933a9b",
+        "d4aa4755f062366787b251b8e4fefed0cfe7f0be"
+      ],
+      "label": "sequence_pattern",
+      "source": 9,
+      "target": 9,
+      "titles": [
+        "Sequence Pattern",
+        "Sequence Patterns"
+      ],
+      "candidates": 61,
+      "hard": true,
+      "predictions": {
+        "title": 9,
+        "content": 9,
+        "context": 9,
+        "combined": 9,
+        "no_title": 9,
+        "no_content": 9,
+        "no_context": 9,
+        "exact": null
+      }
+    },
+    {
+      "commit": "d3bcd15cd2d54342fd0d94610942f88aa6c88963",
+      "path": "pep-0622.rst",
+      "blobs": [
+        "7f6382d412745189c63c20bbfab2631041933a9b",
+        "d4aa4755f062366787b251b8e4fefed0cfe7f0be"
+      ],
+      "label": "mapping_pattern",
+      "source": 10,
+      "target": 10,
+      "titles": [
+        "Mapping Pattern",
+        "Mapping Patterns"
+      ],
+      "candidates": 61,
+      "hard": true,
+      "predictions": {
+        "title": 10,
+        "content": 10,
+        "context": 10,
+        "combined": 10,
+        "no_title": 10,
+        "no_content": 10,
+        "no_context": 10,
+        "exact": null
+      }
+    },
+    {
+      "commit": "d3bcd15cd2d54342fd0d94610942f88aa6c88963",
+      "path": "pep-0622.rst",
+      "blobs": [
+        "7f6382d412745189c63c20bbfab2631041933a9b",
+        "d4aa4755f062366787b251b8e4fefed0cfe7f0be"
+      ],
+      "label": "class_pattern",
+      "source": 11,
+      "target": 11,
+      "titles": [
+        "Class Pattern",
+        "Class Patterns"
+      ],
+      "candidates": 61,
+      "hard": true,
+      "predictions": {
+        "title": 11,
+        "content": 11,
+        "context": 11,
+        "combined": 11,
+        "no_title": 11,
+        "no_content": 11,
+        "no_context": 11,
+        "exact": null
+      }
+    },
+    {
+      "commit": "31d5ffe9ca2af4cfadf041073bc33f600137dd87",
+      "path": "pep-0622.rst",
+      "blobs": [
+        "e50e848a192cbdfb7eec947229f499697baf8675",
+        "29ad60611bb7049c3b812a960914e17b38431825"
+      ],
+      "label": "extended matching",
+      "source": 55,
+      "target": 55,
+      "titles": [
+        "Extended matching protocol",
+        "Custom matching protocol"
+      ],
+      "candidates": 61,
+      "hard": true,
+      "predictions": {
+        "title": 55,
+        "content": 55,
+        "context": 55,
+        "combined": 55,
+        "no_title": 55,
+        "no_content": 55,
+        "no_context": 55,
+        "exact": null
+      }
+    },
+    {
+      "commit": "1dc309632afa4bd5e6c98e267d3f1a76a8d307a1",
+      "path": "pep-0635.rst",
+      "blobs": [
+        "38e4e4c58b590d11313ab3bb1fc2540618fc0346",
+        "ca744baa2c91a4ff87f23ad0f7bc6bc0c79df864"
+      ],
+      "label": "constant_value_pattern",
+      "source": 14,
+      "target": 15,
+      "titles": [
+        "Constant Value Patterns",
+        "Value Patterns"
+      ],
+      "candidates": 22,
+      "hard": true,
+      "predictions": {
+        "title": 15,
+        "content": 15,
+        "context": 17,
+        "combined": 15,
+        "no_title": 15,
+        "no_content": 15,
+        "no_context": 15,
+        "exact": null
+      }
+    },
+    {
+      "commit": "51c6246c7e18d7e7d5fc8188d9f3c3fc67b90463",
+      "path": "pep-0675.rst",
+      "blobs": [
+        "81e28889aefcb8e0ce1d1a721f4652bfaabf65b5",
+        "0b341d7603357909e8ecf257d820efd5411a4866"
+      ],
+      "label": "appendix_C",
+      "source": 24,
+      "target": 26,
+      "titles": [
+        "Appendix C: ``str`` methods that preserve ``Literal[str]``",
+        "Appendix C: ``str`` methods that preserve ``LiteralString``"
+      ],
+      "candidates": 32,
+      "hard": true,
+      "predictions": {
+        "title": 26,
+        "content": 26,
+        "context": 26,
+        "combined": 26,
+        "no_title": 26,
+        "no_content": 26,
+        "no_context": 26,
+        "exact": null
+      }
+    },
+    {
+      "commit": "d31806fe1e045e5fb2d92df38c510685f2595035",
+      "path": "pep-0639.rst",
+      "blobs": [
+        "39c9f6931394465df5bc1389f3acef4fe2467e07",
+        "183017a72321318849d7a34f914c526f875e50a8"
+      ],
+      "label": "639-examples",
+      "source": 24,
+      "target": 24,
+      "titles": [
+        "Appendix: License Expression Examples",
+        "Appendix: Examples"
+      ],
+      "candidates": 47,
+      "hard": true,
+      "predictions": {
+        "title": 27,
+        "content": 0,
+        "context": 24,
+        "combined": 24,
+        "no_title": 24,
+        "no_content": 24,
+        "no_context": 27,
+        "exact": null
+      }
+    },
+    {
+      "commit": "72595af7b18306146ae88d644387efa22d5ad82b",
+      "path": "peps/pep-0740.rst",
+      "blobs": [
+        "8fe92720733df41f57f0f8c76e2d15b01bea63f7",
+        "ea265854746b0025f1e747dd86ed8003fdf56ab5"
+      ],
+      "label": "appendix-1",
+      "source": 15,
+      "target": 21,
+      "titles": [
+        "Appendix 1: Example Uploaded Attestations",
+        "Appendix 1: Example Trusted Publisher Representation"
+      ],
+      "candidates": 24,
+      "hard": true,
+      "predictions": {
+        "title": 21,
+        "content": 21,
+        "context": 22,
+        "combined": 22,
+        "no_title": 22,
+        "no_content": 22,
+        "no_context": 21,
+        "exact": null
+      }
+    },
+    {
+      "commit": "72595af7b18306146ae88d644387efa22d5ad82b",
+      "path": "peps/pep-0740.rst",
+      "blobs": [
+        "8fe92720733df41f57f0f8c76e2d15b01bea63f7",
+        "ea265854746b0025f1e747dd86ed8003fdf56ab5"
+      ],
+      "label": "appendix-2",
+      "source": 16,
+      "target": 22,
+      "titles": [
+        "Appendix 2: Example Trusted Publisher Representation",
+        "Appendix 2: Data models for Transparency Log Entries"
+      ],
+      "candidates": 24,
+      "hard": true,
+      "predictions": {
+        "title": 21,
+        "content": 21,
+        "context": 22,
+        "combined": 21,
+        "no_title": 21,
+        "no_content": 21,
+        "no_context": 21,
+        "exact": null
+      }
+    },
+    {
+      "commit": "0efd2570741ab48bf6ba3243bf62ea05d53445a3",
+      "path": "peps/pep-0639.rst",
+      "blobs": [
+        "a3042fc64533d49f9c067f9b19911d292fbfd271",
+        "42a922b7e56955ef50d097d339e504db907e631a"
+      ],
+      "label": "639-spec-core-metadata",
+      "source": 7,
+      "target": 9,
+      "titles": [
+        "Core metadata",
+        "Core Metadata"
+      ],
+      "candidates": 25,
+      "hard": false,
+      "predictions": {
+        "title": 9,
+        "content": 0,
+        "context": 11,
+        "combined": 9,
+        "no_title": 11,
+        "no_content": 9,
+        "no_context": 9,
+        "exact": 9
+      }
+    },
+    {
+      "commit": "67631c3428b67133a454031ba4f5e45a70e3601d",
+      "path": "peps/pep-0740.rst",
+      "blobs": [
+        "ea265854746b0025f1e747dd86ed8003fdf56ab5",
+        "28871fc874c5c3a10ef4122b82af16ce437488d1"
+      ],
+      "label": "payload-and-signature-generation",
+      "source": 12,
+      "target": 12,
+      "titles": [
+        "Attestation payload and signature generation",
+        "Attestation statement and signature generation"
+      ],
+      "candidates": 25,
+      "hard": true,
+      "predictions": {
+        "title": 12,
+        "content": 23,
+        "context": 12,
+        "combined": 12,
+        "no_title": 12,
+        "no_content": 12,
+        "no_context": 12,
+        "exact": null
+      }
+    },
+    {
+      "commit": "025487722a1906eede27cbd51d48f82c727cccbf",
+      "path": "peps/pep-0770.rst",
+      "blobs": [
+        "55f4429aafad31367363803cbbcd6a04b4414253",
+        "12bac2905c2f79463bca3ba4561c7e9c55d230a9"
+      ],
+      "label": "770-spec-dist-info-subdirs-registry",
+      "source": 13,
+      "target": 12,
+      "titles": [
+        "Registry of reserved ``.dist-info`` subdirectory names",
+        "Reserving the ``.dist-info/sboms`` directory"
+      ],
+      "candidates": 33,
+      "hard": true,
+      "predictions": {
+        "title": 16,
+        "content": 12,
+        "context": 13,
+        "combined": 12,
+        "no_title": 12,
+        "no_content": 12,
+        "no_context": 12,
+        "exact": null
+      }
+    },
+    {
+      "commit": "81424fc9f4534ef556b68595f679db5351f53b37",
+      "path": "peps/pep-0788.rst",
+      "blobs": [
+        "0f5b58e1804139863ad35b3b2fa81a7fc1164c55",
+        "3c54811f514f5fa99db2db2f7f61f0ff686c7377"
+      ],
+      "label": "pep-788-deprecation",
+      "source": 25,
+      "target": 27,
+      "titles": [
+        "When should the legacy APIs be removed?",
+        "When Should the GIL-state APIs be Removed?"
+      ],
+      "candidates": 29,
+      "hard": true,
+      "predictions": {
+        "title": 27,
+        "content": 27,
+        "context": 27,
+        "combined": 27,
+        "no_title": 27,
+        "no_content": 27,
+        "no_context": 27,
+        "exact": null
+      }
+    },
+    {
+      "commit": "89421e7db0b4b69f6cba18dfd274fa40239a823d",
+      "path": "peps/pep-0788.rst",
+      "blobs": [
+        "55ffac8594e33fc4a489fc92ddeb4e895c833cfc",
+        "98b068b4f814d2d10abcb652ddb44db57cd950c4"
+      ],
+      "label": "pep-788-activate-deactivate-instead",
+      "source": 21,
+      "target": 24,
+      "titles": [
+        "Exposing an ``Activate``/``Deactivate`` API instead of ``Ensure``/``Clear``",
+        "Exposing an ``Activate``/``Deactivate`` API Instead of ``Ensure``/``Clear``"
+      ],
+      "candidates": 28,
+      "hard": false,
+      "predictions": {
+        "title": 24,
+        "content": 24,
+        "context": 24,
+        "combined": 24,
+        "no_title": 24,
+        "no_content": 24,
+        "no_context": 24,
+        "exact": 24
+      }
+    },
+    {
+      "commit": "9618d5b8ad371c28e0df687b1df1c91cecfbb61b",
+      "path": "peps/pep-0694.rst",
+      "blobs": [
+        "0100d132c01d3b9661509bdc4eb85d1f6c97828a",
+        "da70efc7dbaba503b0b438a939f76625e9b540c1"
+      ],
+      "label": "publishing-session-cancellation",
+      "source": 16,
+      "target": 17,
+      "titles": [
+        "Cancellation",
+        "Publishing Session Cancellation"
+      ],
+      "candidates": 39,
+      "hard": true,
+      "predictions": {
+        "title": 24,
+        "content": 17,
+        "context": 15,
+        "combined": 17,
+        "no_title": 17,
+        "no_content": 17,
+        "no_context": 17,
+        "exact": null
+      }
+    },
+    {
+      "commit": "4541e9e91fdc3b13bf03bb84ecb4f086b2551314",
+      "path": "peps/pep-0788.rst",
+      "blobs": [
+        "b45e4f3324a5f1c0f6c953b9b628aa0843c8644c",
+        "d933316f97ff168f6f0efc41c2e66d5f765f7055"
+      ],
+      "label": "pep-788-activate-deactivate-instead",
+      "source": 27,
+      "target": 27,
+      "titles": [
+        "Exposing an ``Activate``/``Deactivate`` API Instead of ``Ensure``/``Clear``",
+        "Exposing an ``Activate``/``Deactivate`` API Instead of ``Ensure``/``Release``"
+      ],
+      "candidates": 31,
+      "hard": true,
+      "predictions": {
+        "title": 27,
+        "content": 27,
+        "context": 27,
+        "combined": 27,
+        "no_title": 27,
+        "no_content": 27,
+        "no_context": 27,
+        "exact": null
+      }
+    },
+    {
+      "commit": "da7b68fc4b905039d4f6ba58713b16e7ed8b96e3",
+      "path": "peps/pep-0694.rst",
+      "blobs": [
+        "2a9ac30bdbb8ace227a030cd6c4c002507887df7",
+        "df22ebcc12184ea7935bd5911130b6a840f6853f"
+      ],
+      "label": "staged-preview",
+      "source": 28,
+      "target": 30,
+      "titles": [
+        "Stage Previews",
+        "Staged Previews"
+      ],
+      "candidates": 57,
+      "hard": true,
+      "predictions": {
+        "title": 30,
+        "content": 30,
+        "context": 30,
+        "combined": 30,
+        "no_title": 30,
+        "no_content": 30,
+        "no_context": 30,
+        "exact": null
+      }
+    },
+    {
+      "commit": "87d12a95c0c743c5818439a7642689a5dc063d4d",
+      "path": "peps/pep-0842.rst",
+      "blobs": [
+        "4396efa85199bbdbbcf5f3e2ee908a5491bc0f6c",
+        "6f8c55cfb4ebd5806a62954d2b1c46619b7ba9ff"
+      ],
+      "label": "pep-842-not-an-access-modifier",
+      "source": 14,
+      "target": 21,
+      "titles": [
+        "``__export__`` is not an access modifier",
+        "This is not an access modifier"
+      ],
+      "candidates": 42,
+      "hard": true,
+      "predictions": {
+        "title": 21,
+        "content": 21,
+        "context": 21,
+        "combined": 21,
+        "no_title": 21,
+        "no_content": 21,
+        "no_context": 21,
+        "exact": null
+      }
+    },
+    {
+      "commit": "28fdc96835aad2c0983dc379430d0ac4eec14deb",
+      "path": "peps/pep-0844.rst",
+      "blobs": [
+        "6794a43751a824b32c23d6d9115381df64a9a9c0",
+        "18bcbbb55df49b9c7af5374cc0ba027419c5f142"
+      ],
+      "label": "pep-844-static-analysis",
+      "source": 10,
+      "target": 11,
+      "titles": [
+        "Static analysis of the function call form",
+        "Static analysis of the function call forms"
+      ],
+      "candidates": 33,
+      "hard": true,
+      "predictions": {
+        "title": 11,
+        "content": 11,
+        "context": 11,
+        "combined": 11,
+        "no_title": 11,
+        "no_content": 11,
+        "no_context": 11,
+        "exact": null
+      }
+    }
+  ]
+}

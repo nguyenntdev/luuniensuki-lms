@@ -1,0 +1,53 @@
+{
+  "writers": 38,
+  "essays": 76,
+  "rotations": 228,
+  "per_method": 42,
+  "mean_discovered": {
+    "ai_gap": 0.5148809523809523,
+    "ai_spread": 0.4583333333333333,
+    "candidate": 0.4538690476190476,
+    "equal_gaps": 0.4211309523809524,
+    "matched": 0.4523809523809524,
+    "oracle": 0.8199404761904762,
+    "peer_gap": 0.3705357142857143,
+    "random_expectation": 0.4199561403508772
+  },
+  "share": {
+    "ai_gap": 0.2258485639686684,
+    "ai_spread": 0.2010443864229765,
+    "candidate": 0.19908616187989556,
+    "equal_gaps": 0.18472584856396868,
+    "matched": 0.19843342036553524,
+    "oracle": 0.35966057441253263,
+    "peer_gap": 0.16253263707571802,
+    "random_expectation": 0.1842105263157895
+  },
+  "contrasts": {
+    "ai_gap": {
+      "gain": -0.06101190476190471,
+      "both_folds_positive": false
+    },
+    "ai_spread": {
+      "gain": -0.004464285714285698,
+      "both_folds_positive": false
+    },
+    "equal_gaps": {
+      "gain": 0.03273809523809523,
+      "both_folds_positive": true
+    },
+    "matched": {
+      "gain": 0.0014880952380952328,
+      "both_folds_positive": false
+    },
+    "peer_gap": {
+      "gain": 0.08333333333333331,
+      "both_folds_positive": true
+    },
+    "random_expectation": {
+      "gain": 0.03391290726817042,
+      "both_folds_positive": true
+    }
+  },
+  "advance": false
+}
