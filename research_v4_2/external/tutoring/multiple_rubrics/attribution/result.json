@@ -1,0 +1,504 @@
+{
+  "input_sha256": {
+    "mrbench_v3_devset.json": "a395feab801de50d44b73e1e9b88f84824a1f1d92e15ae86842d90c2b6dbf33c",
+    "MRBench_V2.json": "a8792225075533d15c23e1c903d0c649f19708ee93f5c3d8267eaa6ab623aac1"
+  },
+  "v2_provenance_rows": 200,
+  "v2_unique_provenance_keys": 195,
+  "v3_cases": 300,
+  "v3_case_counts_by_source": {
+    "Bridge": 37,
+    "MathDial": 145,
+    "unlinked": 118
+  },
+  "eligible_cases": 300,
+  "eligible_case_counts_by_source": {
+    "Bridge": 37,
+    "MathDial": 145,
+    "unlinked": 118
+  },
+  "eligible_openings": 206,
+  "tutors": [
+    "GPT4",
+    "Gemini",
+    "Llama31405B",
+    "Llama318B",
+    "Mistral",
+    "Sonnet"
+  ],
+  "label_counts_before_filtering": {
+    "Providing_Guidance": {
+      "Yes": 1141,
+      "To some extent": 391,
+      "No": 268
+    },
+    "Mistake_Identification": {
+      "Yes": 1594,
+      "To some extent": 81,
+      "No": 125
+    },
+    "Mistake_Location": {
+      "Yes": 1259,
+      "To some extent": 169,
+      "No": 372
+    },
+    "Actionability": {
+      "Yes": 1034,
+      "To some extent": 305,
+      "No": 461
+    }
+  },
+  "primary_test_endpoint": "guidance",
+  "secondary_test_endpoint": "all_four",
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 42,
+  "transfers": [
+    {
+      "origin": "MathDial",
+      "target": "Bridge",
+      "origin_cases_before_opening_filter": 145,
+      "origin_cases_excluded_by_opening": 0,
+      "train_cases": 145,
+      "train_openings": 119,
+      "test_cases": 37,
+      "test_openings": 27,
+      "train_test_conversation_id_overlap": 0,
+      "train_test_opening_overlap": 0,
+      "guidance_only_baseline": "GPT4",
+      "subsets": [
+        {
+          "supplements": [],
+          "training_successes": {
+            "GPT4": 113,
+            "Gemini": 71,
+            "Llama31405B": 111,
+            "Llama318B": 61,
+            "Mistral": 93,
+            "Sonnet": 89
+          },
+          "training_maximizers": [
+            "GPT4"
+          ],
+          "frozen_tie_break_choice": "GPT4"
+        },
+        {
+          "supplements": [
+            "Mistake_Identification"
+          ],
+          "training_successes": {
+            "GPT4": 113,
+            "Gemini": 70,
+            "Llama31405B": 110,
+            "Llama318B": 54,
+            "Mistral": 91,
+            "Sonnet": 87
+          },
+          "training_maximizers": [
+            "GPT4"
+          ],
+          "frozen_tie_break_choice": "GPT4"
+        },
+        {
+          "supplements": [
+            "Mistake_Location"
+          ],
+          "training_successes": {
+            "GPT4": 111,
+            "Gemini": 65,
+            "Llama31405B": 109,
+            "Llama318B": 52,
+            "Mistral": 88,
+            "Sonnet": 87
+          },
+          "training_maximizers": [
+            "GPT4"
+          ],
+          "frozen_tie_break_choice": "GPT4"
+        },
+        {
+          "supplements": [
+            "Actionability"
+          ],
+          "training_successes": {
+            "GPT4": 73,
+            "Gemini": 63,
+            "Llama31405B": 99,
+            "Llama318B": 41,
+            "Mistral": 83,
+            "Sonnet": 79
+          },
+          "training_maximizers": [
+            "Llama31405B"
+          ],
+          "frozen_tie_break_choice": "Llama31405B"
+        },
+        {
+          "supplements": [
+            "Mistake_Identification",
+            "Mistake_Location"
+          ],
+          "training_successes": {
+            "GPT4": 111,
+            "Gemini": 65,
+            "Llama31405B": 108,
+            "Llama318B": 51,
+            "Mistral": 88,
+            "Sonnet": 86
+          },
+          "training_maximizers": [
+            "GPT4"
+          ],
+          "frozen_tie_break_choice": "GPT4"
+        },
+        {
+          "supplements": [
+            "Mistake_Identification",
+            "Actionability"
+          ],
+          "training_successes": {
+            "GPT4": 73,
+            "Gemini": 62,
+            "Llama31405B": 98,
+            "Llama318B": 38,
+            "Mistral": 83,
+            "Sonnet": 79
+          },
+          "training_maximizers": [
+            "Llama31405B"
+          ],
+          "frozen_tie_break_choice": "Llama31405B"
+        },
+        {
+          "supplements": [
+            "Mistake_Location",
+            "Actionability"
+          ],
+          "training_successes": {
+            "GPT4": 71,
+            "Gemini": 58,
+            "Llama31405B": 98,
+            "Llama318B": 37,
+            "Mistral": 81,
+            "Sonnet": 79
+          },
+          "training_maximizers": [
+            "Llama31405B"
+          ],
+          "frozen_tie_break_choice": "Llama31405B"
+        },
+        {
+          "supplements": [
+            "Mistake_Identification",
+            "Mistake_Location",
+            "Actionability"
+          ],
+          "training_successes": {
+            "GPT4": 71,
+            "Gemini": 58,
+            "Llama31405B": 97,
+            "Llama318B": 36,
+            "Mistral": 81,
+            "Sonnet": 79
+          },
+          "training_maximizers": [
+            "Llama31405B"
+          ],
+          "frozen_tie_break_choice": "Llama31405B"
+        }
+      ],
+      "target_successes_by_endpoint": {
+        "guidance": {
+          "GPT4": 26,
+          "Gemini": 31,
+          "Llama31405B": 30,
+          "Llama318B": 19,
+          "Mistral": 23,
+          "Sonnet": 22
+        },
+        "all_four": {
+          "GPT4": 6,
+          "Gemini": 24,
+          "Llama31405B": 19,
+          "Llama318B": 5,
+          "Mistral": 10,
+          "Sonnet": 17
+        }
+      },
+      "paired_target_outcomes_vs_guidance_baseline": {
+        "GPT4": {
+          "guidance": {
+            "successes": 26,
+            "recovered": 0,
+            "lost": 0,
+            "delta_successes": 0,
+            "delta_rate": 0.0,
+            "paired_95pct_interval": [
+              0.0,
+              0.0
+            ]
+          },
+          "all_four": {
+            "successes": 6,
+            "recovered": 0,
+            "lost": 0,
+            "delta_successes": 0,
+            "delta_rate": 0.0,
+            "paired_95pct_interval": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "Llama31405B": {
+          "guidance": {
+            "successes": 30,
+            "recovered": 7,
+            "lost": 3,
+            "delta_successes": 4,
+            "delta_rate": 0.10810810810810811,
+            "paired_95pct_interval": [
+              -0.08108108108108109,
+              0.25925925925925924
+            ]
+          },
+          "all_four": {
+            "successes": 19,
+            "recovered": 16,
+            "lost": 3,
+            "delta_successes": 13,
+            "delta_rate": 0.35135135135135137,
+            "paired_95pct_interval": [
+              0.1111111111111111,
+              0.5185185185185185
+            ]
+          }
+        }
+      }
+    },
+    {
+      "origin": "Bridge",
+      "target": "MathDial",
+      "origin_cases_before_opening_filter": 37,
+      "origin_cases_excluded_by_opening": 0,
+      "train_cases": 37,
+      "train_openings": 27,
+      "test_cases": 145,
+      "test_openings": 119,
+      "train_test_conversation_id_overlap": 0,
+      "train_test_opening_overlap": 0,
+      "guidance_only_baseline": "Gemini",
+      "subsets": [
+        {
+          "supplements": [],
+          "training_successes": {
+            "GPT4": 26,
+            "Gemini": 31,
+            "Llama31405B": 30,
+            "Llama318B": 19,
+            "Mistral": 23,
+            "Sonnet": 22
+          },
+          "training_maximizers": [
+            "Gemini"
+          ],
+          "frozen_tie_break_choice": "Gemini"
+        },
+        {
+          "supplements": [
+            "Mistake_Identification"
+          ],
+          "training_successes": {
+            "GPT4": 26,
+            "Gemini": 30,
+            "Llama31405B": 30,
+            "Llama318B": 17,
+            "Mistral": 22,
+            "Sonnet": 21
+          },
+          "training_maximizers": [
+            "Gemini",
+            "Llama31405B"
+          ],
+          "frozen_tie_break_choice": "Gemini"
+        },
+        {
+          "supplements": [
+            "Mistake_Location"
+          ],
+          "training_successes": {
+            "GPT4": 25,
+            "Gemini": 30,
+            "Llama31405B": 30,
+            "Llama318B": 17,
+            "Mistral": 21,
+            "Sonnet": 20
+          },
+          "training_maximizers": [
+            "Gemini",
+            "Llama31405B"
+          ],
+          "frozen_tie_break_choice": "Gemini"
+        },
+        {
+          "supplements": [
+            "Actionability"
+          ],
+          "training_successes": {
+            "GPT4": 6,
+            "Gemini": 24,
+            "Llama31405B": 19,
+            "Llama318B": 6,
+            "Mistral": 11,
+            "Sonnet": 18
+          },
+          "training_maximizers": [
+            "Gemini"
+          ],
+          "frozen_tie_break_choice": "Gemini"
+        },
+        {
+          "supplements": [
+            "Mistake_Identification",
+            "Mistake_Location"
+          ],
+          "training_successes": {
+            "GPT4": 25,
+            "Gemini": 30,
+            "Llama31405B": 30,
+            "Llama318B": 17,
+            "Mistral": 21,
+            "Sonnet": 20
+          },
+          "training_maximizers": [
+            "Gemini",
+            "Llama31405B"
+          ],
+          "frozen_tie_break_choice": "Gemini"
+        },
+        {
+          "supplements": [
+            "Mistake_Identification",
+            "Actionability"
+          ],
+          "training_successes": {
+            "GPT4": 6,
+            "Gemini": 24,
+            "Llama31405B": 19,
+            "Llama318B": 5,
+            "Mistral": 10,
+            "Sonnet": 17
+          },
+          "training_maximizers": [
+            "Gemini"
+          ],
+          "frozen_tie_break_choice": "Gemini"
+        },
+        {
+          "supplements": [
+            "Mistake_Location",
+            "Actionability"
+          ],
+          "training_successes": {
+            "GPT4": 6,
+            "Gemini": 24,
+            "Llama31405B": 19,
+            "Llama318B": 5,
+            "Mistral": 10,
+            "Sonnet": 17
+          },
+          "training_maximizers": [
+            "Gemini"
+          ],
+          "frozen_tie_break_choice": "Gemini"
+        },
+        {
+          "supplements": [
+            "Mistake_Identification",
+            "Mistake_Location",
+            "Actionability"
+          ],
+          "training_successes": {
+            "GPT4": 6,
+            "Gemini": 24,
+            "Llama31405B": 19,
+            "Llama318B": 5,
+            "Mistral": 10,
+            "Sonnet": 17
+          },
+          "training_maximizers": [
+            "Gemini"
+          ],
+          "frozen_tie_break_choice": "Gemini"
+        }
+      ],
+      "target_successes_by_endpoint": {
+        "guidance": {
+          "GPT4": 113,
+          "Gemini": 71,
+          "Llama31405B": 111,
+          "Llama318B": 61,
+          "Mistral": 93,
+          "Sonnet": 89
+        },
+        "all_four": {
+          "GPT4": 71,
+          "Gemini": 58,
+          "Llama31405B": 97,
+          "Llama318B": 36,
+          "Mistral": 81,
+          "Sonnet": 79
+        }
+      },
+      "paired_target_outcomes_vs_guidance_baseline": {
+        "Gemini": {
+          "guidance": {
+            "successes": 71,
+            "recovered": 0,
+            "lost": 0,
+            "delta_successes": 0,
+            "delta_rate": 0.0,
+            "paired_95pct_interval": [
+              0.0,
+              0.0
+            ]
+          },
+          "all_four": {
+            "successes": 58,
+            "recovered": 0,
+            "lost": 0,
+            "delta_successes": 0,
+            "delta_rate": 0.0,
+            "paired_95pct_interval": [
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "Llama31405B": {
+          "guidance": {
+            "successes": 111,
+            "recovered": 52,
+            "lost": 12,
+            "delta_successes": 40,
+            "delta_rate": 0.27586206896551724,
+            "paired_95pct_interval": [
+              0.17880794701986755,
+              0.3698630136986301
+            ]
+          },
+          "all_four": {
+            "successes": 97,
+            "recovered": 52,
+            "lost": 13,
+            "delta_successes": 39,
+            "delta_rate": 0.2689655172413793,
+            "paired_95pct_interval": [
+              0.16901170536733917,
+              0.36879432624113473
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

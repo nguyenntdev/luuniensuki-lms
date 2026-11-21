@@ -96,3 +96,5 @@ run -m pytest tests/research_v4_2
 ```
 
 A development follow-up jointly bounded term enrollments and credit loads. Of 448 requests the existing screen rejected 229. The extra certificate rejected none of the remaining 219, including 23 subsequently proved infeasible by the matched solver. This limits the prospect of accelerating this sample through the additional bound. [Certificate derivation and controls](term_requests/certificates/README.md)
+
+Testing tentative endpoint placements added a stronger bound. On the 14 development curricula it certified 12 previously unresolved infeasibilities. Applied to the other 14 curricula, the complete service avoided 11 further integer searches and returned a feasible timetable within budget for the one request that the matched controls left unresolved. All 448 requests received correct decisions. The added probing cost increased geometric-mean service time by 7.33% against the matched interval service, missing the speed criterion. [Development proof and certificates](term_requests/predecessor_load/README.md) · [Matched full-service test](term_requests/probe_service/README.md)

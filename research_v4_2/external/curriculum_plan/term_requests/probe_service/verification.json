@@ -1,0 +1,38 @@
+{
+  "checked_witnesses": 565,
+  "outcomes": {
+    "bounded": {
+      "FEASIBLE": 188,
+      "solver_calls": 260,
+      "INFEASIBLE": 259,
+      "UNKNOWN": 1
+    },
+    "interval": {
+      "FEASIBLE": 188,
+      "solver_calls": 214,
+      "INFEASIBLE": 259,
+      "UNKNOWN": 1
+    },
+    "probe": {
+      "FEASIBLE": 189,
+      "solver_calls": 203,
+      "INFEASIBLE": 259
+    }
+  },
+  "timings": {
+    "bounded": {
+      "relative_time": 1.0143610009339517,
+      "simultaneous_interval": [
+        0.9354256490570516,
+        1.0877561190603369
+      ]
+    },
+    "interval": {
+      "relative_time": 1.0732626041991584,
+      "simultaneous_interval": [
+        0.9784798298085438,
+        1.1627985898848463
+      ]
+    }
+  }
+}

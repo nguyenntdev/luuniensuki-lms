@@ -55,3 +55,5 @@ The joint word- and character-based ranker selected the expert response in 360 o
 ### Joint success across four rubric dimensions
 
 Choosing the fixed tutor on MathDial using four rubric dimensions changed the selected tutor from GPT4 to Llama31405B. The number of Bridge conversations meeting all four criteria increased from 6 to 19 out of 37. Both training objectives selected Gemini in the reverse direction and it met the joint criterion on 58 of 145 conversations. This asymmetry limits transfer claims based on optimizing the guidance label alone. [Criteria, source splits and paired intervals](multiple_rubrics/README.md)
+
+Across all eight training objectives containing guidance, requiring actionability was sufficient to switch the selected tutor from GPT4 to Llama31405B on MathDial. On Bridge, that switch gained four successes on the guidance label alone (26 to 30 of 37), with a paired interval spanning zero. On the four-criterion endpoint it gained 13. In the reverse direction some objectives tied two tutors whose MathDial guidance counts differed by 40. [Subset attribution and all maximizers](multiple_rubrics/attribution/README.md)
