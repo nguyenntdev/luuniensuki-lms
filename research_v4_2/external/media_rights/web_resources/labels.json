@@ -1,0 +1,11 @@
+{
+  "url": "https://data.europeana.eu/item/2022502/_KAMRA_356338",
+  "sha256": "eb48d75b0a574404120121532879e1ff421bcab01f5f2d9ae4fda7780fc16b06",
+  "resources": {
+    "https://www.kamra.si/mm-elementi/rosthornova-zelezarska-sola/": [],
+    "https://www.kamra.si/wp-content/uploads/2022/07/slike_021.jpg": [
+      "http://rightsstatements.org/vocab/InC/1.0/"
+    ],
+    "https://iiif.europeana.eu/presentation/2022502/_KAMRA_356338/manifest": []
+  }
+}

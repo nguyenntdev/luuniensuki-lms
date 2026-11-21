@@ -1,0 +1,1778 @@
+[
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-dereference/metis-dereference-common/src/test/resources/invalid_xml.xml",
+    "status": 200,
+    "bytes": 56
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-dereference/metis-dereference-common/src/test/resources/yso_p105069.xml",
+    "status": 200,
+    "bytes": 2340,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-dereference/metis-dereference-service/src/test/resources/log4j.xml",
+    "status": 200,
+    "bytes": 690,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-dereference/metis-dereference-service/src/test/resources/test.xml",
+    "status": 200,
+    "bytes": 3071,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/dereference/dereference-failure.xml",
+    "status": 200,
+    "bytes": 807,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/dereference/dereference-geoname.xml",
+    "status": 200,
+    "bytes": 5541,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/dereference/dereference-no-vocabulary.xml",
+    "status": 200,
+    "bytes": 830,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/dereference/dereference-normal-ii.xml",
+    "status": 200,
+    "bytes": 5628,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/dereference/dereference-normal-redirect.xml",
+    "status": 200,
+    "bytes": 1225,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/dereference/dereference-normal.xml",
+    "status": 200,
+    "bytes": 1394,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/dereference/dereference-null.xml",
+    "status": 200,
+    "bytes": 729,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/dereference/dereference-unknown-europeana-entity.xml",
+    "status": 200,
+    "bytes": 824,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/dereference/dereference-vocabulary.xml",
+    "status": 200,
+    "bytes": 2009,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/enrichment/sample_dereference_not_found.rdf",
+    "status": 200,
+    "bytes": 5450,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/08635/7b498e8404a14793a79c67a3faaf5502",
+        "provider": [
+          "Lietuvos Centrinis Valstyb\u00e9s Archyvas"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://www.e-kinas.lt/search-results-order/ioresource/534?type=image",
+          "http://www.e-kinas.lt/objektas/kinas/1382/consecration-of-the-church-foundation-in-klaipeda"
+        ]
+      }
+    ],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/enrichment/sample_dereference_redirect.rdf",
+    "status": 200,
+    "bytes": 5116,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/08635/7b498e8404a14793a79c67a3faaf5502",
+        "provider": [
+          "Lietuvos Centrinis Valstyb\u00e9s Archyvas"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://www.e-kinas.lt/search-results-order/ioresource/534?type=image",
+          "http://www.e-kinas.lt/objektas/kinas/1382/consecration-of-the-church-foundation-in-klaipeda"
+        ]
+      }
+    ],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/enrichment/sample_enrichment_exception.rdf",
+    "status": 200,
+    "bytes": 6078,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/08635/7b498e8404a14793a79c67a3faaf5502",
+        "provider": [
+          "Lietuvos Centrinis Valstyb\u00e9s Archyvas"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://www.e-kinas.lt/search-results-order/ioresource/534?type=image",
+          "http://www.e-kinas.lt/objektas/kinas/1382/consecration-of-the-church-foundation-in-klaipeda"
+        ]
+      }
+    ],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/enrichment/sample_enrichment_failure.rdf",
+    "status": 200,
+    "bytes": 5201,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/08635/8b528e8504s24895b42c56a7fhaf5502",
+        "provider": [
+          "Lietuvos Centrinis Valstyb\u00e9s Archyvas"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://www.e-kinas.lt/search-results-order/ioresource/534?type=image",
+          "http://www.e-kinas.lt/objektas/kinas/1382/consecration-of-the-church-foundation-in-klaipeda"
+        ]
+      }
+    ],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/enrichment/sample_enrichment_noentity.rdf",
+    "status": 200,
+    "bytes": 5201,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/08635/7b498e8404a14793a79c67a3faaf5502",
+        "provider": [
+          "Lietuvos Centrinis Valstyb\u00e9s Archyvas"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://www.e-kinas.lt/search-results-order/ioresource/534?type=image",
+          "http://www.e-kinas.lt/objektas/kinas/1382/consecration-of-the-church-foundation-in-klaipeda"
+        ]
+      }
+    ],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/enrichment/sample_enrichment_success.rdf",
+    "status": 200,
+    "bytes": 5019,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/08635/7b498e8404a14793a79c67a3faaf5502",
+        "provider": [
+          "Lietuvos Centrinis Valstyb\u00e9s Archyvas"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://www.e-kinas.lt/search-results-order/ioresource/534?type=image",
+          "http://www.e-kinas.lt/objektas/kinas/1382/consecration-of-the-church-foundation-in-klaipeda"
+        ]
+      }
+    ],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/log4j2.xml",
+    "status": 200,
+    "bytes": 345,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/sample_1.rdf",
+    "status": 200,
+    "bytes": 4023,
+    "aggregations": [
+      {
+        "id": "Bolton Council/1993.83.27.19",
+        "provider": [
+          "Bolton Council"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://boltonworktown.co.uk/wp-content/uploads/1993.83.27.19.jpg",
+          "http://boltonworktown.co.uk/wp-content/uploads/1993.83.27.19.jpg",
+          "http://boltonworktown.co.uk/photograph/washing-day-2"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://boltonworktown.co.uk/wp-content/uploads/1993.83.27.19.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-client/src/test/resources/sample_2.rdf",
+    "status": 200,
+    "bytes": 3009,
+    "aggregations": [
+      {
+        "id": "10796/0C787F5D-D4D6-40B0-B0A7-C196CD67891662",
+        "provider": [
+          "Amsab-Institute of Social History"
+        ],
+        "rights": [
+          "http://www.europeana.eu/rights/rr-f/"
+        ],
+        "resources": [
+          "http://hdl.handle.net/10796/79B8632E-8057-4D11-A87C-98B8A20D6FF6?locatt=view:level2",
+          "http://hdl.handle.net/10796/79B8632E-8057-4D11-A87C-98B8A20D6FF6?locatt=view:level2",
+          "http://hdl.handle.net/10796/0C787F5D-D4D6-40B0-B0A7-C196CD67891662#1"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://hdl.handle.net/10796/79B8632E-8057-4D11-A87C-98B8A20D6FF6?locatt=view:level2",
+        "rights": [
+          "http://www.europeana.eu/rights/rr-f/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-common/src/test/resources/entity-agent.xml",
+    "status": 200,
+    "bytes": 5210,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-common/src/test/resources/entity-concept.xml",
+    "status": 200,
+    "bytes": 5319,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-common/src/test/resources/entity-organization.xml",
+    "status": 200,
+    "bytes": 443,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-enrichment/metis-enrichment-common/src/test/resources/entity-place.xml",
+    "status": 200,
+    "bytes": 6355,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-harvesting/src/test/resources/deletedOaiRecord.xml",
+    "status": 200,
+    "bytes": 827,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-harvesting/src/test/resources/expectedOaiRecord.xml",
+    "status": 200,
+    "bytes": 1090,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-harvesting/src/test/resources/oaiListIdentifiers.xml",
+    "status": 200,
+    "bytes": 896,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-harvesting/src/test/resources/oaiListIdentifiers2.xml",
+    "status": 200,
+    "bytes": 893,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-harvesting/src/test/resources/oaiListIdentifiersIncorrectCompleteListSize.xml",
+    "status": 200,
+    "bytes": 896,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-harvesting/src/test/resources/oaiListIdentifiersIncorrectMetadataPrefix.xml",
+    "status": 200,
+    "bytes": 587
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-harvesting/src/test/resources/oaiListIdentifiersNoCompleteListSize.xml",
+    "status": 200,
+    "bytes": 872,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-harvesting/src/test/resources/oaiListIdentifiersNoResumptionToken.xml",
+    "status": 200,
+    "bytes": 733,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-harvesting/src/test/resources/sampleOaiRecord.xml",
+    "status": 200,
+    "bytes": 2217,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_rdf_conversion.xml",
+    "status": 200,
+    "bytes": 27865,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/277/CMC_HA_1185",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502043"
+        ],
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-nd/4.0/"
+        ],
+        "resources": [
+          "http://www.cmcassociates.co.uk/Skara_Brae/images/panorama_photos/link7-8grassyknoll/_I2P1856.JPG",
+          "http://www.cmcassociates.co.uk/Skara_Brae/images/panorama_photos/link7-8grassyknoll/_I2P1872.JPG",
+          "http://www.cmcassociates.co.uk/Skara_Brae/images/panorama_photos/link7-8grassyknoll/_I2P1856_th.jpg",
+          "http://www.cmcassociates.co.uk/Skara_Brae/landing/sb_pass_photo.html"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://www.cmcassociates.co.uk/Skara_Brae/images/panorama_photos/link7-8grassyknoll/_I2P1872.JPG",
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-nd/4.0/"
+        ]
+      },
+      {
+        "id": "http://www.cmcassociates.co.uk/Skara_Brae/landing/sb_pass_photo.html",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_rdf_tier_for_overwrite.xml",
+    "status": 200,
+    "bytes": 8684,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/2022502/_KAMRA_356338",
+        "provider": [
+          "http://data.europeana.eu/organization/3041"
+        ],
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc/3.0/"
+        ],
+        "resources": [
+          "https://www.kamra.si/wp-content/uploads/2022/07/slike_021.jpg",
+          "https://www.kamra.si/mm-elementi/rosthornova-zelezarska-sola/"
+        ]
+      },
+      {
+        "id": "/aggregation/aggregator/2022502/_KAMRA_356338",
+        "provider": [
+          "http://data.europeana.eu/organization/3041"
+        ],
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc/3.0/"
+        ],
+        "resources": [
+          "https://www.kamra.si/wp-content/uploads/2022/07/slike_021.jpg",
+          "https://www.kamra.si/mm-elementi/rosthornova-zelezarska-sola/"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://www.kamra.si/mm-elementi/rosthornova-zelezarska-sola/",
+        "rights": []
+      },
+      {
+        "id": "https://www.kamra.si/wp-content/uploads/2022/07/slike_021.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_rdf_with_tier_calculated.xml",
+    "status": 200,
+    "bytes": 11847,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/305/_nnhSX08",
+        "provider": [
+          "http://data.europeana.eu/organization/2897"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://mbc.malopolska.pl/Content/48386/d2j:big,0/0437_0001.djvu.jpg",
+          "http://fbc.pionier.net.pl/id/oai:mbc.malopolska.pl:48386"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://mbc.malopolska.pl/Content/48386/d2j:big,0/0437_0001.djvu.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "http://fbc.pionier.net.pl/id/oai:mbc.malopolska.pl:48386",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_tier_calculation_rdf.xml",
+    "status": 200,
+    "bytes": 10070,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/305/_nnhSX08",
+        "provider": [
+          "http://data.europeana.eu/organization/2897"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://mbc.malopolska.pl/Content/48386/d2j:big,0/0437_0001.djvu.jpg",
+          "http://fbc.pionier.net.pl/id/oai:mbc.malopolska.pl:48386"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://mbc.malopolska.pl/Content/48386/d2j:big,0/0437_0001.djvu.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "http://fbc.pionier.net.pl/id/oai:mbc.malopolska.pl:48386",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_to_sample_index_dup_rdf.xml",
+    "status": 200,
+    "bytes": 16480,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/50/_providedCHO_NL_BwdADRKF_2_82_5",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000046543016"
+        ],
+        "rights": [
+          "http://creativecommons.org/publicdomain/mark/1.0/"
+        ],
+        "resources": [
+          "https://archivesspace-ed.nl/digital_objects/258/280/062-007.pdf",
+          "https://archivesspace-ed.nl/digital_objects/258/280/062-007.pdf",
+          "https://archivesspace-pi.nl/repositories/11/archival_objects/42779"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://archivesspace-ed.nl/digital_objects/258/222/062-007.pdf",
+        "rights": [
+          "http://creativecommons.org/publicdomain/mark/1.0/"
+        ]
+      },
+      {
+        "id": "https://archivesspace-pi.nl/repositories/11/archival_objects/42779",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_to_sample_index_rdf.xml",
+    "status": 200,
+    "bytes": 16519,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/50/_providedCHO_NL_BwdADRKF_2_62_7",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000046543016"
+        ],
+        "rights": [
+          "http://creativecommons.org/publicdomain/mark/1.0/"
+        ],
+        "resources": [
+          "https://archivesspace-ed.nl/digital_objects/258/280/062-007.pdf",
+          "https://archivesspace-ed.nl/digital_objects/258/280/062-007.pdf",
+          "https://archivesspace-pi.nl/repositories/11/archival_objects/42779"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://archivesspace-ed.nl/digital_objects/258/280/062-007.pdf",
+        "rights": [
+          "http://creativecommons.org/publicdomain/mark/1.0/"
+        ]
+      },
+      {
+        "id": "https://archivesspace-pi.nl/repositories/11/archival_objects/42779",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_to_sample_index_string.xml",
+    "status": 200,
+    "bytes": 18132,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/50/_providedCHO_NL_BwdADRKF_2_126_10",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000046543016"
+        ],
+        "rights": [
+          "http://creativecommons.org/publicdomain/mark/1.0/"
+        ],
+        "resources": [
+          "https://archivesspace-ed.nl/digital_objects/270/292/126-010.pdf",
+          "https://archivesspace-ed.nl/digital_objects/270/292/126-010.pdf",
+          "https://archivesspace-pi.nl/repositories/11/archival_objects/44084"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://archivesspace-ed.nl/digital_objects/270/292/126-010.pdf",
+        "rights": [
+          "http://creativecommons.org/publicdomain/mark/1.0/"
+        ]
+      },
+      {
+        "id": "https://archivesspace-pi.nl/repositories/11/archival_objects/44084",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_to_sample_pid_index_rdf.xml",
+    "status": 200,
+    "bytes": 39066,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/12148/ivrla:3827",
+        "provider": [
+          "http://data.europeana.eu/organization/4568"
+        ],
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-sa/4.0/"
+        ],
+        "resources": [
+          "https://iiif.ucd.ie/loris/ivrla:3828/full/full/0/default.jpg",
+          "https://iiif.ucd.ie/loris/ivrla:3828/full/600,/0/default.jpg",
+          "https://digital.ucd.ie/view/ivrla:3827"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://iiif.ucd.ie/loris/ivrla:3828/full/full/0/default.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_with_geospatial_data.xml",
+    "status": 200,
+    "bytes": 9080,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_with_geospatial_data_wgs84.xml",
+    "status": 200,
+    "bytes": 9040,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/europeana_record_with_normalized_date_timespan.xml",
+    "status": 200,
+    "bytes": 29096,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/875/object_NLS2__RS_18_______2LYQ776",
+        "provider": [
+          "http://data.europeana.eu/organization/4574"
+        ],
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-sa/4.0/"
+        ],
+        "resources": [
+          "https://imagines.manuscriptorium.com/loris/NLS___-NLS2__RS_18_______2LYQ776-sr/id_001/full/full/0/default.jpg",
+          "https://imagines.manuscriptorium.com/loris/NLS___-NLS2__RS_18_______2LYQ776-sr/id_001/full/!400,400/0/default.jpg",
+          "http://www.manuscriptorium.com/apps/index.php?direct=record&pid=NLS___-NLS2__RS_18_______2LYQ776-sr"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://imagines.manuscriptorium.com/loris/NLS___-NLS2__RS_18_______2LYQ776-sr/id_001/full/full/0/default.jpg",
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-sa/4.0/"
+        ]
+      },
+      {
+        "id": "https://imagines.manuscriptorium.com/loris/NLS___-NLS2__RS_18_______2LYQ776-sr/id_001/full/!400,400/0/default.jpg",
+        "rights": []
+      },
+      {
+        "id": "http://www.manuscriptorium.com/apps/index.php?direct=record&pid=NLS___-NLS2__RS_18_______2LYQ776-sr",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-indexing/src/test/resources/log4j2.xml",
+    "status": 200,
+    "bytes": 345,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-media-service/src/test/resources/oembed/not_oembed.xml",
+    "status": 200,
+    "bytes": 552,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-media-service/src/test/resources/oembed/oembed.xml",
+    "status": 200,
+    "bytes": 1447,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-media-service/src/test/resources/rdf/rdf_with_3d_gltf.xml",
+    "status": 200,
+    "bytes": 30896,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1532/CMC_HA_936",
+        "provider": [
+          "http://data.europeana.eu/organization/3557"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html",
+          "http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+          "https://raw.githubusercontent.com/europeana/metis-framework/refs/heads/develop/metis-media-service/src/test/resources/models/cube.gltf"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-media-service/src/test/resources/rdf/rdf_with_3d_ply.xml",
+    "status": 200,
+    "bytes": 30902,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1532/CMC_HA_936",
+        "provider": [
+          "http://data.europeana.eu/organization/3557"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html",
+          "http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+          "https://raw.githubusercontent.com/europeana/metis-framework/refs/heads/develop/metis-media-service/src/test/resources/models/cube-binary.ply"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-media-service/src/test/resources/rdf/rdf_with_complex_isformatof_graph.xml",
+    "status": 200,
+    "bytes": 4092,
+    "aggregations": [
+      {
+        "id": "H-0614_AGG",
+        "provider": [
+          "International Military Tribunal at Nuremberg"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/CNE/1.0/"
+        ],
+        "resources": [
+          "https://example.com/resourceA1",
+          "https://example.com/resourceA1",
+          "https://example.com/resourceB1",
+          "https://example.com/resourceB1",
+          "https://example.com/resourceA1"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://example.com/resourceA1",
+        "rights": []
+      },
+      {
+        "id": "https://example.com/resourceA2",
+        "rights": []
+      },
+      {
+        "id": "https://example.com/resourceB1",
+        "rights": []
+      },
+      {
+        "id": "https://example.com/resourceB2",
+        "rights": []
+      },
+      {
+        "id": "https://example.com/resourceD1",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-media-service/src/test/resources/rdf/rdf_with_iiif_sample.xml",
+    "status": 200,
+    "bytes": 4148,
+    "aggregations": [
+      {
+        "id": "H-0614_AGG",
+        "provider": [
+          "International Military Tribunal at Nuremberg"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/CNE/1.0/"
+        ],
+        "resources": [
+          "https://stacks.stanford.edu/image/iiif/zw031pj2507/zw031pj2507_0001/full/full/0/default.jpg",
+          "https://stacks.stanford.edu/image/iiif/zw031pj2507/zw031pj2507_0002/full/full/0/default.jpg",
+          "https://stacks.stanford.edu/image/iiif/zw031pj2507/zw031pj2507_0001/full/400,/0/default.jpg",
+          "https://purl.stanford.edu/zw031pj2507"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://stacks.stanford.edu/image/iiif/zw031pj2507/zw031pj2507_0001/full/full/0/default.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/CNE/1.0/"
+        ]
+      },
+      {
+        "id": "https://stacks.stanford.edu/image/iiif/zw031pj2507/zw031pj2507_0002/full/full/0/default.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-media-service/src/test/resources/rdf/rdf_with_iiif_sample_II.xml",
+    "status": 200,
+    "bytes": 4659,
+    "aggregations": [
+      {
+        "id": "H-0614_AGG",
+        "provider": [
+          "International Military Tribunal at Nuremberg"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/CNE/1.0/"
+        ],
+        "resources": [
+          "https://stacks.stanford.edu/image/iiif/zw031pj2507/zw031pj2507_0001/full/full/0/default.jpg",
+          "https://stacks.stanford.edu/image/iiif/zw031pj2507/zw031pj2507_0002/full/full/0/default.jpg",
+          "https://stacks.stanford.edu/image/iiif/zw031pj2507/zw031pj2507_0001/full/400,/0/default.jpg",
+          "https://purl.stanford.edu/zw031pj2507"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://stacks.stanford.edu/image/iiif/zw031pj2507/zw031pj2507_0001/full/full/0/default.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/CNE/1.0/"
+        ]
+      },
+      {
+        "id": "https://stacks.stanford.edu/image/iiif/zw031pj2507/zw031pj2507_0002/full/full/0/default.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-media-service/src/test/resources/rdf/rdf_with_oembed_sample.xml",
+    "status": 200,
+    "bytes": 11038,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/307/CMC_HA_2255",
+        "provider": [
+          "http://data.europeana.eu/organization/1554"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fcdn.pixabay.com%2Fvideo%2F2023%2F10%2F22%2F186070-876973719_small.mp4",
+          "http://www.flickr.com/services/oembed/?url=https%3A%2F%2Fwww.flickr.com%2Fphotos%2Fbees%2F2341623661%2F&format=json",
+          "https://player.vimeo.com/video/24416915?app_id=122963"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://www.flickr.com/services/oembed/?url=https%3A%2F%2Fwww.flickr.com%2Fphotos%2Fbees%2F2341623661%2F&format=json",
+        "rights": []
+      },
+      {
+        "id": "https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fcdn.pixabay.com%2Fvideo%2F2023%2F10%2F22%2F186070-876973719_small.mp4",
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-nd/4.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-media-service/src/test/resources/rdf/rdf_with_oembed_sample_II.xml",
+    "status": 200,
+    "bytes": 16783,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/321/CMC_HA_22558",
+        "provider": [
+          "CMC - CMC Associates Ltd."
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F24416915",
+          "https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F42947250",
+          "https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F24416915",
+          "http://www.cmcassociates.co.uk/Skara_Brae/landing/sb_pass_pano.html"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F42947250",
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-nd/4.0/"
+        ]
+      },
+      {
+        "id": "https://vimeo.com/api/oembed.json?url=https%3A%2F%2Fvimeo.com%2F24416915",
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-nd/4.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-pattern-analysis/src/test/resources/europeana_record_empty_proxy_choices.xml",
+    "status": 200,
+    "bytes": 6929,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-pattern-analysis/src/test/resources/europeana_record_no_problem_patterns.xml",
+    "status": 200,
+    "bytes": 7018,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-pattern-analysis/src/test/resources/europeana_record_with_P12.xml",
+    "status": 200,
+    "bytes": 7096,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-pattern-analysis/src/test/resources/europeana_record_with_P2.xml",
+    "status": 200,
+    "bytes": 8121,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-pattern-analysis/src/test/resources/europeana_record_with_P3.xml",
+    "status": 200,
+    "bytes": 9319,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-pattern-analysis/src/test/resources/europeana_record_with_P5.xml",
+    "status": 200,
+    "bytes": 7418,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-pattern-analysis/src/test/resources/europeana_record_with_P6.xml",
+    "status": 200,
+    "bytes": 6831,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-pattern-analysis/src/test/resources/europeana_record_with_P7.xml",
+    "status": 200,
+    "bytes": 6676,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-pattern-analysis/src/test/resources/europeana_record_with_P7_descriptions_empty.xml",
+    "status": 200,
+    "bytes": 6799,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-pattern-analysis/src/test/resources/europeana_record_with_P9.xml",
+    "status": 200,
+    "bytes": 7064,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/1/12944",
+        "provider": [
+          "http://data.europeana.eu/organization/1482250000004502033"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "https://vimeo.com/209357984",
+          "https://i.vimeocdn.com/video/624880505_640.jpg"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "https://vimeo.com/209357984",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "https://i.vimeocdn.com/video/624880505_640.jpg",
+        "rights": []
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-repository/metis-repository-rest/src/test/resources/record-test.xml",
+    "status": 200,
+    "bytes": 2435,
+    "aggregations": [
+      {
+        "id": "#aggregation:nhwSbs6",
+        "provider": [
+          "Archiwum Filmowe - Szko\u0142a Filmowa w \u0141odzi"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://media.etiudy.filmschool.lodz.pl/published/Miejsce.mov",
+          "http://media.etiudy.filmschool.lodz.pl/published_img/Miejsce/orig/00:01:33.02.png",
+          "http://fbc.pionier.net.pl/id/oai:etiudy.filmschool.lodz.pl:instudio-205"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://media.etiudy.filmschool.lodz.pl/published/Miejsce.mov",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-transformation/metis-transformation-service/src/test/resources/europeana_record_edm_external_sorted.xml",
+    "status": 200,
+    "bytes": 6651,
+    "aggregations": [
+      {
+        "id": "CMC_HA/936#ORE",
+        "provider": [
+          "Historic Scotland"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html",
+          " http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+          "  http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": " http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-transformation/metis-transformation-service/src/test/resources/europeana_record_edm_external_unsorted.xml",
+    "status": 200,
+    "bytes": 6655,
+    "aggregations": [
+      {
+        "id": "CMC_HA/936#ORE",
+        "provider": [
+          "Historic Scotland"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html",
+          " http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+          "  http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": " http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-transformation/metis-transformation-service/src/test/resources/europeana_record_edm_internal.xml",
+    "status": 200,
+    "bytes": 8007,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/00000/some_record_id1",
+        "provider": [
+          "Historic Scotland"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html",
+          " http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+          "  http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": " http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-transformation/metis-transformation-service/src/test/resources/malformedFile.xml",
+    "status": 200,
+    "bytes": 4507
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-transformation/metis-transformation-service/src/test/resources/xmlForTesting.xml",
+    "status": 200,
+    "bytes": 4497,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-transformation/metis-transformation-service/src/test/resources/xmlForTestingParamInjection.xml",
+    "status": 200,
+    "bytes": 84,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-validation/metis-validation-service/src/test/resources/Item_35834473.xml",
+    "status": 200,
+    "bytes": 9636,
+    "aggregations": [
+      {
+        "id": "/aggregation/provider/08502/5F41E0B657BDD9923BA2C4655BB7A6880A2ED5C2",
+        "provider": [
+          "Israel Museum, Jerusalem"
+        ],
+        "rights": [
+          "http://rightReserved.html"
+        ],
+        "resources": [
+          "http://www.imj.org.il/images/corridor/bezalel/modern/new modern scans/g-h-i/gauguin-still life~b66_1041.jpg",
+          "http://www.imj.org.il/images/corridor/bezalel/modern/new modern scans/g-h-i/gauguin-still life~b66_1041.jpg",
+          "http://www.imj.org.il/imagine/collections/item.asp?itemNum=193112"
+        ]
+      }
+    ],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-validation/metis-validation-service/src/test/resources/Item_35834473_test.xml",
+    "status": 200,
+    "bytes": 3248,
+    "aggregations": [
+      {
+        "id": "10796/0C787F5D-D4D6-40B0-B0A7-C196CD67891662",
+        "provider": [
+          "Amsab-Institute of Social History"
+        ],
+        "rights": [
+          "http://www.europeana.eu/rights/rr-f/"
+        ],
+        "resources": [
+          "http://hdl.handle.net/10796/79B8632E-8057-4D11-A87C-98B8A20D6FF6?locatt=view:level2",
+          "http://hdl.handle.net/10796/79B8632E-8057-4D11-A87C-98B8A20D6FF6?locatt=view:level2",
+          "http://hdl.handle.net/10796/0C787F5D-D4D6-40B0-B0A7-C196CD67891662#1"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://hdl.handle.net/10796/79B8632E-8057-4D11-A87C-98B8A20D6FF6?locatt=view:level2",
+        "rights": [
+          "http://www.europeana.eu/rights/rr-f/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-validation/metis-validation-service/src/test/resources/Item_35834473_wrong.xml",
+    "status": 200,
+    "bytes": 2770,
+    "aggregations": [
+      {
+        "id": "10796/0C787F5D-D4D6-40B0-B0A7-C196CD67891662",
+        "provider": [
+          "Amsab-Institute of Social History"
+        ],
+        "rights": [
+          "http://www.europeana.eu/rights/rr-f/"
+        ],
+        "resources": [
+          "http://hdl.handle.net/10796/79B8632E-8057-4D11-A87C-98B8A20D6FF6?locatt=view:level2",
+          "http://hdl.handle.net/10796/79B8632E-8057-4D11-A87C-98B8A20D6FF6?locatt=view:level2",
+          "http://hdl.handle.net/10796/0C787F5D-D4D6-40B0-B0A7-C196CD67891662#1"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://hdl.handle.net/10796/79B8632E-8057-4D11-A87C-98B8A20D6FF6?locatt=view:level2",
+        "rights": [
+          "http://www.europeana.eu/rights/rr-f/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-validation/metis-validation-service/src/test/resources/Item_schematron_invalid.xml",
+    "status": 200,
+    "bytes": 3020,
+    "aggregations": [
+      {
+        "id": "http://digitalna.nb.rs/wb/NBS/Knjige/sabrana_dela_vuka_karadzica/II_146423_24",
+        "provider": [],
+        "rights": [
+          "https://creativecommons.org/licenses/by-nc-nd/4.0/"
+        ],
+        "resources": [
+          "http://digitalna.nb.rs/wb/NBS/Knjige/sabrana_dela_vuka_karadzica/II_146423_24?pageIndex=00001",
+          "http://digitalna.nb.rs/wb/NBS/Knjige/sabrana_dela_vuka_karadzica/II_146423_24"
+        ]
+      }
+    ],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-validation/metis-validation-service/src/test/resources/Item_schematron_invalid2.xml",
+    "status": 200,
+    "bytes": 14981,
+    "aggregations": [
+      {
+        "id": "http://www.mimo-db.eu/UEDIN/214",
+        "provider": [
+          "University of Edinburgh"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC-OW-EU/1.0/"
+        ],
+        "resources": [
+          "http://dams.llgc.org.uk/iiif/image/2.0/1294670/full/512,/0/default.jpg",
+          "",
+          "http://www.mimo-db.eu/media/UEDIN/AUDIO/0032195s.mp3",
+          "http://www.mimo-db.eu/media/GNM/IMAGE/MIR146_1300188501138_2.jpg",
+          "http://www.mimo-db.eu/media/MF-CAN/IMAGE/MFIM000021740.jpg",
+          "http://www.mimo-db.eu/media/MF-CAN/IMAGE/MFIM000021472.jpg",
+          "http://www.mimo-db.eu/media/MF-CAN/IMAGE/MFIM000021473.jpg",
+          "http://www.mimo-db.eu/media/UEDIN/IMAGE/0032195c.jpg",
+          "http://www.mimo-db.eu/UEDIN/214"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://www.mimo-db.eu/media/UEDIN/VIDEO/0032195v.mpg",
+        "rights": [
+          "#statement_3000095353973"
+        ]
+      },
+      {
+        "id": "http://dams.llgc.org.uk/iiif/image/2.0/1294670/full/512,/0/default.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "http://www.mimo-db.eu/media/MF-CAN/IMAGE/MFIM000021473.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "http://www.mimo-db.eu/media/GNM/IMAGE/MIR146_1300188501138_2.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      },
+      {
+        "id": "http://www.mimo-db.eu/media/MF-CAN/IMAGE/MFIM000021740.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC-OW-EU/1.0/"
+        ]
+      },
+      {
+        "id": "http://www.mimo-db.eu/media/MF-CAN/IMAGE/MFIM000021472.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC-OW-EU/1.0/"
+        ]
+      },
+      {
+        "id": "http://www.mimo-db.eu/media/UEDIN/AUDIO/0032195s.mp3",
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-validation/metis-validation-service/src/test/resources/edm_external_invalid_edm_intendedUsage.xml",
+    "status": 200,
+    "bytes": 5990,
+    "aggregations": [
+      {
+        "id": "CMC_HA/936#ORE",
+        "provider": [
+          "Historic Scotland"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html",
+          " http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+          "  http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": " http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/metis-framework/36e787825402e3515440eefe9c9aa95089d7ec2b/metis-validation/metis-validation-service/src/test/resources/edm_external_invalid_schema_digitalSourceType.xml",
+    "status": 200,
+    "bytes": 5985,
+    "aggregations": [
+      {
+        "id": "CMC_HA/936#ORE",
+        "provider": [
+          "Historic Scotland"
+        ],
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ],
+        "resources": [
+          "http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html",
+          " http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+          "  http://cmcassociates.co.uk/Skara_Brae/landing/sb_h10_lidar.html"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": " http://www.cmcassociates.co.uk/Skara_Brae/scandata/house10/sb10_scandata_th.jpg",
+        "rights": [
+          "http://rightsstatements.org/vocab/InC/1.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/corelib/e25ca6ac024a93b5d2b05eb603f6306a3f73a121/corelib-search/src/test/resources/corelib-solr-test.xml",
+    "status": 200,
+    "bytes": 1606,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/corelib/e25ca6ac024a93b5d2b05eb603f6306a3f73a121/corelib-search/src/test/resources/solr/search/conf/elevate.xml",
+    "status": 200,
+    "bytes": 5181,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/corelib/e25ca6ac024a93b5d2b05eb603f6306a3f73a121/corelib-search/src/test/resources/solr/search/conf/schema.xml",
+    "status": 200,
+    "bytes": 62450,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/corelib/e25ca6ac024a93b5d2b05eb603f6306a3f73a121/corelib-search/src/test/resources/solr/solr.xml",
+    "status": 200,
+    "bytes": 2073,
+    "aggregations": [],
+    "files": []
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/corelib/e25ca6ac024a93b5d2b05eb603f6306a3f73a121/corelib-search/src/test/resources/test_files/edm.xml",
+    "status": 200,
+    "bytes": 3525,
+    "aggregations": [
+      {
+        "id": "http://www.mimo-db.eu/GNM/7116411",
+        "provider": [
+          "Germanisches Nationalmuseum"
+        ],
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+        ],
+        "resources": [
+          "http://www.mimo-db.eu/media/GNM/IMAGE/MI952_1278054389450_2.jpg",
+          "http://www.mimo-db.eu/media/GNM/IMAGE/MI952_1278054389450_2.jpg",
+          "http://www.mimo-db.eu/media/GNM/IMAGE/MI952_1278054389450_2.jpg",
+          "http://www.mimo-db.eu/GNM/7116411"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://www.mimo-db.eu/media/GNM/IMAGE/MI952_1278054389450_2.jpg",
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/corelib/e25ca6ac024a93b5d2b05eb603f6306a3f73a121/corelib-search/src/test/resources/test_files/edm_new.xml",
+    "status": 200,
+    "bytes": 5030,
+    "aggregations": [
+      {
+        "id": "http://www.mimo-db.eu/ULEI/M0000005",
+        "provider": [
+          "Museum f\u00fcr Musikinstrumente der Universit\u00e4t Leipzig"
+        ],
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+        ],
+        "resources": [
+          "http://www.mimo-db.eu/media/ULEI/IMAGE/0005.jpg",
+          "http://www.mimo-db.eu/media/ULEI/IMAGE/0005.jpg",
+          "http://www.mimo-db.eu/media/ULEI/IMAGE/0005.jpg",
+          "http://www.mimo-db.eu/ULEI/M0000005"
+        ]
+      }
+    ],
+    "files": [
+      {
+        "id": "http://www.mimo-db.eu/media/ULEI/IMAGE/0005.jpg",
+        "rights": [
+          "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/europeana/corelib/e25ca6ac024a93b5d2b05eb603f6306a3f73a121/corelib-search/src/test/resources/test_files/sample.xml",
+    "status": 200,
+    "bytes": 589,
+    "aggregations": [],
+    "files": []
+  }
+]

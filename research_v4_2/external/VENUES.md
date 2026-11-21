@@ -1,6 +1,6 @@
 # External studies and publication fit
 
-Assessed 21 November 2026. The most developed comparisons are the learner-recall replication, the day-60 withdrawal audit and the nested cross-course dropout benchmark. Each has a defensible, bounded result. The recall comparison missed its practical margin, the withdrawal study has a close published precedent, and the spline missed its joint superiority criterion. None of the eleven currently establishes a new best method.
+Assessed 21 November 2026. The most developed comparisons are the learner-recall replication, the day-60 withdrawal audit and the nested cross-course dropout benchmark. Each has a defensible, bounded result. The recall comparison missed its practical margin, the withdrawal study has a close published precedent, and the spline missed its joint superiority criterion. The current [ten-method audit](TEN_METHODS.md) records zero strong wins against every required comparator.
 
 ## Venue ranks and submission formats
 
@@ -9,6 +9,7 @@ Ranks below come from the **ICORE 2026** conference list. Formats come from the 
 | Conference | Rank source | Relevant edition and format |
 |---|---|---|
 | Learning Analytics and Knowledge (LAK) | [ICORE 2026 A](https://portal.core.edu.au/conf-ranks/2268/) | LAK26 short research paper, up to ten single-column pages including references. The reviewers explicitly ask what a replication adds to knowledge. [Submission guidelines](https://www.solaresearch.org/events/lak/lak26/submission-guidelines/) · [Reviewer guidelines](https://www.solaresearch.org/events/lak/lak26/reviewer-guidelines/) |
+| Educational Data Mining (EDM) | [ICORE 2026 B](https://portal.core.edu.au/conf-ranks/446/) | Potential audience for the recall replication and the withdrawal risk-set audit. Check the edition-specific track and dates before submission. |
 | Artificial Intelligence in Education (AIED) | [ICORE 2026 A](https://portal.core.edu.au/conf-ranks/1961/) | AIED 2026 full or short research papers in technical, human and societal tracks. The technical track fits offline models of learning and tutoring. [General call](https://aied-conference.org/2026/call-for-paper) |
 | Empirical Methods in Natural Language Processing (EMNLP) | [ICORE 2026 A*](https://portal.core.edu.au/conf-ranks/448/) | EMNLP 2026 main conference short paper. The call explicitly welcomes negative findings and reproduction studies alongside original empirical work. [Main conference call](https://2026.emnlp.org/calls/main_conference_papers/) |
 | ACM SIGACCESS Conference on Computers and Accessibility (ASSETS) | [ICORE 2026 A](https://portal.core.edu.au/conf-ranks/2258/) | ASSETS 2026 short technical paper, 4,000–5,000 words excluding references. The impact on accessibility must be evident. [Technical papers call](https://assets26.sigaccess.org/technical_papers.html) |

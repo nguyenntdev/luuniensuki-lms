@@ -1,0 +1,424 @@
+{
+  "oulad": {
+    "train": 4265,
+    "excluded": {},
+    "learners": 6959,
+    "pools": 6,
+    "female_cases": 526,
+    "male_cases": 579,
+    "optimum": 0.14797723625559198,
+    "local_cap_optimum": 0.14797705000465386,
+    "methods": {
+      "unrestricted": {
+        "seats": 695,
+        "swaps": 129,
+        "captures_f": 114,
+        "captures_m": 61,
+        "score_utility": 265.80862470687305,
+        "predicted_worst": 0.09916080414146129,
+        "recall": 0.10535405872193437,
+        "precision": 0.2517985611510791,
+        "gain_recall_ci": [
+          0.014983122396295592,
+          0.06249587584296853
+        ],
+        "gain_precision_ci": [
+          -0.021989594373341633,
+          0.015294790518092728
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "fair": {
+        "seats": 695,
+        "swaps": 129,
+        "captures_f": 114,
+        "captures_m": 61,
+        "score_utility": 265.80862470687305,
+        "predicted_worst": 0.09916080414146129,
+        "recall": 0.10535405872193437,
+        "precision": 0.2517985611510791,
+        "gain_recall_ci": [
+          0.014983122396295592,
+          0.06249587584296853
+        ],
+        "gain_precision_ci": [
+          -0.021989594373341633,
+          0.015294790518092728
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "quota": {
+        "seats": 695,
+        "swaps": 36,
+        "captures_f": 80,
+        "captures_m": 92,
+        "score_utility": 262.54709973931875,
+        "predicted_worst": 0.14662932097855502,
+        "recall": 0.1520912547528517,
+        "precision": 0.2474820143884892,
+        "gain_recall_ci": [
+          -0.0117652010299069,
+          0.01398636363636363
+        ],
+        "gain_precision_ci": [
+          -0.007974765866348543,
+          0.010907707549630375
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "threshold": {
+        "seats": 695,
+        "swaps": 35,
+        "captures_f": 82,
+        "captures_m": 92,
+        "score_utility": 262.69907948645607,
+        "predicted_worst": 0.14755151123132118,
+        "recall": 0.155893536121673,
+        "precision": 0.2503597122302158,
+        "gain_recall_ci": [
+          -0.012324789984015034,
+          0.00939849624060149
+        ],
+        "gain_precision_ci": [
+          -0.010028987508671117,
+          0.007541651896490632
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "discount_dp": {
+        "seats": 695,
+        "swaps": 129,
+        "captures_f": 114,
+        "captures_m": 61,
+        "score_utility": 265.80862470687305,
+        "predicted_worst": 0.09916080414146129,
+        "recall": 0.10535405872193437,
+        "precision": 0.2517985611510791,
+        "gain_recall_ci": [
+          0.014983122396295592,
+          0.06249587584296853
+        ],
+        "gain_precision_ci": [
+          -0.021989594373341633,
+          0.015294790518092728
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "robust": {
+        "seats": 695,
+        "swaps": 29,
+        "captures_f": 82,
+        "captures_m": 94,
+        "score_utility": 262.71782191098254,
+        "predicted_worst": 0.1473826103958188,
+        "recall": 0.155893536121673,
+        "precision": 0.25323741007194245,
+        "gain_recall_ci": [
+          -0.014109347442680775,
+          0.00939849624060149
+        ],
+        "gain_precision_ci": [
+          -0.012256609044420382,
+          0.0035631850389199822
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "pooled": {
+        "seats": 695,
+        "swaps": 0,
+        "captures_f": 84,
+        "captures_m": 89,
+        "score_utility": 262.98584093891924,
+        "predicted_worst": 0.1479772362555931,
+        "recall": 0.153713298791019,
+        "precision": 0.2489208633093525,
+        "gain_recall_ci": [
+          0.0,
+          0.0
+        ],
+        "gain_precision_ci": [
+          0.0,
+          0.0
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "pooled_local_cap": {
+        "seats": 695,
+        "swaps": 0,
+        "captures_f": 84,
+        "captures_m": 89,
+        "score_utility": 262.98584093891924,
+        "predicted_worst": 0.1479772362555931,
+        "recall": 0.153713298791019,
+        "precision": 0.2489208633093525,
+        "gain_recall_ci": [
+          0.0,
+          0.0
+        ],
+        "gain_precision_ci": [
+          0.0,
+          0.0
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "pooled_greedy": {
+        "seats": 695,
+        "swaps": 73,
+        "captures_f": 83,
+        "captures_m": 89,
+        "score_utility": 261.8947749737885,
+        "predicted_worst": 0.14730100275490093,
+        "recall": 0.153713298791019,
+        "precision": 0.2474820143884892,
+        "gain_recall_ci": [
+          -0.012325546311225961,
+          0.014733644574014809
+        ],
+        "gain_precision_ci": [
+          -0.012855985762064634,
+          0.015825669043245404
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      }
+    }
+  },
+  "uci697": {
+    "train": 2653,
+    "excluded": {
+      "33": 4
+    },
+    "learners": 1767,
+    "pools": 16,
+    "female_cases": 283,
+    "male_cases": 260,
+    "optimum": 0.1886825608728189,
+    "local_cap_optimum": 0.17559047602867825,
+    "methods": {
+      "unrestricted": {
+        "seats": 168,
+        "swaps": 34,
+        "captures_f": 29,
+        "captures_m": 66,
+        "score_utility": 109.39837252311204,
+        "predicted_worst": 0.12824029757702132,
+        "recall": 0.10247349823321555,
+        "precision": 0.5654761904761905,
+        "gain_recall_ci": [
+          0.02397229650553583,
+          0.08049639495501486
+        ],
+        "gain_precision_ci": [
+          -0.054629041257477966,
+          0.041567129623073795
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "fair": {
+        "seats": 168,
+        "swaps": 15,
+        "captures_f": 36,
+        "captures_m": 56,
+        "score_utility": 107.60373493189991,
+        "predicted_worst": 0.15842417218139354,
+        "recall": 0.127208480565371,
+        "precision": 0.5476190476190477,
+        "gain_recall_ci": [
+          -0.0013752049033499652,
+          0.05063398049948682
+        ],
+        "gain_precision_ci": [
+          -0.01921510507036828,
+          0.04424160549361999
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "quota": {
+        "seats": 168,
+        "swaps": 23,
+        "captures_f": 49,
+        "captures_m": 42,
+        "score_utility": 102.46791124414005,
+        "predicted_worst": 0.1608886917802892,
+        "recall": 0.16153846153846155,
+        "precision": 0.5416666666666666,
+        "gain_recall_ci": [
+          -0.030001879699248106,
+          0.03952569169960474
+        ],
+        "gain_precision_ci": [
+          -0.021969452247822305,
+          0.057200128379705714
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "threshold": {
+        "seats": 168,
+        "swaps": 10,
+        "captures_f": 42,
+        "captures_m": 52,
+        "score_utility": 107.12619645291824,
+        "predicted_worst": 0.17162892540490737,
+        "recall": 0.14840989399293286,
+        "precision": 0.5595238095238095,
+        "gain_recall_ci": [
+          -0.011860069603010896,
+          0.02247191011235955
+        ],
+        "gain_precision_ci": [
+          -0.027592302123552147,
+          0.027925245486221034
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "discount_dp": {
+        "seats": 168,
+        "swaps": 15,
+        "captures_f": 36,
+        "captures_m": 56,
+        "score_utility": 107.60373493189991,
+        "predicted_worst": 0.15842417218139354,
+        "recall": 0.127208480565371,
+        "precision": 0.5476190476190477,
+        "gain_recall_ci": [
+          -0.0013752049033499652,
+          0.05063398049948682
+        ],
+        "gain_precision_ci": [
+          -0.01921510507036828,
+          0.04424160549361999
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "robust": {
+        "seats": 168,
+        "swaps": 10,
+        "captures_f": 42,
+        "captures_m": 52,
+        "score_utility": 107.12619645291824,
+        "predicted_worst": 0.17162892540490737,
+        "recall": 0.14840989399293286,
+        "precision": 0.5595238095238095,
+        "gain_recall_ci": [
+          -0.011860069603010896,
+          0.02247191011235955
+        ],
+        "gain_precision_ci": [
+          -0.027592302123552147,
+          0.027925245486221034
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "pooled": {
+        "seats": 168,
+        "swaps": 0,
+        "captures_f": 45,
+        "captures_m": 49,
+        "score_utility": 106.44138608543055,
+        "predicted_worst": 0.18868256087281884,
+        "recall": 0.15901060070671377,
+        "precision": 0.5595238095238095,
+        "gain_recall_ci": [
+          0.0,
+          0.0
+        ],
+        "gain_precision_ci": [
+          0.0,
+          0.0
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "pooled_local_cap": {
+        "seats": 168,
+        "swaps": 8,
+        "captures_f": 42,
+        "captures_m": 52,
+        "score_utility": 107.12095789861199,
+        "predicted_worst": 0.1755904760286783,
+        "recall": 0.14840989399293286,
+        "precision": 0.5595238095238095,
+        "gain_recall_ci": [
+          -0.011860069603010896,
+          0.02247191011235955
+        ],
+        "gain_precision_ci": [
+          -0.024409088492752508,
+          0.024695731118120155
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      },
+      "pooled_greedy": {
+        "seats": 168,
+        "swaps": 11,
+        "captures_f": 44,
+        "captures_m": 49,
+        "score_utility": 106.1999043478611,
+        "predicted_worst": 0.1878842429060779,
+        "recall": 0.15547703180212014,
+        "precision": 0.5535714285714286,
+        "gain_recall_ci": [
+          -0.011765863825845312,
+          0.018251529626449076
+        ],
+        "gain_precision_ci": [
+          -0.021049699682521773,
+          0.033585823042148015
+        ],
+        "defined_draws": [
+          5000,
+          5000
+        ]
+      }
+    }
+  }
+}

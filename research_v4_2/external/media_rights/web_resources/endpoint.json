@@ -1,0 +1,114 @@
+[
+  [
+    "https://data.europeana.eu/item/00000/some_record_id1",
+    404,
+    "https://api.europeana.eu/record/00000/some_record_id1.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/08502/5F41E0B657BDD9923BA2C4655BB7A6880A2ED5C2",
+    404,
+    "https://api.europeana.eu/record/08502/5F41E0B657BDD9923BA2C4655BB7A6880A2ED5C2.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/08635/7b498e8404a14793a79c67a3faaf5502",
+    404,
+    "https://api.europeana.eu/record/08635/7b498e8404a14793a79c67a3faaf5502.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/08635/8b528e8504s24895b42c56a7fhaf5502",
+    404,
+    "https://api.europeana.eu/record/08635/8b528e8504s24895b42c56a7fhaf5502.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/1/12944",
+    404,
+    "https://api.europeana.eu/record/1/12944.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/12148/ivrla:3827",
+    404,
+    "https://api.europeana.eu/record/12148/ivrla:3827.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/1532/CMC_HA_936",
+    404,
+    "https://api.europeana.eu/record/1532/CMC_HA_936.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/2022502/_KAMRA_356338",
+    200,
+    "https://api.europeana.eu/record/2022502/_KAMRA_356338.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<?xml vers"
+  ],
+  [
+    "https://data.europeana.eu/item/277/CMC_HA_1185",
+    404,
+    "https://api.europeana.eu/record/277/CMC_HA_1185.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/305/_nnhSX08",
+    404,
+    "https://api.europeana.eu/record/305/_nnhSX08.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/307/CMC_HA_2255",
+    404,
+    "https://api.europeana.eu/record/307/CMC_HA_2255.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/321/CMC_HA_22558",
+    404,
+    "https://api.europeana.eu/record/321/CMC_HA_22558.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/50/_providedCHO_NL_BwdADRKF_2_126_10",
+    404,
+    "https://api.europeana.eu/record/50/_providedCHO_NL_BwdADRKF_2_126_10.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/50/_providedCHO_NL_BwdADRKF_2_62_7",
+    404,
+    "https://api.europeana.eu/record/50/_providedCHO_NL_BwdADRKF_2_62_7.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/50/_providedCHO_NL_BwdADRKF_2_82_5",
+    404,
+    "https://api.europeana.eu/record/50/_providedCHO_NL_BwdADRKF_2_82_5.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ],
+  [
+    "https://data.europeana.eu/item/875/object_NLS2__RS_18_______2LYQ776",
+    404,
+    "https://api.europeana.eu/record/875/object_NLS2__RS_18_______2LYQ776.rdf?wskey=api2demo",
+    "application/rdf+xml;charset=UTF-8",
+    "<error>Non-existing record identifier</error>"
+  ]
+]

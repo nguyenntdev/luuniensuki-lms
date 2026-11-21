@@ -73,3 +73,6 @@ python "$paper/transfer.py" score "$paper/objects.csv.gz" | diff - "$paper/trans
 ```
 
 Chicago refreshes its bulk archive. The build checks both raw hashes before extraction. The frozen projection retains provider, object ID and three binary fields, sufficient to replay every comparison after a refresh. Scoring checks the decompressed projection hash so that different gzip implementations can produce equivalent inputs.
+
+
+On one Europeana object, assigning the aggregation's CC BY-NC 3.0 declaration to the JPEG would overwrite the provider's explicit In Copyright declaration. Only one of 16 provider IDs in the fixture audit resolved. This supplies a counterexample to unconditional propagation across resource levels. [Frozen labels, public record and scoring instructions](web_resources/README.md)

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
-from screen import course_choices, prepare
+from screen import course_choices, prepare, predict
 
 
 def options(course, labels, label_order):
@@ -41,14 +41,16 @@ def optimal(courses, tables, female_cases, male_cases, floor):
     return result
 
 
-def evaluate(name, raw, saved):
-    frame, scores, target, _ = prepare(name, raw)
+def evaluate(name, raw, saved, scorer=predict, required_captures=None):
+    frame, scores, target, _ = prepare(name, raw, scorer)
     courses = course_choices(frame,scores)
     y = target(set(frame.key))
     unrestricted = saved['methods']['unrestricted']
     seats = unrestricted['seats']
     captured = unrestricted['captures_f']+unrestricted['captures_m']
     floor = math.ceil((100*captured-seats)/100)
+    if required_captures is not None:
+        floor = required_captures
     out = dict(seats=seats, unrestricted_captured=captured, required_captures=floor)
     for label_order, title in [(False, 'fixed_score_order'), (True, 'free_within_group_order')]:
         tables = [options(c,y,label_order) for c in courses]

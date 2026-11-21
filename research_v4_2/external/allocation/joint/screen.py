@@ -17,7 +17,7 @@ from benchmark import cohort, outcomes, predict, verified_archive
 from policies import allocate, fair_rank
 
 
-def prepare(name, raw):
+def cohort_data(name, raw):
     if name == 'oulad':
         with verified_archive(name, raw) as archive:
             rows, _, cat, num = cohort(name, archive)
@@ -52,8 +52,13 @@ def prepare(name, raw):
     eligible = test.groupby('pool').female.transform(lambda x: len(x) >= 10 and 0 < x.sum() < len(x))
     excluded = test.loc[~eligible].groupby('pool').size().to_dict()
     test = test[eligible].reset_index(drop=True)
-    scores = predict(train, test, cat, num, history)
-    return test.assign(p=scores[0]), scores, target, dict(train=len(train), excluded=excluded)
+    return train, test, cat, num, history, target, dict(train=len(train), excluded=excluded)
+
+
+def prepare(name, raw, scorer=predict):
+    train, test, cat, num, history, target, source = cohort_data(name, raw)
+    scores = scorer(train, test, cat, num, history)
+    return test.assign(p=scores[0]), scores, target, source
 
 
 def course_choices(test, scores):
@@ -139,8 +144,8 @@ def greedy(courses):
         choices = best_pick
 
 
-def report(name, raw, output):
-    frame, scores, target, source = prepare(name, raw)
+def report(name, raw, output, scorer=predict):
+    frame, scores, target, source = prepare(name, raw, scorer)
     courses = course_choices(frame,scores)
     primary, optimum = exact(courses,False)
     local, local_opt = exact(courses,True)
@@ -195,7 +200,8 @@ def report(name, raw, output):
                           defined_draws=np.isfinite(differences[:,:,i]).sum(axis=0).tolist())
     with (output/f'{name}_options.csv').open('w',newline='') as fp:
         cols = ['course','k','f_count','female_capture','male_capture','female_mass','male_mass','pooled','local_cap','greedy']
-        w = csv.writer(fp); w.writerow(cols)
+        w = csv.writer(fp, lineterminator="\n")
+        w.writerow(cols)
         for j,c in enumerate(courses):
             for i,n in enumerate(c['choices']):
                 w.writerow([c['course'],c['k'],n,c['fc'][i],c['mc'][i],c['fmass'],c['mmass'],
