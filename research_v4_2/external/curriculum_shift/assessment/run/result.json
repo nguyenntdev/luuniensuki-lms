@@ -1,0 +1,73 @@
+{
+  "modules": 7,
+  "edges": 15,
+  "positive": 2,
+  "active_learners": 25361,
+  "methods": {
+    "weekly_quiz_js": {
+      "ap": 0.5,
+      "selected": 0,
+      "tp": 0,
+      "fdp": 0.0,
+      "recall": 0.0,
+      "half_rank_rho": 0.9856887298747762
+    },
+    "weekly_full_js": {
+      "ap": 0.8333333333333333,
+      "selected": 0,
+      "tp": 0,
+      "fdp": 0.0,
+      "recall": 0.0,
+      "half_rank_rho": 0.982142857142857
+    },
+    "pooled_full_js": {
+      "ap": 0.8333333333333333,
+      "selected": 0,
+      "tp": 0,
+      "fdp": 0.0,
+      "recall": 0.0,
+      "half_rank_rho": 0.9571428571428571
+    },
+    "pooled_quiz_js": {
+      "ap": 0.5833333333333333,
+      "selected": 1,
+      "tp": 0,
+      "fdp": 1.0,
+      "recall": 0.0,
+      "half_rank_rho": 0.9499105545617172
+    },
+    "raw_click_js": {
+      "ap": 0.8333333333333333,
+      "selected": 0,
+      "tp": 0,
+      "fdp": 0.0,
+      "recall": 0.0,
+      "half_rank_rho": 0.8821428571428571
+    },
+    "inventory_js": {
+      "ap": 1.0,
+      "selected": 1,
+      "tp": 1,
+      "fdp": 0.0,
+      "recall": 0.5,
+      "half_rank_rho": 1.0
+    },
+    "different_season": {
+      "ap": 0.14285714285714285,
+      "selected": 0,
+      "tp": 0,
+      "fdp": 0.0,
+      "recall": 0.0,
+      "half_rank_rho": 0.9999999999999999
+    },
+    "weekly_quiz_abs": {
+      "ap": 0.41666666666666663,
+      "selected": 0,
+      "tp": 0,
+      "fdp": 0.0,
+      "recall": 0.0,
+      "half_rank_rho": 0.9749552772808585
+    }
+  },
+  "advance": false
+}

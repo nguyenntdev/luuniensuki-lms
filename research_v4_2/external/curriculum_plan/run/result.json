@@ -1,0 +1,53 @@
+{
+  "comp": {
+    "source_rows": 32,
+    "retained": 23,
+    "empty": [
+      "COMP 121",
+      "DATA 101",
+      "DHUM 101",
+      "SENG 299"
+    ],
+    "opaque": [
+      "COMP 122",
+      "COMP 226",
+      "DATA 202",
+      "DHUM 201",
+      "DHUM 303"
+    ],
+    "excluded_dependent_bundles": 404,
+    "bundles": 1367,
+    "exact_beats_local": 150,
+    "mean_added": {
+      "independent": 3.5091441111923922,
+      "sequential": 3.4579370885149965,
+      "unpruned": 3.399414776883687,
+      "pruned": 3.399414776883687
+    }
+  },
+  "math": {
+    "source_rows": 26,
+    "retained": 18,
+    "empty": [
+      "COMO 101",
+      "MATH 120",
+      "MATH 130",
+      "STAT 110",
+      "STAT 115"
+    ],
+    "opaque": [
+      "STAT 260",
+      "STAT 311",
+      "STAT 399"
+    ],
+    "excluded_dependent_bundles": 269,
+    "bundles": 547,
+    "exact_beats_local": 0,
+    "mean_added": {
+      "independent": 3.786106032906764,
+      "sequential": 3.786106032906764,
+      "unpruned": 3.786106032906764,
+      "pruned": 3.786106032906764
+    }
+  }
+}
