@@ -1,0 +1,38 @@
+{
+  "registrations": 8815,
+  "learners": 8505,
+  "clients": 7,
+  "macro_auc": {
+    "adapted": 0.6267798605940368,
+    "matched": 0.6252783922124031,
+    "mlp_half": 0.6457800221124421,
+    "previous_weak_ridge": 0.6311610610255277
+  },
+  "contrasts": {
+    "matched": {
+      "auc_gain": 0.001501468381633675,
+      "simultaneous_ci95": [
+        0.0004479407466617012,
+        0.0025549960166056486
+      ],
+      "clears_margin": false
+    },
+    "previous_weak_ridge": {
+      "auc_gain": -0.004381200431490928,
+      "simultaneous_ci95": [
+        -0.03125567701696014,
+        0.022493276153978285
+      ],
+      "clears_margin": false
+    },
+    "mlp_half": {
+      "auc_gain": -0.019000161518405334,
+      "simultaneous_ci95": [
+        -0.04198377061278972,
+        0.00398344757597905
+      ],
+      "clears_margin": false
+    }
+  },
+  "advances": false
+}

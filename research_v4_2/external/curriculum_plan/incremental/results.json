@@ -1,0 +1,16 @@
+{
+  "comp": {
+    "episodes": 1367,
+    "setup": 7350,
+    "incremental": 6933,
+    "cold_pruned": 14283,
+    "cold_plain": 14864
+  },
+  "math": {
+    "episodes": 547,
+    "setup": 2287,
+    "incremental": 3551,
+    "cold_pruned": 5838,
+    "cold_plain": 6075
+  }
+}
